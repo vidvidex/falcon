@@ -12,29 +12,29 @@
 
 
 module decompress #(
-    parameter integer SIGNATURE_LENGTH_WIDTH = 32  //! Number of bits used to represent the signature length (slen in reference code)
+    parameter integer SIGNATURE_LENGTH_WIDTH = 32  //! Number of bits used to represent the signature length (signature length = slen in reference code)
   )(
-    input wire clk,
-    input wire rst,
+    input logic clk,
+    input logic rst,
 
-    input wire [23:0] compressed_signature, //! Compressed signature
-    input wire [23:0] compressed_signature_valid, //! Is the compressed signature valid. Bitwise.
-    input wire [SIGNATURE_LENGTH_WIDTH-1:0] compressed_signature_length, //! Expected length of the compressed signature in bytes (slen in reference code)
+    input logic [23:0] compressed_signature, //! Compressed signature
+    input logic [23:0] compressed_signature_valid, //! Is the compressed signature valid. Bitwise.
+    input logic [SIGNATURE_LENGTH_WIDTH-1:0] compressed_signature_length, //! Expected length of the compressed signature in bytes (slen in reference code)
 
-    output wire [11:0] coefficient, //! Decompressed coefficient
-    output wire [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
-    output wire signature_error,    //! Was an error detected in the signature?
-    output reg decompression_done      //! Is decompression finished?
+    output logic [11:0] coefficient, //! Decompressed coefficient
+    output logic [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
+    output logic signature_error,    //! Was an error detected in the signature?
+    output logic decompression_done      //! Is decompression finished?
   );
 
-  reg [SIGNATURE_LENGTH_WIDTH-1+3:0] bits_processed; //! Number of bits (not bytes!) of compressed signature processed so far.
+  logic [SIGNATURE_LENGTH_WIDTH-1+3:0] bits_processed; //! Number of bits (not bytes!) of compressed signature processed so far.
 
-  wire coefficient_error_i;  //! Was an error detected while decompressing current coefficient?
-  reg coefficient_error; //! Was an error detected while decompressing any coefficient?
-  reg signature_length_error; //! Was the signature not of the expected length?
+  logic coefficient_error_i;  //! Was an error detected while decompressing current coefficient?
+  logic coefficient_error; //! Was an error detected while decompressing any coefficient?
+  logic signature_length_error; //! Was the signature not of the expected length?
 
-  wire [23:0] shifted_compressed_signature_valid; //! Shifted compressed signature valid, used to check if the coefficient is valid
-  wire coefficient_valid; //! Is the current coefficient valid?
+  logic [23:0] shifted_compressed_signature_valid; //! Shifted compressed signature valid, used to check if the coefficient is valid
+  logic coefficient_valid; //! Is the current coefficient valid?
 
 
   decompress_coefficient decompress_coefficient (
@@ -44,7 +44,7 @@ module decompress #(
                            .coefficient_error(coefficient_error_i)
                          );
 
-  always @(posedge clk)
+  always_ff @(posedge clk)
   begin
     if (rst == 1'b0)
     begin
@@ -70,7 +70,7 @@ module decompress #(
   end
 
   // Check if we processed all the bits of the compressed signature
-  always @(negedge coefficient_valid)
+  always_ff @(negedge coefficient_valid)
   begin
     // Check if the number of bits processed is less or equal to the expected length of the compressed signature
     // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
@@ -78,7 +78,6 @@ module decompress #(
       decompression_done <= 1'b1;  // We processed all the bits of the compressed signature
     else
       signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
-
   end
 
   // We check if the coefficient is valid by checking if all bits of the compressed signature are valid

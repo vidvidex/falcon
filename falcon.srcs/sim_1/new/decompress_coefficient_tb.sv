@@ -2,10 +2,10 @@
 
 module decompress_coefficient_tb;
 
-  reg [23:0] compressed_signature;
-  wire [11:0] coefficient;
-  wire [4:0] compressed_coef_length;
-  wire coefficient_error;
+  logic [23:0] compressed_signature;
+  logic [11:0] coefficient;
+  logic [4:0] compressed_coef_length;
+  logic coefficient_error;
 
   decompress_coefficient uut (
                .compressed_signature(compressed_signature),

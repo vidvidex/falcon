@@ -10,7 +10,7 @@
 //
 //     [23] - sign, [22:16] - low, [15:0] - high
 //
-// We enforce only one possible reprensentation of coefficient 0 (algorithm 18, line 9)
+// We enforce only one possible representation of coefficient 0 (algorithm 18, line 9)
 //
 // If we decide more than one coefficient should be decoded at the same time, we use a longer input
 // and decode multiple coefficients in parallel. We can use the compressed_coef_length of coefficient n to figure out where
@@ -21,19 +21,19 @@
 
 
 module decompress_coefficient (
-    input wire [23:0] compressed_signature, //! Compressed signature
+    input logic [23:0] compressed_signature, //! Compressed signature
 
-    output wire [11:0] coefficient,   //! Decompressed coefficient
-    output wire [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
-    output wire coefficient_error  //! Was an error detected in the compressed string?
+    output logic [11:0] coefficient,   //! Decompressed coefficient
+    output logic [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
+    output logic coefficient_error  //! Was an error detected in the compressed string?
   );
 
-  wire sign = compressed_signature[23];
-  wire [6:0] low;
-  reg [3:0] high;
+  logic sign;
+  logic [6:0] low;
+  logic [3:0] high;
 
   //! Priority encoder for the high part of the coefficient
-  always @(compressed_signature[15:0])
+  always_comb
   begin
     casex(compressed_signature[15:0])
       16'b1xxx_xxxx_xxxx_xxxx:
@@ -74,6 +74,7 @@ module decompress_coefficient (
     endcase
   end
 
+  assign sign = compressed_signature[23];
   assign low = compressed_signature[22:16];
   assign coefficient = {sign, high, low};
   assign compressed_coef_length = 9 + high;  // 1 sign bit + 7 low bits + 1 high bit (one) + high bits (zeros)
