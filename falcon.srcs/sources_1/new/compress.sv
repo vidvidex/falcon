@@ -40,35 +40,28 @@ module compress#(
                          .compressed_coefficient_length(compressed_coefficient_length)
                        );
 
-  always_ff @(posedge clk)
-  begin
-    if (rst == 1'b0)
-    begin
+  always_ff @(posedge clk) begin
+    if (rst == 1'b0) begin
       error <= 1'b0;
     end
-    else
-    begin
+    else begin
 
-      if (valid)
-      begin
+      if (valid) begin
         if (compressed_so_far > SIGNATURE_LENGTH*8)
           // Processed more bits than expected
-          error <= 1;
+          error <= 1'b1;
       end
     end
   end
 
   // Most of the processing in this module is done on a negative edge of the clock
   // This is because on a positive edge the coefficients are changed and we cannot append them to the compressed signature and shift it immediately
-  always_ff @(negedge clk)
-  begin
-    if (rst == 1'b0)
-    begin
+  always_ff @(negedge clk) begin
+    if (rst == 1'b0) begin
       compressed_signature <= 0;
       compressed_so_far <= 0;
     end
-    else if(valid)
-    begin
+    else if(valid) begin
       // Update the number of bits processed so far
       compressed_so_far <= compressed_so_far + compressed_coefficient_length;
 
