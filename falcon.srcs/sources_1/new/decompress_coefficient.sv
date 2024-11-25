@@ -33,8 +33,7 @@ module decompress_coefficient (
   logic [3:0] high;
 
   //! Priority encoder for the high part of the coefficient
-  always_comb
-  begin
+  always_comb begin
     casex(compressed_signature[15:0])
       16'b1xxx_xxxx_xxxx_xxxx:
         high = 4'b0000;

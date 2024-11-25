@@ -30,8 +30,7 @@ module compress_tb;
 
   always #5 clk = ~clk;
 
-  initial
-  begin
+  initial begin
     clk = 1;
 
     // Test 1: Real signature of size 8
@@ -42,8 +41,7 @@ module compress_tb;
     finalize = 0;
 
     // Compress all coefficients
-    for (i = 0; i < 8; i++)
-    begin
+    for (i = 0; i < 8; i++) begin
       coefficient = coefficients[i];
       valid = 1;
       #10;
@@ -53,13 +51,11 @@ module compress_tb;
     #10;
     finalize = 0;
     // Check if error is low (all coefficients were compressed successfully)
-    if (error !== 0)
-    begin
+    if (error !== 0) begin
       $display("ASSERTION FAILED: Signature error detected");
       $fatal;
     end
-    if(compressed_signature !== 88'h9aec4cb13a56853d656000)
-    begin
+    if(compressed_signature !== 88'h9aec4cb13a56853d656000) begin
       $display("ASSERTION FAILED: Compressed signature is not correct");
       $fatal;
     end
@@ -72,15 +68,13 @@ module compress_tb;
     finalize = 0;
 
     // Compress all coefficients
-    for (i = 0; i < 8; i++)
-    begin
+    for (i = 0; i < 8; i++) begin
       coefficient = coefficients[i];
       valid = 1;
       #10;
 
       // When processing the 5th coefficient the signature should become too long
-      if(i == 4 && error !== 1)
-      begin
+      if(i == 4 && error !== 1) begin
         $display("ASSERTION FAILED: Signature error not detected");
         $fatal;
       end
@@ -91,8 +85,7 @@ module compress_tb;
     #10;
     finalize = 0;
     // Check if error stays highL
-    if (error !== 1)
-    begin
+    if (error !== 1) begin
       $display("ASSERTION FAILED: Signature error not detected");
       $fatal;
     end

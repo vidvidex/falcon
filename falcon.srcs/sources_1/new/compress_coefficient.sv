@@ -21,8 +21,7 @@ module compress_coefficient(
   logic [15:0] high;
   logic [11:0] abs_coefficient;  // If coefficient is negative, we need to negate it before compressing
 
-  always_comb
-  begin
+  always_comb begin
 
     case(abs_coefficient[10:7])
       4'b0000:

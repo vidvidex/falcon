@@ -44,19 +44,15 @@ module decompress #(
                            .coefficient_error(coefficient_error_i)
                          );
 
-  always_ff @(posedge clk)
-  begin
-    if (rst == 1'b0)
-    begin
+  always_ff @(posedge clk) begin
+    if (rst == 1'b0) begin
       coefficient_error <= 1'b0;
       signature_length_error <= 1'b0;
       bits_processed <= 0;
       decompression_done <= 0;
     end
-    else
-    begin
-      if(coefficient_valid)
-      begin
+    else begin
+      if(coefficient_valid) begin
         // Update the number of bits processed
         bits_processed <= bits_processed + compressed_coef_length;
 
@@ -70,8 +66,7 @@ module decompress #(
   end
 
   // Check if we processed all the bits of the compressed signature
-  always_ff @(negedge coefficient_valid)
-  begin
+  always_ff @(negedge coefficient_valid) begin
     // Check if the number of bits processed is less or equal to the expected length of the compressed signature
     // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
     if (bits_processed <= compressed_signature_length*8 && compressed_signature[23:17] == 7'b0)

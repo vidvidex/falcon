@@ -2,6 +2,7 @@
 # website: https://www.xilinx.com/support/download.html
 .stfolder
 falcon.sim/
+a.out
 
 # [home]
 *.jou
