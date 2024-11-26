@@ -20,22 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_state_buffer(clk, rst, din_64bit, din_wen, state_out, state_in, we_state_in,
-                             state_output_sel, we_output_buffer, shift_output_buffer, dout_64bit);
-  input clk;
-  input rst; // Clears the state buffer when 1
-
-  input [63:0] din_64bit; // Data comes in 64 bit chunks
-  input din_wen;  // write enable signal for input data
-
-  output [25*64-1:0] state_out;
-  input [25*64-1:0] state_in;
-  input we_state_in;
-
-  input [4:0] state_output_sel;
-  input we_output_buffer;             // When 1, keccak_state is written into the output_buffer
-  input shift_output_buffer;          // When 1, output_buffer is shifted by 64-bits every cycle. One word is output
-  output [63:0] dout_64bit;       // Data output happens in 64 bit chunks
+module keccak_state_buffer(
+    input logic   clk,
+    input logic  rst, // Clears the state buffer when 1
+    input logic [63:0]  din_64bit, // Data comes in 64 bit chunks
+    input logic   din_wen,  // write enable signal for input data
+    output logic [25*64-1:0]   state_out,
+    input logic [25*64-1:0]  state_in,
+    input logic   we_state_in,
+    input [4:0]  state_output_sel,
+    input  we_output_buffer,  // When 1, keccak_state is written into the output_buffer
+    input   shift_output_buffer,  // When 1, output_buffer is shifted by 64-bits every cycle. One word is output
+    output [63:0]  dout_64bit   // Data output happens in 64 bit chunks
+  );
 
   reg [64*25-1:0] keccak_state;
   reg [64*21-1:0] keccak_output_buffer;   // Note that at most 21 words are output. (shake128 outputs 21 64-bit words)

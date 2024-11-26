@@ -20,10 +20,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_round_sujoy(lanes_in, round_constant, lanes_out);
-  input [64*5*5-1:0] lanes_in;
-  input [63:0] round_constant;
-  output [64*5*5-1:0] lanes_out;
+module keccak_round_sujoy(
+    input logic [64*5*5-1:0]lanes_in,
+    input logic [63:0] round_constant,
+    output logic [64*5*5-1:0]  lanes_out
+  );
 
 
   // Start # ? step
