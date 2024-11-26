@@ -31,23 +31,20 @@
 */
 
 // Note: Data output from Keccak squeeze happens in 64-bit words every cycle.
-module keccak_squeeze(clk, rst, rateInBytes, outputLen_InBytes, keccak_squeeze_resume,
-                        call_keccak_f1600, keccak_round_complete,
-                        state_reg_sel, we_output_buffer, shift_output_buffer, dout_valid, done);
-  input clk;
-  input rst;                       // Active high
-  input [7:0] rateInBytes;         // Note that maximum rateInBytes = 1344/8 = 168
-  input [15:0] outputLen_InBytes;  // Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
-  input keccak_squeeze_resume;     // This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
-
-  output reg call_keccak_f1600;    // This signal is used to start Keccak-f1600 on the state variable
-  input keccak_round_complete;     // This signal comes from Keccak-f1600 after its completion
-  output [4:0] state_reg_sel;      // This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
-  output we_output_buffer;       // Used to write keccak_state into keccak_output_buffer
-  output shift_output_buffer;    // Used to shift the keccak_output_buffer in 64 bits such that one word is output
-  output reg dout_valid;           // This signal is used to write Keccak-squeeze output
-  output done;                     // Becomes 1 when the entire input is absorbed.
-
+module keccak_squeeze(
+    input logic   clk,
+    input logic  rst,// Active high
+    input logic[7:0]  rateInBytes,// Note that maximum rateInBytes = 1344/8 = 168
+    input logic [15:0]   outputLen_InBytes,// Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
+    input logic  keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
+    output logic  call_keccak_f1600,// This signal is used to start Keccak-f1600 on the state variable
+    input logic keccak_round_complete,   // This signal comes from Keccak-f1600 after its completion
+    output logic[4:0]  state_reg_sel,  // This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
+    output logic  we_output_buffer,  // Used to write keccak_state into keccak_output_buffer
+    output  logic shift_output_buffer,  // Used to shift the keccak_output_buffer in 64 bits such that one word is output
+    output logic  dout_valid,  // This signal is used to write Keccak-squeeze output
+    output logic done   // Becomes 1 when the entire input is absorbed.
+  );
 
   reg [16:0] outputLen_InBytes_reg;   // 1 bit extra is used for sign: + or -
   reg dec_outputLen;
@@ -56,10 +53,6 @@ module keccak_squeeze(clk, rst, rateInBytes, outputLen_InBytes, keccak_squeeze_r
   reg rst_rate_counter, inc_rate_counter;
   reg [3:0] state, nextstate;
   wire rate_counter_eq;
-
-  reg we_output_buffer;       // Used to write keccak_state into keccak_output_buffer
-  reg shift_output_buffer;    // Used to shift the keccak_output_buffer in 64 bits such that one word is output
-
 
   always @(posedge clk) begin
     if(rst)

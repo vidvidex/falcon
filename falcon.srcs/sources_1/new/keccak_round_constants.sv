@@ -20,9 +20,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_round_constants(round_nr, round_constant);
-  input [4:0] round_nr;
-  output [63:0] round_constant;
+module keccak_round_constants(
+    input logic [4:0] round_nr,
+    output logic [63:0] round_constant
+  );
 
   assign round_constant =
          (round_nr==5'd0) ? 64'h0000000000000001 :

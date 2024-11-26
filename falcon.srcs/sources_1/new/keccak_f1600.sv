@@ -20,12 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_f1600(clk, rst, state_in, state_out, we_state_out, final_round);
-  input clk, rst;
-  input [64*25-1:0] state_in;
-  output [64*25-1:0] state_out;
-  output we_state_out;        // This signal is 1 for writing 25x64 bit state to the buffer
-  output reg final_round;
+module keccak_f1600(
+    input logic clk,
+    input logic rst,
+    input logic [64*25-1:0] state_in,
+    output logic [64*25-1:0]state_out,
+    output logic we_state_out, //! This signal is 1 for writing 25x64 bit state to the buffer
+    output logic final_round
+  );
 
   wire [63:0] round_constant;
   reg [4:0] round_nr;
