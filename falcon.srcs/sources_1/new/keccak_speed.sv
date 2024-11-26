@@ -61,24 +61,63 @@ module keccak_speed(
 
   // Reset clears the state buffer.
   // The first step is Keccak_absorb. This module is the FSM. It also does necessary padding to the message.
-  keccak_absorb Absorb(clk, rst_absorb, rateInBytes, inputLen_InBytes, delimitedSuffix,
-                       din_64bit_raw, din_valid,
-                       keccak_is_ready_to_receive, din_64bit_processed, din_wen, call_keccak_f1600_absorb,
-                       keccak_round_complete, absorb_done);
+  keccak_absorb Absorb(
+                  .clk(clk),
+                  .rst(rst_absorb),
+                  .rateInBytes(rateInBytes),
+                  .inputlen_InBytes(inputLen_InBytes),
+                  .delimitedSuffix(delimitedSuffix),
+                  .din_64bit_raw(din_64bit_raw),
+                  .din_valid(din_valid),
+                  .ready(keccak_is_ready_to_receive),
+                  .din_64bit_processed(din_64bit_processed),
+                  .din_wen(din_wen),
+                  .call_keccak_f1600(call_keccak_f1600_absorb),
+                  .keccak_round_complete(keccak_round_complete),
+                  .done(absorb_done)
+                );
+
+  keccak_state_buffer State(
+                        .clk(clk),
+                        .rst(rst_state),
+                        .din_64bit(din_64bit_processed),
+                        .din_wen(din_wen),
+                        .state_out(state_out),
+                        .state_in(state_in),
+                        .we_state_in(write_state_in),
+                        .state_output_sel(state_reg_sel),
+                        .we_output_buffer(we_output_buffer),
+                        .shift_output_buffer(shift_output_buffer),
+                        .dout_64bit(dout_64bit)
+                      );
 
 
-  keccak_state_buffer State(clk, rst_state, din_64bit_processed, din_wen,
-                            state_out, state_in, write_state_in,
-                            state_reg_sel, we_output_buffer, shift_output_buffer, dout_64bit);
+  keccak_f1600 Rounds(
+                 .clk(clk),
+                 .rst(rst_rounds),
+                 .state_in(state_out),
+                 .state_out(state_in),
+                 .we_state_out(write_state_in),
+                 .final_round(keccak_round_complete)
+               );
+
+
+  keccak_squeeze Squeeze(
+                   .clk(clk),
+                   .rst(rst_squeeze),
+                   .rateInBytes(rateInBytes),
+                   .outputLen_InBytes(outputLen_InBytes),
+                   .keccak_squeeze_resume(keccak_squeeze_resume),
+                   .call_keccak_f1600(call_keccak_f1600_squeeze),
+                   .keccak_round_complete(keccak_round_complete),
+                   .state_reg_sel(state_reg_sel),
+                   .we_output_buffer(we_output_buffer),
+                   .shift_output_buffer(shift_output_buffer),
+                   .dout_valid(dout_valid),
+                   .done(squeeze_done)
+                 );
 
   assign rst_rounds = (rst_absorb==1'b0) ? ~call_keccak_f1600_absorb : (rst_squeeze==1'b0) ? ~call_keccak_f1600_squeeze : 1'b1;
-
-  keccak_f1600    Rounds(clk, rst_rounds, state_out, state_in, write_state_in, keccak_round_complete);
-
-
-  keccak_squeeze  Squeeze(clk, rst_squeeze, rateInBytes, outputLen_InBytes, keccak_squeeze_resume,
-                          call_keccak_f1600_squeeze, keccak_round_complete,
-                          state_reg_sel, we_output_buffer, shift_output_buffer, dout_valid, squeeze_done);
 
   always @(posedge clk) begin
     if(rst)

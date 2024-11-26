@@ -68,8 +68,15 @@ module keccak_f1600(
   assign lanes_in[63+64*5*4+64*4:64*5*4+64*4] = state_in[63+64*5*4+64*4:64*5*4+64*4];
 
 
-  keccak_round_sujoy KR(lanes_in, round_constant, lanes_out);
-  keccak_round_constants KRConst(round_nr, round_constant);
+  keccak_round_sujoy KR(
+                       .lanes_in(lanes_in),
+                       .round_constant(round_constant),
+                       .lanes_out(lanes_out)
+                     );
+  keccak_round_constants KRConst(
+                           .round_nr(round_nr),
+                           .round_constant(round_constant)
+                         );
 
   // 5x5 Lanes are just transpose of 5x5 States. Perform the transpose.
   // for x=0, y=0..4                            // for x=0..4, y=0
