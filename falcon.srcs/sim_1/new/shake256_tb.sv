@@ -18,8 +18,6 @@ module shake256_tb;
   logic keccak_squeeze_resume;     // This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
   logic [63:0] dout_64bit;        // 64-bit PRNG word logic from Keccak state
   logic dout_valid;               // This signal is used to write Keccak-squeeze logic
-  logic absorb_done;
-  logic squeeze_done;
 
   keccak_speed uut(
                  .clk(clk),
@@ -33,85 +31,14 @@ module shake256_tb;
                  .din_valid(din_valid),
                  .keccak_squeeze_resume(keccak_squeeze_resume),
                  .dout_64bit(dout_64bit),
-                 .dout_valid(dout_valid),
-                 .absorb_done(absorb_done),
-                 .squeeze_done(squeeze_done));
+                 .dout_valid(dout_valid)
+                 );
 
   always #5 clk = ~clk;
 
   assign rateInBytes       =  8'd136;
   assign delimitedSuffix   =  8'h1f;
   assign keccak_squeeze_resume = 0;
-
-
-
-  // initial begin
-  //   clk = 0;
-  //   rst = 1;
-
-  //   #5;
-
-  //   inputLen_InBytes = 16'h0000;
-  //   outputLen_InBytes = 16'h0000;
-  //   din_64bit_raw = 64'h0000000000000000;
-  //   din_valid = 0;
-  //   #550;
-
-  //   // inputLen_InBytes = 16'h0000;
-  //   inputLen_InBytes = 16'h001f;
-  //   #10;
-
-  //   inputLen_InBytes = 16'h0049;
-  //   outputLen_InBytes = 16'h0040;
-
-  //   #10;
-  //   din_64bit_raw = 64'h1720e40775c0b333;
-  //   #10;
-  //   rst = 0;
-  //   #20;
-
-  //   din_valid = 1;
-  //   #20;
-
-  //   din_64bit_raw = 64'ha6e26e2b834d4948;
-  //   #10;
-
-  //   din_64bit_raw = 64'hb543e30e9bff3bc9;
-  //   #10;
-
-  //   din_64bit_raw = 64'hd7e00d3d5af8d150;
-  //   #10;
-
-  //   din_64bit_raw = 64'h913954278d1c604;
-  //   #10;
-
-  //   din_64bit_raw = 64'hfbcb4f738d4d1cd8;
-  //   #10;
-
-  //   din_64bit_raw = 64'haa9f038a3f3ddeea;
-  //   #10;
-
-  //   din_64bit_raw = 64'h55ad35e857992c2a;
-  //   #10;
-
-  //   din_64bit_raw = 64'h6a55bb57bf752eb2;
-  //   #10;
-
-  //   din_64bit_raw = 64'hc8;
-  //   #10;
-
-  //   din_64bit_raw = 64'h0000000000000000;
-  //   #70;
-  //   din_valid = 0;
-  //   #250;
-  //   din_valid = 1;
-  //   #10;
-  //   din_valid = 0;
-  //   keccak_squeeze_resume = 1;
-  //   #100;
-  //   keccak_squeeze_resume = 0;
-
-  // end
 
   initial begin
     clk = 0;
