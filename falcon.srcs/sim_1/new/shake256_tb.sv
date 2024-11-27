@@ -5,8 +5,6 @@ module shake256_tb;
   logic clk;
   logic rst;
 
-  logic [7:0] rateInBytes;        // Note that maximum rateInBytes = 1344/8 = 168
-
   logic [15:0] inputLen_InBytes;  // Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
   logic [15:0] outputLen_InBytes; // Length of logic PRNG string in bytes.
 
@@ -21,7 +19,6 @@ module shake256_tb;
   keccak_speed uut(
                  .clk(clk),
                  .rst(rst),
-                 .rateInBytes(rateInBytes),
                  .inputLen_InBytes(inputLen_InBytes),
                  .outputLen_InBytes(outputLen_InBytes),
                  .keccak_is_ready_to_receive(keccak_is_ready_to_receive),
@@ -34,7 +31,6 @@ module shake256_tb;
 
   always #5 clk = ~clk;
 
-  assign rateInBytes       =  8'd136;
   assign keccak_squeeze_resume = 0;
 
   initial begin

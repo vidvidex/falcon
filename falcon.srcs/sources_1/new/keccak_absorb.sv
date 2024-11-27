@@ -23,7 +23,6 @@
 module keccak_absorb(
     input logic clk,
     input logic  rst, // Active high
-    input logic [7:0]   rateInBytes,   // Note that maximum rateInBytes = 1344/8 = 168
     input logic [15:0]  inputlen_InBytes, // Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic [63:0]  din_64bit_raw,
     input logic din_valid, // This signal is provided by a data source to indicate that din_64bit_raw is valid
@@ -44,6 +43,7 @@ module keccak_absorb(
   reg [2:0] state, nextstate;
   reg delimitedSuffix_used;
   logic [7:0] delimitedSuffix = 8'h1f;
+  logic [7:0] rateInBytes = 8'd136;
 
   //////////////////////////////
   assign din_64bit_processed[7:0] = (messageLen_lt_8==1'b0) ? din_64bit_raw[7:0] :
