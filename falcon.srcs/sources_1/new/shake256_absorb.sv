@@ -1,26 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
 //
-// Create Date: 12/26/2020 07:37:53 PM
-// Design Name:
-// Module Name: keccak_absorb
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
 //
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_absorb(
+module shake256_absorb(
     input logic clk,
     input logic  rst, // Active high
     input logic [15:0]  inputlen_InBytes, // Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.

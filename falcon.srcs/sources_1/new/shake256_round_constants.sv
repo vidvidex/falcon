@@ -1,26 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
 //
-// Create Date: 12/25/2020 10:29:30 PM
-// Design Name:
-// Module Name: keccak_round_constants
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
 //
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_round_constants(
+module shake256_round_constants(
     input logic [4:0] round_nr,
     output logic [63:0] round_constant
   );

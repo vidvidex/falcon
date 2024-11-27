@@ -16,7 +16,7 @@ module shake256_tb;
   logic [63:0] dout_64bit;        // 64-bit PRNG word logic from Keccak state
   logic dout_valid;               // This signal is used to write Keccak-squeeze logic
 
-  keccak_speed uut(
+  shake256 uut(
                  .clk(clk),
                  .rst(rst),
                  .inputLen_InBytes(inputLen_InBytes),
