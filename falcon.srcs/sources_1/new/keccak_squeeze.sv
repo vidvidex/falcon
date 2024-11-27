@@ -34,7 +34,6 @@
 module keccak_squeeze(
     input logic   clk,
     input logic  rst,// Active high
-    input logic[7:0]  rateInBytes,// Note that maximum rateInBytes = 1344/8 = 168
     input logic [15:0]   outputLen_InBytes,// Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
     input logic  keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
     output logic  call_keccak_f1600,// This signal is used to start Keccak-f1600 on the state variable
@@ -53,6 +52,7 @@ module keccak_squeeze(
   reg rst_rate_counter, inc_rate_counter;
   reg [3:0] state, nextstate;
   wire rate_counter_eq;
+  logic [7:0] rateInBytes = 8'd136;
 
   always @(posedge clk) begin
     if(rst)
