@@ -8,3 +8,8 @@
 - Recommended value for Falcon-1024: 1280 bytes
 
 `SIGNATURE_LENGTH_WIDTH` - number of bits required to represent the signature length. `ceil(log2(SIGNATURE_LENGTH))`
+
+`N` - number of coefficients in the polynomial. Often called `n` in the algorithms in the specification.
+
+- Falcon-512: 512
+- Falcon-1024: 1024
