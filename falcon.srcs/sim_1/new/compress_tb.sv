@@ -2,7 +2,6 @@
 
 module compress_tb;
   parameter integer SIGNATURE_LENGTH = 11;
-  parameter integer SIGNATURE_LENGTH_WIDTH = 4;
 
   logic clk;
   logic rst;
@@ -16,8 +15,7 @@ module compress_tb;
   integer i;                          // Loop variable
 
   compress #(
-             .SIGNATURE_LENGTH(SIGNATURE_LENGTH),
-             .SIGNATURE_LENGTH_WIDTH(SIGNATURE_LENGTH_WIDTH)
+             .SIGNATURE_LENGTH(SIGNATURE_LENGTH)
            )uut(
              .clk(clk),
              .rst(rst),

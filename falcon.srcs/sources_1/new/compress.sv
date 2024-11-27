@@ -16,8 +16,7 @@
 
 
 module compress#(
-    parameter integer SIGNATURE_LENGTH,               //! Expected length of the compressed signature in bytes (slen in reference code)
-    parameter integer SIGNATURE_LENGTH_WIDTH          //! Number of bits used to represent the signature length (signature length = slen in reference code)
+    parameter integer SIGNATURE_LENGTH               //! Expected length of the compressed signature in bytes (slen in reference code)
   )(
     input logic clk,
     input logic rst,
@@ -30,7 +29,7 @@ module compress#(
     output logic error //! Error signal, something went wrong while compressing
   );
 
-  logic [SIGNATURE_LENGTH_WIDTH-1+3:0] compressed_so_far; //! Number of bits (not bytes!) of compressed signature processed so far.
+  logic [$clog2(SIGNATURE_LENGTH)-1+3:0] compressed_so_far; //! Number of bits (not bytes!) of compressed signature processed so far.
   logic [23:0] compressed_coefficient; //! Compressed representation of the current coefficient. Some of the bottom bits of this can be undefined, since they are rarely all used.
   logic [4:0] compressed_coefficient_length; //! Number of bits used to compress the current coefficient
 
