@@ -11,17 +11,17 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="26.820 ns"></ZoomStartTime>
-      <ZoomEndTime time="78.821 ns"></ZoomEndTime>
-      <Cursor1Time time="10.000 ns"></Cursor1Time>
+      <ZoomStartTime time="791.520 ns"></ZoomStartTime>
+      <ZoomEndTime time="934.334 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="274"></NameColumnWidth>
-      <ValueColumnWidth column_width="209"></ValueColumnWidth>
+      <NameColumnWidth column_width="250"></NameColumnWidth>
+      <ValueColumnWidth column_width="246"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group1316">
-      <obj_property name="label">keccak_speed</obj_property>
+      <obj_property name="label">shake256</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/shake256_tb/uut/clk">
@@ -31,14 +31,6 @@
       <wvobject type="logic" fp_name="/shake256_tb/uut/rst">
          <obj_property name="ElementShortName">rst</obj_property>
          <obj_property name="ObjectShortName">rst</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/rateInBytes">
-         <obj_property name="ElementShortName">rateInBytes[7:0]</obj_property>
-         <obj_property name="ObjectShortName">rateInBytes[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/delimitedSuffix">
-         <obj_property name="ElementShortName">delimitedSuffix[7:0]</obj_property>
-         <obj_property name="ObjectShortName">delimitedSuffix[7:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/shake256_tb/uut/inputLen_InBytes">
          <obj_property name="ElementShortName">inputLen_InBytes[15:0]</obj_property>
@@ -52,25 +44,33 @@
          <obj_property name="ElementShortName">keccak_is_ready_to_receive</obj_property>
          <obj_property name="ObjectShortName">keccak_is_ready_to_receive</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/din_64bit_raw">
-         <obj_property name="ElementShortName">din_64bit_raw[63:0]</obj_property>
-         <obj_property name="ObjectShortName">din_64bit_raw[63:0]</obj_property>
+      <wvobject type="array" fp_name="/shake256_tb/uut/data_in">
+         <obj_property name="ElementShortName">data_in[63:0]</obj_property>
+         <obj_property name="ObjectShortName">data_in[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/din_valid">
-         <obj_property name="ElementShortName">din_valid</obj_property>
-         <obj_property name="ObjectShortName">din_valid</obj_property>
+      <wvobject type="logic" fp_name="/shake256_tb/uut/data_in_valid">
+         <obj_property name="ElementShortName">data_in_valid</obj_property>
+         <obj_property name="ObjectShortName">data_in_valid</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/shake256_tb/uut/keccak_squeeze_resume">
          <obj_property name="ElementShortName">keccak_squeeze_resume</obj_property>
          <obj_property name="ObjectShortName">keccak_squeeze_resume</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/dout_64bit">
-         <obj_property name="ElementShortName">dout_64bit[63:0]</obj_property>
-         <obj_property name="ObjectShortName">dout_64bit[63:0]</obj_property>
+      <wvobject type="array" fp_name="/shake256_tb/uut/data_out">
+         <obj_property name="ElementShortName">data_out[63:0]</obj_property>
+         <obj_property name="ObjectShortName">data_out[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/dout_valid">
-         <obj_property name="ElementShortName">dout_valid</obj_property>
-         <obj_property name="ObjectShortName">dout_valid</obj_property>
+      <wvobject type="logic" fp_name="/shake256_tb/uut/data_out_valid">
+         <obj_property name="ElementShortName">data_out_valid</obj_property>
+         <obj_property name="ObjectShortName">data_out_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/shake256_tb/uut/absorb_done">
+         <obj_property name="ElementShortName">absorb_done</obj_property>
+         <obj_property name="ObjectShortName">absorb_done</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/shake256_tb/uut/squeeze_done">
+         <obj_property name="ElementShortName">squeeze_done</obj_property>
+         <obj_property name="ObjectShortName">squeeze_done</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/shake256_tb/uut/din_64bit_processed">
          <obj_property name="ElementShortName">din_64bit_processed[63:0]</obj_property>
@@ -88,10 +88,6 @@
          <obj_property name="ElementShortName">keccak_round_complete</obj_property>
          <obj_property name="ObjectShortName">keccak_round_complete</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/absorb_done">
-         <obj_property name="ElementShortName">absorb_done</obj_property>
-         <obj_property name="ObjectShortName">absorb_done</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/shake256_tb/uut/state_out">
          <obj_property name="ElementShortName">state_out[1599:0]</obj_property>
          <obj_property name="ObjectShortName">state_out[1599:0]</obj_property>
@@ -103,10 +99,6 @@
       <wvobject type="logic" fp_name="/shake256_tb/uut/write_state_in">
          <obj_property name="ElementShortName">write_state_in</obj_property>
          <obj_property name="ObjectShortName">write_state_in</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/rst_f1600">
-         <obj_property name="ElementShortName">rst_f1600</obj_property>
-         <obj_property name="ObjectShortName">rst_f1600</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/shake256_tb/uut/state_reg_sel">
          <obj_property name="ElementShortName">state_reg_sel[4:0]</obj_property>
@@ -123,10 +115,6 @@
       <wvobject type="logic" fp_name="/shake256_tb/uut/call_keccak_f1600_squeeze">
          <obj_property name="ElementShortName">call_keccak_f1600_squeeze</obj_property>
          <obj_property name="ObjectShortName">call_keccak_f1600_squeeze</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/squeeze_done">
-         <obj_property name="ElementShortName">squeeze_done</obj_property>
-         <obj_property name="ObjectShortName">squeeze_done</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/shake256_tb/uut/FSM_state">
          <obj_property name="ElementShortName">FSM_state[2:0]</obj_property>
@@ -152,245 +140,18 @@
          <obj_property name="ElementShortName">rst_rounds</obj_property>
          <obj_property name="ObjectShortName">rst_rounds</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/dout_valid_wire">
-         <obj_property name="ElementShortName">dout_valid_wire</obj_property>
-         <obj_property name="ObjectShortName">dout_valid_wire</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group1317">
-      <obj_property name="label">keccak_absorb</obj_property>
+      <obj_property name="label">shake256_absorb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/rst">
-         <obj_property name="ElementShortName">rst</obj_property>
-         <obj_property name="ObjectShortName">rst</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/rateInBytes">
-         <obj_property name="ElementShortName">rateInBytes[7:0]</obj_property>
-         <obj_property name="ObjectShortName">rateInBytes[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/inputlen_InBytes">
-         <obj_property name="ElementShortName">inputlen_InBytes[15:0]</obj_property>
-         <obj_property name="ObjectShortName">inputlen_InBytes[15:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/delimitedSuffix">
-         <obj_property name="ElementShortName">delimitedSuffix[7:0]</obj_property>
-         <obj_property name="ObjectShortName">delimitedSuffix[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/din_64bit_raw">
-         <obj_property name="ElementShortName">din_64bit_raw[63:0]</obj_property>
-         <obj_property name="ObjectShortName">din_64bit_raw[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/din_valid">
-         <obj_property name="ElementShortName">din_valid</obj_property>
-         <obj_property name="ObjectShortName">din_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/ready">
-         <obj_property name="ElementShortName">ready</obj_property>
-         <obj_property name="ObjectShortName">ready</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/din_64bit_processed">
-         <obj_property name="ElementShortName">din_64bit_processed[63:0]</obj_property>
-         <obj_property name="ObjectShortName">din_64bit_processed[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/din_wen">
-         <obj_property name="ElementShortName">din_wen</obj_property>
-         <obj_property name="ObjectShortName">din_wen</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/call_keccak_f1600">
-         <obj_property name="ElementShortName">call_keccak_f1600</obj_property>
-         <obj_property name="ObjectShortName">call_keccak_f1600</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/keccak_round_complete">
-         <obj_property name="ElementShortName">keccak_round_complete</obj_property>
-         <obj_property name="ObjectShortName">keccak_round_complete</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/done">
-         <obj_property name="ElementShortName">done</obj_property>
-         <obj_property name="ObjectShortName">done</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/messageLen_InBytes">
-         <obj_property name="ElementShortName">messageLen_InBytes[15:0]</obj_property>
-         <obj_property name="ObjectShortName">messageLen_InBytes[15:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/dec_messageLen">
-         <obj_property name="ElementShortName">dec_messageLen</obj_property>
-         <obj_property name="ObjectShortName">dec_messageLen</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/rate_counter">
-         <obj_property name="ElementShortName">rate_counter[7:0]</obj_property>
-         <obj_property name="ObjectShortName">rate_counter[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/rst_rate_counter">
-         <obj_property name="ElementShortName">rst_rate_counter</obj_property>
-         <obj_property name="ObjectShortName">rst_rate_counter</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/inc_rate_counter">
-         <obj_property name="ElementShortName">inc_rate_counter</obj_property>
-         <obj_property name="ObjectShortName">inc_rate_counter</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/messageLen_lt_8">
-         <obj_property name="ElementShortName">messageLen_lt_8</obj_property>
-         <obj_property name="ObjectShortName">messageLen_lt_8</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/messageLen_lte_8">
-         <obj_property name="ElementShortName">messageLen_lte_8</obj_property>
-         <obj_property name="ObjectShortName">messageLen_lte_8</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/rate_counter_eq">
-         <obj_property name="ElementShortName">rate_counter_eq</obj_property>
-         <obj_property name="ObjectShortName">rate_counter_eq</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/last_rate_byte">
-         <obj_property name="ElementShortName">last_rate_byte</obj_property>
-         <obj_property name="ObjectShortName">last_rate_byte</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/state">
-         <obj_property name="ElementShortName">state[2:0]</obj_property>
-         <obj_property name="ObjectShortName">state[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/nextstate">
-         <obj_property name="ElementShortName">nextstate[2:0]</obj_property>
-         <obj_property name="ObjectShortName">nextstate[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/Absorb/delimitedSuffix_used">
-         <obj_property name="ElementShortName">delimitedSuffix_used</obj_property>
-         <obj_property name="ObjectShortName">delimitedSuffix_used</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/Absorb/din_proce_temp">
-         <obj_property name="ElementShortName">din_proce_temp[7:0]</obj_property>
-         <obj_property name="ObjectShortName">din_proce_temp[7:0]</obj_property>
-      </wvobject>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject type="group" fp_name="group2569">
-      <obj_property name="label">keccak_state</obj_property>
+      <obj_property name="label">shake256_state</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/State/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/State/rst">
-         <obj_property name="ElementShortName">rst</obj_property>
-         <obj_property name="ObjectShortName">rst</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/din_64bit">
-         <obj_property name="ElementShortName">din_64bit[63:0]</obj_property>
-         <obj_property name="ObjectShortName">din_64bit[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/State/din_wen">
-         <obj_property name="ElementShortName">din_wen</obj_property>
-         <obj_property name="ObjectShortName">din_wen</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/state_out">
-         <obj_property name="ElementShortName">state_out[1599:0]</obj_property>
-         <obj_property name="ObjectShortName">state_out[1599:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/state_in">
-         <obj_property name="ElementShortName">state_in[1599:0]</obj_property>
-         <obj_property name="ObjectShortName">state_in[1599:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/State/we_state_in">
-         <obj_property name="ElementShortName">we_state_in</obj_property>
-         <obj_property name="ObjectShortName">we_state_in</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/state_output_sel">
-         <obj_property name="ElementShortName">state_output_sel[4:0]</obj_property>
-         <obj_property name="ObjectShortName">state_output_sel[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/State/we_output_buffer">
-         <obj_property name="ElementShortName">we_output_buffer</obj_property>
-         <obj_property name="ObjectShortName">we_output_buffer</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/State/shift_output_buffer">
-         <obj_property name="ElementShortName">shift_output_buffer</obj_property>
-         <obj_property name="ObjectShortName">shift_output_buffer</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/dout_64bit">
-         <obj_property name="ElementShortName">dout_64bit[63:0]</obj_property>
-         <obj_property name="ObjectShortName">dout_64bit[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/keccak_state">
-         <obj_property name="ElementShortName">keccak_state[1599:0]</obj_property>
-         <obj_property name="ObjectShortName">keccak_state[1599:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/keccak_output_buffer">
-         <obj_property name="ElementShortName">keccak_output_buffer[1343:0]</obj_property>
-         <obj_property name="ObjectShortName">keccak_output_buffer[1343:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/din_slot">
-         <obj_property name="ElementShortName">din_slot[4:0]</obj_property>
-         <obj_property name="ObjectShortName">din_slot[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/dout_64bit_wire">
-         <obj_property name="ElementShortName">dout_64bit_wire[63:0]</obj_property>
-         <obj_property name="ObjectShortName">dout_64bit_wire[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/uut/State/state_matrix">
-         <obj_property name="ElementShortName">state_matrix[0:4][0:4][63:0]</obj_property>
-         <obj_property name="ObjectShortName">state_matrix[0:4][0:4][63:0]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group2679">
-      <obj_property name="label">keccak_squeeze</obj_property>
+      <obj_property name="label">shake256_squeeze</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/shake256_tb/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/rst">
-         <obj_property name="ElementShortName">rst</obj_property>
-         <obj_property name="ObjectShortName">rst</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/rateInBytes">
-         <obj_property name="ElementShortName">rateInBytes[7:0]</obj_property>
-         <obj_property name="ObjectShortName">rateInBytes[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/delimitedSuffix">
-         <obj_property name="ElementShortName">delimitedSuffix[7:0]</obj_property>
-         <obj_property name="ObjectShortName">delimitedSuffix[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/inputLen_InBytes">
-         <obj_property name="ElementShortName">inputLen_InBytes[15:0]</obj_property>
-         <obj_property name="ObjectShortName">inputLen_InBytes[15:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/outputLen_InBytes">
-         <obj_property name="ElementShortName">outputLen_InBytes[15:0]</obj_property>
-         <obj_property name="ObjectShortName">outputLen_InBytes[15:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/keccak_is_ready_to_receive">
-         <obj_property name="ElementShortName">keccak_is_ready_to_receive</obj_property>
-         <obj_property name="ObjectShortName">keccak_is_ready_to_receive</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/din_64bit_raw">
-         <obj_property name="ElementShortName">din_64bit_raw[63:0]</obj_property>
-         <obj_property name="ObjectShortName">din_64bit_raw[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/din_valid">
-         <obj_property name="ElementShortName">din_valid</obj_property>
-         <obj_property name="ObjectShortName">din_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/keccak_squeeze_resume">
-         <obj_property name="ElementShortName">keccak_squeeze_resume</obj_property>
-         <obj_property name="ObjectShortName">keccak_squeeze_resume</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/shake256_tb/dout_64bit">
-         <obj_property name="ElementShortName">dout_64bit[63:0]</obj_property>
-         <obj_property name="ObjectShortName">dout_64bit[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/dout_valid">
-         <obj_property name="ElementShortName">dout_valid</obj_property>
-         <obj_property name="ObjectShortName">dout_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/absorb_done">
-         <obj_property name="ElementShortName">absorb_done</obj_property>
-         <obj_property name="ObjectShortName">absorb_done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/squeeze_done">
-         <obj_property name="ElementShortName">squeeze_done</obj_property>
-         <obj_property name="ObjectShortName">squeeze_done</obj_property>
-      </wvobject>
    </wvobject>
 </wave_config>
