@@ -12,14 +12,14 @@
 
 
 module decompress #(
-    parameter integer SIGNATURE_LENGTH_WIDTH = 32  //! Number of bits used to represent the signature length (signature length = slen in reference code)
+    parameter integer SIGNATURE_LENGTH
   )(
     input logic clk,
     input logic rst,
 
     input logic [23:0] compressed_signature, //! Compressed signature
     input logic [23:0] compressed_signature_valid, //! Is the compressed signature valid. Bitwise.
-    input logic [SIGNATURE_LENGTH_WIDTH-1:0] compressed_signature_length, //! Expected length of the compressed signature in bytes (slen in reference code)
+    input logic [$clog2(SIGNATURE_LENGTH)-1:0] compressed_signature_length, //! Expected length of the compressed signature in bytes (slen in reference code)
 
     output logic [11:0] coefficient, //! Decompressed coefficient
     output logic [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
@@ -27,7 +27,7 @@ module decompress #(
     output logic decompression_done      //! Is decompression finished?
   );
 
-  logic [SIGNATURE_LENGTH_WIDTH-1+3:0] bits_processed; //! Number of bits (not bytes!) of compressed signature processed so far.
+  logic [$clog2(SIGNATURE_LENGTH)-1+3:0] bits_processed; //! Number of bits (not bytes!) of compressed signature processed so far.
 
   logic coefficient_error_i;  //! Was an error detected while decompressing current coefficient?
   logic coefficient_error; //! Was an error detected while decompressing any coefficient?
