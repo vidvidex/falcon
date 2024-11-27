@@ -11,13 +11,15 @@
 
 module shake256(
     input logic clk,
-    input logic rst, //! Active high reset
-    input logic[15:0] inputLen_InBytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
-    input logic[15:0] outputLen_InBytes,// Length of output PRNG string in bytes.
-    output logic keccak_is_ready_to_receive,// when this signal is high, that means Keccak is ready to absorb.
+    input logic rst,
+
+    input logic[15:0] input_len_bytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
+    input logic[15:0] output_len_bytes,// Length of output PRNG string in bytes.
     input logic[63:0] data_in,
     input logic data_in_valid,
-    input logic keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
+    input logic ready_out, // when this signal is high, that means we can send data ("data_out")
+
+    output logic ready_in,// when this signal is high, that means we can receive data ("data_in")
     output logic[63:0] data_out,  // 64-bit PRNG word output from Keccak state
     output logic data_out_valid // This signal is used to write Keccak-squeeze output
   );
@@ -49,10 +51,10 @@ module shake256(
   shake256_absorb absorb(
                     .clk(clk),
                     .rst(rst_absorb),
-                    .inputlen_InBytes(inputLen_InBytes),
+                    .inputlen_InBytes(input_len_bytes),
                     .din_64bit_raw(data_in),
                     .din_valid(data_in_valid),
-                    .ready(keccak_is_ready_to_receive),
+                    .ready(ready_in),
                     .din_64bit_processed(din_64bit_processed),
                     .din_wen(din_wen),
                     .call_keccak_f1600(call_keccak_f1600_absorb),
@@ -88,8 +90,8 @@ module shake256(
   shake256_squeeze squeeze(
                      .clk(clk),
                      .rst(rst_squeeze),
-                     .outputLen_InBytes(outputLen_InBytes),
-                     .keccak_squeeze_resume(keccak_squeeze_resume),
+                     .outputLen_InBytes(output_len_bytes),
+                     .keccak_squeeze_resume(ready_out),
                      .call_keccak_f1600(call_keccak_f1600_squeeze),
                      .keccak_round_complete(keccak_round_complete),
                      .state_reg_sel(state_reg_sel),
