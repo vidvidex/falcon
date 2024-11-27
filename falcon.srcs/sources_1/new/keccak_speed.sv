@@ -25,7 +25,6 @@ module keccak_speed(
     input logic clk,
     input logic  rst, //! Active high reset
     input logic[7:0] rateInBytes,// Note that maximum rateInBytes = 1344/8 = 168
-    input logic[7:0]  delimitedSuffix, // Keccak parameter
     input logic[15:0]                 inputLen_InBytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic[15:0]                  outputLen_InBytes,// Length of output PRNG string in bytes.
     output logic                  keccak_is_ready_to_receive,// when this signal is high, that means Keccak is ready to absorb.
@@ -65,7 +64,6 @@ module keccak_speed(
                   .rst(rst_absorb),
                   .rateInBytes(rateInBytes),
                   .inputlen_InBytes(inputLen_InBytes),
-                  .delimitedSuffix(delimitedSuffix),
                   .din_64bit_raw(din_64bit_raw),
                   .din_valid(din_valid),
                   .ready(keccak_is_ready_to_receive),
