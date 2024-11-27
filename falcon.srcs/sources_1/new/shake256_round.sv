@@ -1,26 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
 //
-// Create Date: 12/24/2020 09:16:37 PM
-// Design Name:
-// Module Name: keccak_round_sujoy
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
 //
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_round_sujoy(
+module shake256_round(
     input logic [64*5*5-1:0]lanes_in,
     input logic [63:0] round_constant,
     output logic [64*5*5-1:0]  lanes_out

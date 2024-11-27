@@ -1,37 +1,25 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
 //
-// Create Date: 12/27/2020 06:50:26 PM
-// Design Name:
-// Module Name: keccak_speed
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
+// Implements shake256 algorithm.absorb_done
 //
-// Dependencies:
+// Keccak HW architecture following the pseudocode algorithm specified in https://keccak.team/keccak_specs_summary.html
 //
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
+// This and child modules originally created by Sujoy Sinha Roy
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-// Keccak HW architecture following the pseudocode algorithm specified in https://keccak.team/keccak_specs_summary.html
-
-module keccak_speed(
+module shake256(
     input logic clk,
-    input logic  rst, //! Active high reset
-    input logic[15:0]                 inputLen_InBytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
-    input logic[15:0]                  outputLen_InBytes,// Length of output PRNG string in bytes.
-    output logic                  keccak_is_ready_to_receive,// when this signal is high, that means Keccak is ready to absorb.
-    input logic[63:0]                  din_64bit_raw,
+    input logic rst, //! Active high reset
+    input logic[15:0] inputLen_InBytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
+    input logic[15:0] outputLen_InBytes,// Length of output PRNG string in bytes.
+    output logic keccak_is_ready_to_receive,// when this signal is high, that means Keccak is ready to absorb.
+    input logic[63:0] din_64bit_raw,
     input logic din_valid,
-    input logic                   keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
-    output logic[63:0]                  dout_64bit,  // 64-bit PRNG word output from Keccak state
-    output logic                    dout_valid // This signal is used to write Keccak-squeeze output
+    input logic keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
+    output logic[63:0] dout_64bit,  // 64-bit PRNG word output from Keccak state
+    output logic dout_valid // This signal is used to write Keccak-squeeze output
   );
 
   wire absorb_done; // Becomes 1 after the entire input message is absorbed.
@@ -57,59 +45,59 @@ module keccak_speed(
   wire rst_rounds;
 
   // Reset clears the state buffer.
-  // The first step is Keccak_absorb. This module is the FSM. It also does necessary padding to the message.
-  keccak_absorb Absorb(
-                  .clk(clk),
-                  .rst(rst_absorb),
-                  .inputlen_InBytes(inputLen_InBytes),
-                  .din_64bit_raw(din_64bit_raw),
-                  .din_valid(din_valid),
-                  .ready(keccak_is_ready_to_receive),
-                  .din_64bit_processed(din_64bit_processed),
-                  .din_wen(din_wen),
-                  .call_keccak_f1600(call_keccak_f1600_absorb),
-                  .keccak_round_complete(keccak_round_complete),
-                  .done(absorb_done)
-                );
+  // The first step is shake256_absorb. This module is the FSM. It also does necessary padding to the message.
+  shake256_absorb absorb(
+                    .clk(clk),
+                    .rst(rst_absorb),
+                    .inputlen_InBytes(inputLen_InBytes),
+                    .din_64bit_raw(din_64bit_raw),
+                    .din_valid(din_valid),
+                    .ready(keccak_is_ready_to_receive),
+                    .din_64bit_processed(din_64bit_processed),
+                    .din_wen(din_wen),
+                    .call_keccak_f1600(call_keccak_f1600_absorb),
+                    .keccak_round_complete(keccak_round_complete),
+                    .done(absorb_done)
+                  );
 
-  keccak_state_buffer State(
-                        .clk(clk),
-                        .rst(rst_state),
-                        .din_64bit(din_64bit_processed),
-                        .din_wen(din_wen),
-                        .state_out(state_out),
-                        .state_in(state_in),
-                        .we_state_in(write_state_in),
-                        .state_output_sel(state_reg_sel),
-                        .we_output_buffer(we_output_buffer),
-                        .shift_output_buffer(shift_output_buffer),
-                        .dout_64bit(dout_64bit)
-                      );
-
-
-  keccak_f1600 Rounds(
-                 .clk(clk),
-                 .rst(rst_rounds),
-                 .state_in(state_out),
-                 .state_out(state_in),
-                 .we_state_out(write_state_in),
-                 .final_round(keccak_round_complete)
-               );
-
-
-  keccak_squeeze Squeeze(
+  shake256_state state(
                    .clk(clk),
-                   .rst(rst_squeeze),
-                   .outputLen_InBytes(outputLen_InBytes),
-                   .keccak_squeeze_resume(keccak_squeeze_resume),
-                   .call_keccak_f1600(call_keccak_f1600_squeeze),
-                   .keccak_round_complete(keccak_round_complete),
-                   .state_reg_sel(state_reg_sel),
+                   .rst(rst_state),
+                   .din_64bit(din_64bit_processed),
+                   .din_wen(din_wen),
+                   .state_out(state_out),
+                   .state_in(state_in),
+                   .we_state_in(write_state_in),
+                   .state_output_sel(state_reg_sel),
                    .we_output_buffer(we_output_buffer),
                    .shift_output_buffer(shift_output_buffer),
-                   .dout_valid(dout_valid),
-                   .done(squeeze_done)
+                   .dout_64bit(dout_64bit)
                  );
+
+
+  shake256_rounds rounds(
+                    .clk(clk),
+                    .rst(rst_rounds),
+                    .state_in(state_out),
+                    .state_out(state_in),
+                    .we_state_out(write_state_in),
+                    .final_round(keccak_round_complete)
+                  );
+
+
+  shake256_squeeze squeeze(
+                     .clk(clk),
+                     .rst(rst_squeeze),
+                     .outputLen_InBytes(outputLen_InBytes),
+                     .keccak_squeeze_resume(keccak_squeeze_resume),
+                     .call_keccak_f1600(call_keccak_f1600_squeeze),
+                     .keccak_round_complete(keccak_round_complete),
+                     .state_reg_sel(state_reg_sel),
+                     .we_output_buffer(we_output_buffer),
+                     .shift_output_buffer(shift_output_buffer),
+                     .dout_valid(dout_valid),
+                     .done(squeeze_done)
+                   );
 
   assign rst_rounds = (rst_absorb==1'b0) ? ~call_keccak_f1600_absorb : (rst_squeeze==1'b0) ? ~call_keccak_f1600_squeeze : 1'b1;
 

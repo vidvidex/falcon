@@ -1,26 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
 //
-// Create Date: 12/25/2020 10:37:17 PM
-// Design Name:
-// Module Name: keccak_f1600
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
 //
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module keccak_f1600(
+module shake256_rounds(
     input logic clk,
     input logic rst,
     input logic [64*25-1:0] state_in,
@@ -68,15 +54,15 @@ module keccak_f1600(
   assign lanes_in[63+64*5*4+64*4:64*5*4+64*4] = state_in[63+64*5*4+64*4:64*5*4+64*4];
 
 
-  keccak_round_sujoy KR(
-                       .lanes_in(lanes_in),
-                       .round_constant(round_constant),
-                       .lanes_out(lanes_out)
-                     );
-  keccak_round_constants KRConst(
-                           .round_nr(round_nr),
-                           .round_constant(round_constant)
-                         );
+  shake256_round round(
+                   .lanes_in(lanes_in),
+                   .round_constant(round_constant),
+                   .lanes_out(lanes_out)
+                 );
+  shake256_round_constants constants(
+                             .round_nr(round_nr),
+                             .round_constant(round_constant)
+                           );
 
   // 5x5 Lanes are just transpose of 5x5 States. Perform the transpose.
   // for x=0, y=0..4                            // for x=0..4, y=0

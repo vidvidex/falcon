@@ -1,21 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
 //
-// Create Date: 12/27/2020 11:22:46 AM
-// Design Name:
-// Module Name: keccak_squeeze
-// Project Name:
-// Target Devices:
-// Tool Versions:
-// Description:
 //
-// Dependencies:
-//
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +17,7 @@
 */
 
 // Note: Data output from Keccak squeeze happens in 64-bit words every cycle.
-module keccak_squeeze(
+module shake256_squeeze(
     input logic   clk,
     input logic  rst,// Active high
     input logic [15:0]   outputLen_InBytes,// Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
