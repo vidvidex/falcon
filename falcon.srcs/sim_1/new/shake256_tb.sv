@@ -5,33 +5,34 @@ module shake256_tb;
   logic clk;
   logic rst;
 
-  logic [15:0] inputLen_InBytes;  // Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
-  logic [15:0] outputLen_InBytes; // Length of logic PRNG string in bytes.
+  // TODO: It would be nice if we didn't have to provide input length in advance. Perhaps we could use a signal "last" to indicate that this is the last block of input.
+  logic [15:0] input_len_bytes;  // Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s. CAUTION: that is the opposite of everything else in this implementation
+  logic [15:0] output_len_bytes; // Length of logic PRNG string in bytes.
 
-  logic keccak_is_ready_to_receive;  // when this signal is high, that means Keccak is ready to absorb.
+  logic ready_in;  // Is shake256 module ready to receive data?
   logic [63:0] data_in;
   logic data_in_valid;
 
-  logic keccak_squeeze_resume;     // This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
+  logic ready_out;     // Are we ready to receive result from shake256 module?
   logic [63:0] data_out;
   logic data_out_valid;
 
   shake256 uut(
              .clk(clk),
              .rst(rst),
-             .inputLen_InBytes(inputLen_InBytes),
-             .outputLen_InBytes(outputLen_InBytes),
-             .keccak_is_ready_to_receive(keccak_is_ready_to_receive),
+             .input_len_bytes(input_len_bytes),
+             .output_len_bytes(output_len_bytes),
+             .ready_in(ready_in),
              .data_in(data_in),
              .data_in_valid(data_in_valid),
-             .keccak_squeeze_resume(keccak_squeeze_resume),
+             .ready_out(ready_out),
              .data_out(data_out),
              .data_out_valid(data_out_valid)
            );
 
   always #5 clk = ~clk;
 
-  assign keccak_squeeze_resume = 0;
+  assign ready_out = 1; // We are always ready to receive the result
 
   initial begin
     clk = 0;
@@ -39,14 +40,13 @@ module shake256_tb;
 
     #5;
 
-
-    inputLen_InBytes = 16'h0049;
-    outputLen_InBytes = 16'h0040;
+    input_len_bytes = 16'h0049;
+    output_len_bytes = 16'h0040;
 
     #10;
     data_in = 64'h1720e40775c0b333;
     rst = 0;
-    #20;
+    #10;
 
     data_in_valid = 1;
     #20;
@@ -82,9 +82,6 @@ module shake256_tb;
     #70;
     data_in_valid = 0;
     #260;
-    keccak_squeeze_resume = 1;
-    #100;
-    keccak_squeeze_resume = 0;
 
   end
 endmodule
