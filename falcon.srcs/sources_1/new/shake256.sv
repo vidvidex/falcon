@@ -15,11 +15,11 @@ module shake256(
     input logic[15:0] inputLen_InBytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic[15:0] outputLen_InBytes,// Length of output PRNG string in bytes.
     output logic keccak_is_ready_to_receive,// when this signal is high, that means Keccak is ready to absorb.
-    input logic[63:0] din_64bit_raw,
-    input logic din_valid,
+    input logic[63:0] data_in,
+    input logic data_in_valid,
     input logic keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
-    output logic[63:0] dout_64bit,  // 64-bit PRNG word output from Keccak state
-    output logic dout_valid // This signal is used to write Keccak-squeeze output
+    output logic[63:0] data_out,  // 64-bit PRNG word output from Keccak state
+    output logic data_out_valid // This signal is used to write Keccak-squeeze output
   );
 
   wire absorb_done; // Becomes 1 after the entire input message is absorbed.
@@ -50,8 +50,8 @@ module shake256(
                     .clk(clk),
                     .rst(rst_absorb),
                     .inputlen_InBytes(inputLen_InBytes),
-                    .din_64bit_raw(din_64bit_raw),
-                    .din_valid(din_valid),
+                    .din_64bit_raw(data_in),
+                    .din_valid(data_in_valid),
                     .ready(keccak_is_ready_to_receive),
                     .din_64bit_processed(din_64bit_processed),
                     .din_wen(din_wen),
@@ -71,7 +71,7 @@ module shake256(
                    .state_output_sel(state_reg_sel),
                    .we_output_buffer(we_output_buffer),
                    .shift_output_buffer(shift_output_buffer),
-                   .dout_64bit(dout_64bit)
+                   .dout_64bit(data_out)
                  );
 
 
@@ -95,7 +95,7 @@ module shake256(
                      .state_reg_sel(state_reg_sel),
                      .we_output_buffer(we_output_buffer),
                      .shift_output_buffer(shift_output_buffer),
-                     .dout_valid(dout_valid),
+                     .dout_valid(data_out_valid),
                      .done(squeeze_done)
                    );
 
