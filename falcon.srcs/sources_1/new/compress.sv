@@ -19,7 +19,7 @@ module compress#(
     parameter integer SIGNATURE_LENGTH               //! Expected length of the compressed signature in bytes (slen in reference code)
   )(
     input logic clk,
-    input logic rst,
+    input logic rst_n,
 
     input signed [11:0] coefficient, //! Next coefficient to compress, compressed representation will be appended to "compressed_signature"
     input logic valid, //! Indicates that "coefficient" is valid and should be compressed
@@ -40,7 +40,7 @@ module compress#(
                        );
 
   always_ff @(posedge clk) begin
-    if (rst == 1'b0) begin
+    if (rst_n == 1'b0) begin
       error <= 1'b0;
     end
     else begin
@@ -56,7 +56,7 @@ module compress#(
   // Most of the processing in this module is done on a negative edge of the clock
   // This is because on a positive edge the coefficients are changed and we cannot append them to the compressed signature and shift it immediately
   always_ff @(negedge clk) begin
-    if (rst == 1'b0) begin
+    if (rst_n == 1'b0) begin
       compressed_signature <= 0;
       compressed_so_far <= 0;
     end
