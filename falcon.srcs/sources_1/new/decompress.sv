@@ -15,7 +15,7 @@ module decompress #(
     parameter integer SIGNATURE_LENGTH
   )(
     input logic clk,
-    input logic rst,
+    input logic rst_n ,
 
     input logic [23:0] compressed_signature, //! Compressed signature
     input logic [23:0] compressed_signature_valid, //! Is the compressed signature valid. Bitwise.
@@ -45,7 +45,7 @@ module decompress #(
                          );
 
   always_ff @(posedge clk) begin
-    if (rst == 1'b0) begin
+    if (rst_n  == 1'b0) begin
       coefficient_error <= 1'b0;
       signature_length_error <= 1'b0;
       bits_processed <= 0;

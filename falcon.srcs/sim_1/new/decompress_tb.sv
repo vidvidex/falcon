@@ -2,7 +2,7 @@
 
 module decompress_tb;
   logic clk;
-  logic rst;
+  logic rst_n;
   logic [191:0] compressed_signature; //! 192 bytes for signature in order to have enough space for testing the case when the signature is too long. These signatures are generated with key size 8.
   logic [191:0] compressed_signature_valid;
   logic [11:0] expected_coefficients [0:7];
@@ -19,7 +19,7 @@ module decompress_tb;
              )
              uut (
                .clk(clk),
-               .rst(rst),
+               .rst_n(rst_n),
                .compressed_signature(compressed_signature[191:168]),  // Pass top 24 bits of the compressed signature
                .compressed_signature_valid(compressed_signature_valid[191:168]),
                .compressed_signature_length(compressed_signature_length),
@@ -33,7 +33,7 @@ module decompress_tb;
 
   // Shift compressed_signature to the left by "compressed_coef_length" bits to get the next compressed coefficient
   always @ (posedge clk) begin
-    if (rst == 1'b1)
+    if (rst_n == 1'b1)
       compressed_signature <= compressed_signature << compressed_coef_length;
     compressed_signature_valid <= compressed_signature_valid << compressed_coef_length;
   end
@@ -42,9 +42,9 @@ module decompress_tb;
     clk = 0;
 
     // Test 1: Real signature of size 8
-    rst = 0;
+    rst_n = 0;
     #10;
-    rst = 1;
+    rst_n = 1;
     compressed_signature_length = 11;
     expected_coefficient_count = 8;
     compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
@@ -77,9 +77,9 @@ module decompress_tb;
 
 
     // Test 2: Signature too long
-    rst = 0;
+    rst_n = 0;
     #20;
-    rst = 1;
+    rst_n = 1;
     compressed_signature_length = 11;
     expected_coefficient_count = 8;
     compressed_signature = 'h000001000001000001000001000001000001000001000001; // Maximum length representation for each of the signatures, total length is 24B, but we only expect 11B

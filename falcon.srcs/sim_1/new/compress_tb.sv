@@ -4,7 +4,7 @@ module compress_tb;
   parameter integer SIGNATURE_LENGTH = 11;
 
   logic clk;
-  logic rst;
+  logic rst_n;
 
   logic [11:0] coefficients [0:7];    // Coefficients to compress
   logic [11:0] coefficient;           // Next coefficient to compress
@@ -18,7 +18,7 @@ module compress_tb;
              .SIGNATURE_LENGTH(SIGNATURE_LENGTH)
            )uut(
              .clk(clk),
-             .rst(rst),
+             .rst_n(rst_n),
              .coefficient(coefficient),
              .valid(valid),
              .finalize(finalize),
@@ -32,9 +32,9 @@ module compress_tb;
     clk = 1;
 
     // Test 1: Real signature of size 8
-    rst = 0;
+    rst_n = 0;
     #10;
-    rst = 1;
+    rst_n = 1;
     coefficients = {-26, -88, 50, -9, -165, -161, 189, -21};
     finalize = 0;
 
@@ -59,9 +59,9 @@ module compress_tb;
     end
 
     // Test 2: Signature too long
-    rst = 0;
+    rst_n = 0;
     #10;
-    rst = 1;
+    rst_n = 1;
     coefficients = {12'h780, 12'h780, 12'h780, 12'h780, 12'h780, 12'h780, 12'h780, 12'h780};
     finalize = 0;
 
