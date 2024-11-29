@@ -11,15 +11,16 @@
 
 module shake256(
     input logic clk,
-    input logic rst,
+    input logic rst, // Active high (not like the rest of the design)
 
     input logic[15:0] input_len_bytes,// Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic[15:0] output_len_bytes,// Length of output PRNG string in bytes.
     input logic[63:0] data_in,
     input logic data_in_valid,
-    input logic ready_out, // when this signal is high, that means we can send data ("data_out")
+    input logic ready_out, // when this signal is high, that means we can send data via "data_out"
+    input logic need_next_hash_block,
 
-    output logic ready_in,// when this signal is high, that means we can receive data ("data_in")
+    output logic ready_in,// when this signal is high, that means we can receive data via "data_in"
     output logic[63:0] data_out,  // 64-bit PRNG word output from Keccak state
     output logic data_out_valid // This signal is used to write Keccak-squeeze output
   );
@@ -92,12 +93,13 @@ module shake256(
                      .rst(rst_squeeze),
                      .outputLen_InBytes(output_len_bytes),
                      .keccak_squeeze_resume(ready_out),
+                     .need_next_hash_block(need_next_hash_block),
                      .call_keccak_f1600(call_keccak_f1600_squeeze),
                      .keccak_round_complete(keccak_round_complete),
                      .state_reg_sel(state_reg_sel),
                      .we_output_buffer(we_output_buffer),
                      .shift_output_buffer(shift_output_buffer),
-                     .dout_valid(data_out_valid),
+                     .data_out_valid(data_out_valid),
                      .done(squeeze_done)
                    );
 
