@@ -6,8 +6,8 @@ module compress_tb;
   logic clk;
   logic rst_n;
 
-  logic [11:0] coefficients [0:7];    // Coefficients to compress
-  logic [11:0] coefficient;           // Next coefficient to compress
+  logic [14:0] coefficients [0:7];    // Coefficients to compress
+  logic [14:0] coefficient;           // Next coefficient to compress
   logic valid;                        // Indicates that "coefficient" is valid and should be compressed
   logic finalize;                     // Indicats that all coefficients have been compressed and that the padding should be added
   logic [87:0] compressed_signature;  // Compressed signature containing all compressed coefficients (when done). (space for 11x8 bytes - size of signature for 8 coefficients)

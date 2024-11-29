@@ -5,11 +5,11 @@ module decompress_tb;
   logic rst_n;
   logic [191:0] compressed_signature; //! 192 bytes for signature in order to have enough space for testing the case when the signature is too long. These signatures are generated with key size 8.
   logic [191:0] compressed_signature_valid;
-  logic [11:0] expected_coefficients [0:7];
-  logic [4:0] compressed_coef_length;
+  logic [14:0] expected_coefficients [0:7];
+  logic [6:0] compressed_coef_length;
   logic decompression_done;
   logic signature_error;
-  logic [11:0] coefficient;
+  logic [14:0] coefficient;
   integer i;
   integer compressed_signature_length;  //! How many bytes should the compressed signature be
   integer expected_coefficient_count;    //! How many coefficients we expect to get from the compressed signature
@@ -20,8 +20,8 @@ module decompress_tb;
              uut (
                .clk(clk),
                .rst_n(rst_n),
-               .compressed_signature(compressed_signature[191:168]),  // Pass top 24 bits of the compressed signature
-               .compressed_signature_valid(compressed_signature_valid[191:168]),
+               .compressed_signature(compressed_signature[191:87]),
+               .compressed_signature_valid(compressed_signature_valid[191:87]),
                .compressed_signature_length(compressed_signature_length),
                .compressed_coef_length(compressed_coef_length),
                .signature_error(signature_error),
@@ -50,19 +50,19 @@ module decompress_tb;
     compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
     compressed_signature_valid = {'hffffffffffffffffffffff, 'h00000000000000000000000000};
 
-    expected_coefficients[0] = 12'h097;
-    expected_coefficients[1] = 12'h89C;
-    expected_coefficients[2] = 12'h051;
-    expected_coefficients[3] = 12'h8B0;
-    expected_coefficients[4] = 12'h0AA;
-    expected_coefficients[5] = 12'h044;
-    expected_coefficients[6] = 12'h817;
-    expected_coefficients[7] = 12'h8A5;
+    expected_coefficients[0] = 15'b000000010010111;
+    expected_coefficients[1] = 15'b100000010011100;
+    expected_coefficients[2] = 15'b000000001010001;
+    expected_coefficients[3] = 15'b100000010110000;
+    expected_coefficients[4] = 15'b000000010101010;
+    expected_coefficients[5] = 15'b000000001000100;
+    expected_coefficients[6] = 15'b100000000010111;
+    expected_coefficients[7] = 15'b100000010100101;
 
     for (i = 1; i < expected_coefficient_count; i = i + 1) begin
       #10;
       if (expected_coefficients[i] !== coefficient) begin
-        $display("ASSERTION FAILED: Expected coefficient %d, got %d", expected_coefficients[i], coefficient);
+        $display("ASSERTION FAILED: Expected coefficient %x, got %x", expected_coefficients[i], coefficient);
         $fatal;
       end
     end
@@ -82,22 +82,22 @@ module decompress_tb;
     rst_n = 1;
     compressed_signature_length = 11;
     expected_coefficient_count = 8;
-    compressed_signature = 'h000001000001000001000001000001000001000001000001; // Maximum length representation for each of the signatures, total length is 24B, but we only expect 11B
+    compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expet
     compressed_signature_valid = 'hffffffffffffffffffffffffffffffffffffffffffffffff;
 
-    expected_coefficients[0] = 12'h780;
-    expected_coefficients[1] = 12'h780;
-    expected_coefficients[2] = 12'h780;
-    expected_coefficients[3] = 12'h780;
-    expected_coefficients[4] = 12'h780;
-    expected_coefficients[5] = 12'h780;
-    expected_coefficients[6] = 12'h780;
-    expected_coefficients[7] = 12'h780;
+    expected_coefficients[0] = 15'b000_0111_1000_0000;
+    expected_coefficients[1] = 15'b000_0111_1000_0000;
+    expected_coefficients[2] = 15'b000_0111_1000_0000;
+    expected_coefficients[3] = 15'b000_0111_1000_0000;
+    expected_coefficients[4] = 15'b000_0111_1000_0000;
+    expected_coefficients[5] = 15'b000_0111_1000_0000;
+    expected_coefficients[6] = 15'b000_0111_1000_0000;
+    expected_coefficients[7] = 15'b000_0111_1000_0000;
 
     for (i = 1; i < expected_coefficient_count; i = i + 1) begin
       #10;
       if (expected_coefficients[i] !== coefficient) begin
-        $display("ASSERTION FAILED: Expected coefficient %d, got %d", expected_coefficients[i], coefficient);
+        $display("ASSERTION FAILED: Expected coefficient %x, got %x", expected_coefficients[i], coefficient);
         $fatal;
       end
 
