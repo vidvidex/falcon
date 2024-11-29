@@ -1,6 +1,6 @@
 # Falcon
 
-All reset signals are active high.
+All reset signals are active low. They are also named `rstn`. SHAKE256 module is an exception. There the reset is active high and called `rst` or `reset`.
 
 ## Implementation-wide parameters
 
