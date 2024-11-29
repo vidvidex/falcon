@@ -18,16 +18,19 @@
 
 // Note: Data output from Keccak squeeze happens in 64-bit words every cycle.
 module shake256_squeeze(
-    input logic   clk,
-    input logic  rst,// Active high
-    input logic [15:0]   outputLen_InBytes,// Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
-    input logic  keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
-    output logic  call_keccak_f1600,// This signal is used to start Keccak-f1600 on the state variable
+    input logic clk,
+    input logic rst,// Active high
+
+    input logic [15:0] outputLen_InBytes,// Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
+    input logic keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
+    input logic need_next_hash_block, // Are we requesting the next hash block?
     input logic keccak_round_complete,   // This signal comes from Keccak-f1600 after its completion
-    output logic[4:0]  state_reg_sel,  // This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
-    output logic  we_output_buffer,  // Used to write keccak_state into keccak_output_buffer
-    output  logic shift_output_buffer,  // Used to shift the keccak_output_buffer in 64 bits such that one word is output
-    output logic  dout_valid,  // This signal is used to write Keccak-squeeze output
+
+    output logic call_keccak_f1600,// This signal is used to start Keccak-f1600 on the state variable
+    output logic[4:0] state_reg_sel,  // This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
+    output logic we_output_buffer,  // Used to write keccak_state into keccak_output_buffer
+    output logic shift_output_buffer,  // Used to shift the keccak_output_buffer in 64 bits such that one word is output
+    output logic data_out_valid,  // This signal is used to write Keccak-squeeze output
     output logic done   // Becomes 1 when the entire input is absorbed.
   );
 
@@ -36,7 +39,7 @@ module shake256_squeeze(
   wire outputLen_lte_8, outputLen_lte_0;
   reg [7:0] rate_counter;
   reg rst_rate_counter, inc_rate_counter;
-  reg [3:0] state, nextstate;
+  reg [3:0] state, next_state;
   wire rate_counter_eq;
   logic [7:0] rateInBytes = 8'd136;
 
@@ -55,9 +58,7 @@ module shake256_squeeze(
   assign state_reg_sel = rate_counter[7:3];
 
   always @(posedge clk) begin
-    if(rst)
-      rate_counter <= 8'd0;
-    else if(rst_rate_counter)
+    if(rst || rst_rate_counter)
       rate_counter <= 8'd0;
     else if(inc_rate_counter)
       rate_counter <= rate_counter + 8'd8;
@@ -69,7 +70,7 @@ module shake256_squeeze(
     if(rst)
       state <= 4'd0;
     else
-      state <= nextstate;
+      state <= next_state;
   end
 
   always @(state) begin
@@ -78,7 +79,7 @@ module shake256_squeeze(
         rst_rate_counter<=1;
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
-        dout_valid<=0;
+        data_out_valid<=0;
         dec_outputLen<=0;
         we_output_buffer<=1;
         shift_output_buffer<=0;
@@ -88,7 +89,7 @@ module shake256_squeeze(
         rst_rate_counter<=0;
         call_keccak_f1600<=1;
         inc_rate_counter<=1;
-        dout_valid<=1;
+        data_out_valid<=1;
         dec_outputLen<=1;
         we_output_buffer<=0;
         shift_output_buffer<=1;
@@ -98,7 +99,7 @@ module shake256_squeeze(
         rst_rate_counter<=1;
         call_keccak_f1600<=1;
         inc_rate_counter<=0;
-        dout_valid<=0;
+        data_out_valid<=0;
         dec_outputLen<=0;
         we_output_buffer<=0;
         shift_output_buffer<=0;
@@ -108,7 +109,7 @@ module shake256_squeeze(
         rst_rate_counter<=0;
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
-        dout_valid<=0;
+        data_out_valid<=0;
         dec_outputLen<=0;
         we_output_buffer<=1;
         shift_output_buffer<=0;
@@ -118,7 +119,7 @@ module shake256_squeeze(
         rst_rate_counter<=1;
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
-        dout_valid<=0;
+        data_out_valid<=0;
         dec_outputLen<=0;
         we_output_buffer<=0;
         shift_output_buffer<=0;
@@ -127,7 +128,7 @@ module shake256_squeeze(
         rst_rate_counter<=1;
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
-        dout_valid<=0;
+        data_out_valid<=0;
         dec_outputLen<=0;
         we_output_buffer<=0;
         shift_output_buffer<=0;
@@ -135,41 +136,40 @@ module shake256_squeeze(
     endcase
   end
 
-  always @(state or rate_counter_eq or outputLen_lte_8
-             or keccak_round_complete or keccak_squeeze_resume) begin
+  always @(state or rate_counter_eq or outputLen_lte_8 or keccak_round_complete or keccak_squeeze_resume) begin
     case(state)
       4'd0: begin
         if(keccak_squeeze_resume)
-          nextstate <= 4'd1;
+          next_state <= 4'd1;
         else
-          nextstate <= 4'd0;
+          next_state <= 4'd0;
       end
 
       4'd1: begin // Stay in this state outputLen is generated; or KeccakRate is completed.
         if(outputLen_lte_8)
-          nextstate <= 4'd4;
+          next_state <= 4'd4;
         else if(rate_counter_eq)
-          nextstate <= 4'd2;
+          next_state <= 4'd2;
         else
-          nextstate <= 4'd1;
+          next_state <= 4'd1;
       end
 
       4'd2: begin
         if(keccak_round_complete)
-          nextstate <= 4'd3;
+          next_state <= 4'd3;
         else
-          nextstate <= 4'd2;
+          next_state <= 4'd2;
       end
       4'd3: begin
         if(keccak_squeeze_resume)
-          nextstate <= 4'd1;
+          next_state <= 4'd1;
         else
-          nextstate <= 4'd3;
+          next_state <= 4'd3;
       end
       4'd4:
-        nextstate <= 4'd4;
+        next_state <= 4'd4;
       default:
-        nextstate <= 4'd0;
+        next_state <= 4'd0;
     endcase
   end
 
