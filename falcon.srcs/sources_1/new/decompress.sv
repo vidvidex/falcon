@@ -15,14 +15,14 @@ module decompress #(
     parameter integer SIGNATURE_LENGTH
   )(
     input logic clk,
-    input logic rst_n ,
+    input logic rst_n,
 
-    input logic [23:0] compressed_signature, //! Compressed signature
-    input logic [23:0] compressed_signature_valid, //! Is the compressed signature valid. Bitwise.
+    input logic [104:0] compressed_signature, //! Compressed signature
+    input logic [104:0] compressed_signature_valid, //! Is the compressed signature valid. Bitwise.
     input logic [$clog2(SIGNATURE_LENGTH)-1:0] compressed_signature_length, //! Expected length of the compressed signature in bytes (slen in reference code)
 
-    output logic [11:0] coefficient, //! Decompressed coefficient
-    output logic [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
+    output logic [14:0] coefficient, //! Decompressed coefficient
+    output logic [6:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
     output logic signature_error,    //! Was an error detected in the signature?
     output logic decompression_done      //! Is decompression finished?
   );
@@ -33,7 +33,7 @@ module decompress #(
   logic coefficient_error; //! Was an error detected while decompressing any coefficient?
   logic signature_length_error; //! Was the signature not of the expected length?
 
-  logic [23:0] shifted_compressed_signature_valid; //! Shifted compressed signature valid, used to check if the coefficient is valid
+  logic [104:0] shifted_compressed_signature_valid; //! Shifted compressed signature valid, used to check if the coefficient is valid
   logic coefficient_valid; //! Is the current coefficient valid?
 
 
@@ -69,7 +69,7 @@ module decompress #(
   always_ff @(negedge coefficient_valid) begin
     // Check if the number of bits processed is less or equal to the expected length of the compressed signature
     // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
-    if (bits_processed <= compressed_signature_length*8 && compressed_signature[23:17] == 7'b0)
+    if (bits_processed <= compressed_signature_length*8 && compressed_signature[104:98] == 7'b0)
       decompression_done <= 1'b1;  // We processed all the bits of the compressed signature
     else
       signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
@@ -78,7 +78,7 @@ module decompress #(
   // We check if the coefficient is valid by checking if all bits of the compressed signature are valid
   // We do that by checking if the rightmost big of compressed_signature_valid is 1, in that case all bits of the coefficient are valid
   assign shifted_compressed_signature_valid = compressed_signature_valid << compressed_coef_length-1;
-  assign coefficient_valid = shifted_compressed_signature_valid[23];
+  assign coefficient_valid = shifted_compressed_signature_valid[104];
 
   assign signature_error = coefficient_error || signature_length_error;
 

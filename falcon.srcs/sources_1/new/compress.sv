@@ -21,7 +21,7 @@ module compress#(
     input logic clk,
     input logic rst_n,
 
-    input signed [11:0] coefficient, //! Next coefficient to compress, compressed representation will be appended to "compressed_signature"
+    input signed [14:0] coefficient, //! Next coefficient to compress, compressed representation will be appended to "compressed_signature"
     input logic valid, //! Indicates that "coefficient" is valid and should be compressed
     input logic finalize, //! Indicates that all coefficient have been compressed and that the padding should be added
 
@@ -30,8 +30,8 @@ module compress#(
   );
 
   logic [$clog2(SIGNATURE_LENGTH)-1+3:0] compressed_so_far; //! Number of bits (not bytes!) of compressed signature processed so far.
-  logic [23:0] compressed_coefficient; //! Compressed representation of the current coefficient. Some of the bottom bits of this can be undefined, since they are rarely all used.
-  logic [4:0] compressed_coefficient_length; //! Number of bits used to compress the current coefficient
+  logic [104:0] compressed_coefficient; //! Compressed representation of the current coefficient. Some of the bottom bits of this can be undefined, since they are rarely all used.
+  logic [6:0] compressed_coefficient_length; //! Number of bits used to compress the current coefficient
 
   compress_coefficient compress_coefficient (
                          .coefficient(coefficient),
@@ -68,7 +68,7 @@ module compress#(
       // This is done by shifting the compressed signature to the left by the number of bits used to compress the coefficient
       // and then appending the compressed coefficient, which is shifted all the way to the right, because only the top "compressed_coefficient_length" bits of
       // "compressed_coefficient" are valid
-      compressed_signature <= (compressed_signature << compressed_coefficient_length) | (compressed_coefficient >> 24-compressed_coefficient_length);
+      compressed_signature <= (compressed_signature << compressed_coefficient_length) | (compressed_coefficient >> 105-compressed_coefficient_length);
     end
     else if (finalize)
       // After all coefficients have been compressed, pad the compressed signature with zeros

@@ -6,9 +6,9 @@
 // Each coefficient is compressed as follows:
 // 1. The first bit is the sign of the coefficient
 // 2. The next 7 bits are the low part of the coefficient
-// 3. The next 1-16 bits are the high part of the coefficient, encoded in unary (value=number of zeros), so we have to convert it to binary before outputting it.
+// 3. The next 1-97 bits are the high part of the coefficient, encoded in unary (value=number of zeros, followed by a one), so we have to convert it to binary before outputting it.
 //
-//     [23] - sign, [22:16] - low, [15:0] - high
+//     [104] - sign, [103:97] - low, [96:0] - high
 //
 // We enforce only one possible representation of coefficient 0 (algorithm 18, line 9)
 //
@@ -18,67 +18,37 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-
-
 module decompress_coefficient (
-    input logic [23:0] compressed_signature, //! Compressed signature
+    input logic [104:0] compressed_signature, //! Compressed signature
 
-    output logic [11:0] coefficient,   //! Decompressed coefficient
-    output logic [4:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
+    output logic [14:0] coefficient,   //! Decompressed coefficient
+    output logic [6:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
     output logic coefficient_error  //! Was an error detected in the compressed string?
   );
 
   logic sign;
   logic [6:0] low;
-  logic [3:0] high;
+  logic [6:0] high;
 
   //! Priority encoder for the high part of the coefficient
   always_comb begin
-    casex(compressed_signature[15:0])
-      16'b1xxx_xxxx_xxxx_xxxx:
-        high = 4'b0000;
-      16'b01xx_xxxx_xxxx_xxxx:
-        high = 4'b0001;
-      16'b001x_xxxx_xxxx_xxxx:
-        high = 4'b0010;
-      16'b0001_xxxx_xxxx_xxxx:
-        high = 4'b0011;
-      16'b0000_1xxx_xxxx_xxxx:
-        high = 4'b0100;
-      16'b0000_01xx_xxxx_xxxx:
-        high = 4'b0101;
-      16'b0000_001x_xxxx_xxxx:
-        high = 4'b0110;
-      16'b0000_0001_xxxx_xxxx:
-        high = 4'b0111;
-      16'b0000_0000_1xxx_xxxx:
-        high = 4'b1000;
-      16'b0000_0000_01xx_xxxx:
-        high = 4'b1001;
-      16'b0000_0000_001x_xxxx:
-        high = 4'b1010;
-      16'b0000_0000_0001_xxxx:
-        high = 4'b1011;
-      16'b0000_0000_0000_1xxx:
-        high = 4'b1100;
-      16'b0000_0000_0000_01xx:
-        high = 4'b1101;
-      16'b0000_0000_0000_001x:
-        high = 4'b1110;
-      16'b0000_0000_0000_0001:
-        high = 4'b1111;
-      default:
-        // Should never happen
-        high = 4'b0000;
-    endcase
+    high = 5'b00000;
+
+    // Go over the encoded high bits and find the first 1
+    for (logic [6:0] i = 0; i < 17; i++) begin
+      if (compressed_signature[96-i]) begin
+        high = i;
+        break;
+      end
+    end
   end
 
-  assign sign = compressed_signature[23];
-  assign low = compressed_signature[22:16];
+  assign sign = compressed_signature[104];
+  assign low = compressed_signature[103:97];
   assign coefficient = {sign, high, low};
-  assign compressed_coef_length = 9 + high;  // 1 sign bit + 7 low bits + 1 high bit (one) + high bits (zeros)
+  assign compressed_coef_length = 1 + 7 + high + 1;  // 1 sign bit + 7 low bits + high bits (zeros) + 1 high bit (one)
 
   // If coefficient is 0 and sign bit is 1 (-), we have an error (only sign + is allowed with coefficient 0) (algorithm 18, line 9)
-  assign coefficient_error = (coefficient == 12'b100000000000 && sign == 1) ? 1'b1 : 1'b0;
+  assign coefficient_error = (coefficient == 15'b100000000000000 && sign == 1) ? 1'b1 : 1'b0;
 
 endmodule
