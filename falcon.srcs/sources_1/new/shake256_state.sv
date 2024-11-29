@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// 
-// 
+//
+//
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -9,15 +9,17 @@
 module shake256_state(
     input logic clk,
     input logic rst, // Clears the state buffer when 1
-    input logic [63:0]  din_64bit, // Data comes in 64 bit chunks
-    input logic din_wen,  // write enable signal for input data
-    output logic [25*64-1:0]   state_out,
-    input logic [25*64-1:0]  state_in,
+
+    input logic [63:0] din_64bit, // Data comes in 64 bit chunks
+    input logic data_in_padded_valid,  // write enable signal for input data
+    input logic [25*64-1:0] state_in,
     input logic we_state_in,
     input [4:0] state_output_sel,
-    input  we_output_buffer,  // When 1, keccak_state is written into the output_buffer
-    input   shift_output_buffer,  // When 1, output_buffer is shifted by 64-bits every cycle. One word is output
-    output [63:0]  dout_64bit   // Data output happens in 64 bit chunks
+    input we_output_buffer,  // When 1, keccak_state is written into the output_buffer
+    input shift_output_buffer,  // When 1, output_buffer is shifted by 64-bits every cycle. One word is output
+
+    output logic [25*64-1:0] state_out,
+    output [63:0] dout_64bit   // Data output happens in 64 bit chunks
   );
 
   reg [64*25-1:0] keccak_state;
@@ -26,7 +28,7 @@ module shake256_state(
   always @(posedge clk) begin
     if(rst)
       din_slot <= 5'd0;
-    else if(din_wen)
+    else if(data_in_padded_valid)
       din_slot <= din_slot + 1'b1;
     else
       din_slot <= 5'd0;
@@ -37,66 +39,65 @@ module shake256_state(
       keccak_state <= 1600'b0;
 
     // For y = 0..4 with x = 0
-    else if(din_wen==1'b1 && din_slot==5'd0)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd0)
       keccak_state[63+64*5*0+64*0:64*5*0+64*0] <= keccak_state[63+64*5*0+64*0:64*5*0+64*0] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd1)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd1)
       keccak_state[63+64*5*0+64*1:64*5*0+64*1] <= keccak_state[63+64*5*0+64*1:64*5*0+64*1] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd2)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd2)
       keccak_state[63+64*5*0+64*2:64*5*0+64*2] <= keccak_state[63+64*5*0+64*2:64*5*0+64*2] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd3)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd3)
       keccak_state[63+64*5*0+64*3:64*5*0+64*3] <= keccak_state[63+64*5*0+64*3:64*5*0+64*3] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd4)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd4)
       keccak_state[63+64*5*0+64*4:64*5*0+64*4] <= keccak_state[63+64*5*0+64*4:64*5*0+64*4] ^ din_64bit;
 
     // For y = 0..4 with x = 1
-    else if(din_wen==1'b1 && din_slot==5'd5)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd5)
       keccak_state[63+64*5*1+64*0:64*5*1+64*0] <= keccak_state[63+64*5*1+64*0:64*5*1+64*0] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd6)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd6)
       keccak_state[63+64*5*1+64*1:64*5*1+64*1] <= keccak_state[63+64*5*1+64*1:64*5*1+64*1] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd7)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd7)
       keccak_state[63+64*5*1+64*2:64*5*1+64*2] <= keccak_state[63+64*5*1+64*2:64*5*1+64*2] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd8)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd8)
       keccak_state[63+64*5*1+64*3:64*5*1+64*3] <= keccak_state[63+64*5*1+64*3:64*5*1+64*3] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd9)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd9)
       keccak_state[63+64*5*1+64*4:64*5*1+64*4] <= keccak_state[63+64*5*1+64*4:64*5*1+64*4] ^ din_64bit;
 
     // For y = 0..4 with x = 2
-    else if(din_wen==1'b1 && din_slot==5'd10)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd10)
       keccak_state[63+64*5*2+64*0:64*5*2+64*0] <= keccak_state[63+64*5*2+64*0:64*5*2+64*0] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd11)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd11)
       keccak_state[63+64*5*2+64*1:64*5*2+64*1] <= keccak_state[63+64*5*2+64*1:64*5*2+64*1] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd12)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd12)
       keccak_state[63+64*5*2+64*2:64*5*2+64*2] <= keccak_state[63+64*5*2+64*2:64*5*2+64*2] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd13)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd13)
       keccak_state[63+64*5*2+64*3:64*5*2+64*3] <= keccak_state[63+64*5*2+64*3:64*5*2+64*3] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd14)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd14)
       keccak_state[63+64*5*2+64*4:64*5*2+64*4] <= keccak_state[63+64*5*2+64*4:64*5*2+64*4] ^ din_64bit;
 
     // For y = 0..4 with x = 3
-    else if(din_wen==1'b1 && din_slot==5'd15)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd15)
       keccak_state[63+64*5*3+64*0:64*5*3+64*0] <= keccak_state[63+64*5*3+64*0:64*5*3+64*0] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd16)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd16)
       keccak_state[63+64*5*3+64*1:64*5*3+64*1] <= keccak_state[63+64*5*3+64*1:64*5*3+64*1] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd17)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd17)
       keccak_state[63+64*5*3+64*2:64*5*3+64*2] <= keccak_state[63+64*5*3+64*2:64*5*3+64*2] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd18)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd18)
       keccak_state[63+64*5*3+64*3:64*5*3+64*3] <= keccak_state[63+64*5*3+64*3:64*5*3+64*3] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd19)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd19)
       keccak_state[63+64*5*3+64*4:64*5*3+64*4] <= keccak_state[63+64*5*3+64*4:64*5*3+64*4] ^ din_64bit;
 
     // For y = 0..4 with x = 4
-    else if(din_wen==1'b1 && din_slot==5'd20)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd20)
       keccak_state[63+64*5*4+64*0:64*5*4+64*0] <= keccak_state[63+64*5*4+64*0:64*5*4+64*0] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd21)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd21)
       keccak_state[63+64*5*4+64*1:64*5*4+64*1] <= keccak_state[63+64*5*4+64*1:64*5*4+64*1] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd22)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd22)
       keccak_state[63+64*5*4+64*2:64*5*4+64*2] <= keccak_state[63+64*5*4+64*2:64*5*4+64*2] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd23)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd23)
       keccak_state[63+64*5*4+64*3:64*5*4+64*3] <= keccak_state[63+64*5*4+64*3:64*5*4+64*3] ^ din_64bit;
-    else if(din_wen==1'b1 && din_slot==5'd24)
+    else if(data_in_padded_valid==1'b1 && din_slot==5'd24)
       keccak_state[63+64*5*4+64*4:64*5*4+64*4] <= keccak_state[63+64*5*4+64*4:64*5*4+64*4] ^ din_64bit;
 
-    //////
     // Now input for state from Keccak Round
     else if(we_state_in)
       keccak_state <= state_in;
