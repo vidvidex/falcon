@@ -1,29 +1,19 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //
+// Controls squeezing data out of Keccak state
+// Will send new data every cycle until the entire rate part of state is squeezed out. Then it will pause for a few cycles, prepare new state and start squeezing again.
+// To stop squeezing set rst high.
 //
+// Note: this file has been heavily modified to fit the needs of the Falcon project. For example in this version we can no longer specify the number of bytes to squeeze out.
 //
 //////////////////////////////////////////////////////////////////////////////////
-
-/*
-# === Squeeze out all the output blocks ===
-    while(outputByteLen > 0):
-        blockSize = min(outputByteLen, rateInBytes)
-        outputBytes = outputBytes + state[0:blockSize]
-        outputByteLen = outputByteLen - blockSize
-        if (outputByteLen > 0):
-            state = KeccakF1600(state)
-    return outputBytes
-*/
 
 // Note: Data output from Keccak squeeze happens in 64-bit words every cycle.
 module shake256_squeeze(
     input logic clk,
-    input logic rst,// Active high
+    input logic rst,  // Active high
 
-    input logic [15:0] outputLen_InBytes,// Output length in bytes. If output is less than 64 bits, then the most significant bits of 64-bit word are 0s.
-    input logic keccak_squeeze_resume,// This is used to 'resume' Keccak squeeze after a pause. Useful to generate PRNG in short chunks.
-    input logic need_next_hash_block, // Are we requesting the next hash block?
     input logic keccak_round_complete,   // This signal comes from Keccak-f1600 after its completion
 
     output logic call_keccak_f1600,// This signal is used to start Keccak-f1600 on the state variable
@@ -34,27 +24,12 @@ module shake256_squeeze(
     output logic done   // Becomes 1 when the entire input is absorbed.
   );
 
-  reg [16:0] outputLen_InBytes_reg;   // 1 bit extra is used for sign: + or -
-  reg dec_outputLen;
-  wire outputLen_lte_8, outputLen_lte_0;
-  reg [7:0] rate_counter;
-  reg rst_rate_counter, inc_rate_counter;
-  reg [3:0] state, next_state;
-  wire rate_counter_eq;
-  logic [7:0] rateInBytes = 8'd136;
+  logic [7:0] rate_counter;
+  logic rst_rate_counter, inc_rate_counter;
+  logic [3:0] state, next_state;
+  logic rate_counter_eq;
 
-  always @(posedge clk) begin
-    if(rst)
-      outputLen_InBytes_reg <= {1'b0,outputLen_InBytes};
-    else if(dec_outputLen==1'b1 && outputLen_lte_8==1'b0)
-      outputLen_InBytes_reg <= outputLen_InBytes_reg - 17'd8;
-    else
-      outputLen_InBytes_reg <= outputLen_InBytes_reg;
-  end
-
-  assign outputLen_lte_8 = (outputLen_InBytes_reg <= 17'd8) ? 1'b1 : 1'b0;
-  assign outputLen_lte_0 = (outputLen_InBytes_reg[16]==1'b1 || outputLen_InBytes_reg==17'd0);
-  assign rate_counter_eq = (rate_counter==(rateInBytes-8'd8)) ? 1'b1 : 1'b0;
+  assign rate_counter_eq = (rate_counter=='d128) ? 1'b1 : 1'b0; // 128 = rate - 8 (rate for SHAKE256 is 1088 bits = 136 bytes)
   assign state_reg_sel = rate_counter[7:3];
 
   always @(posedge clk) begin
@@ -80,48 +55,34 @@ module shake256_squeeze(
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
         data_out_valid<=0;
-        dec_outputLen<=0;
         we_output_buffer<=1;
         shift_output_buffer<=0;
       end
 
-      4'd1: begin // Start squeeze; Send state words one-by-one till min(outputLen, rateInBytes); Also start the next state permutation in [parallel. Note: state permutation takes more cycles than squeeze.
+      4'd1: begin // Start squeeze
         rst_rate_counter<=0;
         call_keccak_f1600<=1;
         inc_rate_counter<=1;
         data_out_valid<=1;
-        dec_outputLen<=1;
         we_output_buffer<=0;
         shift_output_buffer<=1;
       end
 
-      4'd2: begin // Jump to this state from State-1 unless outputLen_lte_0. Continue Keccak-f1600, always.
+      4'd2: begin
         rst_rate_counter<=1;
         call_keccak_f1600<=1;
         inc_rate_counter<=0;
         data_out_valid<=0;
-        dec_outputLen<=0;
         we_output_buffer<=0;
         shift_output_buffer<=0;
       end
 
-      4'd3: begin // Wait in this state for Data-receiver to provide 'resume' signal. With this we can 'pause' generation of long PRNG string.
+      4'd3: begin
         rst_rate_counter<=0;
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
         data_out_valid<=0;
-        dec_outputLen<=0;
         we_output_buffer<=1;
-        shift_output_buffer<=0;
-      end
-
-      4'd4: begin // End state: From state1 to this state when outputLen_lte_0.
-        rst_rate_counter<=1;
-        call_keccak_f1600<=0;
-        inc_rate_counter<=0;
-        data_out_valid<=0;
-        dec_outputLen<=0;
-        we_output_buffer<=0;
         shift_output_buffer<=0;
       end
       default: begin // Reset
@@ -129,26 +90,20 @@ module shake256_squeeze(
         call_keccak_f1600<=0;
         inc_rate_counter<=0;
         data_out_valid<=0;
-        dec_outputLen<=0;
         we_output_buffer<=0;
         shift_output_buffer<=0;
       end
     endcase
   end
 
-  always @(state or rate_counter_eq or outputLen_lte_8 or keccak_round_complete or keccak_squeeze_resume) begin
+  always @(state or rate_counter_eq or keccak_round_complete) begin
     case(state)
       4'd0: begin
-        if(keccak_squeeze_resume)
-          next_state <= 4'd1;
-        else
-          next_state <= 4'd0;
+        next_state <= 4'd1;
       end
 
-      4'd1: begin // Stay in this state outputLen is generated; or KeccakRate is completed.
-        if(outputLen_lte_8)
-          next_state <= 4'd4;
-        else if(rate_counter_eq)
+      4'd1: begin
+        if(rate_counter_eq)
           next_state <= 4'd2;
         else
           next_state <= 4'd1;
@@ -161,13 +116,8 @@ module shake256_squeeze(
           next_state <= 4'd2;
       end
       4'd3: begin
-        if(keccak_squeeze_resume)
-          next_state <= 4'd1;
-        else
-          next_state <= 4'd3;
+        next_state <= 4'd1;
       end
-      4'd4:
-        next_state <= 4'd4;
       default:
         next_state <= 4'd0;
     endcase

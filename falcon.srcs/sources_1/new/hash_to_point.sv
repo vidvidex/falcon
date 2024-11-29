@@ -16,7 +16,7 @@ module hash_to_point#(
     input logic clk,
     input logic rst_n,
 
-    input logic [15:0] message_len_bytes, //! Length of the message in bytes. TODO: It would be nice if we didn't have to provide input length in advance. Perhaps we could use a signal "last" to indicate that this is the last block of input.
+    input logic [15:0] message_len_bytes, //! Length of the message in bytes.
     input logic [63:0] message, //! every clock cycle the next 64 bits of the message should be provided
     input logic message_valid, //! Is message valid
 
@@ -42,26 +42,21 @@ module hash_to_point#(
   logic shake256_reset; // Reset signal for shake256 module, active high
   logic unsigned [$clog2(N):0] polynomial_index; // Index of the polynomial that we are currently writing to
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
-  logic need_next_hash_block; // Do we need to process the next hash block. If this is 1 we need to squeeze out the next block of the hash
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   logic unsigned [15:0] q; // q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
   assign q = 16'd12289;
 
-  assign need_next_hash_block = (polynomial_index < N) ? 1 : 0; // While we are filling the polynomial we need the next hash block in case we need more coefficients (all current ones might get rejected)
   assign polynomial_valid = polynomial_index == N; // Polynomial is valid when we have filled all the coefficients
 
   shake256 shake256(
              .clk(clk),
              .rst(shake256_reset),
              .input_len_bytes(message_len_bytes),
-             .output_len_bytes(16'd2048),
              .ready_in(shake256_ready),
              .data_in(data_in),
              .data_in_valid(data_in_valid),
-             .ready_out(1'b1), // We are always ready to receive the result
-             .need_next_hash_block(need_next_hash_block),
              .data_out(data_out),
              .data_out_valid(data_out_valid)
            );
