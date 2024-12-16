@@ -22,6 +22,7 @@ module decompress #(
     input logic [$clog2(SIGNATURE_LENGTH)-1:0] expected_signature_length_bytes, //! Expected length of the compressed signature in bytes (slen in reference code)
 
     output logic [14:0] coefficient, //! Decompressed coefficient
+    output logic coefficient_valid, //! Is the current coefficient valid?
     output logic [6:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
     output logic signature_error,    //! Was an error detected in the signature?
     output logic decompression_done      //! Is decompression finished?
@@ -34,8 +35,6 @@ module decompress #(
   logic signature_length_error; //! Was the signature not of the expected length?
 
   logic [104:0] shifted_compressed_signature_valid; //! Shifted compressed signature valid, used to check if the coefficient is valid
-  logic coefficient_valid; //! Is the current coefficient valid?
-
 
   decompress_coefficient decompress_coefficient (
                            .compressed_signature(compressed_signature),
