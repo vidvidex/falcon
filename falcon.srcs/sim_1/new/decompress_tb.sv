@@ -10,6 +10,7 @@ module decompress_tb;
   logic decompression_done;
   logic signature_error;
   logic [14:0] coefficient;
+  logic coefficient_valid;
   integer i;
   integer expected_signature_length_bytes;  //! How many bytes long is the signature we expect to be
   integer expected_coefficient_count;    //! How many coefficients we expect to get from the compressed signature
@@ -26,7 +27,8 @@ module decompress_tb;
                .compressed_coef_length(compressed_coef_length),
                .signature_error(signature_error),
                .decompression_done(decompression_done),
-               .coefficient(coefficient)
+               .coefficient(coefficient),
+               .coefficient_valid(coefficient_valid)
              );
 
   always #5 clk = ~clk;
@@ -65,6 +67,11 @@ module decompress_tb;
         $display("ASSERTION FAILED: Expected coefficient %x, got %x", expected_coefficients[i], coefficient);
         $fatal;
       end
+      if (coefficient_valid !== 1) begin
+        $display("ASSERTION FAILED: Coefficient is not valid");
+        $fatal;
+      end
+
     end
     // Run decompression until the end of the signature
     while (decompression_done === 0)
@@ -98,6 +105,10 @@ module decompress_tb;
       #10;
       if (expected_coefficients[i] !== coefficient) begin
         $display("ASSERTION FAILED: Expected coefficient %x, got %x", expected_coefficients[i], coefficient);
+        $fatal;
+      end
+      if (coefficient_valid !== 1) begin
+        $display("ASSERTION FAILED: Coefficient is not valid");
         $fatal;
       end
 
