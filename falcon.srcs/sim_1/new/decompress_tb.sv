@@ -11,7 +11,7 @@ module decompress_tb;
   logic signature_error;
   logic [14:0] coefficient;
   integer i;
-  integer compressed_signature_length;  //! How many bytes should the compressed signature be
+  integer expected_signature_length_bytes;  //! How many bytes long is the signature we expect to be
   integer expected_coefficient_count;    //! How many coefficients we expect to get from the compressed signature
 
   decompress #(
@@ -22,7 +22,7 @@ module decompress_tb;
                .rst_n(rst_n),
                .compressed_signature(compressed_signature[191:87]),
                .compressed_signature_valid(compressed_signature_valid[191:87]),
-               .compressed_signature_length(compressed_signature_length),
+               .expected_signature_length_bytes(expected_signature_length_bytes),
                .compressed_coef_length(compressed_coef_length),
                .signature_error(signature_error),
                .decompression_done(decompression_done),
@@ -45,7 +45,7 @@ module decompress_tb;
     rst_n = 0;
     #10;
     rst_n = 1;
-    compressed_signature_length = 11;
+    expected_signature_length_bytes = 11;
     expected_coefficient_count = 8;
     compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
     compressed_signature_valid = {'hffffffffffffffffffffff, 'h00000000000000000000000000};
@@ -80,7 +80,7 @@ module decompress_tb;
     rst_n = 0;
     #20;
     rst_n = 1;
-    compressed_signature_length = 11;
+    expected_signature_length_bytes = 11;
     expected_coefficient_count = 8;
     compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expet
     compressed_signature_valid = 'hffffffffffffffffffffffffffffffffffffffffffffffff;
