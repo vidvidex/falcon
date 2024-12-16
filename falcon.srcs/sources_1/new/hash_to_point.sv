@@ -6,6 +6,7 @@
 // In the specification the function has two parameters: message and salt, which are both hashed into a polynomial
 // Since the specification simply adds first salt and then the message to the shake256 context, we will pass both
 // values in the "message" parameter. First 40 bytes will be the salt, the rest will be the message.
+// Parent module is responsible for first sending the salt and then immediately after the message.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
