@@ -1,6 +1,8 @@
 # Falcon
 
-All reset signals are active high.
+All reset signals are active high, except in shake256, where they are active low in some cases. TODO: fix this inconsistency.
+
+Coefficients are 15 bits `[14:0]`
 
 ## Implementation-wide parameters
 
@@ -13,3 +15,4 @@ All reset signals are active high.
 
 - Falcon-512: 512
 - Falcon-1024: 1024
+
