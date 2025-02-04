@@ -21,9 +21,9 @@ module hash_to_point#(
     input logic [63:0] message, //! every clock cycle the next 64 bits of the message should be provided
     input logic message_valid, //! Is message valid
 
-    output logic ready, // Are we ready to receive the next message? When set we are ready to receive the next message
+    output logic ready, //! Are we ready to receive the next message? When set we are ready to receive the next message
     output logic [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
-    output logic polynomial_valid // Is polynomial valid
+    output logic polynomial_valid //! Is polynomial valid
   );
 
   typedef enum logic [2:0] {
