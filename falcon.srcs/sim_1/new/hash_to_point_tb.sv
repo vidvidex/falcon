@@ -13,8 +13,8 @@ module hash_to_point_tb;
   logic message_valid; //! Is message valid
 
   logic ready; // Are we ready to receive the next message? When set we are ready to receive the next message
-  logic [15:0] polynomial[0:N-1]; // Output polynomial,defined as an array of coefficients
-  logic [0:N-1] [15:0] expected_polynomial;
+  logic [14:0] polynomial[0:N-1]; //! Output polynomial,defined as an array of coefficients
+  logic [0:N-1] [14:0] expected_polynomial;
   logic polynomial_valid; // Is polynomial valid
   integer i;
 
