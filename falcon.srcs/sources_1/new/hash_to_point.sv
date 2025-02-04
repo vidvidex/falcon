@@ -22,7 +22,7 @@ module hash_to_point#(
     input logic message_valid, //! Is message valid
 
     output logic ready, // Are we ready to receive the next message? When set we are ready to receive the next message
-    output logic [15:0] polynomial[0:N-1], // Output polynomial, defined as an array of coefficients
+    output logic [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
     output logic polynomial_valid // Is polynomial valid
   );
 
@@ -45,7 +45,7 @@ module hash_to_point#(
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
-  logic unsigned [15:0] q; // q = 12289
+  logic unsigned [14:0] q; // q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
   assign q = 16'd12289;
 
