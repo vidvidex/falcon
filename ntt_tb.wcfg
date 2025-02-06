@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="ntt_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="ntt_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="275.801 ns"></ZoomEndTime>
+      <Cursor1Time time="170.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="242"></NameColumnWidth>
+      <ValueColumnWidth column_width="282"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="2" />
+   <wvobject type="group" fp_name="group152">
+      <obj_property name="label">tb</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/ntt_tb/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_tb/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_tb/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/input_polynomial">
+         <obj_property name="ElementShortName">input_polynomial[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">input_polynomial[0:7][14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/twiddle_factors">
+         <obj_property name="ElementShortName">twiddle_factors[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_factors[0:7][14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_tb/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/output_polynomial">
+         <obj_property name="ElementShortName">output_polynomial[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_polynomial[0:7][14:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group153">
+      <obj_property name="label">NTT</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/ntt_tb/uut/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_tb/uut/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_tb/uut/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/input_polynomial">
+         <obj_property name="ElementShortName">input_polynomial[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">input_polynomial[0:7][14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_tb/uut/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/output_polynomial">
+         <obj_property name="ElementShortName">output_polynomial[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_polynomial[0:7][14:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/polynomial">
+         <obj_property name="ElementShortName">polynomial[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">polynomial[0:7][14:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/index">
+         <obj_property name="ElementShortName">index[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/index_rev">
+         <obj_property name="ElementShortName">index_rev[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index_rev[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/butterfly">
+         <obj_property name="ElementShortName">butterfly[1:0]</obj_property>
+         <obj_property name="ObjectShortName">butterfly[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/i">
+         <obj_property name="ElementShortName">i[2:0]</obj_property>
+         <obj_property name="ObjectShortName">i[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/starting_i">
+         <obj_property name="ElementShortName">starting_i[2:0]</obj_property>
+         <obj_property name="ObjectShortName">starting_i[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/stage">
+         <obj_property name="ElementShortName">stage[31:0]</obj_property>
+         <obj_property name="ObjectShortName">stage[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/stride">
+         <obj_property name="ElementShortName">stride[31:0]</obj_property>
+         <obj_property name="ObjectShortName">stride[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/address_stride">
+         <obj_property name="ElementShortName">address_stride[31:0]</obj_property>
+         <obj_property name="ObjectShortName">address_stride[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/address">
+         <obj_property name="ElementShortName">address[2:0]</obj_property>
+         <obj_property name="ObjectShortName">address[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/twiddle_factor">
+         <obj_property name="ElementShortName">twiddle_factor[14:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_factor[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/state">
+         <obj_property name="ElementShortName">state[1:0]</obj_property>
+         <obj_property name="ObjectShortName">state[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/next_state">
+         <obj_property name="ElementShortName">next_state[1:0]</obj_property>
+         <obj_property name="ObjectShortName">next_state[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_tb/uut/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
