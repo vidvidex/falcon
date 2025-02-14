@@ -8,6 +8,9 @@
 // values in the "message" parameter. First 40 bytes will be the salt, the rest will be the message.
 // Parent module is responsible for first sending the salt and then immediately after the message.
 //
+// The input "message_valid" must be set high before this module starts processing the message and even setting "ready" high.
+// The "ready" signal of this module is dependent on the "message_valid" signal, which is an oversight, which could probably be fixed in the future.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -76,7 +79,7 @@ module hash_to_point#(
         if (message_valid && shake256_ready)
           next_state <= SET_VALID;
       end
-      SET_VALID: begin  // Set valid signal hight one cycle before absorbing the message. I have no idea why this is necessary.
+      SET_VALID: begin  // Set valid signal high one cycle before absorbing the message. I have no idea why this is necessary.
         next_state <= ABSORB;
       end
       ABSORB: begin // Input other blocks of the message to the shake256
