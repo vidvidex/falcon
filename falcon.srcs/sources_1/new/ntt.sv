@@ -11,7 +11,7 @@
 
 
 module ntt#(
-    parameter integer N
+    parameter int N
   )(
     input logic clk,
     input logic rst_n,

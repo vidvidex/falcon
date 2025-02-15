@@ -11,7 +11,7 @@
 
 
 module twiddle_rom#(
-    parameter integer N
+    parameter int N
   )(
     input logic mode, // 0: NTT, 1: Inverse NTT
     input logic [$clog2(N)-1:0] addr,

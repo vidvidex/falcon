@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module compress_tb;
-  parameter integer SIGNATURE_LENGTH = 11;
+  parameter int SIGNATURE_LENGTH = 11;
 
   logic clk;
   logic rst_n;
@@ -12,7 +12,7 @@ module compress_tb;
   logic finalize;                     // Indicats that all coefficients have been compressed and that the padding should be added
   logic [87:0] compressed_signature;  // Compressed signature containing all compressed coefficients (when done). (space for 11x8 bytes - size of signature for 8 coefficients)
   logic error;                        // Error signal, something went wrong while compressing
-  integer i;                          // Loop variable
+  int i;                          // Loop variable
 
   compress #(
              .SIGNATURE_LENGTH(SIGNATURE_LENGTH)

@@ -5,16 +5,16 @@ module decompress_tb;
   logic rst_n;
   logic [191:0] compressed_signature, shifted_compressed_signature; //! 192 bytes for signature in order to have enough space for testing the case when the signature is too long. These signatures are generated with key size 8.
   logic [6:0] compressed_signature_valid_bits;  // Number of valid bits in the compressed signature that is passed to the decompress module
-  integer compressed_signature_valid_bits_total, compressed_signature_valid_bits_initial;  // Total and initial number of valid bits in compressed signature
+    int compressed_signature_valid_bits_total, compressed_signature_valid_bits_initial;  // Total and initial number of valid bits in compressed signature
   logic [14:0] expected_coefficients [0:7];
   logic [6:0] compressed_coef_length;
   logic decompression_done;
   logic signature_error;
   logic [14:0] coefficient;
   logic coefficient_valid;
-  integer i;
-  integer expected_signature_length_bytes;  //! How many bytes long is the signature we expect to be
-  integer expected_coefficient_count;    //! How many coefficients we expect to get from the compressed signature
+  int i;
+  int expected_signature_length_bytes;  //! How many bytes long is the signature we expect to be
+  int expected_coefficient_count;    //! How many coefficients we expect to get from the compressed signature
 
   decompress #(
                .N(8),
