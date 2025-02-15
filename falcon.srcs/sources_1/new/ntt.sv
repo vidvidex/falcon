@@ -33,7 +33,7 @@ module ntt#(
   logic [$clog2(N)-1:0] address;
   logic [14:0] twiddle_factor;  // twiddle_rom[address]
 
-  typedef enum logic [1:0] {
+  typedef enum {
             IDLE,   // Waiting for start signal
             COPY_BIT_REVERSED, // Copy input polynomial to intermediate intermediate or intermediate polynomial to output while reversing the order of the coefficients
             COPY, // Copy input polynomial to intermediate intermediate or intermediate polynomial to output

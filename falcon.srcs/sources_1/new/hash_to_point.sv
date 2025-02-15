@@ -29,7 +29,7 @@ module hash_to_point#(
     output logic polynomial_valid //! Is polynomial valid
   );
 
-  typedef enum logic [2:0] {
+  typedef enum {
             IDLE,
             SET_VALID,
             ABSORB,
