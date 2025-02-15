@@ -12,8 +12,8 @@
 
 
 module decompress #(
-    parameter integer N,
-    parameter integer SIGNATURE_LENGTH
+    parameter int N,
+    parameter int SIGNATURE_LENGTH
   )(
     input logic clk,
     input logic rst_n,
