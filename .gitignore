@@ -3,6 +3,7 @@
 .stfolder
 falcon.sim/
 a.out
+.vscode/
 
 # [home]
 *.jou
