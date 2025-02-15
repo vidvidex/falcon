@@ -32,6 +32,14 @@ module ntt#(
   logic [$clog2(N/2)-1:0] butterfly; // Index of the current butterfly operation, in each stage there are N/2 butterfly operations
   logic [$clog2(N)-1:0] address;
   logic [14:0] twiddle_factor;  // twiddle_rom[address]
+  int n_to_minus1;
+
+  // N^-1 mod 12289 for N=8, 512, 1024
+  assign n_to_minus1 =
+         N == 8 ? 10753 :
+         N == 512 ? 12265 :
+         N == 1024 ? 12277 :
+         0;
 
   typedef enum {
             IDLE,   // Waiting for start signal
@@ -169,7 +177,7 @@ module ntt#(
           if(mode == 1'b0)
             polynomial[index_rev>>1] = input_polynomial[index];
           else
-            output_polynomial[index] = polynomial[index_rev>>1]>> $clog2(N);  // For INTT we have to scale down the coefficients by N
+            output_polynomial[index] = mod_mult(polynomial[index_rev>>1], n_to_minus1);  // For INTT we have to scale the coefficients by N^-1
         end
       end
 
@@ -258,7 +266,7 @@ module ntt#(
       end
       else begin
         polynomial[i] <= mod_add(polynomial[i], polynomial[i + stride]);
-        polynomial[i + stride] <= mod_mult( mod_sub(polynomial[i], polynomial[i + stride]), twiddle_factor);
+        polynomial[i + stride] <= mod_mult(mod_sub(polynomial[i], polynomial[i + stride]), twiddle_factor);
       end
     end
   end
