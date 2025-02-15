@@ -4,7 +4,8 @@ module decompress_tb;
   logic clk;
   logic rst_n;
   logic [191:0] compressed_signature; //! 192 bytes for signature in order to have enough space for testing the case when the signature is too long. These signatures are generated with key size 8.
-  logic [191:0] compressed_signature_valid;
+  logic [6:0] compressed_signature_valid_bits;  // Number of valid bits in the compressed signature that is passed to the decompress module
+  integer compressed_signature_valid_bits_total;  // Total number of valid bits in compressed signature
   logic [14:0] expected_coefficients [0:7];
   logic [6:0] compressed_coef_length;
   logic decompression_done;
@@ -22,7 +23,7 @@ module decompress_tb;
                .clk(clk),
                .rst_n(rst_n),
                .compressed_signature(compressed_signature[191:87]),
-               .compressed_signature_valid(compressed_signature_valid[191:87]),
+               .compressed_signature_valid_bits(compressed_signature_valid_bits),
                .expected_signature_length_bytes(expected_signature_length_bytes),
                .compressed_coef_length(compressed_coef_length),
                .signature_error(signature_error),
@@ -35,10 +36,13 @@ module decompress_tb;
 
   // Shift compressed_signature to the left by "compressed_coef_length" bits to get the next compressed coefficient
   always @ (posedge clk) begin
-    if (rst_n == 1'b1)
+    if (rst_n == 1'b1) begin
       compressed_signature <= compressed_signature << compressed_coef_length;
-    compressed_signature_valid <= compressed_signature_valid << compressed_coef_length;
+      compressed_signature_valid_bits_total <= compressed_signature_valid_bits_total - compressed_coef_length;
+    end
   end
+  // Limit the number of valid bits in the compressed signature to 104
+  assign compressed_signature_valid_bits = compressed_signature_valid_bits_total > 104 ? 104 : compressed_signature_valid_bits_total;
 
   initial begin
     clk = 0;
@@ -50,7 +54,7 @@ module decompress_tb;
     expected_signature_length_bytes = 11;
     expected_coefficient_count = 8;
     compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
-    compressed_signature_valid = {'hffffffffffffffffffffff, 'h00000000000000000000000000};
+    compressed_signature_valid_bits_total = 88;
 
     expected_coefficients[0] = 15'b000000010010111;
     expected_coefficients[1] = 15'b100000010011100;
@@ -68,7 +72,7 @@ module decompress_tb;
         $fatal;
       end
       if (coefficient_valid !== 1) begin
-        $display("ASSERTION FAILED: Coefficient is not valid");
+        $display("ASSERTION FAILED: Coefficient at index %d is not marked as valid", i);
         $fatal;
       end
 
@@ -82,6 +86,7 @@ module decompress_tb;
       $fatal;
     end
 
+    $display("Test 1 passed!");
 
     // Test 2: Signature too long
     rst_n = 0;
@@ -89,8 +94,8 @@ module decompress_tb;
     rst_n = 1;
     expected_signature_length_bytes = 11;
     expected_coefficient_count = 8;
-    compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expet
-    compressed_signature_valid = 'hffffffffffffffffffffffffffffffffffffffffffffffff;
+    compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expect
+    compressed_signature_valid_bits_total = 192;
 
     expected_coefficients[0] = 15'b000_0111_1000_0000;
     expected_coefficients[1] = 15'b000_0111_1000_0000;
@@ -108,7 +113,7 @@ module decompress_tb;
         $fatal;
       end
       if (coefficient_valid !== 1) begin
-        $display("ASSERTION FAILED: Coefficient is not valid");
+        $display("ASSERTION FAILED: Coefficient at index %d is not marked as valid", i);
         $fatal;
       end
 
@@ -119,6 +124,7 @@ module decompress_tb;
       end
     end
 
+    $display("Test 2 passed!");
 
     $display("All tests for decompress passed!");
     $finish;
