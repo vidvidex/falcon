@@ -12,6 +12,7 @@
 
 
 module decompress #(
+    parameter integer N,
     parameter integer SIGNATURE_LENGTH
   )(
     input logic clk,
@@ -34,6 +35,7 @@ module decompress #(
   logic coefficient_error; //! Was an error detected while decompressing any coefficient?
   logic signature_length_error; //! Was the signature not of the expected length?
   logic [14:0] coefficient_i; //! Internal version of the coefficient
+  logic [$clog2(N):0] decompressed_count; //! Number of coefficients decompressed so far
 
   decompress_coefficient decompress_coefficient (
                            .compressed_signature(compressed_signature),
@@ -48,14 +50,18 @@ module decompress #(
       signature_length_error <= 1'b0;
       bits_processed <= 0;
       decompression_done <= 0;
+      decompressed_count <= 0;
     end
     else begin
 
+      // Do nothing if we have no valid data
       if(compressed_signature_valid_bits > 0) begin
 
         if(coefficient_valid) begin
           // Update the number of bits processed
           bits_processed = bits_processed + compressed_coef_length;
+
+          decompressed_count = decompressed_count + 1;
 
           // If there was an error in the coefficient, set the error flag
           coefficient_error <= coefficient_error || coefficient_error_i;
@@ -74,12 +80,12 @@ module decompress #(
       end
     end
 
-    coefficient <= coefficient_valid ? coefficient_i : 0;
-
   end
 
   // Check if coefficient is valid by checking if all bits that were used to decompress the coefficient are valid
-  assign coefficient_valid = compressed_coef_length <= compressed_signature_valid_bits;
+  assign coefficient_valid = compressed_coef_length <= compressed_signature_valid_bits && decompressed_count < N;
+
+  assign coefficient = coefficient_valid ? coefficient_i : 0;
 
   assign signature_error = coefficient_error || signature_length_error;
 
