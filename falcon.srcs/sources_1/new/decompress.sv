@@ -33,10 +33,11 @@ module decompress #(
   logic coefficient_error_i;  //! Was an error detected while decompressing current coefficient?
   logic coefficient_error; //! Was an error detected while decompressing any coefficient?
   logic signature_length_error; //! Was the signature not of the expected length?
+  logic [14:0] coefficient_i; //! Internal version of the coefficient
 
   decompress_coefficient decompress_coefficient (
                            .compressed_signature(compressed_signature),
-                           .coefficient(coefficient),
+                           .coefficient(coefficient_i),
                            .compressed_coef_length(compressed_coef_length),
                            .coefficient_error(coefficient_error_i)
                          );
@@ -50,30 +51,35 @@ module decompress #(
     end
     else begin
 
-      // Check if coefficient is valid by checking if all bits that were used to decompress the coefficient are valid
-      coefficient_valid = compressed_coef_length <= compressed_signature_valid_bits;
+      if(compressed_signature_valid_bits > 0) begin
 
-      if(coefficient_valid) begin
-        // Update the number of bits processed
-        bits_processed = bits_processed + compressed_coef_length;
+        if(coefficient_valid) begin
+          // Update the number of bits processed
+          bits_processed = bits_processed + compressed_coef_length;
 
-        // If there was an error in the coefficient, set the error flag
-        coefficient_error <= coefficient_error || coefficient_error_i;
-      end
-      else begin
-        // Check if the number of bits processed is less or equal to the expected length of the compressed signature
-        // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
-        if (bits_processed <= expected_signature_length_bytes*8 && compressed_signature[104:98] == 7'b0)
-          decompression_done <= 1'b1;  // We processed all the bits of the compressed signature
-        else
+          // If there was an error in the coefficient, set the error flag
+          coefficient_error <= coefficient_error || coefficient_error_i;
+        end
+        else begin
+          // Check if the number of bits processed is less or equal to the expected length of the compressed signature
+          // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
+          if (bits_processed <= expected_signature_length_bytes*8 && compressed_signature[104:98] == 7'b0)
+            decompression_done <= 1'b1;  // We processed all the bits of the compressed signature
+          else
+            signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
+        end
+
+        if (bits_processed > expected_signature_length_bytes*8)
           signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
       end
-
-      if (bits_processed > expected_signature_length_bytes*8)
-        signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
     end
 
+    coefficient <= coefficient_valid ? coefficient_i : 0;
+
   end
+
+  // Check if coefficient is valid by checking if all bits that were used to decompress the coefficient are valid
+  assign coefficient_valid = compressed_coef_length <= compressed_signature_valid_bits;
 
   assign signature_error = coefficient_error || signature_length_error;
 
