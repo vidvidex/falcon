@@ -1,5 +1,7 @@
 # Falcon
 
+This implementation supports N = 8 for development and debugging purposes and N = 512 and N = 1024 for actual use.
+
 All reset signals are active high, except in shake256, where they are active low in some cases. TODO: fix this inconsistency.
 
 Coefficients are 15 bits `[14:0]`
