@@ -103,47 +103,47 @@ module ntt#(
   end
 
   // State machine state changes
-  always_ff @(posedge clk) begin
+  always_comb begin
     case (state)
       IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
 
           // For NTT we have to bit reverse now, for INTT we do it at the end
           if(mode == 1'b0)
-            next_state <= COPY_BIT_REVERSED;
+            next_state = COPY_BIT_REVERSED;
           else
-            next_state <= COPY;
+            next_state = COPY;
       end
       COPY_BIT_REVERSED: begin // Copy input polynomial to intermediate storage or from intermediate storage to output polynomial while reversing the order of the coefficients. This takes just one cycle
 
         // For NTT we go to the NTT state, while for INTT we go to the IDLE state (we reverse at the end)
         if(mode == 1'b0)
-          next_state <= NTT;
+          next_state = NTT;
         else
-          next_state <= IDLE;
+          next_state = IDLE;
       end
       COPY: begin // Copy input polynomial to intermediate storage or from intermediate storage to output polynomial. This takes just one cycle
 
         // For NTT we go to the IDLE state, while for INTT we go to the NTT state
         if(mode == 1'b0)
-          next_state <= IDLE;
+          next_state = IDLE;
         else
-          next_state <= NTT;
+          next_state = NTT;
       end
       NTT: begin
-        if (stage == $clog2(N)-1 && butterfly >= N/2-2) begin // Set next_state when we are at the second to last element of the last stage (this accounts for the delay in switching states)
+        if (stage == $clog2(N)-1 && butterfly >= N/2-1) begin // Set next_state when we are at the last-1 element of the last stage
 
           // For NTT we just copy, for INTT we have to copy and bit reverse
           if(mode == 1'b0)
-            next_state <= COPY;
+            next_state = COPY;
           else
-            next_state <= COPY_BIT_REVERSED;
+            next_state = COPY_BIT_REVERSED;
         end
         else
-          next_state <= NTT;
+          next_state = NTT;
       end
       default: begin
-        next_state <= IDLE;
+        next_state = IDLE;
       end
     endcase
   end
