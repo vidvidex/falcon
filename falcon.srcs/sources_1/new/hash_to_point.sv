@@ -73,6 +73,7 @@ module hash_to_point#(
       state <= next_state;
   end
 
+  // TODO: this should be a always_comb block, but the tests fail then so we have to fix it at some point. (with always_comb the state transitions are much faster than with always_ff, since next_state determination is not synchronized to the clock)
   always_ff @(posedge clk) begin
     case (state)
       IDLE: begin   // Waiting for the input message to be valid and shake256 to be ready
