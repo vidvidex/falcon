@@ -52,7 +52,7 @@ module ntt_tb;
     if (output_polynomial === expected_output_polynomial)
       $display("Test 1: Passed");
     else
-      $display("Test 1: Failed");
+      $display("Test 1: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
     // Test 2: INTT of polynomial size 8
     rst_n = 0;
@@ -75,10 +75,9 @@ module ntt_tb;
     if (output_polynomial === expected_output_polynomial)
       $display("Test 2: Passed");
     else
-      $display("Test 2: Failed");
+      $display("Test 2: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
     $finish;
   end
 
 endmodule
-
