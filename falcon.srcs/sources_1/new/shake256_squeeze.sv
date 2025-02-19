@@ -12,16 +12,16 @@
 // Note: Data output from Keccak squeeze happens in 64-bit words every cycle.
 module shake256_squeeze(
     input logic clk,
-    input logic rst,  // Active high
+    input logic rst,  //! Active high
 
-    input logic keccak_round_complete,   // This signal comes from Keccak-f1600 after its completion
+    input logic keccak_round_complete,   //! This signal comes from Keccak-f1600 after its completion
 
-    output logic call_keccak_f1600,// This signal is used to start Keccak-f1600 on the state variable
-    output logic[4:0] state_reg_sel,  // This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
-    output logic we_output_buffer,  // Used to write keccak_state into keccak_output_buffer
-    output logic shift_output_buffer,  // Used to shift the keccak_output_buffer in 64 bits such that one word is output
-    output logic data_out_valid,  // This signal is used to write Keccak-squeeze output
-    output logic done   // Becomes 1 when the entire input is absorbed.
+    output logic call_keccak_f1600,//! This signal is used to start Keccak-f1600 on the state variable
+    output logic[4:0] state_reg_sel,  //! This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
+    output logic we_output_buffer,  //! Used to write keccak_state into keccak_output_buffer
+    output logic shift_output_buffer,  //! Used to shift the keccak_output_buffer in 64 bits such that one word is output
+    output logic data_out_valid,  //! This signal is used to write Keccak-squeeze output
+    output logic done   //! Becomes 1 when the entire input is absorbed.
   );
 
   logic [7:0] rate_counter;

@@ -6,12 +6,16 @@
 // In the specification the function has two parameters: message and salt, which are both hashed into a polynomial
 // Since the specification simply adds first salt and then the message to the shake256 context, we will pass both
 // values in the "message" parameter. First 40 bytes will be the salt, the rest will be the message.
+// Parent module is responsible for first sending the salt and then immediately after the message.
+//
+// The input "message_valid" must be set high before this module starts processing the message and even setting "ready" high.
+// The "ready" signal of this module is dependent on the "message_valid" signal, which is an oversight, which could probably be fixed in the future.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
 module hash_to_point#(
-    parameter integer N
+    parameter int N
   )(
     input logic clk,
     input logic rst_n,
@@ -20,12 +24,12 @@ module hash_to_point#(
     input logic [63:0] message, //! every clock cycle the next 64 bits of the message should be provided
     input logic message_valid, //! Is message valid
 
-    output logic ready, // Are we ready to receive the next message? When set we are ready to receive the next message
-    output logic [15:0] polynomial[0:N-1], // Output polynomial, defined as an array of coefficients
-    output logic polynomial_valid // Is polynomial valid
+    output logic ready, //! Are we ready to receive the next message? When set we are ready to receive the next message
+    output logic [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
+    output logic polynomial_valid //! Is polynomial valid
   );
 
-  typedef enum logic [2:0] {
+  typedef enum {
             IDLE,
             SET_VALID,
             ABSORB,
@@ -44,7 +48,7 @@ module hash_to_point#(
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
-  logic unsigned [15:0] q; // q = 12289
+  logic unsigned [14:0] q; // q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
   assign q = 16'd12289;
 
@@ -69,13 +73,14 @@ module hash_to_point#(
       state <= next_state;
   end
 
+  // TODO: this should be a always_comb block, but the tests fail then so we have to fix it at some point. (with always_comb the state transitions are much faster than with always_ff, since next_state determination is not synchronized to the clock)
   always_ff @(posedge clk) begin
     case (state)
       IDLE: begin   // Waiting for the input message to be valid and shake256 to be ready
         if (message_valid && shake256_ready)
           next_state <= SET_VALID;
       end
-      SET_VALID: begin  // Set valid signal hight one cycle before absorbing the message. I have no idea why this is necessary.
+      SET_VALID: begin  // Set valid signal high one cycle before absorbing the message. I have no idea why this is necessary.
         next_state <= ABSORB;
       end
       ABSORB: begin // Input other blocks of the message to the shake256

@@ -16,7 +16,7 @@
 
 
 module compress#(
-    parameter integer SIGNATURE_LENGTH               //! Expected length of the compressed signature in bytes (slen in reference code)
+    parameter int SIGNATURE_LENGTH               //! Expected length of the compressed signature in bytes (slen in reference code)
   )(
     input logic clk,
     input logic rst_n,

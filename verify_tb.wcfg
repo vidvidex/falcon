@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="verify_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="verify_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="90.445 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="234"></NameColumnWidth>
+      <ValueColumnWidth column_width="246"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="2" />
+   <wvobject type="group" fp_name="group675">
+      <obj_property name="label">TB</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/verify_tb/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/message_blocks">
+         <obj_property name="ElementShortName">message_blocks[0:1][63:0]</obj_property>
+         <obj_property name="ObjectShortName">message_blocks[0:1][63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_salt_blocks">
+         <obj_property name="ElementShortName">signature_salt_blocks[0:4][63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_salt_blocks[0:4][63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_value_blocks">
+         <obj_property name="ElementShortName">signature_value_blocks[0:1][63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_value_blocks[0:1][63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_value_valid_blocks">
+         <obj_property name="ElementShortName">signature_value_valid_blocks[0:1][6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_value_valid_blocks[0:1][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/message_len_bytes">
+         <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
+         <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/message">
+         <obj_property name="ElementShortName">message[63:0]</obj_property>
+         <obj_property name="ObjectShortName">message[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/message_valid">
+         <obj_property name="ElementShortName">message_valid</obj_property>
+         <obj_property name="ObjectShortName">message_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/message_ready">
+         <obj_property name="ElementShortName">message_ready</obj_property>
+         <obj_property name="ObjectShortName">message_ready</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_salt">
+         <obj_property name="ElementShortName">signature_salt[63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_salt[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/signature_salt_valid">
+         <obj_property name="ElementShortName">signature_salt_valid</obj_property>
+         <obj_property name="ObjectShortName">signature_salt_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/signature_salt_ready">
+         <obj_property name="ElementShortName">signature_salt_ready</obj_property>
+         <obj_property name="ObjectShortName">signature_salt_ready</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_value">
+         <obj_property name="ElementShortName">signature_value[63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_value[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_value_valid">
+         <obj_property name="ElementShortName">signature_value_valid[6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_value_valid[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/signature_value_ready">
+         <obj_property name="ElementShortName">signature_value_ready</obj_property>
+         <obj_property name="ObjectShortName">signature_value_ready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/accept">
+         <obj_property name="ElementShortName">accept</obj_property>
+         <obj_property name="ObjectShortName">accept</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/reject">
+         <obj_property name="ElementShortName">reject</obj_property>
+         <obj_property name="ObjectShortName">reject</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/message_block_index">
+         <obj_property name="ElementShortName">message_block_index[31:0]</obj_property>
+         <obj_property name="ObjectShortName">message_block_index[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_salt_block_index">
+         <obj_property name="ElementShortName">signature_salt_block_index[31:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_salt_block_index[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/signature_value_block_index">
+         <obj_property name="ElementShortName">signature_value_block_index[31:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_value_block_index[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group676">
+      <obj_property name="label">verify</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/verify_tb/uut/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/uut/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/uut/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/uut/accept">
+         <obj_property name="ElementShortName">accept</obj_property>
+         <obj_property name="ObjectShortName">accept</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/uut/reject">
+         <obj_property name="ElementShortName">reject</obj_property>
+         <obj_property name="ObjectShortName">reject</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/uut/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/uut/SIGNATURE_LENGTH">
+         <obj_property name="ElementShortName">SIGNATURE_LENGTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">SIGNATURE_LENGTH[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group928">
+         <obj_property name="label">hash_to_point</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/message_len_bytes">
+            <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
+            <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/message">
+            <obj_property name="ElementShortName">message[63:0]</obj_property>
+            <obj_property name="ObjectShortName">message[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/message_valid">
+            <obj_property name="ElementShortName">message_valid</obj_property>
+            <obj_property name="ObjectShortName">message_valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/message_ready">
+            <obj_property name="ElementShortName">message_ready</obj_property>
+            <obj_property name="ObjectShortName">message_ready</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/signature_salt">
+            <obj_property name="ElementShortName">signature_salt[63:0]</obj_property>
+            <obj_property name="ObjectShortName">signature_salt[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/signature_salt_ready">
+            <obj_property name="ElementShortName">signature_salt_ready</obj_property>
+            <obj_property name="ObjectShortName">signature_salt_ready</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/signature_salt_valid">
+            <obj_property name="ElementShortName">signature_salt_valid</obj_property>
+            <obj_property name="ObjectShortName">signature_salt_valid</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/htp_message_len_bytes">
+            <obj_property name="ElementShortName">htp_message_len_bytes[15:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_message_len_bytes[15:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/htp_input_message">
+            <obj_property name="ElementShortName">htp_input_message[63:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_input_message[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/htp_message_valid">
+            <obj_property name="ElementShortName">htp_message_valid</obj_property>
+            <obj_property name="ObjectShortName">htp_message_valid</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/htp_polynomial">
+            <obj_property name="ElementShortName">htp_polynomial[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_polynomial[0:7][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/htp_polynomial_valid">
+            <obj_property name="ElementShortName">htp_polynomial_valid</obj_property>
+            <obj_property name="ObjectShortName">htp_polynomial_valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/htp_ready">
+            <obj_property name="ElementShortName">htp_ready</obj_property>
+            <obj_property name="ObjectShortName">htp_ready</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group929">
+         <obj_property name="label">decompress</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/compressed_signature_buffer">
+            <obj_property name="ElementShortName">compressed_signature_buffer[191:0]</obj_property>
+            <obj_property name="ObjectShortName">compressed_signature_buffer[191:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/compressed_signature_buffer_valid">
+            <obj_property name="ElementShortName">compressed_signature_buffer_valid[7:0]</obj_property>
+            <obj_property name="ObjectShortName">compressed_signature_buffer_valid[7:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/compressed_coef_length">
+            <obj_property name="ElementShortName">compressed_coef_length[5:0]</obj_property>
+            <obj_property name="ObjectShortName">compressed_coef_length[5:0]</obj_property>
+            <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/coefficient">
+            <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+            <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/coefficient_valid">
+            <obj_property name="ElementShortName">coefficient_valid</obj_property>
+            <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/signature_error">
+            <obj_property name="ElementShortName">signature_error</obj_property>
+            <obj_property name="ObjectShortName">signature_error</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/decompression_done">
+            <obj_property name="ElementShortName">decompression_done</obj_property>
+            <obj_property name="ObjectShortName">decompression_done</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/signature_value_ready">
+            <obj_property name="ElementShortName">signature_value_ready</obj_property>
+            <obj_property name="ObjectShortName">signature_value_ready</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/signature_value_valid">
+            <obj_property name="ElementShortName">signature_value_valid[6:0]</obj_property>
+            <obj_property name="ObjectShortName">signature_value_valid[6:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/signature_value">
+            <obj_property name="ElementShortName">signature_value[63:0]</obj_property>
+            <obj_property name="ObjectShortName">signature_value[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/coefficient_index">
+            <obj_property name="ElementShortName">coefficient_index[2:0]</obj_property>
+            <obj_property name="ObjectShortName">coefficient_index[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/decompressed_coefficients">
+            <obj_property name="ElementShortName">decompressed_coefficients[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">decompressed_coefficients[0:7][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group2525">
+         <obj_property name="label">NTT</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/verify_tb/uut/public_key_valid">
+            <obj_property name="ElementShortName">public_key_valid</obj_property>
+            <obj_property name="ObjectShortName">public_key_valid</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/public_key">
+            <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_input">
+            <obj_property name="ElementShortName">ntt_input[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_input[0:7][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_output">
+            <obj_property name="ElementShortName">ntt_output[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_output[0:7][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer1">
+            <obj_property name="ElementShortName">ntt_buffer1[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_buffer1[0:7][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer2">
+            <obj_property name="ElementShortName">ntt_buffer2[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_buffer2[0:7][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/ntt_start">
+            <obj_property name="ElementShortName">ntt_start</obj_property>
+            <obj_property name="ObjectShortName">ntt_start</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/ntt_mode">
+            <obj_property name="ElementShortName">ntt_mode</obj_property>
+            <obj_property name="ObjectShortName">ntt_mode</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/ntt_done">
+            <obj_property name="ElementShortName">ntt_done</obj_property>
+            <obj_property name="ObjectShortName">ntt_done</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/mult_mod_q_index">
+            <obj_property name="ElementShortName">mult_mod_q_index[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_index[3:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_and_normalize_index">
+            <obj_property name="ElementShortName">sub_and_normalize_index[3:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_and_normalize_index[3:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_index">
+            <obj_property name="ElementShortName">squared_norm_index[3:0]</obj_property>
+            <obj_property name="ObjectShortName">squared_norm_index[3:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_state">
+            <obj_property name="ElementShortName">ntt_state[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_state[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_next_state">
+            <obj_property name="ElementShortName">ntt_next_state[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_next_state[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_error">
+            <obj_property name="ElementShortName">squared_norm_error</obj_property>
+            <obj_property name="ObjectShortName">squared_norm_error</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/squared_norm">
+            <obj_property name="ElementShortName">squared_norm[26:0]</obj_property>
+            <obj_property name="ObjectShortName">squared_norm[26:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/bound2">
+            <obj_property name="ElementShortName">bound2[26:0]</obj_property>
+            <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+</wave_config>

@@ -8,16 +8,16 @@
 
 module shake256_absorb(
     input logic clk,
-    input logic  rst, // Active high
-    input logic [15:0]  inputlen_InBytes, // Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
+    input logic  rst, //! Active high
+    input logic [15:0]  inputlen_InBytes, //! Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic [63:0]  din_64bit_raw,
-    input logic din_valid, // This signal is provided by a data source to indicate that din_64bit_raw is valid
-    output reg ready,  // when this signal is high, that means Keccak is ready to absorb.
-    output wire [63:0]  data_in_padded, // This is properly processed data that ill get written into state buffer.
-    output reg data_in_padded_valid,   // Used to write processed 64-bit data to the state buffer.
-    output reg call_keccak_f1600, // This signal is used to start Keccak-f1600 on the state variable
-    input logic keccak_round_complete,  // This signal comes from Keccak-f1600 after its completion
-    output logic done  // Becomes 1 when the entire input is absorbed.
+    input logic din_valid, //! This signal is provided by a data source to indicate that din_64bit_raw is valid
+    output reg ready,  //! When this signal is high, that means Keccak is ready to absorb.
+    output wire [63:0]  data_in_padded, //! This is properly processed data that ill get written into state buffer.
+    output reg data_in_padded_valid,   //! Used to write processed 64-bit data to the state buffer.
+    output reg call_keccak_f1600, //! This signal is used to start Keccak-f1600 on the state variable
+    input logic keccak_round_complete,  //! This signal comes from Keccak-f1600 after its completion
+    output logic done  //! Becomes 1 when the entire input is absorbed.
   );
 
   reg [15:0] messageLen_InBytes;
