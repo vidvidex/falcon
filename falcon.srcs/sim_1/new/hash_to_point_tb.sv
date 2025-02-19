@@ -1,8 +1,14 @@
 `timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+//
+// Hashing takes 2615 ns, which is more than the default 1000 ns that the simulations run for in Vivado.
+// Click Run to finish the simulation and see the results.
+//
+//////////////////////////////////////////////////////////////////////////////////
 
 module hash_to_point_tb;
 
-  parameter integer N = 512;
+  parameter int N = 512;
 
   logic clk;
   logic rst_n;
@@ -12,11 +18,11 @@ module hash_to_point_tb;
   logic [63:0] message;
   logic message_valid; //! Is message valid
 
-  logic ready; // Are we ready to receive the next message? When set we are ready to receive the next message
-  logic [15:0] polynomial[0:N-1]; // Output polynomial,defined as an array of coefficients
-  logic [0:N-1] [15:0] expected_polynomial;
-  logic polynomial_valid; // Is polynomial valid
-  integer i;
+  logic ready; //! Are we ready to receive the next message? When set we are ready to receive the next message
+  logic [14:0] polynomial[0:N-1]; //! Output polynomial,defined as an array of coefficients
+  logic [0:N-1] [14:0] expected_polynomial;
+  logic polynomial_valid; //! Is polynomial valid
+  int i;
 
   hash_to_point #(
                   .N(N)
