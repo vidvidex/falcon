@@ -171,7 +171,7 @@ module verify#(
       $error("N must be 8, 512 or 1024");
   endgenerate
 
-  ntt #(
+  ntt_negative #(
         .N(N)
       )ntt(
         .clk(clk),
