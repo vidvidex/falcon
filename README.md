@@ -6,6 +6,8 @@ All reset signals are active high, except in shake256, where they are active low
 
 Coefficients are 15 bits `[14:0]`
 
+Folder `scripts` contains the various scripts used during implementation
+
 ## Implementation-wide parameters
 
 `SIGNATURE_LENGTH` - length of the signature in bytes. See table 3.3 in the specification. Often called `slen` or `sbytelen` in the algorithms in the specification.
