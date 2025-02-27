@@ -1,16 +1,20 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Implements both NTT and inverse NTT, because we are never going to use both at
-// the same time, therefore we can save resources by reusing the same module.
+// Implements both NTT and inverse NTT for positive-wrapped convolution.
+// This module is not needed for Falcon, but since I accidentally implemented the wrong NTT
+// might as well preserver it, since it could be useful for something else in the future.
 //
 //  Forward NTT: IDLE -> COPY_BIT_REVERSED -> NTT -> COPY(done=1) -> IDLE
 //  Inverse NTT: IDLE -> COPY -> NTT -> COPY_BIT_REVERSED(done=1) -> IDLE
 //
+// This module is based on the Python implementation from https://cryptographycaffe.sandboxaq.com/posts/ntt-02/
+// See: scripts/ntt_iter.py
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ntt#(
+module ntt_positive#(
     parameter int N
   )(
     input logic clk,

@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module ntt_tb;
+module ntt_positive_tb;
 
   logic clk;
   logic rst_n;
@@ -14,7 +14,7 @@ module ntt_tb;
 
   logic [14:0] expected_output_polynomial[0:7];
 
-  ntt #(
+  ntt_positive #(
         .N(8)
       )uut(
         .clk(clk),

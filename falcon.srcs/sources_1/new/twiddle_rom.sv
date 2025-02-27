@@ -5,7 +5,12 @@
 //
 // Supported sizes of N are 8, 512, and 1024. For final version only keep one of the sizes since the others cannot be used anyway.
 //
-// The factors were computed using the primitive_root.py script
+// The twiddle factors were computed using the scripts/NTT_positive_compute_twiddle_factors.py script
+//
+// TODO: since N is constant we don't have to keep all 3 versions of factors in the final build. If synthesis doesn't automatically
+//       remove the others find a way to do it. (or just delete manually before building)
+//
+// (* rom_style = "block" *) is supposed to store the data in BRAM, I have not tested if this is true
 //
 //////////////////////////////////////////////////////////////////////////////////
 
