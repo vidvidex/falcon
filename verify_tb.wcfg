@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="90.445 ns"></ZoomEndTime>
+      <ZoomStartTime time="853.820 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,029.236 ns"></ZoomEndTime>
       <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="234"></NameColumnWidth>
-      <ValueColumnWidth column_width="246"></ValueColumnWidth>
+      <NameColumnWidth column_width="209"></NameColumnWidth>
+      <ValueColumnWidth column_width="273"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group675">
@@ -203,6 +203,7 @@
       <wvobject type="group" fp_name="group929">
          <obj_property name="label">decompress</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/verify_tb/uut/compressed_signature_buffer">
             <obj_property name="ElementShortName">compressed_signature_buffer[191:0]</obj_property>
             <obj_property name="ObjectShortName">compressed_signature_buffer[191:0]</obj_property>
@@ -253,7 +254,7 @@
          <wvobject type="array" fp_name="/verify_tb/uut/decompressed_coefficients">
             <obj_property name="ElementShortName">decompressed_coefficients[0:7][14:0]</obj_property>
             <obj_property name="ObjectShortName">decompressed_coefficients[0:7][14:0]</obj_property>
-            <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group2525">
@@ -268,33 +269,37 @@
             <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
             <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
          </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/ntt_mode">
+            <obj_property name="ElementShortName">ntt_mode</obj_property>
+            <obj_property name="ObjectShortName">ntt_mode</obj_property>
+         </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/ntt_input">
             <obj_property name="ElementShortName">ntt_input[0:7][14:0]</obj_property>
             <obj_property name="ObjectShortName">ntt_input[0:7][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/ntt_output">
-            <obj_property name="ElementShortName">ntt_output[0:7][14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_output[0:7][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer1">
-            <obj_property name="ElementShortName">ntt_buffer1[0:7][14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_buffer1[0:7][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer2">
-            <obj_property name="ElementShortName">ntt_buffer2[0:7][14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_buffer2[0:7][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/verify_tb/uut/ntt_start">
             <obj_property name="ElementShortName">ntt_start</obj_property>
             <obj_property name="ObjectShortName">ntt_start</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/ntt_mode">
-            <obj_property name="ElementShortName">ntt_mode</obj_property>
-            <obj_property name="ObjectShortName">ntt_mode</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_output">
+            <obj_property name="ElementShortName">ntt_output[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_output[0:7][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/verify_tb/uut/ntt_done">
             <obj_property name="ElementShortName">ntt_done</obj_property>
             <obj_property name="ObjectShortName">ntt_done</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer1">
+            <obj_property name="ElementShortName">ntt_buffer1[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_buffer1[0:7][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer2">
+            <obj_property name="ElementShortName">ntt_buffer2[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_buffer2[0:7][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/mult_mod_q_index">
             <obj_property name="ElementShortName">mult_mod_q_index[3:0]</obj_property>
@@ -319,6 +324,10 @@
          <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_error">
             <obj_property name="ElementShortName">squared_norm_error</obj_property>
             <obj_property name="ObjectShortName">squared_norm_error</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/temp">
+            <obj_property name="ElementShortName">temp[26:0]</obj_property>
+            <obj_property name="ObjectShortName">temp[26:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/squared_norm">
             <obj_property name="ElementShortName">squared_norm[26:0]</obj_property>

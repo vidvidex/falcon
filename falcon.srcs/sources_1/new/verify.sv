@@ -10,14 +10,14 @@ module verify#(
     parameter int SIGNATURE_LENGTH,
     parameter int MULT_MOD_Q_OPS_PER_CYCLE = 4, //! The number of operations per cycle for the MULT_MOD_Q module. N should be divisible by this number.
     parameter int SUB_AND_NORMALIZE_OPS_PER_CYCLE = 4, //! The number of operations per cycle for the SUB_AND_NORMALIZE module. N should be divisible by this number.
-    parameter int SQUARED_NORM_OPS_PER_CYCLE = 4 //! The number of operations per cycle for the SQUARED_NORM module. N should be divisible by this number.
+    parameter int SQUARED_NORM_OPS_PER_CYCLE = 1 //! The number of operations per cycle for the SQUARED_NORM module. N should be divisible by this number.
   )(
     input logic clk,
     input logic rst_n,
 
     input logic start, //! Start signal for the module (currently only starts NTT, everything else runs automatically when the data is valid)
 
-    input logic [14:0] public_key[0:N-1], //! Public key in coefficient form
+    input logic signed [14:0] public_key[0:N-1], //! Public key in coefficient form
     input logic public_key_valid, //! Is public key valid
 
     input logic [15:0] message_len_bytes, //! Length of the message in bytes.
@@ -42,7 +42,7 @@ module verify#(
   logic [63:0] htp_input_message; //! Input block to hash_to_point module
   logic htp_message_valid  ; //! Is input block to hash_to_point module valid
   logic htp_ready; //! Is hash_to_point module ready to receive the next input block
-  logic [14:0] htp_polynomial[0:N-1]; // Output polynomial from hash_to_point
+  logic signed [14:0] htp_polynomial[0:N-1]; // Output polynomial from hash_to_point
   logic htp_polynomial_valid; // Is htp_polynomial from hash_to_point valid
 
   hash_to_point #(
@@ -82,8 +82,8 @@ module verify#(
   logic [3*64-1:0] compressed_signature_buffer;
   logic [7:0] compressed_signature_buffer_valid; //! Number of valid bits in compressed_signature_buffer. Only leftmost bits are valid.
 
-  logic [14:0] coefficient; //! Decompressed coefficient
-  logic [14:0] decompressed_coefficients [0:N-1];
+  logic signed [14:0] coefficient; //! Decompressed coefficient
+  logic signed [14:0] decompressed_coefficients [0:N-1];
   logic [5:0] compressed_coef_length; //! Number of bits that were used to compress the coefficient
   logic coefficient_valid; //! Is coefficient valid
   logic signature_error=0; //! Set to true if the signature is invalid
@@ -144,11 +144,11 @@ module verify#(
 
   /////////////////////////// Start NTT and general control logic //////
 
-  logic [14:0] ntt_input[0:N-1];
-  logic [14:0] ntt_output[0:N-1];
+  logic signed [14:0] ntt_input[0:N-1];
+  logic signed [14:0] ntt_output[0:N-1];
 
-  logic [14:0] ntt_buffer1[0:N-1]; // Buffer for NTT module, here we store the result of NTT(public key), NTT(public key) * NTT(decompressed signature) = product, INTT(product), htp_polynomial - INTT(product)
-  logic [14:0] ntt_buffer2[0:N-1]; // Buffer for NTT module, here we store the result of NTT(decompressed signature)
+  logic signed [14:0] ntt_buffer1[0:N-1]; // Buffer for NTT module, here we store the result of NTT(public key), NTT(public key) * NTT(decompressed signature) = product, INTT(product), htp_polynomial - INTT(product)
+  logic signed [14:0] ntt_buffer2[0:N-1]; // Buffer for NTT module, here we store the result of NTT(decompressed signature)
 
   logic ntt_start; //! Start signal for NTT module
   logic ntt_mode; //! 0 - NTT, 1 - INTT
@@ -157,6 +157,7 @@ module verify#(
 
   // The size is selected so that when we iteratively compute it we can check if it's larger than the bound^2 on each iteration, since 27 bits is enough for the value at previous iteration
   // to be 70265242-1 and to this we add (-6145)^2 (this is the worst case scenario)
+  logic [26:0] temp=0;  // Temporary variable for calculating squared norm
   logic [26:0] squared_norm=0;
 
   logic [26:0] bound2; // The bound squared
@@ -172,16 +173,16 @@ module verify#(
   endgenerate
 
   ntt_negative #(
-        .N(N)
-      )ntt(
-        .clk(clk),
-        .rst_n(rst_n),
-        .mode(ntt_mode),
-        .start(ntt_start),
-        .input_polynomial(ntt_input),
-        .done(ntt_done),
-        .output_polynomial(ntt_output)
-      );
+                 .N(N)
+               )ntt(
+                 .clk(clk),
+                 .rst_n(rst_n),
+                 .mode(ntt_mode),
+                 .start(ntt_start),
+                 .input_polynomial(ntt_input),
+                 .done(ntt_done),
+                 .output_polynomial(ntt_output)
+               );
 
   // Modulo 12289 multiplication
   function [14:0] mod_mult(input [14:0] a, b);
@@ -437,8 +438,9 @@ module verify#(
         // Compute SQUARED_NORM_OPS_PER_CYCLE coefficients per clock cycle
         for (int i = squared_norm_index; i < squared_norm_index + SQUARED_NORM_OPS_PER_CYCLE; i = i + 1) begin
 
-          // squared_norm += normalized^2 + hashed_message^2
-          squared_norm = squared_norm + ntt_buffer1[i] * ntt_buffer1[i] + htp_polynomial[i] * htp_polynomial[i];
+          // squared_norm += normalized^2 + decompressed_coefficients^2
+          temp = ntt_buffer1[i] * ntt_buffer1[i] + decompressed_coefficients[i] * decompressed_coefficients[i]; // We need to multiply this in a separate variable, otherwise the sum is not correct (not idea why)
+          squared_norm = squared_norm + temp;
 
           // Check if the squared norm is larger than the bound^2
           if (squared_norm > bound2)
@@ -463,7 +465,6 @@ module verify#(
       end
     endcase
   end
-
 
   /////////////////////////// End NTT and general control logic ////////
 
