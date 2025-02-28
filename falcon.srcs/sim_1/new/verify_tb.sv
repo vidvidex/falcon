@@ -92,7 +92,7 @@ module verify_tb;
     start = 1;
 
     // Run until we get the result
-    while (accept != 1'b1 || reject != 1'b1) begin
+    while (!accept && !reject) begin
 
       // Send new signature salt block if module is ready for it
       // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
@@ -116,7 +116,7 @@ module verify_tb;
 
       // Debugging help:
       // After sending both salt and message the valid polynomial should be
-      // [1112,5539,5209,3423,2324,1901,12163,9202]
+      // [1112, 5539, 5209, 3423, 2324, 1901, 12163, 9202] (signed decimal)
 
       // Send new signature value block if module is ready for it
       if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
@@ -129,11 +129,18 @@ module verify_tb;
 
       // Debugging help:
       // After sending the valid decompressed signature should be
-      // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed magnitude)
+      // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
 
       #10;
       start = 0;
     end
+
+    // Check that it was accepted
+    if (accept && !reject)
+      $display("Test 1: Passed");
+    else
+      $fatal("Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
+
 
     // Test 2: Invalid signature for N=8
 
