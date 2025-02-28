@@ -49,14 +49,12 @@ module compress_tb;
     #10;
     finalize = 0;
     // Check if error is low (all coefficients were compressed successfully)
-    if (error !== 0) begin
-      $display("ASSERTION FAILED: Signature error detected");
-      $fatal;
-    end
-    if(compressed_signature !== 88'h9aec4cb13a56853d656000) begin
-      $display("ASSERTION FAILED: Compressed signature is not correct");
-      $fatal;
-    end
+    if (error !== 0)
+      $fatal("ASSERTION FAILED: Signature error detected");
+
+    if(compressed_signature !== 88'h9aec4cb13a56853d656000)
+      $fatal("ASSERTION FAILED: Compressed signature is not correct");
+
 
     // Test 2: Signature too long
     rst_n = 0;
@@ -72,10 +70,8 @@ module compress_tb;
       #10;
 
       // When processing the 5th coefficient the signature should become too long
-      if(i == 4 && error !== 1) begin
-        $display("ASSERTION FAILED: Signature error not detected");
-        $fatal;
-      end
+      if(i == 4 && error !== 1)
+        $fatal("ASSERTION FAILED: Signature error not detected");
 
     end
     finalize = 1;
@@ -83,10 +79,8 @@ module compress_tb;
     #10;
     finalize = 0;
     // Check if error stays highL
-    if (error !== 1) begin
-      $display("ASSERTION FAILED: Signature error not detected");
-      $fatal;
-    end
+    if (error !== 1)
+      $fatal("ASSERTION FAILED: Signature error not detected");
 
 
     $display("All tests for compress passed!");

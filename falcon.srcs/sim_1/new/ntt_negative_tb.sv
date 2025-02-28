@@ -51,7 +51,7 @@ module ntt_negative_tb;
     if (output_polynomial === expected_output_polynomial)
       $display("Test 1: Passed");
     else
-      $display("Test 1: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
+      $fatal("Test 1: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
     // Test 2: INTT of polynomial size 8
     rst_n = 0;
@@ -74,7 +74,7 @@ module ntt_negative_tb;
     if (output_polynomial === expected_output_polynomial)
       $display("Test 2: Passed");
     else
-      $display("Test 2: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
+      $fatal("Test 2: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
 
     // Test 3: NTT with bigger numbers
@@ -98,7 +98,7 @@ module ntt_negative_tb;
     if (output_polynomial === expected_output_polynomial)
       $display("Test 3: Passed");
     else
-      $display("Test 3: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
+      $fatal("Test 3: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
 
     // Test 4: NTT with negative coefficients
@@ -122,8 +122,9 @@ module ntt_negative_tb;
     if (output_polynomial === expected_output_polynomial)
       $display("Test 4: Passed");
     else
-      $display("Test 4: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
+      $fatal("Test 4: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
+    $display("All tests for ntt_negative passed!");
     $finish;
   end
 
