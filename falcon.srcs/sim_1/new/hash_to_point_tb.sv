@@ -80,8 +80,7 @@ module hash_to_point_tb;
     // Check if the polynomial is correct
     for (i = 0; i < N; i++) begin
       if (polynomial[i] !== expected_polynomial[i]) begin
-        $display("Test 1 failed at index %d. Expected %d, got %d",i,expected_polynomial[i],polynomial[i]);
-        $fatal;
+        $fatal("Test 1 failed at index %d. Expected %d, got %d",i,expected_polynomial[i],polynomial[i]);
       end
     end
 
