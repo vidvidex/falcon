@@ -11,6 +11,9 @@
 // The module is based on the reference C implementation via a modified Python version to allow for easier implementing
 // See also scripts/ntt_from_reference_C.py and scripts/ntt_from_reference_C_for_FPGA.py
 //
+// Note that the coefficient in the output of this module are in a different order than the coefficient in the Python implementation of Falcon.
+// I have no idea why but the final polynomial multiplication still works fine so I think it "cancels out" when running INTT.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -23,19 +26,19 @@ module ntt_negative#(
     input logic mode, // 0: NTT, 1: Inverse NTT
 
     input logic start, //! Polynomial is valid, NTT can start
-    input logic [14:0] input_polynomial[0:N-1], //! Polynomial in coefficient form
+    input logic signed [14:0] input_polynomial[0:N-1], //! Polynomial in coefficient form
 
     output logic done, //! NTT is done and output_polynomial is valid
-    output logic [14:0] output_polynomial[0:N-1] //! Polynomial in NTT form
+    output logic signed [14:0] output_polynomial[0:N-1] //! Polynomial in NTT form
   );
 
-  logic [14:0] polynomial[0:N-1]; // Intermediate storage for polynomial
+  logic signed [14:0] polynomial[0:N-1]; // Intermediate storage for polynomial
   logic [$clog2(N):0] stage, counter, counter_max;
   logic [$clog2(N)-1:0] stride, butterfly;
   logic signed [$clog2(N):0] i; // Index for butterfly unit
   logic signed [$clog2(N)-1:0] group;
   logic [14:0] twiddle_factor;
-  logic [14:0] a, b;
+  logic signed [14:0] a, b;
 
   // This needs to be in the same module as opposed to being in a submodule because we need to access the value in the same clock cycle
   // Computed with scripts/NTT_negative_compute_twiddle_factors.py
@@ -60,16 +63,16 @@ module ntt_negative#(
 
 
   // Modulo 12289 multiplication
-  function [14:0] mod_mult(input [14:0] a, b);
-    logic [29:0] temp;
+  function [14:0] mod_mult(input logic signed [14:0] a, b);
+    logic signed [29:0] temp;
     begin
       temp = a * b;
-      mod_mult = temp % 12289;
+      mod_mult = (temp % 12289 + 12289) % 12289;  // Ensure the result is always in [0, 12289] range
     end
   endfunction
 
   // Modulo 12289 addition
-  function [14:0] mod_add(input [14:0] a, b);
+  function [14:0] mod_add(input logic signed [14:0] a, b);
     reg [15:0] temp;
     begin
       temp = a + b;
@@ -81,7 +84,7 @@ module ntt_negative#(
   endfunction
 
   // Modulo 12289 subtraction
-  function [14:0] mod_sub(input [14:0] a, b);
+  function [14:0] mod_sub(input logic signed [14:0] a, b);
     begin
       if (a >= b)
         mod_sub = a - b;
