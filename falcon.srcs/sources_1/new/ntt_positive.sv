@@ -11,6 +11,8 @@
 // This module is based on the Python implementation from https://cryptographycaffe.sandboxaq.com/posts/ntt-02/
 // See: scripts/ntt_iter.py
 //
+// Note: behavior with negative inputs has not been tested and it might not work.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 

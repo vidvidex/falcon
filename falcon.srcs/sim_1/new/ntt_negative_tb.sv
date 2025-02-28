@@ -7,24 +7,23 @@ module ntt_negative_tb;
 
   logic mode;
   logic start;
-  logic [14:0] input_polynomial[0:7];
-  logic [14:0] twiddle_factors[0:7];
+  logic signed [14:0] input_polynomial[0:7];
   logic done;
   logic [14:0] output_polynomial[0:7];
 
   logic [14:0] expected_output_polynomial[0:7];
 
   ntt_negative #(
-        .N(8)
-      )uut(
-        .clk(clk),
-        .rst_n(rst_n),
-        .mode(mode),
-        .start(start),
-        .input_polynomial(input_polynomial),
-        .done(done),
-        .output_polynomial(output_polynomial)
-      );
+                 .N(8)
+               )uut(
+                 .clk(clk),
+                 .rst_n(rst_n),
+                 .mode(mode),
+                 .start(start),
+                 .input_polynomial(input_polynomial),
+                 .done(done),
+                 .output_polynomial(output_polynomial)
+               );
 
   always #5 clk = ~clk;
 
@@ -77,7 +76,55 @@ module ntt_negative_tb;
     else
       $display("Test 2: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
-    // $finish;
+
+    // Test 3: NTT with bigger numbers
+    rst_n = 0;
+    #10;
+    rst_n = 1;
+    mode = 0;
+    input_polynomial = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+
+    // Start NTT
+    start = 1;
+    #10;
+    start = 0;
+
+    // Wait for NTT to finish
+    while (!done)
+      #10;
+
+    // Check output
+    expected_output_polynomial = {5550, 7668, 5033, 222, 2053, 777, 6055, 9216};
+    if (output_polynomial === expected_output_polynomial)
+      $display("Test 3: Passed");
+    else
+      $display("Test 3: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
+
+
+    // Test 4: NTT with negative coefficients
+    rst_n = 0;
+    #10;
+    rst_n = 1;
+    mode = 0;
+    input_polynomial = {-153,-108,143,-216,-49,222,81,152};
+
+    // Start NTT
+    start = 1;
+    #10;
+    start = 0;
+
+    // Wait for NTT to finish
+    while (!done)
+      #10;
+
+    // Check output
+    expected_output_polynomial = {2598, 1143, 7769, 7404, 5910, 11731, 1017, 10360};
+    if (output_polynomial === expected_output_polynomial)
+      $display("Test 4: Passed");
+    else
+      $display("Test 4: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
+
+    $finish;
   end
 
 endmodule
