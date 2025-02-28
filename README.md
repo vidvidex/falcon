@@ -4,7 +4,7 @@ This implementation supports N = 8 for development and debugging purposes and N 
 
 All reset signals are active high, except in shake256, where they are active low in some cases. TODO: fix this inconsistency.
 
-Coefficients are 15 bits `[14:0]`
+Coefficients are 15 bits `[14:0]` in signed decimal representation
 
 Folder `scripts` contains the various scripts used during implementation
 

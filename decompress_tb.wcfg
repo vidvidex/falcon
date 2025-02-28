@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="decompress_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="decompress_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="76.701 ns"></ZoomEndTime>
+      <Cursor1Time time="0.003 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="209"></NameColumnWidth>
+      <ValueColumnWidth column_width="277"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="16" />
+   <wvobject type="logic" fp_name="/decompress_tb/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/decompress_tb/rst_n">
+      <obj_property name="ElementShortName">rst_n</obj_property>
+      <obj_property name="ObjectShortName">rst_n</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/compressed_signature">
+      <obj_property name="ElementShortName">compressed_signature[191:0]</obj_property>
+      <obj_property name="ObjectShortName">compressed_signature[191:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/shifted_compressed_signature">
+      <obj_property name="ElementShortName">shifted_compressed_signature[191:0]</obj_property>
+      <obj_property name="ObjectShortName">shifted_compressed_signature[191:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/compressed_signature_valid_bits">
+      <obj_property name="ElementShortName">compressed_signature_valid_bits[6:0]</obj_property>
+      <obj_property name="ObjectShortName">compressed_signature_valid_bits[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/compressed_signature_valid_bits_total">
+      <obj_property name="ElementShortName">compressed_signature_valid_bits_total[31:0]</obj_property>
+      <obj_property name="ObjectShortName">compressed_signature_valid_bits_total[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/compressed_signature_valid_bits_initial">
+      <obj_property name="ElementShortName">compressed_signature_valid_bits_initial[31:0]</obj_property>
+      <obj_property name="ObjectShortName">compressed_signature_valid_bits_initial[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/expected_coefficients">
+      <obj_property name="ElementShortName">expected_coefficients[0:7][14:0]</obj_property>
+      <obj_property name="ObjectShortName">expected_coefficients[0:7][14:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/compressed_coef_length">
+      <obj_property name="ElementShortName">compressed_coef_length[6:0]</obj_property>
+      <obj_property name="ObjectShortName">compressed_coef_length[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/decompress_tb/decompression_done">
+      <obj_property name="ElementShortName">decompression_done</obj_property>
+      <obj_property name="ObjectShortName">decompression_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/decompress_tb/signature_error">
+      <obj_property name="ElementShortName">signature_error</obj_property>
+      <obj_property name="ObjectShortName">signature_error</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/coefficient">
+      <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+      <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/decompress_tb/coefficient_valid">
+      <obj_property name="ElementShortName">coefficient_valid</obj_property>
+      <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/i">
+      <obj_property name="ElementShortName">i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/expected_signature_length_bytes">
+      <obj_property name="ElementShortName">expected_signature_length_bytes[31:0]</obj_property>
+      <obj_property name="ObjectShortName">expected_signature_length_bytes[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/decompress_tb/expected_coefficient_count">
+      <obj_property name="ElementShortName">expected_coefficient_count[31:0]</obj_property>
+      <obj_property name="ObjectShortName">expected_coefficient_count[31:0]</obj_property>
+   </wvobject>
+</wave_config>
