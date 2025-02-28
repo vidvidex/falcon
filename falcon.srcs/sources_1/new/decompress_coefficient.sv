@@ -16,12 +16,14 @@
 // and decode multiple coefficients in parallel. We can use the compressed_coef_length of coefficient n to figure out where
 // to start decompressing coefficient n+1.
 //
+// The output of this module is coefficient in "signed decimal" representation
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module decompress_coefficient (
     input logic [104:0] compressed_signature, //! Compressed signature
 
-    output logic [14:0] coefficient,   //! Decompressed coefficient
+    output logic signed [14:0] coefficient,   //! Decompressed coefficient
     output logic [6:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
     output logic coefficient_error  //! Was an error detected in the compressed string?
   );
@@ -45,10 +47,21 @@ module decompress_coefficient (
 
   assign sign = compressed_signature[104];
   assign low = compressed_signature[103:97];
-  assign coefficient = {sign, high, low};
+
+
+  // Create final coefficient as signed decimal. If it's positive (sign == 0) then it's just {0, high, low}, if it's negative we also compute two's complement
+  always_comb begin
+    if (sign) begin
+      coefficient = -{1'b0, high, low}; // Negate the magnitude
+    end
+    else begin
+      coefficient = {1'b0, high, low};  // Keep magnitude unchanged
+    end
+  end
+
   assign compressed_coef_length = 1 + 7 + high + 1;  // 1 sign bit + 7 low bits + high bits (zeros) + 1 high bit (one)
 
-  // If coefficient is 0 and sign bit is 1 (-), we have an error (only sign + is allowed with coefficient 0) (algorithm 18, line 9)
-  assign coefficient_error = (coefficient == 15'b100000000000000 && sign == 1) ? 1'b1 : 1'b0;
+  // If {high, low} is 0 and sign bit is 1 (-), we have an error (only sign + is allowed with coefficient 0) (algorithm 18, line 9)
+  assign coefficient_error = ({sign, high, low} == 15'b100000000000000) ? 1'b1 : 1'b0;
 
 endmodule

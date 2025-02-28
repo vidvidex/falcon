@@ -45,22 +45,22 @@ module decompress_coefficient_tb;
     // Negative sign, low part=2, high part=0
     compressed_signature = {105'b1_0000010_1, {96{1'b0}}};
     #10;
-    assert_result(15'b100_0000_0000_0010, 9, 0);
+    assert_result(-2, 9, 0);  // Signed decimal: -2, signed magnitude: 15'b100_0000_0000_0010
 
     // Negative sign, low part=127, high part=16
     compressed_signature = {105'b1_1111111_00000000000000001, {80{1'b0}}};
     #10;
-    assert_result(15'b100_1000_0111_1111, 25, 0);
+    assert_result(-2175, 25, 0); // Signed decimal: -2175 , signed magnitude: 15'b100_1000_0111_1111
 
     // Positive sign, low part=0, high part=0 (valid representation of coefficient 0)
     compressed_signature = {105'b0_0000000_1, {96{1'b0}}};
     #10;
-    assert_result(15'b000_0000_0000_0000, 9, 0);
+    assert_result(0, 9, 0);  // Signed decimal: 0 , signed magnitude: 15'b000_0000_0000_0000
 
     // Negative sign, low part=0, high part=0 (invalid representation of coefficient 0)
     compressed_signature = {105'b1_0000000_1, {96{1'b0}}};
     #10;
-    assert_result(15'b100_0000_0000_0000, 9, 1);
+    assert_result(0, 9, 1);  // Signed decimal: 0 , signed magnitude: 15'b100_0000_0000_0000
 
     $display("All tests for decompress_coefficient passed!");
     $finish;

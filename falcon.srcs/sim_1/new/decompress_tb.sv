@@ -5,7 +5,7 @@ module decompress_tb;
   logic rst_n;
   logic [191:0] compressed_signature, shifted_compressed_signature; //! 192 bytes for signature in order to have enough space for testing the case when the signature is too long. These signatures are generated with key size 8.
   logic [6:0] compressed_signature_valid_bits;  // Number of valid bits in the compressed signature that is passed to the decompress module
-    int compressed_signature_valid_bits_total, compressed_signature_valid_bits_initial;  // Total and initial number of valid bits in compressed signature
+  int compressed_signature_valid_bits_total, compressed_signature_valid_bits_initial;  // Total and initial number of valid bits in compressed signature
   logic [14:0] expected_coefficients [0:7];
   logic [6:0] compressed_coef_length;
   logic decompression_done;
@@ -63,14 +63,14 @@ module decompress_tb;
     compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
     compressed_signature_valid_bits_initial = 0;
 
-    expected_coefficients[0] = 15'b000000010010111;
-    expected_coefficients[1] = 15'b100000010011100;
-    expected_coefficients[2] = 15'b000000001010001;
-    expected_coefficients[3] = 15'b100000010110000;
-    expected_coefficients[4] = 15'b000000010101010;
-    expected_coefficients[5] = 15'b000000001000100;
-    expected_coefficients[6] = 15'b100000000010111;
-    expected_coefficients[7] = 15'b100000010100101;
+    expected_coefficients[0] = 151;   // signed magnitude: 15'b000_0000_1001_0111;
+    expected_coefficients[1] = -156;  // signed magnitude: 15'b100_0000_1001_1100
+    expected_coefficients[2] = 81;    // signed magnitude: 15'b000_0000_0101_0001
+    expected_coefficients[3] = -176;  // signed magnitude: 15'b100_0000_1011_0000
+    expected_coefficients[4] = 170;   // signed magnitude: 15'b000_0000_1010_1010
+    expected_coefficients[5] = 68;    // signed magnitude: 15'b000_0000_0100_0100
+    expected_coefficients[6] = -23;   // signed magnitude: 15'b100_0000_0001_0111
+    expected_coefficients[7] = -165;  // signed magnitude: 15'b100_0000_1010_0101
 
     rst_n = 0;
     #10;
@@ -114,14 +114,14 @@ module decompress_tb;
     expected_coefficient_count = 8;
     compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expect
 
-    expected_coefficients[0] = 15'b000_0111_1000_0000;
-    expected_coefficients[1] = 15'b000_0111_1000_0000;
-    expected_coefficients[2] = 15'b000_0111_1000_0000;
-    expected_coefficients[3] = 15'b000_0111_1000_0000;
-    expected_coefficients[4] = 15'b000_0111_1000_0000;
-    expected_coefficients[5] = 15'b000_0111_1000_0000;
-    expected_coefficients[6] = 15'b000_0111_1000_0000;
-    expected_coefficients[7] = 15'b000_0111_1000_0000;
+    expected_coefficients[0] = 1920; // 1920 = signed magnitude/signed decimal: 15'b000_0111_1000_0000;
+    expected_coefficients[1] = 1920;
+    expected_coefficients[2] = 1920;
+    expected_coefficients[3] = 1920;
+    expected_coefficients[4] = 1920;
+    expected_coefficients[5] = 1920;
+    expected_coefficients[6] = 1920;
+    expected_coefficients[7] = 1920;
 
     rst_n = 0;
     #20;
