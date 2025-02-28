@@ -66,7 +66,12 @@ module verify_tb;
   initial begin
     clk = 1;
 
+    //////////////////////////////////////////////////////////////////////////////////
     // Test 1: Valid signature for N=8
+    //////////////////////////////////////////////////////////////////////////////////
+    message_block_index = 0;
+    signature_salt_block_index = 0;
+    signature_value_block_index = 0;
 
     // len("Hello World!") = 12
     message_len_bytes = 16'd12;
@@ -142,14 +147,84 @@ module verify_tb;
       $fatal("Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
 
 
-    // Test 2: Invalid signature for N=8
+    //////////////////////////////////////////////////////////////////////////////////
+    // Test 2: Invalid signature for N=8 (same values as in test 1 but signature is corrupted)
+    //////////////////////////////////////////////////////////////////////////////////
+    message_block_index = 0;
+    signature_salt_block_index = 0;
+    signature_value_block_index = 0;
+
+    // len("Hello World!") = 12
+    message_len_bytes = 16'd12;
+    message_blocks[0] = 64'h6f57206f6c6c6548; // "Hello Wo"
+    message_blocks[1] = 64'h0000000021646c72; // "rld!" + padding
+
+    // len(signature salt) = 40 bytes
+    signature_salt_blocks[0] = 64'h8ae56efee299ddaa;  // Last byte here should be '5d' but changed to 'aa' to make it invalid
+    signature_salt_blocks[1] = 64'h0ddf5a76484a58c2;
+    signature_salt_blocks[2] = 64'he5c9678b2d3ccf73;
+    signature_salt_blocks[3] = 64'haeb69f7b17f6be7d;
+    signature_salt_blocks[4] = 64'h0bdfb438301f6d76;
+
+    // len(signature value) = 11 bytes = 88 bits
+    signature_value_blocks[0] = 64'h997b21eec3635e54;
+    signature_value_blocks[1] = 64'h6308000000000000;
+    signature_value_valid_blocks[0] = 7'd64;
+    signature_value_valid_blocks[1] = 7'd24;
+
+    rst_n = 0;
+    #50;
+    rst_n = 1;
+    start = 1;
+
+    // Run until we get the result
+    while (!accept && !reject) begin
+
+      // Send new signature salt block if module is ready for it
+      // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
+      // We also have to make sure we don't send more than 5 blocks, since we only have 5 blocks of salt
+      if ((signature_salt_block_index == 0 || signature_salt_ready) && signature_salt_block_index < 5) begin
+        signature_salt = signature_salt_blocks[signature_salt_block_index];
+        signature_salt_valid = 1;
+        signature_salt_block_index = signature_salt_block_index + 1;
+      end
+      else if (signature_salt_block_index >= 5)  // Set valid to low after we've sent all salt blocks
+        signature_salt_valid = 0;
+
+      // Send new message block if module is ready for it
+      if ((message_block_index == 0 || message_ready) && message_block_index < 2) begin
+        message = message_blocks[message_block_index];
+        message_valid = 1;
+        message_block_index = message_block_index + 1;
+      end
+      else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
+        message_valid = 0;
+
+      // Send new signature value block if module is ready for it
+      if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
+        signature_value = signature_value_blocks[signature_value_block_index];
+        signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
+        signature_value_block_index = signature_value_block_index + 1;
+      end
+      else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
+        signature_value_valid = 0;
+
+      #10;
+      start = 0;
+    end
+
+    // Check that it was rejected
+    if (!accept && reject)
+      $display("Test 2: Passed");
+    else
+      $fatal("Test 2: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
 
     // Test 3: Valid signature for N=512
 
     // Test 4: Valid signature for N=1024
 
-
-    // $finish;
+    $display("All tests for verify passed!");
+    $finish;
   end
 
 endmodule

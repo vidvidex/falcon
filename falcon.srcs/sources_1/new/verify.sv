@@ -153,7 +153,7 @@ module verify#(
   logic ntt_start; //! Start signal for NTT module
   logic ntt_mode; //! 0 - NTT, 1 - INTT
   logic ntt_done; //! Set high when NTT module is done and ntt_output is valid
-  logic [$clog2(N):0] mult_mod_q_index=0, sub_and_normalize_index=0, squared_norm_index=0; // Indices used for iterating over the buffer arrays. Need to be large enough to store N.
+  logic [$clog2(N):0] mult_mod_q_index, sub_and_normalize_index, squared_norm_index; // Indices used for iterating over the buffer arrays. Need to be large enough to store N.
 
   // The size is selected so that when we iteratively compute it we can check if it's larger than the bound^2 on each iteration, since 27 bits is enough for the value at previous iteration
   // to be 70265242-1 and to this we add (-6145)^2 (this is the worst case scenario)
@@ -323,6 +323,12 @@ module verify#(
 
         accept <= 1'b0;
         reject <= 1'b0;
+
+        // Reset variables in case we run the module multiple times
+        mult_mod_q_index <= 0;
+        sub_and_normalize_index <= 0;
+        squared_norm_index <= 0;
+        squared_norm <= 0;
       end
 
       START_NTT_PUBLIC_KEY: begin

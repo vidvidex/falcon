@@ -11,9 +11,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="853.820 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,029.236 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,233.820 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,409.236 ns"></ZoomEndTime>
+      <Cursor1Time time="1,380.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="209"></NameColumnWidth>
@@ -189,7 +189,7 @@
          <wvobject type="array" fp_name="/verify_tb/uut/htp_polynomial">
             <obj_property name="ElementShortName">htp_polynomial[0:7][14:0]</obj_property>
             <obj_property name="ObjectShortName">htp_polynomial[0:7][14:0]</obj_property>
-            <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/verify_tb/uut/htp_polynomial_valid">
             <obj_property name="ElementShortName">htp_polynomial_valid</obj_property>
@@ -328,6 +328,7 @@
          <wvobject type="array" fp_name="/verify_tb/uut/temp">
             <obj_property name="ElementShortName">temp[26:0]</obj_property>
             <obj_property name="ObjectShortName">temp[26:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/squared_norm">
             <obj_property name="ElementShortName">squared_norm[26:0]</obj_property>
