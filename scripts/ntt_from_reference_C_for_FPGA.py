@@ -2,6 +2,7 @@
 # modified to be easier to implement in hardware, especially by removing most of the loops
 # This computes positive-wrapped NTT.
 
+
 def ntt(arr, twiddles, q):
     n = len(arr)
     stage = 1
@@ -76,7 +77,7 @@ def intt(arr, twiddles, q):
         b = arr[i + stride]
         arr[i] = (a + b) % q
         arr[i + stride] = ((a - b) * twiddle) % q
-        pass
+
     for group in range(n):
         arr[group] = (arr[group] * pow(n, -1, q)) % q
 
