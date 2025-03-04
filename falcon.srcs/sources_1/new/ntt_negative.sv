@@ -151,7 +151,7 @@ module ntt_negative#(
   end
 
   // NTT
-  always_ff @(posedge clk or negedge rst_n) begin
+  always_ff @(posedge clk) begin
 
     // State change, use = instead of <= so we can start processing in the same cycle as it was changed
     if (rst_n == 1'b0)

@@ -86,7 +86,7 @@ module verify#(
   logic signed [14:0] decompressed_coefficients [0:N-1];
   logic [5:0] compressed_coef_length; //! Number of bits that were used to compress the coefficient
   logic coefficient_valid; //! Is coefficient valid
-  logic signature_error=0; //! Set to true if the signature is invalid
+  logic signature_error; //! Set to true if the signature is invalid
   logic squared_norm_error=0; //! Set to true if the squared norm is larger than the bound^2
   logic decompression_done; //! Set to true if the decompression is done
   logic [$clog2(N)-1:0] coefficient_index = 0; //! Index of the coefficient that is currently being decompressed
@@ -375,8 +375,8 @@ module verify#(
         reject <= 1'b0;
 
         // Compute MULT_MOD_Q_OPS_PER_CYCLE coefficients per clock cycle
-        for (int i = mult_mod_q_index; i < mult_mod_q_index + MULT_MOD_Q_OPS_PER_CYCLE; i = i + 1) begin
-          ntt_buffer1[i] <= mod_mult(ntt_buffer1[i], ntt_buffer2[i]);
+        for (int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i = i + 1) begin
+          ntt_buffer1[i + mult_mod_q_index] <= mod_mult(ntt_buffer1[i + mult_mod_q_index], ntt_buffer2[i + mult_mod_q_index]);
         end
 
         mult_mod_q_index <= mult_mod_q_index + MULT_MOD_Q_OPS_PER_CYCLE;
@@ -417,18 +417,18 @@ module verify#(
         reject <= 1'b0;
 
         // Compute SUB_AND_NORMALIZE_OPS_PER_CYCLE coefficients per clock cycle
-        for (int i = sub_and_normalize_index; i < sub_and_normalize_index + SUB_AND_NORMALIZE_OPS_PER_CYCLE; i = i + 1) begin
+        for (int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i = i + 1) begin
 
           logic [14:0] temp;
 
           // Subtract htp_polynomial from INTT(product)
-          temp = mod_sub(htp_polynomial[i], ntt_buffer1[i]);
+          temp = mod_sub(htp_polynomial[i+sub_and_normalize_index], ntt_buffer1[i+sub_and_normalize_index]);
 
           // Normalize to [-q/2, q/2]
           if (temp > 6144)
-            ntt_buffer1[i] <= temp - 12289;
+            ntt_buffer1[i+sub_and_normalize_index] <= temp - 12289;
           else
-            ntt_buffer1[i] <= temp;
+            ntt_buffer1[i+sub_and_normalize_index] <= temp;
         end
 
         sub_and_normalize_index <= sub_and_normalize_index + SUB_AND_NORMALIZE_OPS_PER_CYCLE;
@@ -442,10 +442,10 @@ module verify#(
         reject <= 1'b0;
 
         // Compute SQUARED_NORM_OPS_PER_CYCLE coefficients per clock cycle
-        for (int i = squared_norm_index; i < squared_norm_index + SQUARED_NORM_OPS_PER_CYCLE; i = i + 1) begin
+        for (int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i = i + 1) begin
 
           // squared_norm += normalized^2 + decompressed_coefficients^2
-          temp = ntt_buffer1[i] * ntt_buffer1[i] + decompressed_coefficients[i] * decompressed_coefficients[i]; // We need to multiply this in a separate variable, otherwise the sum is not correct (not idea why)
+          temp = ntt_buffer1[i+squared_norm_index] * ntt_buffer1[i+squared_norm_index] + decompressed_coefficients[i+squared_norm_index] * decompressed_coefficients[i+squared_norm_index]; // We need to multiply this in a separate variable, otherwise the sum is not correct (not idea why)
           squared_norm = squared_norm + temp;
 
           // Check if the squared norm is larger than the bound^2

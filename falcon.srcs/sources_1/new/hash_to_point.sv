@@ -25,7 +25,7 @@ module hash_to_point#(
     input logic message_valid, //! Is message valid
 
     output logic ready, //! Are we ready to receive the next message? When set we are ready to receive the next message
-    output logic [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
+    output logic signed [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
     output logic polynomial_valid //! Is polynomial valid
   );
 
@@ -160,16 +160,16 @@ module hash_to_point#(
 
       // For each of the potential coefficients check if they are less than k*q (part of specification) and also check if we have already filled the polynomial
       if (t1 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] <= t1 % q;
+        polynomial[polynomial_index++] = t1 % q;
 
       if (t2 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] <= t2 % q;
+        polynomial[polynomial_index++] = t2 % q;
 
       if (t3 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] <= t3 % q;
+        polynomial[polynomial_index++] = t3 % q;
 
       if (t4 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] <= t4 % q;
+        polynomial[polynomial_index++] = t4 % q;
     end
   end
 
