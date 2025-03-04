@@ -12,7 +12,7 @@ module verify_tb;
   logic [63:0] signature_value_blocks [2];   // Buffer for signature value blocks
   logic [6:0] signature_value_valid_blocks [2];   // Buffer for signature value valid blocks
 
-  logic [14:0] public_key[0:7] = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+  logic [14:0] public_key[8] = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
 
   logic [15:0] message_len_bytes; //! Length of the message in bytes
   logic [63:0] message;
@@ -61,6 +61,47 @@ module verify_tb;
            .reject(reject)
          );
 
+  // Provides the verify module with the right data at the right time
+  task run_test;
+    begin
+      // Run until we get the result
+      while (!accept && !reject) begin
+
+        // Send new signature salt block if module is ready for it
+        // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
+        // We also have to make sure we don't send more than 5 blocks, since we only have 5 blocks of salt
+        if ((signature_salt_block_index == 0 || signature_salt_ready) && signature_salt_block_index < 5) begin
+          signature_salt = signature_salt_blocks[signature_salt_block_index];
+          signature_salt_valid = 1;
+          signature_salt_block_index = signature_salt_block_index + 1;
+        end
+        else if (signature_salt_block_index >= 5)  // Set valid to low after we've sent all salt blocks
+          signature_salt_valid = 0;
+
+        // Send new message block if module is ready for it
+        if ((message_block_index == 0 || message_ready) && message_block_index < 2) begin
+          message = message_blocks[message_block_index];
+          message_valid = 1;
+          message_block_index = message_block_index + 1;
+        end
+        else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
+          message_valid = 0;
+
+        // Send new signature value block if module is ready for it
+        if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
+          signature_value = signature_value_blocks[signature_value_block_index];
+          signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
+          signature_value_block_index = signature_value_block_index + 1;
+        end
+        else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
+          signature_value_valid = 0;
+
+        #10;
+        start = 0;
+      end
+    end
+  endtask
+
   always #5 clk = ~clk;
 
   initial begin
@@ -96,49 +137,7 @@ module verify_tb;
     rst_n = 1;
     start = 1;
 
-    // Run until we get the result
-    while (!accept && !reject) begin
-
-      // Send new signature salt block if module is ready for it
-      // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
-      // We also have to make sure we don't send more than 5 blocks, since we only have 5 blocks of salt
-      if ((signature_salt_block_index == 0 || signature_salt_ready) && signature_salt_block_index < 5) begin
-        signature_salt = signature_salt_blocks[signature_salt_block_index];
-        signature_salt_valid = 1;
-        signature_salt_block_index = signature_salt_block_index + 1;
-      end
-      else if (signature_salt_block_index >= 5)  // Set valid to low after we've sent all salt blocks
-        signature_salt_valid = 0;
-
-      // Send new message block if module is ready for it
-      if ((message_block_index == 0 || message_ready) && message_block_index < 2) begin
-        message = message_blocks[message_block_index];
-        message_valid = 1;
-        message_block_index = message_block_index + 1;
-      end
-      else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
-        message_valid = 0;
-
-      // Debugging help:
-      // After sending both salt and message the valid polynomial should be
-      // [1112, 5539, 5209, 3423, 2324, 1901, 12163, 9202] (signed decimal)
-
-      // Send new signature value block if module is ready for it
-      if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
-        signature_value = signature_value_blocks[signature_value_block_index];
-        signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
-        signature_value_block_index = signature_value_block_index + 1;
-      end
-      else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
-        signature_value_valid = 0;
-
-      // Debugging help:
-      // After sending the valid decompressed signature should be
-      // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
-
-      #10;
-      start = 0;
-    end
+    run_test();
 
     // Check that it was accepted
     if (accept && !reject)
@@ -177,41 +176,13 @@ module verify_tb;
     rst_n = 1;
     start = 1;
 
-    // Run until we get the result
-    while (!accept && !reject) begin
-
-      // Send new signature salt block if module is ready for it
-      // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
-      // We also have to make sure we don't send more than 5 blocks, since we only have 5 blocks of salt
-      if ((signature_salt_block_index == 0 || signature_salt_ready) && signature_salt_block_index < 5) begin
-        signature_salt = signature_salt_blocks[signature_salt_block_index];
-        signature_salt_valid = 1;
-        signature_salt_block_index = signature_salt_block_index + 1;
-      end
-      else if (signature_salt_block_index >= 5)  // Set valid to low after we've sent all salt blocks
-        signature_salt_valid = 0;
-
-      // Send new message block if module is ready for it
-      if ((message_block_index == 0 || message_ready) && message_block_index < 2) begin
-        message = message_blocks[message_block_index];
-        message_valid = 1;
-        message_block_index = message_block_index + 1;
-      end
-      else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
-        message_valid = 0;
-
-      // Send new signature value block if module is ready for it
-      if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
-        signature_value = signature_value_blocks[signature_value_block_index];
-        signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
-        signature_value_block_index = signature_value_block_index + 1;
-      end
-      else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
-        signature_value_valid = 0;
-
-      #10;
-      start = 0;
-    end
+    run_test();
+    // Debugging help:
+    // After sending both salt and message the valid polynomial should be
+    // [1112, 5539, 5209, 3423, 2324, 1901, 12163, 9202] (signed decimal)
+    //
+    // After sending the valid decompressed signature should be
+    // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
 
     // Check that it was rejected
     if (!accept && reject)
