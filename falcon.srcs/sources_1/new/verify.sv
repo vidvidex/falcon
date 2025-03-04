@@ -10,7 +10,7 @@ module verify#(
     parameter int SIGNATURE_LENGTH,
     parameter int MULT_MOD_Q_OPS_PER_CYCLE = 4, //! The number of operations per cycle for the MULT_MOD_Q module. N should be divisible by this number.
     parameter int SUB_AND_NORMALIZE_OPS_PER_CYCLE = 4, //! The number of operations per cycle for the SUB_AND_NORMALIZE module. N should be divisible by this number.
-    parameter int SQUARED_NORM_OPS_PER_CYCLE = 1 //! The number of operations per cycle for the SQUARED_NORM module. N should be divisible by this number.
+    parameter int SQUARED_NORM_OPS_PER_CYCLE = 4 //! The number of operations per cycle for the SQUARED_NORM module. N should be divisible by this number.
   )(
     input logic clk,
     input logic rst_n,
