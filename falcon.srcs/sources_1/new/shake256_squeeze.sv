@@ -32,7 +32,7 @@ module shake256_squeeze(
   assign rate_counter_eq = (rate_counter=='d128) ? 1'b1 : 1'b0; // 128 = rate - 8 (rate for SHAKE256 is 1088 bits = 136 bytes)
   assign state_reg_sel = rate_counter[7:3];
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if(rst || rst_rate_counter)
       rate_counter <= 8'd0;
     else if(inc_rate_counter)
@@ -41,85 +41,85 @@ module shake256_squeeze(
       rate_counter <= rate_counter;
   end
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if(rst)
       state <= 4'd0;
     else
       state <= next_state;
   end
 
-  always @(state) begin
+  always_comb begin
     case(state)
       4'd0: begin // Reset state
-        rst_rate_counter<=1;
-        call_keccak_f1600<=0;
-        inc_rate_counter<=0;
-        data_out_valid<=0;
-        we_output_buffer<=1;
-        shift_output_buffer<=0;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 0;
+        inc_rate_counter = 0;
+        data_out_valid = 0;
+        we_output_buffer = 1;
+        shift_output_buffer = 0;
       end
 
       4'd1: begin // Start squeeze
-        rst_rate_counter<=0;
-        call_keccak_f1600<=1;
-        inc_rate_counter<=1;
-        data_out_valid<=1;
-        we_output_buffer<=0;
-        shift_output_buffer<=1;
+        rst_rate_counter = 0;
+        call_keccak_f1600 = 1;
+        inc_rate_counter = 1;
+        data_out_valid = 1;
+        we_output_buffer = 0;
+        shift_output_buffer = 1;
       end
 
       4'd2: begin
-        rst_rate_counter<=1;
-        call_keccak_f1600<=1;
-        inc_rate_counter<=0;
-        data_out_valid<=0;
-        we_output_buffer<=0;
-        shift_output_buffer<=0;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 1;
+        inc_rate_counter = 0;
+        data_out_valid = 0;
+        we_output_buffer = 0;
+        shift_output_buffer = 0;
       end
 
       4'd3: begin
-        rst_rate_counter<=0;
-        call_keccak_f1600<=0;
-        inc_rate_counter<=0;
-        data_out_valid<=0;
-        we_output_buffer<=1;
-        shift_output_buffer<=0;
+        rst_rate_counter = 0;
+        call_keccak_f1600 = 0;
+        inc_rate_counter = 0;
+        data_out_valid = 0;
+        we_output_buffer = 1;
+        shift_output_buffer = 0;
       end
       default: begin // Reset
-        rst_rate_counter<=1;
-        call_keccak_f1600<=0;
-        inc_rate_counter<=0;
-        data_out_valid<=0;
-        we_output_buffer<=0;
-        shift_output_buffer<=0;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 0;
+        inc_rate_counter = 0;
+        data_out_valid = 0;
+        we_output_buffer = 0;
+        shift_output_buffer = 0;
       end
     endcase
   end
 
-  always @(state or rate_counter_eq or keccak_round_complete) begin
+  always_comb begin
     case(state)
       4'd0: begin
-        next_state <= 4'd1;
+        next_state = 4'd1;
       end
 
       4'd1: begin
         if(rate_counter_eq)
-          next_state <= 4'd2;
+          next_state = 4'd2;
         else
-          next_state <= 4'd1;
+          next_state = 4'd1;
       end
 
       4'd2: begin
         if(keccak_round_complete)
-          next_state <= 4'd3;
+          next_state = 4'd3;
         else
-          next_state <= 4'd2;
+          next_state = 4'd2;
       end
       4'd3: begin
-        next_state <= 4'd1;
+        next_state = 4'd1;
       end
       default:
-        next_state <= 4'd0;
+        next_state = 4'd0;
     endcase
   end
 

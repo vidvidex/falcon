@@ -43,6 +43,7 @@ module hash_to_point#(
   logic shake256_ready;
   logic [63:0] data_out;
   logic data_out_valid;
+  logic [1:0] valid_high_counter; //! Counter how many cycles we've been in the SET_VALID state
   logic shake256_reset; // Reset signal for shake256 module, active high
   logic unsigned [$clog2(N):0] polynomial_index; // Index of the polynomial that we are currently writing to
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
@@ -67,85 +68,86 @@ module hash_to_point#(
 
 
   always_ff @(posedge clk or negedge rst_n) begin
-    if (rst_n == 1'b0)
+    if (rst_n == 1'b0) begin
       state <= IDLE;
+      polynomial_index <= 0;
+      valid_high_counter <= 0;
+    end
     else
       state <= next_state;
+
+    // Count the number of cycles spent in the SET_VALID state
+    if(state == SET_VALID)
+      valid_high_counter <= valid_high_counter + 1;
   end
 
-  // TODO: this should be a always_comb block, but the tests fail then so we have to fix it at some point. (with always_comb the state transitions are much faster than with always_ff, since next_state determination is not synchronized to the clock)
-  always_ff @(posedge clk) begin
+  always_comb begin
     case (state)
       IDLE: begin   // Waiting for the input message to be valid and shake256 to be ready
         if (message_valid && shake256_ready)
-          next_state <= SET_VALID;
+          next_state = SET_VALID;
       end
-      SET_VALID: begin  // Set valid signal high one cycle before absorbing the message. I have no idea why this is necessary.
-        next_state <= ABSORB;
+      SET_VALID: begin  // Set valid signal high two cycles before absorbing the message. I have no idea why this is necessary.
+
+        if(valid_high_counter >= 1)
+          next_state = ABSORB;
       end
       ABSORB: begin // Input other blocks of the message to the shake256
         if (message_valid == 1'b0)  // If the message is done, then squeeze out the hash
-          next_state <= WAIT_FOR_SQUEEZE;
+          next_state = WAIT_FOR_SQUEEZE;
       end
       WAIT_FOR_SQUEEZE: begin  // Wait for the shake256 to start outputting the hash
         if (data_out_valid)
-          next_state <= WAIT_FOR_SQUEEZE_END;
+          next_state = WAIT_FOR_SQUEEZE_END;
       end
       WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low). If we have all coefficients we can go back to IDLE, otherwise we go to WAIT_FOR_SQUEEZE and wait for more data
         if (!data_out_valid)
           if (polynomial_index < N)
-            next_state <= WAIT_FOR_SQUEEZE;
+            next_state = WAIT_FOR_SQUEEZE;
           else
-            next_state <= IDLE;
+            next_state = IDLE;
       end
       default: begin
-        next_state <= IDLE;
+        next_state = IDLE;
       end
     endcase
   end
 
   always_comb begin
-    if (rst_n == 1'b0) begin
-      ready = 0;
-      shake256_reset = 1;
-      polynomial_index = 0;
-    end
-    else begin
-      case(state)
-        IDLE: begin
-          data_in = 0;
-          data_in_valid = 0;
-          ready = 0;
-          shake256_reset = 1;
-        end
-        SET_VALID: begin
-          data_in = 0;
-          data_in_valid = 1;
-          ready = 0;
-          shake256_reset = 0;
-        end
-        ABSORB: begin
-          data_in = message;
-          data_in_valid = 1;
-          ready = 1;
-          shake256_reset = 0;
-        end
-        WAIT_FOR_SQUEEZE: begin
-          data_in = 0;
-          data_in = 0;
-          data_in_valid = 0;
-          ready = 0;
-          shake256_reset = 0;
-        end
-        WAIT_FOR_SQUEEZE_END: begin
-          data_in = 0;
-          data_in = 0;
-          data_in_valid = 0;
-          ready = 0;
-          shake256_reset = 0;
-        end
-      endcase
-    end
+    case(state)
+      IDLE: begin
+        data_in = 0;
+        data_in_valid = 0;
+        ready = 0;
+        shake256_reset = 1;
+      end
+      SET_VALID: begin
+        data_in = 0;
+        data_in_valid = 1;
+        ready = 0;
+        shake256_reset = 0;
+      end
+      ABSORB: begin
+        data_in = message;
+        data_in_valid = 1;
+        ready = 1;
+        shake256_reset = 0;
+      end
+      WAIT_FOR_SQUEEZE: begin
+        data_in = 0;
+        data_in = 0;
+        data_in_valid = 0;
+        ready = 0;
+        shake256_reset = 0;
+      end
+      WAIT_FOR_SQUEEZE_END: begin
+        data_in = 0;
+        data_in = 0;
+        data_in_valid = 0;
+        ready = 0;
+        shake256_reset = 0;
+      end
+    endcase
   end
 
   // When we get valid hash data we can convert it to polynomials
