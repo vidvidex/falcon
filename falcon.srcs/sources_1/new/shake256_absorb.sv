@@ -26,7 +26,15 @@ module shake256_absorb(
   reg rst_rate_counter, inc_rate_counter;
   wire messageLen_lt_8, messageLen_lte_8, rate_counter_eq, last_rate_byte;
 
-  reg [2:0] state, next_state;
+  typedef enum {
+            IDLE,
+            ABSORB,
+            CONSUME_DELIMITED_SUFFIX,
+            RATE_COMPLETE,
+            FINALIZE
+          } state_t;
+  state_t state, next_state;
+
   reg delimitedSuffix_used;
   logic [7:0] delimitedSuffix = 8'h1f;
   logic [7:0] rateInBytes = 8'd136;
@@ -70,7 +78,7 @@ module shake256_absorb(
   always_ff @(posedge clk) begin
     if(rst)
       delimitedSuffix_used <= 1'b0;
-    else if(delimitedSuffix_used==1'b0 && messageLen_lt_8==1'b1 && state==3'd2) // Note: delimitedSuffix is used only in state=2 (during the first cycle).
+    else if(delimitedSuffix_used==1'b0 && messageLen_lt_8==1'b1 && state==CONSUME_DELIMITED_SUFFIX) // Note: delimitedSuffix is used only in state=2 (during the first cycle).
       delimitedSuffix_used <= 1'b1;
     else
       delimitedSuffix_used <= delimitedSuffix_used;
@@ -94,110 +102,109 @@ module shake256_absorb(
   assign rate_counter_eq = (rate_counter==(rateInBytes-8'd8)) ? 1'b1 : 1'b0;
   assign last_rate_byte = (messageLen_lt_8==1'b1 && rate_counter_eq==1'b1) ? 1'b1 : 1'b0;
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if(rst)
-      state <= 3'd0;
+      state <= IDLE;
     else
       state <= next_state;
   end
 
-  always @(state or din_valid or messageLen_lt_8 or rate_counter_eq) begin
+  always_comb begin
     case(state)
-      3'd0: begin // Reset state
-        ready<=1;
-        rst_rate_counter<=1;
-        inc_rate_counter<=0;
-        dec_messageLen<=0;
-        data_in_padded_valid<=0;
-        call_keccak_f1600<=0;
+      IDLE: begin // Reset state
+        ready = 1;
+        rst_rate_counter = 1;
+        inc_rate_counter = 0;
+        dec_messageLen = 0;
+        data_in_padded_valid = 0;
+        call_keccak_f1600 = 0;
       end
-      3'd1: begin // Absorb 8 bytes every cycle; Stays in this state till {rate_counter=rateInBytes-8; or remaining message len is <8 bytes}
-        ready<=1;
-        rst_rate_counter<=0;
-        call_keccak_f1600<=0;
+      ABSORB: begin // Absorb 8 bytes every cycle; Stays in this state till {rate_counter=rateInBytes-8; or remaining message len is <8 bytes}
+        ready = 1;
+        rst_rate_counter = 0;
+        call_keccak_f1600 = 0;
         if(din_valid) begin
-          inc_rate_counter<=1;
-          data_in_padded_valid<=1;
+          inc_rate_counter = 1;
+          data_in_padded_valid = 1;
         end
         else begin
-          inc_rate_counter<=0;
-          data_in_padded_valid<=0;
+          inc_rate_counter = 0;
+          data_in_padded_valid = 0;
         end
         if(din_valid==1'b1)
-          dec_messageLen<=1;
+          dec_messageLen = 1;
         else
-          dec_messageLen<=0;
+          dec_messageLen = 0;
       end
-      3'd2: begin // Visited when messageLen was < rate in State1 ; Stay in this state till {rate_counter=rateInBytes-8}. delimitedSuffix_used is used in this state.
-        ready<=1;
-        rst_rate_counter<=0;
-        call_keccak_f1600<=0;
-        inc_rate_counter<=1;
-        data_in_padded_valid<=1;
-        dec_messageLen<=0;
+      CONSUME_DELIMITED_SUFFIX: begin // Visited when messageLen was < rate in ABSORB ; Stay in this state till {rate_counter=rateInBytes-8}. delimitedSuffix_used is used in this state.
+        ready = 1;
+        rst_rate_counter = 0;
+        call_keccak_f1600 = 0;
+        inc_rate_counter = 1;
+        data_in_padded_valid = 1;
+        dec_messageLen = 0;
       end
-      3'd3: begin // Visited after state1 when rate_counter completes the specified rate. Calls keccak-f1600
-        ready<=0;
-        rst_rate_counter<=1;
-        inc_rate_counter<=0;
-        dec_messageLen<=0;
-        data_in_padded_valid<=0;
-        call_keccak_f1600<=1;
+      RATE_COMPLETE: begin // Visited after ABSORB when rate_counter completes the specified rate. Calls keccak-f1600
+        ready = 0;
+        rst_rate_counter = 1;
+        inc_rate_counter = 0;
+        dec_messageLen = 0;
+        data_in_padded_valid = 0;
+        call_keccak_f1600 = 1;
       end
 
-      3'd4: begin // Absorb complete
-        ready<=1;
-        rst_rate_counter<=1;
-        inc_rate_counter<=0;
-        dec_messageLen<=0;
-        data_in_padded_valid<=0;
-        call_keccak_f1600<=0;
+      FINALIZE: begin // Absorb complete
+        ready = 1;
+        rst_rate_counter = 1;
+        inc_rate_counter = 0;
+        dec_messageLen = 0;
+        data_in_padded_valid = 0;
+        call_keccak_f1600 = 0;
       end
       default: begin // Reset state
-        ready<=1;
-        rst_rate_counter<=1;
-        inc_rate_counter<=0;
-        dec_messageLen<=0;
-        data_in_padded_valid<=0;
-        call_keccak_f1600<=0;
+        ready = 1;
+        rst_rate_counter = 1;
+        inc_rate_counter = 0;
+        dec_messageLen = 0;
+        data_in_padded_valid = 0;
+        call_keccak_f1600 = 0;
       end
     endcase
   end
 
-  always @(state or messageLen_lte_8 or messageLen_lt_8 or rate_counter_eq
-             or keccak_round_complete or delimitedSuffix_used) begin
+  always_comb begin
     case(state)
-      3'd0:
-        next_state <= 3'd1;
-      3'd1: begin
+      IDLE:
+        next_state = ABSORB;
+      ABSORB: begin
         if(rate_counter_eq)
-          next_state <= 3'd3;
+          next_state = RATE_COMPLETE;
         else if(messageLen_lte_8)
-          next_state <= 3'd2;
+          next_state = CONSUME_DELIMITED_SUFFIX;
         else
-          next_state <= 3'd1;
+          next_state = ABSORB;
       end
-      3'd2: begin
+      CONSUME_DELIMITED_SUFFIX: begin
         if(rate_counter_eq)
-          next_state <= 3'd3;
+          next_state = RATE_COMPLETE;
         else
-          next_state <= 3'd2;
+          next_state = CONSUME_DELIMITED_SUFFIX;
       end
-      3'd3: begin
+      RATE_COMPLETE: begin
         if(messageLen_lt_8 && keccak_round_complete && delimitedSuffix_used)
-          next_state <= 3'd4;
+          next_state = FINALIZE;
         else if(messageLen_lt_8 && keccak_round_complete && delimitedSuffix_used==1'b0) // This is a special case: happens when message length is a multiple of keccak_rate. The delimitedSuffix and following 0s need to be consumed next.
-          next_state <= 3'd2;
+          next_state = CONSUME_DELIMITED_SUFFIX;
         else if(keccak_round_complete)
-          next_state <= 3'd1;
+          next_state = ABSORB;
         else
-          next_state <= 3'd3;
+          next_state = RATE_COMPLETE;
       end
 
-      3'd4:
-        next_state <= 3'd4;
+      FINALIZE:
+        next_state = FINALIZE;
       default:
-        next_state <= 3'd0;
+        next_state = IDLE;
     endcase
   end
 

@@ -97,7 +97,7 @@ module shake256_rounds(
   assign state_out[63+64*5*4+64*4:64*5*4+64*4] = lanes_out[63+64*5*4+64*4:64*5*4+64*4];
 
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if(rst)
       round_nr <= 5'd31;
     else if(round_nr!=5'd24)
@@ -108,7 +108,7 @@ module shake256_rounds(
 
   assign we_state_out = (round_nr<5'd24) ? 1'b1 : 1'b0;
 
-  always @(posedge clk) begin
+  always_ff @(posedge clk) begin
     if(rst)
       final_round <= 1'b0;
     else if(round_nr==5'd22)
