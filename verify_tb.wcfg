@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1,233.820 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,409.236 ns"></ZoomEndTime>
-      <Cursor1Time time="1,380.000 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="156.601 ns"></ZoomEndTime>
+      <Cursor1Time time="80.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="209"></NameColumnWidth>
-      <ValueColumnWidth column_width="273"></ValueColumnWidth>
+      <ValueColumnWidth column_width="265"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="2" />
+   <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group675">
       <obj_property name="label">TB</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -31,6 +31,10 @@
       <wvobject type="logic" fp_name="/verify_tb/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/verify_tb/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/verify_tb/message_blocks">
          <obj_property name="ElementShortName">message_blocks[0:1][63:0]</obj_property>
@@ -47,7 +51,10 @@
       <wvobject type="array" fp_name="/verify_tb/signature_value_valid_blocks">
          <obj_property name="ElementShortName">signature_value_valid_blocks[0:1][6:0]</obj_property>
          <obj_property name="ObjectShortName">signature_value_valid_blocks[0:1][6:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/verify_tb/public_key">
+         <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/verify_tb/message_len_bytes">
          <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
@@ -110,10 +117,13 @@
          <obj_property name="ObjectShortName">signature_value_block_index[31:0]</obj_property>
       </wvobject>
    </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/test">
+      <obj_property name="ElementShortName">test[31:0]</obj_property>
+      <obj_property name="ObjectShortName">test[31:0]</obj_property>
+   </wvobject>
    <wvobject type="group" fp_name="group676">
       <obj_property name="label">verify</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/verify_tb/uut/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -203,7 +213,6 @@
       <wvobject type="group" fp_name="group929">
          <obj_property name="label">decompress</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/verify_tb/uut/compressed_signature_buffer">
             <obj_property name="ElementShortName">compressed_signature_buffer[191:0]</obj_property>
             <obj_property name="ObjectShortName">compressed_signature_buffer[191:0]</obj_property>
@@ -260,7 +269,6 @@
       <wvobject type="group" fp_name="group2525">
          <obj_property name="label">NTT</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/verify_tb/uut/public_key_valid">
             <obj_property name="ElementShortName">public_key_valid</obj_property>
             <obj_property name="ObjectShortName">public_key_valid</obj_property>
@@ -312,6 +320,10 @@
          <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_index">
             <obj_property name="ElementShortName">squared_norm_index[3:0]</obj_property>
             <obj_property name="ObjectShortName">squared_norm_index[3:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/ntt_public_key_done">
+            <obj_property name="ElementShortName">ntt_public_key_done</obj_property>
+            <obj_property name="ObjectShortName">ntt_public_key_done</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/ntt_state">
             <obj_property name="ElementShortName">ntt_state[31:0]</obj_property>

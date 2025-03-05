@@ -61,46 +61,48 @@ module verify_tb;
            .reject(reject)
          );
 
-  // Provides the verify module with the right data at the right time
-  task run_test;
-    begin
-      // Run until we get the result
-      while (!accept && !reject) begin
+  always_ff @(posedge clk) begin
 
-        // Send new signature salt block if module is ready for it
-        // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
-        // We also have to make sure we don't send more than 5 blocks, since we only have 5 blocks of salt
-        if ((signature_salt_block_index == 0 || signature_salt_ready) && signature_salt_block_index < 5) begin
-          signature_salt = signature_salt_blocks[signature_salt_block_index];
-          signature_salt_valid = 1;
-          signature_salt_block_index = signature_salt_block_index + 1;
-        end
-        else if (signature_salt_block_index >= 5)  // Set valid to low after we've sent all salt blocks
-          signature_salt_valid = 0;
-
-        // Send new message block if module is ready for it
-        if ((message_block_index == 0 || message_ready) && message_block_index < 2) begin
-          message = message_blocks[message_block_index];
-          message_valid = 1;
-          message_block_index = message_block_index + 1;
-        end
-        else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
-          message_valid = 0;
-
-        // Send new signature value block if module is ready for it
-        if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
-          signature_value = signature_value_blocks[signature_value_block_index];
-          signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
-          signature_value_block_index = signature_value_block_index + 1;
-        end
-        else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
-          signature_value_valid = 0;
-
-        #10;
-        start = 0;
-      end
+    if(rst_n == 1'b0) begin
+      message_block_index <= 0;
+      signature_salt_block_index <= 0;
+      signature_value_block_index <= 0;
     end
-  endtask
+
+    if(!accept && !reject) begin
+
+      // Send new signature salt block if module is ready for it
+      // For the first block we cannot depend on signature_salt_ready signal, because that is only set high after signature_salt_valid is set high
+      // We also have to make sure we don't send more than 5 blocks, since we only have 5 blocks of salt
+      if ((signature_salt_block_index == 0 || signature_salt_ready) && signature_salt_block_index < 5) begin
+        signature_salt = signature_salt_blocks[signature_salt_block_index];
+        signature_salt_valid = 1;
+        signature_salt_block_index <= signature_salt_block_index + 1;
+      end
+      else if (signature_salt_block_index >= 5)  // Set valid to low after we've sent all salt blocks
+        signature_salt_valid <= 0;
+
+      // Send new message block if module is ready for it
+      if ((message_block_index == 0 || message_ready) && message_block_index < 2) begin
+        message = message_blocks[message_block_index];
+        message_valid = 1;
+        message_block_index <= message_block_index + 1;
+      end
+      else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
+        message_valid <= 0;
+
+      // Send new signature value block if module is ready for it
+      if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
+        signature_value = signature_value_blocks[signature_value_block_index];
+        signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
+        signature_value_block_index <= signature_value_block_index + 1;
+      end
+      else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
+        signature_value_valid <= 0;
+    end
+
+  end
+
 
   always #5 clk = ~clk;
 
@@ -109,10 +111,14 @@ module verify_tb;
 
     //////////////////////////////////////////////////////////////////////////////////
     // Test 1: Valid signature for N=8
+    //
+    // Debugging help:
+    // After sending both salt and message the valid polynomial should be
+    // [1112, 5539, 5209, 3423, 2324, 1901, 12163, 9202] (signed decimal)
+    //
+    // After sending the valid decompressed signature should be
+    // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
     //////////////////////////////////////////////////////////////////////////////////
-    message_block_index = 0;
-    signature_salt_block_index = 0;
-    signature_value_block_index = 0;
 
     // len("Hello World!") = 12
     message_len_bytes = 16'd12;
@@ -136,8 +142,11 @@ module verify_tb;
     #10;
     rst_n = 1;
     start = 1;
+    #10;
+    start = 0;
 
-    run_test();
+    while(!reject && !accept)
+      #10;
 
     // Check that it was accepted
     if (accept && !reject)
@@ -149,9 +158,6 @@ module verify_tb;
     //////////////////////////////////////////////////////////////////////////////////
     // Test 2: Invalid signature for N=8 (same values as in test 1 but signature is corrupted)
     //////////////////////////////////////////////////////////////////////////////////
-    message_block_index = 0;
-    signature_salt_block_index = 0;
-    signature_value_block_index = 0;
 
     // len("Hello World!") = 12
     message_len_bytes = 16'd12;
@@ -175,14 +181,11 @@ module verify_tb;
     #50;
     rst_n = 1;
     start = 1;
+    #10;
+    start = 0;
 
-    run_test();
-    // Debugging help:
-    // After sending both salt and message the valid polynomial should be
-    // [1112, 5539, 5209, 3423, 2324, 1901, 12163, 9202] (signed decimal)
-    //
-    // After sending the valid decompressed signature should be
-    // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
+    while(!reject && !accept)
+      #10;
 
     // Check that it was rejected
     if (!accept && reject)
