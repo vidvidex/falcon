@@ -193,6 +193,44 @@ module verify_tb;
     else
       $fatal("Test 2: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
 
+    //////////////////////////////////////////////////////////////////////////////////
+    // Test 3: Incorrectly compressed coefficients in signature
+    //////////////////////////////////////////////////////////////////////////////////
+
+    // len("Hello World!") = 12
+    message_len_bytes = 16'd12;
+    message_blocks[0] = 64'h6f57206f6c6c6548; // "Hello Wo"
+    message_blocks[1] = 64'h0000000021646c72; // "rld!" + padding
+
+    // len(signature salt) = 40 bytes
+    signature_salt_blocks[0] = 64'h8ae56efee299dd5d;
+    signature_salt_blocks[1] = 64'h0ddf5a76484a58c2;
+    signature_salt_blocks[2] = 64'he5c9678b2d3ccf73;
+    signature_salt_blocks[3] = 64'haeb69f7b17f6be7d;
+    signature_salt_blocks[4] = 64'h0bdfb438301f6d76;
+
+    signature_value_blocks[0] = 64'h1111111111111111;
+    signature_value_blocks[1] = 64'h0000000000000000;
+    signature_value_valid_blocks[0] = 2;
+    signature_value_valid_blocks[1] = 0;
+
+    rst_n = 0;
+    #10;
+    rst_n = 1;
+    start = 1;
+    #10;
+    start = 0;
+
+    while(!reject && !accept)
+      #10;
+
+    // Check that it was accepted
+    if (!accept && reject)
+      $display("Test 3: Passed");
+    else
+      $fatal("Test 3: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
+
+
     // Test 3: Valid signature for N=512
 
     // Test 4: Valid signature for N=1024
