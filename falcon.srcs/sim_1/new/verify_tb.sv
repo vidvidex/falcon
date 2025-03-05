@@ -12,7 +12,7 @@ module verify_tb;
   logic [63:0] signature_value_blocks [2];   // Buffer for signature value blocks
   logic [6:0] signature_value_valid_blocks [2];   // Buffer for signature value valid blocks
 
-  logic [14:0] public_key[8] = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+  logic signed [14:0] public_key[8] = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
 
   logic [15:0] message_len_bytes; //! Length of the message in bytes
   logic [63:0] message;
@@ -120,23 +120,15 @@ module verify_tb;
     // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
     //////////////////////////////////////////////////////////////////////////////////
 
-    // len("Hello World!") = 12
-    message_len_bytes = 16'd12;
-    message_blocks[0] = 64'h6f57206f6c6c6548; // "Hello Wo"
-    message_blocks[1] = 64'h0000000021646c72; // "rld!" + padding
+    message_len_bytes = 12; // len("Hello World!") = 12
+    message_blocks = {64'h6f57206f6c6c6548, 64'h0000000021646c72}; // "Hello World!" (reversed and with padding)
 
     // len(signature salt) = 40 bytes
-    signature_salt_blocks[0] = 64'h8ae56efee299dd5d;
-    signature_salt_blocks[1] = 64'h0ddf5a76484a58c2;
-    signature_salt_blocks[2] = 64'he5c9678b2d3ccf73;
-    signature_salt_blocks[3] = 64'haeb69f7b17f6be7d;
-    signature_salt_blocks[4] = 64'h0bdfb438301f6d76;
+    signature_salt_blocks = {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76};
 
-    // len(signature value) = 11 bytes = 88 bits
-    signature_value_blocks[0] = 64'h997b21eec3635e54;
-    signature_value_blocks[1] = 64'h6308000000000000;
-    signature_value_valid_blocks[0] = 7'd64;
-    signature_value_valid_blocks[1] = 7'd24;
+    // len(signature value) = 11 bytes = 88 bits = 64 + 24
+    signature_value_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
+    signature_value_valid_blocks = {64, 24};
 
     rst_n = 0;
     #10;
@@ -159,23 +151,15 @@ module verify_tb;
     // Test 2: Invalid signature for N=8 (same values as in test 1 but signature is corrupted)
     //////////////////////////////////////////////////////////////////////////////////
 
-    // len("Hello World!") = 12
-    message_len_bytes = 16'd12;
-    message_blocks[0] = 64'h6f57206f6c6c6548; // "Hello Wo"
-    message_blocks[1] = 64'h0000000021646c72; // "rld!" + padding
+    message_len_bytes = 12; // len("Hello World!") = 12
+    message_blocks = {64'h6f57206f6c6c6548, 64'h0000000021646c72}; // "Hello World!" (reversed and with padding)
 
     // len(signature salt) = 40 bytes
-    signature_salt_blocks[0] = 64'h8ae56efee299ddaa;  // Last byte here should be '5d' but changed to 'aa' to make it invalid
-    signature_salt_blocks[1] = 64'h0ddf5a76484a58c2;
-    signature_salt_blocks[2] = 64'he5c9678b2d3ccf73;
-    signature_salt_blocks[3] = 64'haeb69f7b17f6be7d;
-    signature_salt_blocks[4] = 64'h0bdfb438301f6d76;
+    signature_salt_blocks = {64'h8ae56efee299ddaa, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76}; // Last byte of first block should be '5d' but changed to 'aa' to make it invalid
 
-    // len(signature value) = 11 bytes = 88 bits
-    signature_value_blocks[0] = 64'h997b21eec3635e54;
-    signature_value_blocks[1] = 64'h6308000000000000;
-    signature_value_valid_blocks[0] = 7'd64;
-    signature_value_valid_blocks[1] = 7'd24;
+    // len(signature value) = 11 bytes = 88 bits = 64 + 24
+    signature_value_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
+    signature_value_valid_blocks = {64, 24};
 
     rst_n = 0;
     #50;
@@ -197,22 +181,14 @@ module verify_tb;
     // Test 3: Incorrectly compressed coefficients in signature
     //////////////////////////////////////////////////////////////////////////////////
 
-    // len("Hello World!") = 12
-    message_len_bytes = 16'd12;
-    message_blocks[0] = 64'h6f57206f6c6c6548; // "Hello Wo"
-    message_blocks[1] = 64'h0000000021646c72; // "rld!" + padding
+    message_len_bytes = 12; // len("Hello World!") = 12
+    message_blocks = {64'h6f57206f6c6c6548, 64'h0000000021646c72}; // "Hello World!" (reversed and with padding)
 
     // len(signature salt) = 40 bytes
-    signature_salt_blocks[0] = 64'h8ae56efee299dd5d;
-    signature_salt_blocks[1] = 64'h0ddf5a76484a58c2;
-    signature_salt_blocks[2] = 64'he5c9678b2d3ccf73;
-    signature_salt_blocks[3] = 64'haeb69f7b17f6be7d;
-    signature_salt_blocks[4] = 64'h0bdfb438301f6d76;
+    signature_salt_blocks = {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76};
 
-    signature_value_blocks[0] = 64'h1111111111111111;
-    signature_value_blocks[1] = 64'h0000000000000000;
-    signature_value_valid_blocks[0] = 2;
-    signature_value_valid_blocks[1] = 0;
+    signature_value_blocks = {64'h1111111111111111, 64'h0000000000000000};
+    signature_value_valid_blocks = {2, 0};
 
     rst_n = 0;
     #10;
