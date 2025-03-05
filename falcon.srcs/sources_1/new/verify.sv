@@ -153,7 +153,8 @@ module verify#(
   logic ntt_start; //! Start signal for NTT module
   logic ntt_mode; //! 0 - NTT, 1 - INTT
   logic ntt_done; //! Set high when NTT module is done and ntt_output is valid
-  logic [$clog2(N):0] mult_mod_q_index, sub_and_normalize_index, squared_norm_index; // Indices used for iterating over the buffer arrays. Need to be large enough to store N.
+  logic [$clog2(N):0] mult_mod_q_index, sub_and_normalize_index, squared_norm_index; //! Indices used for iterating over the buffer arrays. Need to be large enough to store N.
+  logic ntt_public_key_done; //! IS NTT(public_key) done
 
   // The size is selected so that when we iteratively compute it we can check if it's larger than the bound^2 on each iteration, since 27 bits is enough for the value at previous iteration
   // to be 70265242-1 and to this we add (-6145)^2 (this is the worst case scenario)
@@ -244,11 +245,16 @@ module verify#(
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
           ntt_buffer1 = ntt_output;
-
-          // If both NTT(public key) and decompression are done, we can start NTT(decompressed signature)
-          if(decompression_done == 1'b1)
-            ntt_next_state = START_NTT_SIGNATURE;
+          ntt_public_key_done = 1;
         end
+
+        // If there was an error decompressing the signature go straight to FINISHED
+        if(signature_error == 1'b1)
+          ntt_next_state = FINISHED;
+
+        // If both NTT(public key) and decompression are done, we can start NTT(decompressed signature)
+        else if (ntt_public_key_done == 1'b1 && decompression_done == 1'b1)
+          ntt_next_state = START_NTT_SIGNATURE;
       end
       START_NTT_SIGNATURE: begin // Immediately go to next state
 
@@ -329,6 +335,7 @@ module verify#(
         sub_and_normalize_index <= 0;
         squared_norm_index <= 0;
         squared_norm <= 0;
+        ntt_public_key_done <= 0;
       end
 
       START_NTT_PUBLIC_KEY: begin
