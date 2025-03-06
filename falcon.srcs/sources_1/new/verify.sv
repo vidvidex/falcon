@@ -203,7 +203,7 @@ module verify#(
     end
   endfunction
 
-  typedef enum {
+  typedef enum logic [3:0] {
             IDLE,
             START_NTT_PUBLIC_KEY, // Run NTT(public key)
             RUNNING_NTT_PUBLIC_KEY, // Wait for NTT(public key) to finish

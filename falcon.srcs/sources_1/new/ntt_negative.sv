@@ -53,7 +53,7 @@ module ntt_negative#(
          N == 1024 ? 12277 :
          0;
 
-  typedef enum {
+  typedef enum logic [1:0] {
             IDLE,   // Waiting for start signal
             COPY_TO_INT, // Copy input polynomial to intermediate polynomial
             NTT, // Perform NTT/INTT

@@ -26,7 +26,7 @@ module shake256_absorb(
   reg rst_rate_counter, inc_rate_counter;
   wire messageLen_lt_8, messageLen_lte_8, rate_counter_eq, last_rate_byte;
 
-  typedef enum {
+  typedef enum logic [2:0] {
             IDLE,
             ABSORB,
             CONSUME_DELIMITED_SUFFIX,

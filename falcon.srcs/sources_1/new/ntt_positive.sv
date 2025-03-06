@@ -47,7 +47,7 @@ module ntt_positive#(
          N == 1024 ? 12277 :
          0;
 
-  typedef enum {
+  typedef enum logic[1:0] {
             IDLE,   // Waiting for start signal
             COPY_BIT_REVERSED, // Copy input polynomial to intermediate intermediate or intermediate polynomial to output while reversing the order of the coefficients
             COPY, // Copy input polynomial to intermediate intermediate or intermediate polynomial to output
