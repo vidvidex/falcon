@@ -39,7 +39,7 @@ module shake256(
   logic shift_output_buffer;    //! Used to shift the keccak_output_buffer in 64 bits such that one word is output
   logic call_keccak_f1600_squeeze;     //! This is 1 to initiate F1600 on the state during Squeeze
 
-  typedef enum {
+  typedef enum logic [1:0] {
             IDLE,
             ABSORB,
             SQUEEZE,
