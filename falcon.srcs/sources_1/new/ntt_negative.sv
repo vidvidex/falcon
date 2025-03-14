@@ -123,9 +123,6 @@ module ntt_negative#(
       end
       COPY_TO_INT: begin
         done = 0;
-        for (int i = 0; i < N; i = i + 1) begin
-          polynomial[i] = input_polynomial[i];
-        end
       end
 
       NTT: begin
@@ -134,14 +131,6 @@ module ntt_negative#(
 
       COPY_FROM_INT: begin
         done = 1;
-
-        // Copy coefficients from intermediate to output polynomial. For INTT also scale.
-        for (int i = 0; i < N; i = i + 1) begin
-          if(mode == 1'b0)
-            output_polynomial[i] = polynomial[i];
-          else
-            output_polynomial[i] = mod_mult(polynomial[i], n_to_minus1);  // TODO: there are a lot of multipliers here, maybe do this in multiple clock cycles
-        end
       end
 
       default: begin
@@ -159,75 +148,93 @@ module ntt_negative#(
     else
       state = next_state;
 
-    if (state != NTT) begin
+    case (state)
+      COPY_TO_INT: begin
 
-      if (mode == 1'b0) begin
-        stage <= 1;
-        stride <= N >> 1;
-        counter_max <= N >> 1;
-      end
-      else begin
-        stage <= N;
-        stride <= 1;
-        counter_max <= 1;
-      end
-
-      butterfly <= 0;
-      group <= 0;
-      i <= -1;
-      counter <= 0;
-    end
-    else begin
-
-      if (butterfly == N >> 1) begin
-
+        // BEGIN: We have to do this at some point before the NTT state, so we do it here (if the module is started very quickly we might not have time in the IDLE state)
         if (mode == 1'b0) begin
-          stride >>= 1;
-          stage <<= 1;
-          group = -1;
-          counter_max >>= 1;
-          counter = N;
+          stage <= 1;
+          stride <= N >> 1;
+          counter_max <= N >> 1;
         end
         else begin
-          stride <<= 1;
-          stage >>= 1;
-          group = 0;
-          counter_max <<= 1;
-          counter = 0;
+          stage <= N;
+          stride <= 1;
+          counter_max <= 1;
         end
-        butterfly = 0;
-        i = -1;
+
+        butterfly <= 0;
+        group <= 0;
+        i <= -1;
+        counter <= 0;
+        // END
+
+        for (int i = 0; i < N; i = i + 1) begin
+          polynomial[i] = input_polynomial[i];
+        end
+      end
+      NTT: begin
+
+        if (butterfly == N >> 1) begin
+
+          if (mode == 1'b0) begin
+            stride >>= 1;
+            stage <<= 1;
+            group = -1;
+            counter_max >>= 1;
+            counter = N;
+          end
+          else begin
+            stride <<= 1;
+            stage >>= 1;
+            group = 0;
+            counter_max <<= 1;
+            counter = 0;
+          end
+          butterfly = 0;
+          i = -1;
+        end
+
+        if (counter >= counter_max) begin
+          group = group + 1;
+          i = group * (stride << 1);
+          counter = 1;
+        end
+        else begin
+          i = i + 1;
+          counter = counter + 1;
+        end
+        butterfly = butterfly + 1;
+
+        if (mode == 1'b0)
+          twiddle_factor = twiddle_rom_ntt[stage + group];
+        else
+          twiddle_factor = twiddle_rom_intt[(stage >> 1) + group];
+
+        if (mode == 1'b0) begin
+          a = polynomial[i];
+          b = mod_mult(polynomial[i + stride], twiddle_factor);
+          polynomial[i] <= mod_add(a, b);
+          polynomial[i + stride] <= mod_sub(a, b);
+        end
+        else begin
+          a = polynomial[i];
+          b = polynomial[i + stride];
+          polynomial[i] <= mod_add(a, b);
+          polynomial[i + stride] <= mod_mult(mod_sub(a, b), twiddle_factor);
+        end
       end
 
-      if (counter >= counter_max) begin
-        group = group + 1;
-        i = group * (stride << 1);
-        counter = 1;
+      COPY_FROM_INT: begin
+        // Copy coefficients from intermediate to output polynomial. For INTT also scale.
+        for (int i = 0; i < N; i = i + 1) begin
+          if(mode == 1'b0)
+            output_polynomial[i] = polynomial[i];
+          else
+            output_polynomial[i] = mod_mult(polynomial[i], n_to_minus1);  // TODO: there are a lot of multipliers here, maybe do this in multiple clock cycles
+        end
       end
-      else begin
-        i = i + 1;
-        counter = counter + 1;
-      end
-      butterfly = butterfly + 1;
-
-      if (mode == 1'b0)
-        twiddle_factor = twiddle_rom_ntt[stage + group];
-      else
-        twiddle_factor = twiddle_rom_intt[(stage >> 1) + group];
-
-      if (mode == 1'b0) begin
-        a = polynomial[i];
-        b = mod_mult(polynomial[i + stride], twiddle_factor);
-        polynomial[i] <= mod_add(a, b);
-        polynomial[i + stride] <= mod_sub(a, b);
-      end
-      else begin
-        a = polynomial[i];
-        b = polynomial[i + stride];
-        polynomial[i] <= mod_add(a, b);
-        polynomial[i + stride] <= mod_mult(mod_sub(a, b), twiddle_factor);
-      end
-    end
+    endcase
   end
 
 endmodule

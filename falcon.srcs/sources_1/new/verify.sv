@@ -80,11 +80,11 @@ module verify#(
   // With only 2x64 bits we would have a problem when decompression only used for example 65 bits,
   // so we couldn't load a new block in.
   logic [3*64-1:0] compressed_signature_buffer;
-  logic [7:0] compressed_signature_buffer_valid; //! Number of valid bits in compressed_signature_buffer. Only leftmost bits are valid.
+  logic [6:0] compressed_signature_buffer_valid; //! Number of valid bits in compressed_signature_buffer. Only leftmost bits are valid.
 
   logic signed [14:0] coefficient; //! Decompressed coefficient
   logic signed [14:0] decompressed_coefficients [0:N-1];
-  logic [5:0] compressed_coef_length; //! Number of bits that were used to compress the coefficient
+  logic [6:0] compressed_coef_length; //! Number of bits that were used to compress the coefficient
   logic coefficient_valid; //! Is coefficient valid
   logic signature_error; //! Set to true if the signature is invalid
   logic squared_norm_error=0; //! Set to true if the squared norm is larger than the bound^2
@@ -99,7 +99,6 @@ module verify#(
                .rst_n(rst_n),
                .compressed_signature(compressed_signature_buffer[3*64-1 -: 105]), // Provide top 105 bits of the buffer to decompress module
                .compressed_signature_valid_bits(compressed_signature_buffer_valid),
-               .expected_signature_length_bytes(SIGNATURE_LENGTH),
                .coefficient(coefficient),
                .coefficient_valid(coefficient_valid),
                .compressed_coef_length(compressed_coef_length),

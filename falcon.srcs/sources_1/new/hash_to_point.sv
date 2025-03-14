@@ -49,9 +49,7 @@ module hash_to_point#(
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
-  logic unsigned [14:0] q; // q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
-  assign q = 16'd12289;
 
   assign polynomial_valid = polynomial_index == N; // Polynomial is valid when we have filled all the coefficients
 
@@ -67,10 +65,9 @@ module hash_to_point#(
            );
 
 
-  always_ff @(posedge clk or negedge rst_n) begin
+  always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
       state <= IDLE;
-      polynomial_index <= 0;
       valid_high_counter <= 0;
     end
     else
@@ -152,8 +149,11 @@ module hash_to_point#(
 
   // When we get valid hash data we can convert it to polynomials
   always_ff @(posedge clk) begin
-    if(data_out_valid) begin
 
+    if (rst_n == 1'b0) begin
+      polynomial_index <= 0;  // Reset the polynomial index here, in the same block as it's used so we don't drive it from two different blocks
+    end
+    else if(data_out_valid) begin
       // The bytes of the returned hash have different endianness than what we need, therefore we read them in opposite order
       t1 = {data_out[7:0], data_out[15:8]};
       t2 = {data_out[23:16], data_out[31:24]};
@@ -162,16 +162,16 @@ module hash_to_point#(
 
       // For each of the potential coefficients check if they are less than k*q (part of specification) and also check if we have already filled the polynomial
       if (t1 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t1 % q;
+        polynomial[polynomial_index++] = t1 % 12289;
 
       if (t2 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t2 % q;
+        polynomial[polynomial_index++] = t2 % 12289;
 
       if (t3 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t3 % q;
+        polynomial[polynomial_index++] = t3 % 12289;
 
       if (t4 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t4 % q;
+        polynomial[polynomial_index++] = t4 % 12289;
     end
   end
 

@@ -76,10 +76,6 @@
       <obj_property name="ElementShortName">i[31:0]</obj_property>
       <obj_property name="ObjectShortName">i[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/decompress_tb/expected_signature_length_bytes">
-      <obj_property name="ElementShortName">expected_signature_length_bytes[31:0]</obj_property>
-      <obj_property name="ObjectShortName">expected_signature_length_bytes[31:0]</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/decompress_tb/expected_coefficient_count">
       <obj_property name="ElementShortName">expected_coefficient_count[31:0]</obj_property>
       <obj_property name="ObjectShortName">expected_coefficient_count[31:0]</obj_property>
