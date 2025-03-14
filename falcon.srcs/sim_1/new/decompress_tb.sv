@@ -13,19 +13,17 @@ module decompress_tb;
   logic [14:0] coefficient;
   logic coefficient_valid;
   int i;
-  int expected_signature_length_bytes;  //! How many bytes long is the signature we expect to be
   int expected_coefficient_count;    //! How many coefficients we expect to get from the compressed signature
 
   decompress #(
                .N(8),
-               .SIGNATURE_LENGTH(192)
+               .SIGNATURE_LENGTH(11)
              )
              uut (
                .clk(clk),
                .rst_n(rst_n),
                .compressed_signature(compressed_signature[191:87]),
                .compressed_signature_valid_bits(compressed_signature_valid_bits),
-               .expected_signature_length_bytes(expected_signature_length_bytes),
                .compressed_coef_length(compressed_coef_length),
                .signature_error(signature_error),
                .decompression_done(decompression_done),
@@ -58,7 +56,6 @@ module decompress_tb;
 
     // Test 1: Real signature of size 8
 
-    expected_signature_length_bytes = 11;
     expected_coefficient_count = 8;
     compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
     compressed_signature_valid_bits_initial = 0;
@@ -110,7 +107,6 @@ module decompress_tb;
 
     // Test 2: Signature too long
 
-    expected_signature_length_bytes = 11;
     expected_coefficient_count = 8;
     compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expect
 

@@ -20,7 +20,6 @@ module decompress #(
 
     input logic [104:0] compressed_signature, //! Compressed signature
     input logic [6:0] compressed_signature_valid_bits, //! Number of valid bits in compressed signature (from the left)
-    input logic [$clog2(SIGNATURE_LENGTH)-1:0] expected_signature_length_bytes, //! Expected length of the compressed signature in bytes (slen in reference code)
 
     output logic signed [14:0] coefficient, //! Decompressed coefficient
     output logic coefficient_valid, //! Is the current coefficient valid?
@@ -69,13 +68,13 @@ module decompress #(
         else begin
           // Check if the number of bits processed is less or equal to the expected length of the compressed signature
           // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
-          if (bits_processed <= expected_signature_length_bytes*8 && compressed_signature[104:98] == 7'b0)
+          if (bits_processed <= SIGNATURE_LENGTH*8 && compressed_signature[104:98] == 7'b0)
             decompression_done <= 1'b1;  // We processed all the bits of the compressed signature
           else
             signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
         end
 
-        if (bits_processed > expected_signature_length_bytes*8)
+        if (bits_processed > SIGNATURE_LENGTH*8)
           signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
       end
     end
