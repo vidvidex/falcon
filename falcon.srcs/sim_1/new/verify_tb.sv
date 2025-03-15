@@ -200,11 +200,11 @@ module verify_tb;
     while(!reject && !accept)
       #10;
 
-    // Check that it was accepted
+    // Check that it was rejected
     if (!accept && reject)
       $display("Test 3: Passed");
     else
-      $fatal("Test 3: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
+      $fatal("Test 3: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
 
 
     // Test 3: Valid signature for N=512
