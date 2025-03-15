@@ -91,14 +91,13 @@ module verify_tb;
       else if (message_block_index >= 2)  // Set valid to low after we've sent all message blocks
         message_valid <= 0;
 
-      // Send new signature value block if module is ready for it
-      if ((signature_value_block_index == 0 || signature_value_ready) && signature_value_block_index < 2) begin
-        signature_value = signature_value_blocks[signature_value_block_index];
-        signature_value_valid = signature_value_valid_blocks[signature_value_block_index];
+      if(signature_value_ready && signature_value_block_index < 2) begin
+        signature_value <= signature_value_blocks[signature_value_block_index];
+        signature_value_valid <= signature_value_valid_blocks[signature_value_block_index];
         signature_value_block_index <= signature_value_block_index + 1;
       end
-      else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
-        signature_value_valid = 0;
+      else
+        signature_value_valid <= 0;
     end
 
   end
@@ -200,11 +199,11 @@ module verify_tb;
     while(!reject && !accept)
       #10;
 
-    // Check that it was rejected
+    // Check that it was accepted
     if (!accept && reject)
       $display("Test 3: Passed");
     else
-      $fatal("Test 3: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
+      $fatal("Test 3: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
 
 
     // Test 3: Valid signature for N=512

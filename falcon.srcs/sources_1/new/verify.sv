@@ -3,6 +3,20 @@
 //
 // Verifies that "signature" is a correct signature for "message" using the public key defined as (r, s)
 //
+// Communication with this module aims to roughly follow the AXI-stream protocol way of communication.
+// 1. The module is started by setting the "start" signal high for one clock cycle
+// 2. The module can request new data by setting the "_ready" signal high for the respective data
+// 3. The module provides the data by setting the "_valid" signal high for the respective data
+// 4. While both "_ready" and "_valid" signals are high the module is receiving new data and processing it. When either of the two signals is low the module is not receiving new data
+//      (either because the parent cannot provide the data fast enough for the parent is providing the data too fast)
+// 5. The module signals that it has finished processing the data by setting the "accept" or "reject" signal high
+//
+// The module is composed out of multiple parts, which work in parallel:
+//  - hash_to_point: Converts the message to a polynomial
+//  - decompress: Decompresses the signature
+//  - NTT: This is the "main" part of the module, which has most of the control logic
+// Due to there being multiple parts there are also multiple state machines that control the whole module.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module verify#(
@@ -15,7 +29,7 @@ module verify#(
     input logic clk,
     input logic rst_n,
 
-    input logic start, //! Start signal for the module (currently only starts NTT, everything else runs automatically when the data is valid)
+    input logic start, //! Start signal for the module
 
     input logic signed [14:0] public_key[0:N-1], //! Public key in coefficient form
     input logic public_key_valid, //! Is public key valid
@@ -106,35 +120,84 @@ module verify#(
                .decompression_done(decompression_done)
              );
 
+  typedef enum logic [1:0] {
+            DECOMPRESS_IDLE, // Waiting for the start signal
+            READY_FOR_SIGNATURE, // Ready to receive the next 64 bits of the signature. If we have any existing compressed data we are also decompressing it in this state.
+            DECOMPRESSING, // Decompressing coefficients, don't need new signature data
+            DECOMPRESSION_DONE // Decompression is done
+          } decompress_state_t;
+  decompress_state_t decompress_state, decompress_next_state;
+
+  // State machine state changes
+  always_comb begin
+    case (decompress_state)
+      DECOMPRESS_IDLE: begin   // Waiting for the start signal
+        if (start == 1'b1)
+          decompress_next_state = START_NTT_PUBLIC_KEY;
+      end
+      READY_FOR_SIGNATURE: begin  // Wait for signature buffer to be full
+        if (compressed_signature_buffer_valid > 128)  // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it)
+          decompress_next_state = DECOMPRESSING;
+      end
+      DECOMPRESSING: begin  // Go to DECOMPRESSION_DONE if we're done or READY_FOR_SIGNATURE if we have space for more data
+        if(coefficient_index == N)  // We've decompressed all coefficients
+          decompress_next_state = DECOMPRESSION_DONE;
+        else if (compressed_signature_buffer_valid < 128) // We have space for more data
+          decompress_next_state = READY_FOR_SIGNATURE;
+        else
+          decompress_next_state = DECOMPRESSING;
+      end
+      DECOMPRESSION_DONE: begin // Stay here forever
+        decompress_next_state = DECOMPRESSION_DONE;
+      end
+      default: begin
+        decompress_next_state = DECOMPRESS_IDLE;
+      end
+    endcase
+  end
+
   always_ff @(posedge clk) begin
-    if (rst_n == 1'b0) begin
-      compressed_signature_buffer <= 0;
-      compressed_signature_buffer_valid <= 0;
-      signature_value_ready <= 0;
-    end
-    else begin
 
-      // Load new block of signature data if we have the space for it in the buffer.
-      // Check if signature data has at least one valid bit and if we have 64 bits of space in the buffer (total size is 3*64 bits)
-      if (signature_value_valid > 0 && compressed_signature_buffer_valid < 128) begin
-        compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature_value;
-        compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_value_valid;
+    if (rst_n == 1'b0)
+      decompress_state = DECOMPRESS_IDLE;
+    else
+      decompress_state = decompress_next_state;
 
+    case (decompress_state)
+      DECOMPRESS_IDLE: begin
+        signature_value_ready <= 1'b0;
+        compressed_signature_buffer <= 0;
+        compressed_signature_buffer_valid <= 0;
+      end
+      READY_FOR_SIGNATURE: begin
         signature_value_ready <= 1'b1; // We can receive the next 64 bits of the signature
       end
-      else
-        signature_value_ready <= 0; // We can't receive the next 64 bits of the signature
+      DECOMPRESSING: begin
+        signature_value_ready <= 1'b0;
+      end
+      DECOMPRESSION_DONE: begin
+        signature_value_ready <= 1'b0;
+      end
+    endcase
+
+
+    if(decompress_state == DECOMPRESSING || decompress_state == READY_FOR_SIGNATURE) begin
+
+      // Load new block of signature data
+      if(signature_value_valid) begin
+        compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature_value;
+        compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_value_valid;
+      end
 
       // If decompression module produced a valid coefficient we have to shift the buffer to the left by "compressed_coef_length" bits
-      // to provide the next compressed coefficient to the decompression module. Here we have to use blocking assignments to ensure this block
-      // is executed after loading the new block of signature data above.
+      // to provide the next compressed coefficient to the decompression module.
       // We also need to save the coefficient to the coefficients array.
       if (coefficient_valid == 1'b1) begin
         compressed_signature_buffer = compressed_signature_buffer << compressed_coef_length;
         compressed_signature_buffer_valid = compressed_signature_buffer_valid - compressed_coef_length;
 
-        decompressed_coefficients[coefficient_index] = coefficient;
-        coefficient_index = coefficient_index + 1;
+        decompressed_coefficients[coefficient_index] <= coefficient;
+        coefficient_index <= coefficient_index + 1;
       end
     end
   end
@@ -203,7 +266,7 @@ module verify#(
   endfunction
 
   typedef enum logic [3:0] {
-            IDLE,
+            NTT_IDLE,
             START_NTT_PUBLIC_KEY, // Run NTT(public key)
             RUNNING_NTT_PUBLIC_KEY, // Wait for NTT(public key) to finish
             WAIT_FOR_DECOMPRESS, // Wait for decompression of signature to finish
@@ -216,12 +279,12 @@ module verify#(
             SUB_AND_NORMALIZE, // Compute htp_polynomial - product mod q and normalize to [ceil(-q/2), floor(q/2)]
             SQUARED_NORM, // Compute the squared norm ||(normalized result, decompressed signature)||^2
             FINISHED // Final state, here we accept the signature if there were no errors
-          } state_t;
-  state_t ntt_state, ntt_next_state;
+          } ntt_state_t;
+  ntt_state_t ntt_state, ntt_next_state;
 
   always_ff @(posedge clk or negedge rst_n) begin
     if (rst_n == 1'b0)
-      ntt_state <= IDLE;
+      ntt_state <= NTT_IDLE;
     else
       ntt_state <= ntt_next_state;
   end
@@ -229,16 +292,12 @@ module verify#(
   // State machine state changes
   always_comb begin
     case (ntt_state)
-      IDLE: begin   // Waiting for the start signal
-
+      NTT_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
           ntt_next_state = START_NTT_PUBLIC_KEY;
-
       end
       START_NTT_PUBLIC_KEY: begin // Immediately go to next state
-
         ntt_next_state = RUNNING_NTT_PUBLIC_KEY;
-
       end
       RUNNING_NTT_PUBLIC_KEY: begin // Wait for NTT(public key) to finish and decompressed signature to be ready before moving to START_NTT_SIGNATURE
         if (ntt_done == 1'b1) begin
@@ -261,29 +320,22 @@ module verify#(
           ntt_next_state = START_NTT_SIGNATURE;
       end
       START_NTT_SIGNATURE: begin // Immediately go to next state
-
         ntt_next_state = RUNNING_NTT_SIGNATURE;
-
       end
       RUNNING_NTT_SIGNATURE: begin // Wait for NTT(signature) to finish before moving to MULT_MOD_Q
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
           ntt_buffer2 = ntt_output;
-
           ntt_next_state = MULT_MOD_Q;
         end
       end
       MULT_MOD_Q: begin // Wait for multiplication and modulo to finish before moving to START_INTT
-
         // Check if we've processed all coefficients
         if (mult_mod_q_index == N)
           ntt_next_state = START_INTT;
-
       end
       START_INTT: begin // Immediately go to next state
-
         ntt_next_state = RUNNING_INTT;
-
       end
       RUNNING_INTT: begin // Wait for INTT to finish before moving to WAIT_FOR_HASH_TO_POINT
         if (ntt_done == 1'b1) begin
@@ -298,40 +350,31 @@ module verify#(
         end
       end
       WAIT_FOR_HASH_TO_POINT: begin // Wait for hash_to_point to finish before moving to SUB
-
         if(htp_polynomial_valid == 1'b1)
           ntt_next_state = SUB_AND_NORMALIZE;
-
       end
       SUB_AND_NORMALIZE: begin // Wait for subtraction and normalization to finish before moving to SQUARED_NORM
-
         // Check if we've processed all coefficients
         if (sub_and_normalize_index == N)
           ntt_next_state = SQUARED_NORM;
-
       end
-
-      SQUARED_NORM: begin // Wait for squared norm to finish before moving to IDLE
-
+      SQUARED_NORM: begin // Wait for squared norm to finish before moving to NTT_IDLE
         // Check if we've processed all coefficients
         if(squared_norm_index == N)
           ntt_next_state = FINISHED;
       end
-
       FINISHED: begin // Wait here forever
-
         ntt_next_state = FINISHED;
-
       end
       default: begin
-        ntt_next_state = IDLE;
+        ntt_next_state = NTT_IDLE;
       end
     endcase
   end
 
   always_ff @(posedge clk) begin
     case (ntt_state)
-      IDLE: begin
+      NTT_IDLE: begin
         ntt_mode <= 1'b0;
         ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
 
@@ -467,7 +510,7 @@ module verify#(
 
           // squared_norm += normalized^2 + decompressed_coefficients^2
           temp = ntt_buffer1[i+squared_norm_index] * ntt_buffer1[i+squared_norm_index] + decompressed_coefficients[i+squared_norm_index] * decompressed_coefficients[i+squared_norm_index]; // We need to multiply this in a separate variable, otherwise the sum is not correct (not idea why)
-          squared_norm = squared_norm + temp;
+          squared_norm <= squared_norm + temp;
 
           // Check if the squared norm is larger than the bound^2
           if (squared_norm > bound2)
