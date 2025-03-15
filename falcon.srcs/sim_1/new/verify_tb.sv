@@ -98,7 +98,7 @@ module verify_tb;
         signature_value_block_index <= signature_value_block_index + 1;
       end
       else if (signature_value_block_index >= 2)  // Set valid to low after we've sent all signature value blocks
-        signature_value_valid <= 0;
+        signature_value_valid = 0;
     end
 
   end
