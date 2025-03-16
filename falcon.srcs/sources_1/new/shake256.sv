@@ -56,8 +56,8 @@ module shake256(
                     .clk(clk),
                     .rst(rst_absorb),
                     .inputlen_InBytes(input_len_bytes),
-                    .din_64bit_raw(data_in),
-                    .din_valid(data_in_valid),
+                    .data_in(data_in),
+                    .data_in_valid(data_in_valid),
                     .ready(ready_in),
                     .data_in_padded(data_in_padded),
                     .data_in_padded_valid(data_in_padded_valid),
@@ -104,42 +104,41 @@ module shake256(
   assign rst_rounds = (rst_absorb==1'b0) ? ~call_keccak_f1600_absorb : (rst_squeeze==1'b0) ? ~call_keccak_f1600_squeeze : 1'b1;
 
   always_ff @(posedge clk) begin
-    if(rst)
-      state <= IDLE;
-    else
-      state <= next_state;
-  end
 
-  always_comb begin
+    if(rst)
+      state = IDLE;
+    else
+      state = next_state;
+
     case(state)
       IDLE: begin     // Reset state; Clear state buffer.
-        rst_absorb = 1;
-        rst_state = 1;
-        rst_squeeze = 1;
+        rst_absorb <= 1;
+        rst_state <= 1;
+        rst_squeeze <= 1;
       end
 
       ABSORB: begin     // Absorb input
-        rst_absorb = 0;
-        rst_state = 0;
-        rst_squeeze = 1;
+        rst_absorb <= 0;
+        rst_state <= 0;
+        rst_squeeze <= 1;
       end
 
       SQUEEZE: begin     // Squeeze
-        rst_absorb = 1;
-        rst_state = 0;
-        rst_squeeze = 0;
+        rst_absorb <= 1;
+        rst_state <= 0;
+        rst_squeeze <= 0;
       end
 
       FINALIZE: begin     // End state; Reset all.
-        rst_absorb = 1;
-        rst_state = 1;
-        rst_squeeze = 1;
+        rst_absorb <= 1;
+        rst_state <= 1;
+        rst_squeeze <= 1;
       end
 
       default: begin
-        rst_absorb = 1;
-        rst_state = 1;
-        rst_squeeze = 1;
+        rst_absorb <= 1;
+        rst_state <= 1;
+        rst_squeeze <= 1;
       end
     endcase
   end
