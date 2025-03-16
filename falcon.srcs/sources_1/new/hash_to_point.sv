@@ -8,9 +8,6 @@
 // values in the "message" parameter. First 40 bytes will be the salt, the rest will be the message.
 // Parent module is responsible for first sending the salt and then immediately after the message.
 //
-// The input "message_valid" must be set high before this module starts processing the message and even setting "ready" high.
-// The "ready" signal of this module is dependent on the "message_valid" signal, which is an oversight, which could probably be fixed in the future.
-//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -19,19 +16,19 @@ module hash_to_point#(
   )(
     input logic clk,
     input logic rst_n,
+    input logic start,
 
     input logic [15:0] message_len_bytes, //! Length of the message in bytes.
     input logic [63:0] message, //! every clock cycle the next 64 bits of the message should be provided
     input logic message_valid, //! Is message valid
 
-    output logic ready, //! Are we ready to receive the next message? When set we are ready to receive the next message
+    output logic ready, //! Are we ready to receive the next message? When high we are ready to receive the next message
     output logic signed [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
     output logic polynomial_valid //! Is polynomial valid
   );
 
   typedef enum logic[2:0] {
             IDLE,
-            SET_VALID,
             ABSORB,
             WAIT_FOR_SQUEEZE,
             WAIT_FOR_SQUEEZE_END
@@ -43,7 +40,6 @@ module hash_to_point#(
   logic shake256_ready;
   logic [63:0] data_out;
   logic data_out_valid;
-  logic [1:0] valid_high_counter; //! Counter how many cycles we've been in the SET_VALID state
   logic shake256_reset; // Reset signal for shake256 module, active high
   logic unsigned [$clog2(N):0] polynomial_index; // Index of the polynomial that we are currently writing to
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
@@ -68,25 +64,16 @@ module hash_to_point#(
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
       state <= IDLE;
-      valid_high_counter <= 0;
     end
     else
       state <= next_state;
-
-    // Count the number of cycles spent in the SET_VALID state
-    if(state == SET_VALID)
-      valid_high_counter <= valid_high_counter + 1;
   end
 
   always_comb begin
     case (state)
-      IDLE: begin   // Waiting for the input message to be valid and shake256 to be ready
-        if (message_valid && shake256_ready)
-          next_state = SET_VALID;
-      end
-      SET_VALID: begin  // Set valid signal high two cycles before absorbing the message. I have no idea why this is necessary.
-
-        if(valid_high_counter >= 1)
+      IDLE: begin   // Waiting for start signal, delayed by 1 cycle
+        // if (start == 1'b0 && start_ii == 1'b1)
+        if (start == 1'b1)
           next_state = ABSORB;
       end
       ABSORB: begin // Input other blocks of the message to the shake256
@@ -116,17 +103,16 @@ module hash_to_point#(
         data_in = 0;
         data_in_valid = 0;
         ready = 0;
-        shake256_reset = 1;
-      end
-      SET_VALID: begin
-        data_in = 0;
-        data_in_valid = 1;
-        ready = 0;
-        shake256_reset = 0;
+
+        // In IDLE shake256_reset is set high, except for the cycle when we start (we have to stop resetting one cycle early so the module is ready for data by the time we switch states)
+        if(start == 1'b1)
+          shake256_reset = 0;
+        else
+          shake256_reset = 1;
       end
       ABSORB: begin
         data_in = message;
-        data_in_valid = 1;
+        data_in_valid = message_valid;
         ready = 1;
         shake256_reset = 0;
       end

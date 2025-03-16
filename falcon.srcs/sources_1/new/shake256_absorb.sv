@@ -8,23 +8,25 @@
 
 module shake256_absorb(
     input logic clk,
-    input logic  rst, //! Active high
-    input logic [15:0]  inputlen_InBytes, //! Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
-    input logic [63:0]  din_64bit_raw,
-    input logic din_valid, //! This signal is provided by a data source to indicate that din_64bit_raw is valid
-    output reg ready,  //! When this signal is high, that means Keccak is ready to absorb.
-    output wire [63:0]  data_in_padded, //! This is properly processed data that ill get written into state buffer.
-    output reg data_in_padded_valid,   //! Used to write processed 64-bit data to the state buffer.
-    output reg call_keccak_f1600, //! This signal is used to start Keccak-f1600 on the state variable
+    input logic rst, //! Active high
+
+    input logic [15:0] inputlen_InBytes, //! Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
+    input logic [63:0] data_in,
+    input logic data_in_valid, //! This signal is provided by a data source to indicate that data_in is valid
     input logic keccak_round_complete,  //! This signal comes from Keccak-f1600 after its completion
+
+    output logic ready,  //! When this signal is high, that means Keccak is ready to absorb.
+    output logic [63:0] data_in_padded, //! This is properly processed data that ill get written into state buffer.
+    output logic data_in_padded_valid,   //! Used to write processed 64-bit data to the state buffer.
+    output logic call_keccak_f1600, //! This signal is used to start Keccak-f1600 on the state variable
     output logic done  //! Becomes 1 when the entire input is absorbed.
   );
 
-  reg [15:0] messageLen_InBytes;
-  reg dec_messageLen;
-  reg [7:0] rate_counter;
-  reg rst_rate_counter, inc_rate_counter;
-  wire messageLen_lt_8, messageLen_lte_8, rate_counter_eq, last_rate_byte;
+  logic [15:0] messageLen_InBytes;
+  logic dec_messageLen;
+  logic [7:0] rate_counter;
+  logic rst_rate_counter;
+  logic messageLen_lt_8, messageLen_lte_8, rate_counter_eq, last_rate_byte;
 
   typedef enum logic [2:0] {
             IDLE,
@@ -35,35 +37,35 @@ module shake256_absorb(
           } state_t;
   state_t state, next_state;
 
-  reg delimitedSuffix_used;
+  logic delimitedSuffix_used;
   logic [7:0] delimitedSuffix = 8'h1f;
   logic [7:0] rateInBytes = 8'd136;
 
-  assign data_in_padded[7:0] = (messageLen_lt_8==1'b0) ? din_64bit_raw[7:0] :
+  assign data_in_padded[7:0] = (messageLen_lt_8==1'b0) ? data_in[7:0] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd0) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd0) ? din_64bit_raw[7:0] : 8'd0;
-  assign data_in_padded[15:8] = (messageLen_lt_8==1'b0) ? din_64bit_raw[15:8] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd0) ? data_in[7:0] : 8'd0;
+  assign data_in_padded[15:8] = (messageLen_lt_8==1'b0) ? data_in[15:8] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd1) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd1) ? din_64bit_raw[15:8] :	8'd0;
-  assign data_in_padded[23:16] = (messageLen_lt_8==1'b0) ? din_64bit_raw[23:16] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd1) ? data_in[15:8] :	8'd0;
+  assign data_in_padded[23:16] = (messageLen_lt_8==1'b0) ? data_in[23:16] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd2) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd2) ? din_64bit_raw[23:16] : 8'd0;
-  assign data_in_padded[31:24] = (messageLen_lt_8==1'b0) ? din_64bit_raw[31:24] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd2) ? data_in[23:16] : 8'd0;
+  assign data_in_padded[31:24] = (messageLen_lt_8==1'b0) ? data_in[31:24] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd3) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd3) ? din_64bit_raw[31:24] : 8'd0;
-  assign data_in_padded[39:32] = (messageLen_lt_8==1'b0) ? din_64bit_raw[39:32] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd3) ? data_in[31:24] : 8'd0;
+  assign data_in_padded[39:32] = (messageLen_lt_8==1'b0) ? data_in[39:32] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd4) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd4) ? din_64bit_raw[39:32] : 8'd0;
-  assign data_in_padded[47:40] = (messageLen_lt_8==1'b0) ? din_64bit_raw[47:40] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd4) ? data_in[39:32] : 8'd0;
+  assign data_in_padded[47:40] = (messageLen_lt_8==1'b0) ? data_in[47:40] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd5) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd5) ? din_64bit_raw[47:40] : 8'd0;
-  assign data_in_padded[55:48] = (messageLen_lt_8==1'b0) ? din_64bit_raw[55:48] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd5) ? data_in[47:40] : 8'd0;
+  assign data_in_padded[55:48] = (messageLen_lt_8==1'b0) ? data_in[55:48] :
          (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd6) ? delimitedSuffix :
-         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd6) ? din_64bit_raw[55:48] : 8'd0;
-  wire [7:0] din_proce_temp = (messageLen_lt_8==1'b0) ? din_64bit_raw[63:56] :
+         (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd6) ? data_in[55:48] : 8'd0;
+  wire [7:0] data_in_temp = (messageLen_lt_8==1'b0) ? data_in[63:56] :
        (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd7) ? delimitedSuffix :
-       (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd7) ? din_64bit_raw[63:56] : 8'd0;
-  assign data_in_padded[63:56] = (last_rate_byte) ? {1'b1,din_proce_temp[6:0]} : din_proce_temp;
+       (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd7) ? data_in[63:56] : 8'd0;
+  assign data_in_padded[63:56] = (last_rate_byte) ? {1'b1,data_in_temp[6:0]} : data_in_temp;
 
 
   always_ff @(posedge clk) begin
@@ -89,7 +91,7 @@ module shake256_absorb(
       rate_counter <= 8'd0;
     else if(rst_rate_counter)
       rate_counter <= 8'd0;
-    else if(inc_rate_counter)
+    else if(data_in_padded_valid)
       rate_counter <= rate_counter + 8'd8;
     else
       rate_counter <= rate_counter;
@@ -102,72 +104,59 @@ module shake256_absorb(
   assign rate_counter_eq = (rate_counter==(rateInBytes-8'd8)) ? 1'b1 : 1'b0;
   assign last_rate_byte = (messageLen_lt_8==1'b1 && rate_counter_eq==1'b1) ? 1'b1 : 1'b0;
 
+  assign data_in_padded_valid = (data_in_valid == 1'b1 && state == ABSORB) || state == CONSUME_DELIMITED_SUFFIX;
+
   always_ff @(posedge clk) begin
     if(rst)
-      state <= IDLE;
+      state = IDLE;
     else
-      state <= next_state;
-  end
+      state = next_state;
 
-  always_comb begin
     case(state)
       IDLE: begin // Reset state
-        ready = 1;
-        rst_rate_counter = 1;
-        inc_rate_counter = 0;
-        dec_messageLen = 0;
-        data_in_padded_valid = 0;
-        call_keccak_f1600 = 0;
+        ready <= 0;
+        rst_rate_counter <= 1;
+        dec_messageLen <= 0;
+        // data_in_padded_valid <= 0;
+        call_keccak_f1600 <= 0;
       end
-      ABSORB: begin // Absorb 8 bytes every cycle; Stays in this state till {rate_counter=rateInBytes-8; or remaining message len is <8 bytes}
-        ready = 1;
-        rst_rate_counter = 0;
-        call_keccak_f1600 = 0;
-        if(din_valid) begin
-          inc_rate_counter = 1;
-          data_in_padded_valid = 1;
-        end
-        else begin
-          inc_rate_counter = 0;
-          data_in_padded_valid = 0;
-        end
-        if(din_valid==1'b1)
-          dec_messageLen = 1;
+      ABSORB: begin // Absorb 8 bytes every cycle; Stays in this state till {rate_counter<=rateInBytes-8; or remaining message len is <8 bytes}
+        ready <= 1;
+        rst_rate_counter <= 0;
+        call_keccak_f1600 <= 0;
+        // data_in_padded_valid <= data_in_valid;
+        if(data_in_valid==1'b1)
+          dec_messageLen <= 1;
         else
-          dec_messageLen = 0;
+          dec_messageLen <= 0;
       end
-      CONSUME_DELIMITED_SUFFIX: begin // Visited when messageLen was < rate in ABSORB ; Stay in this state till {rate_counter=rateInBytes-8}. delimitedSuffix_used is used in this state.
-        ready = 1;
-        rst_rate_counter = 0;
-        call_keccak_f1600 = 0;
-        inc_rate_counter = 1;
-        data_in_padded_valid = 1;
-        dec_messageLen = 0;
+      CONSUME_DELIMITED_SUFFIX: begin // Visited when messageLen was < rate in ABSORB ; Stay in this state till {rate_counter<=rateInBytes-8}. delimitedSuffix_used is used in this state.
+        ready <= 1;
+        rst_rate_counter <= 0;
+        call_keccak_f1600 <= 0;
+        // data_in_padded_valid <= 1;
+        dec_messageLen <= 0;
       end
       RATE_COMPLETE: begin // Visited after ABSORB when rate_counter completes the specified rate. Calls keccak-f1600
-        ready = 0;
-        rst_rate_counter = 1;
-        inc_rate_counter = 0;
-        dec_messageLen = 0;
-        data_in_padded_valid = 0;
-        call_keccak_f1600 = 1;
+        ready <= 0;
+        rst_rate_counter <= 1;
+        dec_messageLen <= 0;
+        // data_in_padded_valid <= 0;
+        call_keccak_f1600 <= 1;
       end
-
       FINALIZE: begin // Absorb complete
-        ready = 1;
-        rst_rate_counter = 1;
-        inc_rate_counter = 0;
-        dec_messageLen = 0;
-        data_in_padded_valid = 0;
-        call_keccak_f1600 = 0;
+        ready <= 1;
+        rst_rate_counter <= 1;
+        dec_messageLen <= 0;
+        // data_in_padded_valid <= 0;
+        call_keccak_f1600 <= 0;
       end
       default: begin // Reset state
-        ready = 1;
-        rst_rate_counter = 1;
-        inc_rate_counter = 0;
-        dec_messageLen = 0;
-        data_in_padded_valid = 0;
-        call_keccak_f1600 = 0;
+        ready <= 1;
+        rst_rate_counter <= 1;
+        dec_messageLen <= 0;
+        // data_in_padded_valid <= 0;
+        call_keccak_f1600 <= 0;
       end
     endcase
   end
@@ -200,7 +189,6 @@ module shake256_absorb(
         else
           next_state = RATE_COMPLETE;
       end
-
       FINALIZE:
         next_state = FINALIZE;
       default:
