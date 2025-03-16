@@ -17,6 +17,10 @@
 //  - NTT: This is the "main" part of the module, which has most of the control logic
 // Due to there being multiple parts there are also multiple state machines that control the whole module.
 //
+// Parent of this module should provide both salt from signature and the message via the "message" signal.
+// The first 40B (5 blocks of 64 bit) should be the salt and everything else the message.
+// Size of salt should not be included in "message_len_bytes" (it is added by this module)
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module verify#(
@@ -34,17 +38,15 @@ module verify#(
     input logic signed [14:0] public_key[0:N-1], //! Public key in coefficient form
     input logic public_key_valid, //! Is public key valid
 
-    input logic [15:0] message_len_bytes, //! Length of the message in bytes.
+    input logic [15:0] message_len_bytes, //! Length of the message in bytes. This does not take into account the size of the salt, which will also be inputed as "message"
     input logic [63:0] message, //! every clock cycle the next 64 bits of the message should be provided
     input logic message_valid, //! Is message valid
+    input logic message_last, //! Is this the last block of message
     output logic message_ready, //! Is ready to receive the next message
 
-    input logic [63:0] signature_salt, //! Salt from the signature
-    input logic signature_salt_valid,  //! Is signature_salt valid
-    output logic signature_salt_ready, //! Is ready to receive the next signature_salt block
-    input logic [63:0] signature_value,
-    input logic [6:0] signature_value_valid, //! Is signature_value valid, bitwise from the left
-    output logic signature_value_ready, //! Is ready to receive the next signature_value block
+    input logic [63:0] signature,
+    input logic [6:0] signature_valid, //! Is signature valid, bitwise from the left
+    output logic signature_ready, //! Is ready to receive the next signature block
 
     output logic accept, //! Set to true if signature is valid
     output logic reject //! Set to true if signature is invalid
@@ -52,10 +54,6 @@ module verify#(
 
   /////////////////////////// Start hash_to_point ///////////////////////////
 
-  logic [15:0] htp_message_len_bytes; //! Length of the input to hash_to_point module
-  logic [63:0] htp_input_message; //! Input block to hash_to_point module
-  logic htp_message_valid  ; //! Is input block to hash_to_point module valid
-  logic htp_ready; //! Is hash_to_point module ready to receive the next input block
   logic signed [14:0] htp_polynomial[0:N-1]; // Output polynomial from hash_to_point
   logic htp_polynomial_valid; // Is htp_polynomial from hash_to_point valid
 
@@ -64,23 +62,15 @@ module verify#(
                 )hash_to_point(
                   .clk(clk),
                   .rst_n(rst_n),
-                  .message_len_bytes(htp_message_len_bytes),
-                  .message(htp_input_message),
-                  .message_valid(htp_message_valid),
-                  .ready(htp_ready),
+                  .start(start),
+                  .message_len_bytes(message_len_bytes+40), // +40 because we first send 40B of salt and only then we start sending the message
+                  .message(message),
+                  .message_valid(message_valid),
+                  .message_last(message_last),
+                  .ready(message_ready),
                   .polynomial(htp_polynomial),
                   .polynomial_valid(htp_polynomial_valid)
                 );
-
-  // Input message to hash_to_point is the concatenation of the message and the salt. Salt is 40B long.
-  // First we send the salt, then the message. As long as the salt is valid we keep sending it and then
-  // we start sending the message. We set message_ready and signature_salt_ready to "ready" signal from hash_to_point
-  // depending on what we're currently sending.
-  assign htp_message_len_bytes = message_len_bytes+40;
-  assign htp_input_message = signature_salt_valid ? signature_salt : message;
-  assign htp_message_valid = signature_salt_valid ? signature_salt_valid : message_valid;
-  assign message_ready = signature_salt_valid ? 0 : htp_ready;
-  assign signature_salt_ready = signature_salt_valid ? htp_ready : 0;
 
   /////////////////////////// End hash_to_point ///////////////////////////
 
@@ -133,7 +123,7 @@ module verify#(
     case (decompress_state)
       DECOMPRESS_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
-          decompress_next_state = START_NTT_PUBLIC_KEY;
+          decompress_next_state = READY_FOR_SIGNATURE;
       end
       READY_FOR_SIGNATURE: begin  // Wait for signature buffer to be full
         if (compressed_signature_buffer_valid > 128)  // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it)
@@ -165,28 +155,28 @@ module verify#(
 
     case (decompress_state)
       DECOMPRESS_IDLE: begin
-        signature_value_ready <= 1'b0;
+        signature_ready <= 1'b0;
         compressed_signature_buffer <= 0;
         compressed_signature_buffer_valid <= 0;
       end
       READY_FOR_SIGNATURE: begin
-        signature_value_ready <= 1'b1; // We can receive the next 64 bits of the signature
+        signature_ready <= 1'b1; // We can receive the next 64 bits of the signature
       end
       DECOMPRESSING: begin
-        signature_value_ready <= 1'b0;
+        signature_ready <= 1'b0;
       end
       DECOMPRESSION_DONE: begin
-        signature_value_ready <= 1'b0;
+        signature_ready <= 1'b0;
       end
     endcase
 
-
+    // Logic for loading new signature data and storing decompressed coefficients
     if(decompress_state == DECOMPRESSING || decompress_state == READY_FOR_SIGNATURE) begin
 
       // Load new block of signature data
-      if(signature_value_valid) begin
-        compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature_value;
-        compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_value_valid;
+      if(signature_valid) begin
+        compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
+        compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
       end
 
       // If decompression module produced a valid coefficient we have to shift the buffer to the left by "compressed_coef_length" bits

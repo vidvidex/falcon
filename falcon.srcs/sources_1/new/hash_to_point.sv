@@ -21,8 +21,9 @@ module hash_to_point#(
     input logic [15:0] message_len_bytes, //! Length of the message in bytes.
     input logic [63:0] message, //! every clock cycle the next 64 bits of the message should be provided
     input logic message_valid, //! Is message valid
+    input logic message_last, //! Is this the last block of message
 
-    output logic ready, //! Are we ready to receive the next message? When high we are ready to receive the next message
+    output logic ready, //! Are we ready to receive the next message?
     output logic signed [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
     output logic polynomial_valid //! Is polynomial valid
   );
@@ -72,12 +73,11 @@ module hash_to_point#(
   always_comb begin
     case (state)
       IDLE: begin   // Waiting for start signal, delayed by 1 cycle
-        // if (start == 1'b0 && start_ii == 1'b1)
         if (start == 1'b1)
           next_state = ABSORB;
       end
       ABSORB: begin // Input other blocks of the message to the shake256
-        if (message_valid == 1'b0)  // If the message is done, then squeeze out the hash
+        if (message_last == 1'b1)  // If the message is done, then squeeze out the hash
           next_state = WAIT_FOR_SQUEEZE;
       end
       WAIT_FOR_SQUEEZE: begin  // Wait for the shake256 to start outputting the hash
