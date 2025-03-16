@@ -291,9 +291,6 @@ module verify#(
       end
       RUNNING_NTT_PUBLIC_KEY: begin // Wait for NTT(public key) to finish and decompressed signature to be ready before moving to START_NTT_SIGNATURE
         if (ntt_done == 1'b1) begin
-          // Save output of NTT module for later use
-          ntt_buffer1 = ntt_output;
-
           // If there was an error decompressing the signature go straight to FINISHED
           if(signature_error == 1'b1)
             ntt_next_state = FINISHED;
@@ -313,11 +310,8 @@ module verify#(
         ntt_next_state = RUNNING_NTT_SIGNATURE;
       end
       RUNNING_NTT_SIGNATURE: begin // Wait for NTT(signature) to finish before moving to MULT_MOD_Q
-        if (ntt_done == 1'b1) begin
-          // Save output of NTT module for later use
-          ntt_buffer2 = ntt_output;
+        if (ntt_done == 1'b1)
           ntt_next_state = MULT_MOD_Q;
-        end
       end
       MULT_MOD_Q: begin // Wait for multiplication and modulo to finish before moving to START_INTT
         // Check if we've processed all coefficients
@@ -329,9 +323,6 @@ module verify#(
       end
       RUNNING_INTT: begin // Wait for INTT to finish before moving to WAIT_FOR_HASH_TO_POINT
         if (ntt_done == 1'b1) begin
-          // Save output of NTT module for later use
-          ntt_buffer1 = ntt_output;
-
           // If hash_to_point is finished go to SUB_AND_NORMALIZE, otherwise wait for it to finish
           if(htp_polynomial_valid == 1'b1)
             ntt_next_state =  SUB_AND_NORMALIZE;
@@ -386,6 +377,7 @@ module verify#(
         accept <= 1'b0;
         reject <= 1'b0;
       end
+
       WAIT_FOR_DECOMPRESS: begin
         ntt_mode <= 1'b0;
         ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
@@ -401,6 +393,10 @@ module verify#(
 
         accept <= 1'b0;
         reject <= 1'b0;
+
+        if (ntt_done == 1'b1) begin
+          ntt_buffer1 <= ntt_output;
+        end
       end
 
       START_NTT_SIGNATURE: begin
@@ -410,6 +406,11 @@ module verify#(
 
         accept <= 1'b0;
         reject <= 1'b0;
+
+        if (ntt_done == 1'b1) begin
+          // Save output of NTT module for later use
+          ntt_buffer2 <= ntt_output;
+        end
       end
 
       RUNNING_NTT_SIGNATURE: begin
@@ -434,7 +435,6 @@ module verify#(
         end
 
         mult_mod_q_index <= mult_mod_q_index + MULT_MOD_Q_OPS_PER_CYCLE;
-
       end
 
       START_INTT: begin
@@ -453,6 +453,11 @@ module verify#(
 
         accept <= 1'b0;
         reject <= 1'b0;
+
+        if (ntt_done == 1'b1) begin
+          // Save output of NTT module for later use
+          ntt_buffer1 <= ntt_output;
+        end
       end
 
       WAIT_FOR_HASH_TO_POINT: begin
