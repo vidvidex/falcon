@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="top_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="903.978 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,019.205 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="273"></NameColumnWidth>
+      <ValueColumnWidth column_width="145"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="21" />
+   <wvobject type="logic" fp_name="/top_tb/uut/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/btns">
+      <obj_property name="ElementShortName">btns[3:0]</obj_property>
+      <obj_property name="ObjectShortName">btns[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/leds">
+      <obj_property name="ElementShortName">leds[3:0]</obj_property>
+      <obj_property name="ObjectShortName">leds[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/start">
+      <obj_property name="ElementShortName">start</obj_property>
+      <obj_property name="ObjectShortName">start</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/running">
+      <obj_property name="ElementShortName">running</obj_property>
+      <obj_property name="ObjectShortName">running</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/message_blocks">
+      <obj_property name="ElementShortName">message_blocks[0:6][63:0]</obj_property>
+      <obj_property name="ObjectShortName">message_blocks[0:6][63:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/signature_blocks">
+      <obj_property name="ElementShortName">signature_blocks[0:1][63:0]</obj_property>
+      <obj_property name="ObjectShortName">signature_blocks[0:1][63:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/signature_valid_blocks">
+      <obj_property name="ElementShortName">signature_valid_blocks[0:1][6:0]</obj_property>
+      <obj_property name="ObjectShortName">signature_valid_blocks[0:1][6:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/public_key">
+      <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
+      <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/message_len_bytes">
+      <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
+      <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/message">
+      <obj_property name="ElementShortName">message[63:0]</obj_property>
+      <obj_property name="ObjectShortName">message[63:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/message_valid">
+      <obj_property name="ElementShortName">message_valid</obj_property>
+      <obj_property name="ObjectShortName">message_valid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/message_last">
+      <obj_property name="ElementShortName">message_last</obj_property>
+      <obj_property name="ObjectShortName">message_last</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/message_ready">
+      <obj_property name="ElementShortName">message_ready</obj_property>
+      <obj_property name="ObjectShortName">message_ready</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/signature">
+      <obj_property name="ElementShortName">signature[63:0]</obj_property>
+      <obj_property name="ObjectShortName">signature[63:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/signature_valid">
+      <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
+      <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/signature_ready">
+      <obj_property name="ElementShortName">signature_ready</obj_property>
+      <obj_property name="ObjectShortName">signature_ready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/accept">
+      <obj_property name="ElementShortName">accept</obj_property>
+      <obj_property name="ObjectShortName">accept</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top_tb/uut/reject">
+      <obj_property name="ElementShortName">reject</obj_property>
+      <obj_property name="ObjectShortName">reject</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/message_block_index">
+      <obj_property name="ElementShortName">message_block_index[31:0]</obj_property>
+      <obj_property name="ObjectShortName">message_block_index[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top_tb/uut/signature_block_index">
+      <obj_property name="ElementShortName">signature_block_index[31:0]</obj_property>
+      <obj_property name="ObjectShortName">signature_block_index[31:0]</obj_property>
+   </wvobject>
+</wave_config>
