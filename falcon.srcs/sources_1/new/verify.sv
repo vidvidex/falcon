@@ -395,6 +395,7 @@ module verify#(
         reject <= 1'b0;
 
         if (ntt_done == 1'b1) begin
+          // Save output of NTT module for later use
           ntt_buffer1 <= ntt_output;
         end
       end
@@ -406,11 +407,6 @@ module verify#(
 
         accept <= 1'b0;
         reject <= 1'b0;
-
-        if (ntt_done == 1'b1) begin
-          // Save output of NTT module for later use
-          ntt_buffer2 <= ntt_output;
-        end
       end
 
       RUNNING_NTT_SIGNATURE: begin
@@ -420,6 +416,11 @@ module verify#(
 
         accept <= 1'b0;
         reject <= 1'b0;
+
+        if (ntt_done == 1'b1) begin
+          // Save output of NTT module for later use
+          ntt_buffer2 <= ntt_output;
+        end
       end
 
       MULT_MOD_Q: begin
