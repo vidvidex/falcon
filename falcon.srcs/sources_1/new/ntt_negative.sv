@@ -69,14 +69,13 @@ module ntt_negative#(
   function [14:0] mod_mult(input logic signed [14:0] a, b);
     logic signed [29:0] temp1;
     logic signed [30:0] temp2;
+    logic [15:0] temp3;
     begin
       temp1 = a * b;
-      temp2 = ((temp1 * 12287) & 16'hffff) * 12289;
-
+      temp3 = (((temp1 << 3) + (temp1 << 2)) << 10) - temp1;  // Efficient multiplication by 12287
+      temp2 = (((temp3 << 3) + (temp3 << 2)) << 10) + temp3;  // Efficient multiplication by 12289
       temp1 = (temp1 + temp2) >> 16;
-
-      temp2 = temp1 - 12289;
-      mod_mult = temp2 + (12289 & -(temp2 >> 31));
+      mod_mult = (temp1 >= 12289) ? (temp1 - 12289) : temp1;
     end
   endfunction
 
