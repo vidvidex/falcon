@@ -236,7 +236,7 @@ module verify#(
                  .output_polynomial(ntt_output)
                );
 
-  // Modulo 12289 multiplication
+  // Modulo 12289 multiplication TODO: replace with a more efficient implementation (Barrett / Montgomery reduction). Careful: a and b are not in Montgomery form
   function [14:0] mod_mult(input [14:0] a, b);
     logic [29:0] temp;
     begin
