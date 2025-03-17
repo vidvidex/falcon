@@ -1,5 +1,5 @@
 # NTT from reference C implementation of Falcon, ported to Python
-# This computes positive-wrapped NTT.
+# This computes negative-wrapped NTT.
 
 
 def ntt(arr, twiddles, q):
