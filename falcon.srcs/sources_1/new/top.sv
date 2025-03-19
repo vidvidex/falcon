@@ -6,7 +6,7 @@ module top (
     output logic [3:0] leds
   );
 
-  logic rst, start;
+  logic rst, start, start_i, start_ii, start_pulse;
 
   logic [63:0] message_blocks [7];   // Buffer for message blocks
   logic [63:0] signature_blocks [2];   // Buffer for signature value blocks
@@ -26,6 +26,7 @@ module top (
 
   logic accept; //! Set to true if signature is valid
   logic reject; //! Set to true if signature is invalid
+  logic running;
 
   int message_block_index = 0;
   int signature_block_index = 0;
@@ -37,7 +38,7 @@ module top (
            .clk(clk),
            .rst_n(!rst),
 
-           .start(start),
+           .start(start_pulse),
 
            .public_key(public_key),
            .public_key_valid(1'b1),
@@ -61,7 +62,17 @@ module top (
     if(rst == 1'b1) begin
       message_block_index <= 0;
       signature_block_index <= 0;
+      running <= 0;
     end
+
+    start_i <= start;
+    start_ii <= start_i;
+
+    if(start_pulse)
+      running <= 1'b1;
+
+    if(accept || reject)
+      running <= 1'b0;
 
     if(!accept && !reject) begin
 
@@ -87,19 +98,21 @@ module top (
   end
 
   assign message_len_bytes = 12; // len("Hello World!") = 12
-    // First 5 blocks of message are the salt (40B), the rest is the message ("Hello World!", reversed and with padding)
+  // First 5 blocks of message are the salt (40B), the rest is the message ("Hello World!", reversed and with padding)
   assign message_blocks = {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
 
   // len(signature) = 11 bytes = 88 bits = 64 + 24
   assign signature_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
   assign signature_valid_blocks = '{64, 24};
 
+  assign start_pulse = start == 1'b1 && start_ii == 1'b0;
+
   assign rst = btns[3];
   assign start = btns[2];
 
   assign leds[0] = accept;
   assign leds[1] = reject;
-  assign leds[2] = start;
+  assign leds[2] = running;
   assign leds[3] = rst;
 
 endmodule
