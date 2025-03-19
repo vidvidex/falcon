@@ -15,6 +15,7 @@ module top_tb;
 
   initial begin
     clk = 1;
+    btns = 4'b0;
 
 
     // Reset
@@ -42,6 +43,7 @@ module top_tb;
     else
       $fatal("Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", leds[0], leds[1]);
 
+    $finish;
   end
 
 endmodule
