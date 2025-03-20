@@ -212,7 +212,7 @@ module verify#(
   logic [26:0] temp=0;  // Temporary variable for calculating squared norm
   logic [26:0] squared_norm=0;
 
-  logic signed [14:0] mod_mult_a, mod_mult_b, mod_mult_result;
+  logic signed [14:0] mod_mult_a [MULT_MOD_Q_OPS_PER_CYCLE], mod_mult_b [MULT_MOD_Q_OPS_PER_CYCLE], mod_mult_result [MULT_MOD_Q_OPS_PER_CYCLE];
   logic mod_mult_valid_in, mod_mult_valid_out, mod_mult_last;
   logic [$clog2(N):0] mod_mult_index_in, mod_mult_index_out;
 
@@ -241,7 +241,8 @@ module verify#(
                );
 
   mod_mult_verify #(
-                    .N(N)
+                    .N(N),
+                    .PARALLEL_OPS_COUNT(MULT_MOD_Q_OPS_PER_CYCLE)
                   )mod_mult (
                     .clk(clk),
                     .rst_n(rst_n),
@@ -326,7 +327,7 @@ module verify#(
       end
       MULT_MOD_Q: begin // Wait for multiplication and modulo to finish before moving to WAIT_FOR_MULT_MOD_Q
         // Check if we've sent all coefficients to mod_mult coefficients
-        if (mult_mod_q_index == N - 1)
+        if (mult_mod_q_index == N - MULT_MOD_Q_OPS_PER_CYCLE)
           ntt_next_state = WAIT_FOR_MULT_MOD_Q;
       end
       WAIT_FOR_MULT_MOD_Q: begin // Wait for multiplication and modulo to finish before moving to START_INTT
@@ -376,8 +377,10 @@ module verify#(
         ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
 
         // Initialize mod_mult parameters (so they aren't undefined)
-        mod_mult_a <= 0;
-        mod_mult_b <= 0;
+        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
+          mod_mult_a[i] <= 0;
+          mod_mult_b[i] <= 0;
+        end
         mod_mult_valid_in <= 0;
         mod_mult_index_in <= 0;
 
@@ -452,22 +455,19 @@ module verify#(
         accept <= 1'b0;
         reject <= 1'b0;
 
-        mod_mult_a <= ntt_buffer1[mult_mod_q_index];
-        mod_mult_b <= ntt_buffer2[mult_mod_q_index];
-        mod_mult_valid_in <= 1'b1;
+        // Send data to mod_mult module
+        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
+          mod_mult_a[i] <= ntt_buffer1[mult_mod_q_index + i];
+          mod_mult_b[i] <= ntt_buffer2[mult_mod_q_index + i];
+        end
         mod_mult_index_in <= mult_mod_q_index;
-        mult_mod_q_index <= mult_mod_q_index + 1;
+        mod_mult_valid_in <= 1'b1;
+        mult_mod_q_index <= mult_mod_q_index + MULT_MOD_Q_OPS_PER_CYCLE;
 
         // If output of mod_mult is valid we can save it
         if(mod_mult_valid_out == 1'b1)
-          ntt_buffer1[mod_mult_index_out] <= mod_mult_result;
-
-        // Compute MULT_MOD_Q_OPS_PER_CYCLE coefficients per clock cycle
-        // for (int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i = i + 1) begin
-        //   ntt_buffer1[i + mult_mod_q_index] <= mod_mult(ntt_buffer1[i + mult_mod_q_index], ntt_buffer2[i + mult_mod_q_index]);
-        // end
-
-        // mult_mod_q_index <= mult_mod_q_index + MULT_MOD_Q_OPS_PER_CYCLE;
+          for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++)
+            ntt_buffer1[mod_mult_index_out + i] <= mod_mult_result[i];
       end
 
       WAIT_FOR_MULT_MOD_Q: begin
@@ -477,14 +477,17 @@ module verify#(
         accept <= 1'b0;
         reject <= 1'b0;
 
-        mod_mult_a <= 0;
-        mod_mult_b <= 0;
+        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
+          mod_mult_a[i] <= 0;
+          mod_mult_b[i] <= 0;
+        end
         mod_mult_valid_in <= 0;
         mod_mult_index_in <= 0;
 
         // If output of mod_mult is valid we can save it
         if(mod_mult_valid_out == 1'b1)
-          ntt_buffer1[mod_mult_index_out] <= mod_mult_result;
+          for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++)
+            ntt_buffer1[mod_mult_index_out + i] <= mod_mult_result[i];
       end
 
       START_INTT: begin
