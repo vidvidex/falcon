@@ -5,10 +5,14 @@ module mod_mult_verify_tb;
   logic clk;
   logic rst_n;
 
-  logic signed [14:0] a, b, result;
-  logic signed [14:0] a_arr [4] = '{1, 2, 12270, 12271};
-  logic signed [14:0] b_arr [4] = '{2, 2, 2, 2};
-  logic signed [14:0] expected_results [4] = '{2, 4, 12251, 12253};
+  parameter int PARALLEL_OPS_COUNT = 2;
+
+  logic signed [14:0] a [PARALLEL_OPS_COUNT];
+  logic signed [14:0] b [PARALLEL_OPS_COUNT];
+  logic signed [14:0] result [PARALLEL_OPS_COUNT];
+  logic signed [14:0] a_arr [8] = '{1, 2, 3, 4, 5, 6, 12270, 12271};
+  logic signed [14:0] b_arr [8] = '{2, 2, 2, 2, 2, 2, 2, 2};
+  logic signed [14:0] expected_results [8] = '{2, 4, 6, 8, 10, 12, 12251, 12253};
 
   logic [2:0] index_in, index_out;
 
@@ -19,7 +23,8 @@ module mod_mult_verify_tb;
   int send_i, receive_i = 0;    // Counters for sending data to module and receiving from module
 
   mod_mult_verify #(
-                    .N(8)
+                    .N(8),
+                    .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
                   )uut (
                     .clk(clk),
                     .rst_n(rst_n),
@@ -37,12 +42,14 @@ module mod_mult_verify_tb;
 
   // Send input data
   always_ff @(posedge clk) begin
-    if (run_test && send_i < 4) begin
-      a <= a_arr[send_i];
-      b <= b_arr[send_i];
-      valid_in <= 1;
+    if (run_test && send_i < 8) begin
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
+        a[i] <= a_arr[send_i + i];
+        b[i] <= b_arr[send_i + i];
+        valid_in <= 1;
+      end
       index_in <= send_i;
-      send_i <= send_i + 1;
+      send_i <= send_i + 2;
     end
     else begin
       valid_in <= 0;
@@ -62,19 +69,22 @@ module mod_mult_verify_tb;
     #10;
 
     // Wait for the test to finish
-    while (receive_i != 4 ) begin
+    while (receive_i != 8 ) begin
       if (valid_out) begin
-        if (result != expected_results[receive_i])
-          $fatal(1, "Test failed: Result is not correct. Expected %d, got %d", expected_results[receive_i], result);
+
+        for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
+          if (result[i] != expected_results[receive_i + i])
+            $fatal(1, "Test failed: Result is not correct. Expected %d, got %d", expected_results[receive_i + i], result[i]);
+        end
 
         if (receive_i != index_out)
           $fatal(1, "Test failed: index_out is not correct. Expected %d, got %d", receive_i, index_out);
 
-        if(receive_i == 3)
+        if(receive_i == 6)
           if(last != 1)
             $fatal(1, "Test failed: Expected last to be high");
 
-        receive_i <= receive_i + 1;
+        receive_i <= receive_i + 2;
       end
       #10;
     end
