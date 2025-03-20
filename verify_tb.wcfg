@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2,740.500 ns"></ZoomStartTime>
-      <ZoomEndTime time="2,955.901 ns"></ZoomEndTime>
-      <Cursor1Time time="2,920.000 ns"></Cursor1Time>
+      <ZoomStartTime time="2,339.591 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,556.082 ns"></ZoomEndTime>
+      <Cursor1Time time="2,510.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="210"></NameColumnWidth>
-      <ValueColumnWidth column_width="256"></ValueColumnWidth>
+      <ValueColumnWidth column_width="252"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group675">
@@ -182,6 +182,7 @@
       <wvobject type="group" fp_name="group2525">
          <obj_property name="label">NTT</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/verify_tb/uut/public_key_valid">
             <obj_property name="ElementShortName">public_key_valid</obj_property>
             <obj_property name="ObjectShortName">public_key_valid</obj_property>
@@ -222,45 +223,6 @@
             <obj_property name="ObjectShortName">ntt_buffer2[0:7][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/mod_mult_valid_in">
-            <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_a">
-            <obj_property name="ElementShortName">mod_mult_a[14:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_a[14:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_b">
-            <obj_property name="ElementShortName">mod_mult_b[14:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_b[14:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/mod_mult_valid_out">
-            <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_result">
-            <obj_property name="ElementShortName">mod_mult_result[14:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_result[14:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_index_out">
-            <obj_property name="ElementShortName">mod_mult_index_out[3:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_index_out[3:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/mod_mult_last">
-            <obj_property name="ElementShortName">mod_mult_last</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_last</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_index_in">
-            <obj_property name="ElementShortName">mod_mult_index_in[3:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_index_in[3:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/mult_mod_q_index">
-            <obj_property name="ElementShortName">mult_mod_q_index[3:0]</obj_property>
-            <obj_property name="ObjectShortName">mult_mod_q_index[3:0]</obj_property>
-         </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/sub_and_normalize_index">
             <obj_property name="ElementShortName">sub_and_normalize_index[3:0]</obj_property>
             <obj_property name="ObjectShortName">sub_and_normalize_index[3:0]</obj_property>
@@ -277,24 +239,77 @@
             <obj_property name="ElementShortName">ntt_next_state[3:0]</obj_property>
             <obj_property name="ObjectShortName">ntt_next_state[3:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_error">
-            <obj_property name="ElementShortName">squared_norm_error</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_error</obj_property>
+         <wvobject type="group" fp_name="group170">
+            <obj_property name="label">mod_mult</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject type="logic" fp_name="/verify_tb/uut/mod_mult_valid_in">
+               <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_a">
+               <obj_property name="ElementShortName">mod_mult_a[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_a[0:3][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_b">
+               <obj_property name="ElementShortName">mod_mult_b[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_b[0:3][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/verify_tb/uut/mod_mult_valid_out">
+               <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_result">
+               <obj_property name="ElementShortName">mod_mult_result[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_result[0:3][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_index_out">
+               <obj_property name="ElementShortName">mod_mult_index_out[3:0]</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_index_out[3:0]</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/verify_tb/uut/mod_mult_last">
+               <obj_property name="ElementShortName">mod_mult_last</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_last</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/mod_mult_index_in">
+               <obj_property name="ElementShortName">mod_mult_index_in[3:0]</obj_property>
+               <obj_property name="ObjectShortName">mod_mult_index_in[3:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/mult_mod_q_index">
+               <obj_property name="ElementShortName">mult_mod_q_index[3:0]</obj_property>
+               <obj_property name="ObjectShortName">mult_mod_q_index[3:0]</obj_property>
+            </wvobject>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/temp">
-            <obj_property name="ElementShortName">temp[26:0]</obj_property>
-            <obj_property name="ObjectShortName">temp[26:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/squared_norm">
-            <obj_property name="ElementShortName">squared_norm[26:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm[26:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/bound2">
-            <obj_property name="ElementShortName">bound2[26:0]</obj_property>
-            <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <wvobject type="group" fp_name="group171">
+            <obj_property name="label">squared_norm</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_a">
+               <obj_property name="ElementShortName">squared_norm_a[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_a[0:3][14:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_b">
+               <obj_property name="ElementShortName">squared_norm_b[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_b[0:3][14:0]</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_valid_in">
+               <obj_property name="ElementShortName">squared_norm_valid_in</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_valid_in</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_last">
+               <obj_property name="ElementShortName">squared_norm_last</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_last</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_accept">
+               <obj_property name="ElementShortName">squared_norm_accept</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_accept</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_reject">
+               <obj_property name="ElementShortName">squared_norm_reject</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_reject</obj_property>
+            </wvobject>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group245">
