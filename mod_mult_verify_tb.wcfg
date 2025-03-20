@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="mod_mult_verify_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="mod_mult_verify_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="93.901 ns"></ZoomEndTime>
+      <Cursor1Time time="70.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="209"></NameColumnWidth>
+      <ValueColumnWidth column_width="249"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="2" />
+   <wvobject type="group" fp_name="group17">
+      <obj_property name="label">tb</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/a">
+         <obj_property name="ElementShortName">a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">a[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/b">
+         <obj_property name="ElementShortName">b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">b[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/result">
+         <obj_property name="ElementShortName">result[14:0]</obj_property>
+         <obj_property name="ObjectShortName">result[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/a_arr">
+         <obj_property name="ElementShortName">a_arr[0:3][14:0]</obj_property>
+         <obj_property name="ObjectShortName">a_arr[0:3][14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/b_arr">
+         <obj_property name="ElementShortName">b_arr[0:3][14:0]</obj_property>
+         <obj_property name="ObjectShortName">b_arr[0:3][14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/expected_results">
+         <obj_property name="ElementShortName">expected_results[0:3][14:0]</obj_property>
+         <obj_property name="ObjectShortName">expected_results[0:3][14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/last">
+         <obj_property name="ElementShortName">last</obj_property>
+         <obj_property name="ObjectShortName">last</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/run_test">
+         <obj_property name="ElementShortName">run_test</obj_property>
+         <obj_property name="ObjectShortName">run_test</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/send_i">
+         <obj_property name="ElementShortName">send_i[31:0]</obj_property>
+         <obj_property name="ObjectShortName">send_i[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/receive_i">
+         <obj_property name="ElementShortName">receive_i[31:0]</obj_property>
+         <obj_property name="ObjectShortName">receive_i[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group19">
+      <obj_property name="label">mod_mult</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/uut/a">
+         <obj_property name="ElementShortName">a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">a[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/uut/b">
+         <obj_property name="ElementShortName">b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">b[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/uut/result">
+         <obj_property name="ElementShortName">result[14:0]</obj_property>
+         <obj_property name="ObjectShortName">result[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/last">
+         <obj_property name="ElementShortName">last</obj_property>
+         <obj_property name="ObjectShortName">last</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/uut/a_times_b">
+         <obj_property name="ElementShortName">a_times_b[29:0]</obj_property>
+         <obj_property name="ObjectShortName">a_times_b[29:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/uut/a_times_b_mod_12289">
+         <obj_property name="ElementShortName">a_times_b_mod_12289[15:0]</obj_property>
+         <obj_property name="ObjectShortName">a_times_b_mod_12289[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/valid1">
+         <obj_property name="ElementShortName">valid1</obj_property>
+         <obj_property name="ObjectShortName">valid1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/mod_mult_verify_tb/uut/valid2">
+         <obj_property name="ElementShortName">valid2</obj_property>
+         <obj_property name="ObjectShortName">valid2</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/mod_mult_verify_tb/uut/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
