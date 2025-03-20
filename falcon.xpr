@@ -111,7 +111,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/mod_mult.sv">
+      <File Path="$PSRCDIR/sources_1/new/mod_mult_ntt_negative.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -262,7 +262,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/mod_mult_tb.sv">
+      <File Path="$PSRCDIR/sim_1/new/mod_mult_ntt_negative_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -360,7 +360,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/mod_mult_tb.wcfg">
+      <File Path="$PPRDIR/mod_mult_ntt_negative_tb.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -386,7 +386,7 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_coefficient_tb.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_tb.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/top_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_tb.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_ntt_negative_tb.wcfg"/>
       </Config>
     </FileSet>
     <FileSet Name="utils_1" Type="Utils" RelSrcDir="$PSRCDIR/utils_1" RelGenDir="$PGENDIR/utils_1">
