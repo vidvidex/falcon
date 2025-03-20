@@ -10,17 +10,17 @@ module mod_mult_verify_tb;
   logic signed [14:0] a [PARALLEL_OPS_COUNT];
   logic signed [14:0] b [PARALLEL_OPS_COUNT];
   logic signed [14:0] result [PARALLEL_OPS_COUNT];
-  logic signed [14:0] a_arr [8] = '{1, 2, 3, 4, 5, 6, 12270, 12271};
-  logic signed [14:0] b_arr [8] = '{2, 2, 2, 2, 2, 2, 2, 2};
-  logic signed [14:0] expected_results [8] = '{2, 4, 6, 8, 10, 12, 12251, 12253};
+  logic signed [14:0] a_arr [8] = '{1, 2, 3, 4, 12270, 12271, 5550, 7668};
+  logic signed [14:0] b_arr [8] = '{2, 2, 2, 2, 2, 2, 2598, 1143};
+  logic signed [14:0] expected_results [8] = '{2, 4, 6, 8, 12251, 12253, 3903, 2467};
 
-  logic [2:0] index_in, index_out;
+  logic [3:0] index_in, index_out;
 
   logic valid_in, valid_out;
   logic last;
 
   logic run_test;
-  int send_i, receive_i = 0;    // Counters for sending data to module and receiving from module
+  int send_i = 0, receive_i = 0;    // Counters for sending data to module and receiving from module
 
   mod_mult_verify #(
                     .N(8),
@@ -46,8 +46,8 @@ module mod_mult_verify_tb;
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         a[i] <= a_arr[send_i + i];
         b[i] <= b_arr[send_i + i];
-        valid_in <= 1;
       end
+      valid_in <= 1;
       index_in <= send_i;
       send_i <= send_i + 2;
     end
