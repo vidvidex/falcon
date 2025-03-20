@@ -2,7 +2,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Implements pipelined multiplication a*b mod 12289.
-// This module does not use Montgomery form for any of the operations.
+// This module uses Barrett reduction to avoid using the modulo operator
+// https://www.nayuki.io/page/barrett-reduction-algorithm
 //
 // To speed up calculating a*b mod 12289 for many number this module supports parallel processing of PARALLEL_OPS_COUNT operands at the same time.
 // Total number of operands that will be processed needs to be divisible by PARALLEL_OPS_COUNT (if N = 8, then PARALLEL_OPS_COUNT can be 1, 2, 4 or 8)
@@ -31,12 +32,15 @@ module mod_mult_verify #(
     output logic [$clog2(N):0] index_out
   );
   logic signed [29:0] a_times_b[PARALLEL_OPS_COUNT];
-  logic signed [14:0] a_times_b_mod_12289[PARALLEL_OPS_COUNT];
-  logic [$clog2(N):0] index1, index2;
+  logic signed [29:0] a_times_b_1[PARALLEL_OPS_COUNT], a_times_b_2[PARALLEL_OPS_COUNT], a_times_b_3[PARALLEL_OPS_COUNT];
+  logic signed [43:0] a_times_b_times_21843[PARALLEL_OPS_COUNT];
+  logic signed [14:0] shifted[PARALLEL_OPS_COUNT];
+  logic signed [14:0] times_12289[PARALLEL_OPS_COUNT];
+  logic signed [14:0] result_i[PARALLEL_OPS_COUNT];
+  logic [$clog2(N):0] index1, index2, index3, index4, index5;
+  logic valid1, valid2, valid3, valid4, valid5;
 
-  logic valid1, valid2;
-
-  // Stage 1: Multiplication
+  // Stage 1: Multiply a * b
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0 || valid_in == 1'b0) begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
@@ -52,25 +56,83 @@ module mod_mult_verify #(
     end
   end
 
-  // Stage 2: Modulo 12289
+  // Stage 2: Multiply (a * b) * r
+  //
+  // r = floor(4^k / 12289) = 21843
+  // k = ceil(log2(11289)) = 14
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
-        a_times_b_mod_12289[i] <= 0;
+        a_times_b_times_21843[i] <= 0;
       valid2 <= 0;
       index2 <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
-        a_times_b_mod_12289[i] <= a_times_b[i] % 12289;
+        a_times_b_times_21843[i] <= a_times_b[i] * 21843;
+      a_times_b_1 <= a_times_b;
       valid2 <= valid1;
       index2 <= index1;
     end
   end
 
-  assign result = a_times_b_mod_12289;
-  assign valid_out = valid2;
-  assign last = valid2 == 1'b1 && valid1 == 1'b0;
-  assign index_out = index2;
+  // Stage 3: Right shift by 2*k
+  always_ff @(posedge clk) begin
+    if(rst_n == 1'b0) begin
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        shifted[i] <= 0;
+      valid3 <= 0;
+      index3 <= 0;
+    end
+    else begin
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        shifted[i] <= a_times_b_times_21843[i] >> 28;
+      a_times_b_2 <= a_times_b_1;
+      valid3 <= valid2;
+      index3 <= index2;
+    end
+  end
+
+  // Stage 4: Multiply by 12289
+  always_ff @(posedge clk) begin
+    if(rst_n == 1'b0) begin
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        times_12289[i] <= 0;
+      valid4 <= 0;
+      index4 <= 0;
+    end
+    else begin
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        times_12289[i] <= (((shifted[i] << 3) + (shifted[i] << 2)) << 10) + shifted[i]; // Efficient multiplication by 12289
+      a_times_b_3 <= a_times_b_2;
+      valid4 <= valid3;
+      index4 <= index3;
+    end
+  end
+
+  // Stage 5: Modulo reduction
+  always_ff @(posedge clk) begin
+    if(rst_n == 1'b0) begin
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        result_i[i] <= 0;
+      valid5 <= 0;
+      index5 <= 0;
+    end
+    else begin
+      logic signed [14:0] temp [PARALLEL_OPS_COUNT];
+
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
+        temp[i] = a_times_b_3[i] - times_12289[i];
+        result_i[i] <= (temp[i] >= 12289) ? (temp[i] - 12289) : temp[i];
+      end
+      valid5 <= valid4;
+      index5 <= index4;
+    end
+  end
+
+  assign result = result_i;
+  assign valid_out = valid5;
+  assign last = valid5 == 1'b1 && valid4 == 1'b0;
+  assign index_out = index5;
 
 endmodule
