@@ -91,7 +91,6 @@ module verify#(
   logic [6:0] compressed_coef_length; //! Number of bits that were used to compress the coefficient
   logic coefficient_valid; //! Is coefficient valid
   logic signature_error; //! Set to true if the signature is invalid
-  logic squared_norm_error=0; //! Set to true if the squared norm is larger than the bound^2
   logic decompression_done; //! Set to true if the decompression is done
   logic [$clog2(N)-1:0] coefficient_index = 0; //! Index of the coefficient that is currently being decompressed
 
@@ -207,26 +206,12 @@ module verify#(
   logic ntt_done; //! Set high when NTT module is done and ntt_output is valid
   logic [$clog2(N):0] mult_mod_q_index, sub_and_normalize_index, squared_norm_index; //! Indices used for iterating over the buffer arrays. Need to be large enough to store N.
 
-  // The size is selected so that when we iteratively compute it we can check if it's larger than the bound^2 on each iteration, since 27 bits is enough for the value at previous iteration
-  // to be 70265242-1 and to this we add (-6145)^2 (this is the worst case scenario)
-  logic [26:0] temp=0;  // Temporary variable for calculating squared norm
-  logic [26:0] squared_norm=0;
-
   logic signed [14:0] mod_mult_a [MULT_MOD_Q_OPS_PER_CYCLE], mod_mult_b [MULT_MOD_Q_OPS_PER_CYCLE], mod_mult_result [MULT_MOD_Q_OPS_PER_CYCLE];
   logic mod_mult_valid_in, mod_mult_valid_out, mod_mult_last;
   logic [$clog2(N):0] mod_mult_index_in, mod_mult_index_out;
 
-  logic [26:0] bound2; // The bound squared
-  generate
-    if (N == 8)
-      assign bound2 = 428865; // floor(bound^2) = 428865
-    else if (N == 512)
-      assign bound2 = 34034726; // floor(bound^2) = 34034726
-    else if (N == 1024)
-      assign bound2 = 70265242; // floor(bound^2) = 70265242
-    else
-      $error("N must be 8, 512 or 1024");
-  endgenerate
+  logic signed [14:0] squared_norm_a [MULT_MOD_Q_OPS_PER_CYCLE], squared_norm_b [MULT_MOD_Q_OPS_PER_CYCLE];
+  logic squared_norm_valid_in, squared_norm_last, squared_norm_accept, squared_norm_reject;
 
   ntt_negative #(
                  .N(N)
@@ -255,6 +240,20 @@ module verify#(
                     .index_out(mod_mult_index_out),
                     .last(mod_mult_last)
                   );
+
+  verify_compute_squared_norm #(
+                                .N(8),
+                                .PARALLEL_OPS_COUNT(SQUARED_NORM_OPS_PER_CYCLE)
+                              )verify_compute_squared_norm (
+                                .clk(clk),
+                                .rst_n(rst_n),
+                                .a(squared_norm_a),
+                                .b(squared_norm_b),
+                                .valid_in(squared_norm_valid_in),
+                                .last(squared_norm_last),
+                                .accept(squared_norm_accept),
+                                .reject(squared_norm_reject)
+                              );
 
   // Modulo 12289 subtraction
   function [14:0] mod_sub(input [14:0] a, b);
@@ -325,7 +324,7 @@ module verify#(
         if (ntt_done == 1'b1)
           ntt_next_state = MULT_MOD_Q;
       end
-      MULT_MOD_Q: begin // Wait for multiplication and modulo to finish before moving to WAIT_FOR_MULT_MOD_Q
+      MULT_MOD_Q: begin // Send all data to mod_mult before moving to WAIT_FOR_MULT_MOD_Q
         // Check if we've sent all coefficients to mod_mult coefficients
         if (mult_mod_q_index == N - MULT_MOD_Q_OPS_PER_CYCLE)
           ntt_next_state = WAIT_FOR_MULT_MOD_Q;
@@ -356,12 +355,11 @@ module verify#(
         if (sub_and_normalize_index == N)
           ntt_next_state = SQUARED_NORM;
       end
-      SQUARED_NORM: begin // Wait for squared norm to finish before moving to NTT_IDLE
-        // Check if we've processed all coefficients
+      SQUARED_NORM: begin // Send all data to verify_compute_squared_norm before moving to FINISHED
         if(squared_norm_index == N)
           ntt_next_state = FINISHED;
       end
-      FINISHED: begin // Wait here forever
+      FINISHED: begin // Wait for squared norm to finish and then accept or reject the signature
         ntt_next_state = FINISHED;
       end
       default: begin
@@ -384,6 +382,15 @@ module verify#(
         mod_mult_valid_in <= 0;
         mod_mult_index_in <= 0;
 
+        // Initialize squared norm parameters (so they aren't undefined)
+        for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
+          squared_norm_a[i] <= 0;
+          squared_norm_b[i] <= 0;
+        end
+        squared_norm_valid_in <= 0;
+        squared_norm_index <= 0;
+        squared_norm_last <= 0;
+
         accept <= 1'b0;
         reject <= 1'b0;
 
@@ -391,7 +398,6 @@ module verify#(
         mult_mod_q_index <= 0;
         sub_and_normalize_index <= 0;
         squared_norm_index <= 0;
-        squared_norm <= 0;
       end
 
       START_NTT_PUBLIC_KEY: begin
@@ -404,9 +410,6 @@ module verify#(
       end
 
       WAIT_FOR_DECOMPRESS: begin
-        ntt_mode <= 1'b0;
-        ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
-
         accept <= 1'b0;
         reject <= 1'b0;
       end
@@ -449,9 +452,6 @@ module verify#(
       end
 
       MULT_MOD_Q: begin
-        ntt_mode <= 1'b0;  // Doesn't really matter, we're not running NTT
-        ntt_start <= 1'b0;
-
         accept <= 1'b0;
         reject <= 1'b0;
 
@@ -471,9 +471,6 @@ module verify#(
       end
 
       WAIT_FOR_MULT_MOD_Q: begin
-        ntt_mode <= 1'b0;  // Doesn't really matter, we're not running NTT
-        ntt_start <= 1'b0;
-
         accept <= 1'b0;
         reject <= 1'b0;
 
@@ -514,17 +511,11 @@ module verify#(
       end
 
       WAIT_FOR_HASH_TO_POINT: begin
-        ntt_mode <= 1'b0;  // Doesn't really matter, we're not running NTT
-        ntt_start <= 1'b0;
-
         accept <= 1'b0;
         reject <= 1'b0;
       end
 
       SUB_AND_NORMALIZE: begin
-        ntt_mode <= 1'b0;  // Doesn't really matter, we're not running NTT
-        ntt_start <= 1'b0;
-
         accept <= 1'b0;
         reject <= 1'b0;
 
@@ -547,38 +538,34 @@ module verify#(
       end
 
       SQUARED_NORM: begin
-        ntt_mode <= 1'b0;  // Doesn't really matter, we're not running NTT
-        ntt_start <= 1'b0;
-
         accept <= 1'b0;
         reject <= 1'b0;
 
-        // Compute SQUARED_NORM_OPS_PER_CYCLE coefficients per clock cycle
-        for (int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i = i + 1) begin
-
-          // squared_norm += normalized^2 + decompressed_coefficients^2
-          temp = ntt_buffer1[i+squared_norm_index] * ntt_buffer1[i+squared_norm_index] + decompressed_coefficients[i+squared_norm_index] * decompressed_coefficients[i+squared_norm_index]; // We need to multiply this in a separate variable, otherwise the sum is not correct (not idea why)
-          squared_norm <= squared_norm + temp;
-
-          // Check if the squared norm is larger than the bound^2
-          if (squared_norm > bound2)
-            squared_norm_error <= 1'b1;
+        // Send data to verify_compute_squared_norm module
+        for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
+          squared_norm_a[i] <= ntt_buffer1[squared_norm_index + i];
+          squared_norm_b[i] <= decompressed_coefficients[squared_norm_index + i];
         end
-
+        squared_norm_valid_in <= 1'b1;
         squared_norm_index <= squared_norm_index + SQUARED_NORM_OPS_PER_CYCLE;
+        if(squared_norm_index == N)
+          squared_norm_last <= 1'b1;
+        else
+          squared_norm_last <= 1'b0;
       end
 
       FINISHED: begin
-        ntt_mode <= 1'b0;  // Doesn't really matter, we're not running NTT
-        ntt_start <= 1'b0;
 
-        if (signature_error == 1'b0 && squared_norm_error == 1'b0) begin
-          accept <= 1'b1;
-          reject <= 1'b0;
-        end
-        else begin
-          accept <= 1'b0;
-          reject <= 1'b1;
+        // Wait for squared norm pipeline to finish
+        if(squared_norm_accept == 1'b1 || squared_norm_reject == 1'b1) begin
+          if (signature_error == 1'b0 && squared_norm_reject == 1'b0 && squared_norm_accept == 1'b1) begin
+            accept <= 1'b1;
+            reject <= 1'b0;
+          end
+          else begin
+            accept <= 1'b0;
+            reject <= 1'b1;
+          end
         end
       end
     endcase
