@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mod_mult #(
+module mod_mult_ntt_negative #(
     parameter int N
   )(
     input logic clk,
