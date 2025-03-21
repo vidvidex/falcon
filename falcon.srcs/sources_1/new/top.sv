@@ -98,6 +98,10 @@ module top (
   end
 
   always_ff @(posedge clk) begin
+    if(rst_n == 1'b0) begin
+      reset_counter <= 0;
+    end
+
     case (state)
       RESET: begin
         leds[0] <= 1'b1;
