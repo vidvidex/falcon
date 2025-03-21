@@ -9,6 +9,7 @@ module mod_mult_ntt_negative_tb;
   logic signed [14:0] a_arr [4] = '{4091, 8182, 12273, 4075};             // 1, 2, 3, 4 in Montgomery form
   logic signed [14:0] b_arr [4] = '{8182, 8182, 8182, 8182};              // 2, 2, 2, 2 in Montgomery form
   logic signed [14:0] expected_results [4] = '{8182, 4075, 12257, 8150};  // 2, 4, 6, 8 in Montgomery form
+  logic signed [14:0] passthrough_in, passthrough_out;
 
   logic valid_in, valid_out;
   logic last;
@@ -19,21 +20,21 @@ module mod_mult_ntt_negative_tb;
   int i = 0;
 
   mod_mult_ntt_negative #(
-             .N(8)
-           )uut (
-             .clk(clk),
-             .rst_n(rst_n),
-             .a(a),
-             .b(b),
-             .valid_in(valid_in),
-             .index1_in(index1_in),
-             .index2_in(index2_in),
-             .result(result),
-             .valid_out(valid_out),
-             .last(last),
-             .index1_out(index1_out),
-             .index2_out(index2_out)
-           );
+                          .N(8)
+                        )uut (
+                          .clk(clk),
+                          .rst_n(rst_n),
+                          .a(a),
+                          .b(b),
+                          .valid_in(valid_in),
+                          .index1_in(index1_in),
+                          .index2_in(index2_in),
+                          .result(result),
+                          .valid_out(valid_out),
+                          .last(last),
+                          .index1_out(index1_out),
+                          .index2_out(index2_out)
+                        );
 
   always #5 clk = ~clk;
 
@@ -46,6 +47,7 @@ module mod_mult_ntt_negative_tb;
       index1_in <= i;
       index2_in <= i + 4;
       i <= i + 1;
+      passthrough_in <= 42;
     end
     else begin
       valid_in <= 0;
@@ -73,6 +75,9 @@ module mod_mult_ntt_negative_tb;
 
         if(index2_out != index1_out + 4)
           $fatal(1, "Test failed: Index2 is not correct. Expected %d, got %d", index1_out + 4, index2_out);
+
+        if(passthrough_out != 42)
+          $fatal(1, "Test failed: Passthrough is not correct. Expected %d, got %d", passthrough_in, passthrough_out);
 
         if(index1_out == 4)
           if(last != 1)

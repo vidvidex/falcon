@@ -140,7 +140,7 @@ module verify_tb;
     signature_valid_blocks <= '{64, 24};
 
     rst_n <= 0;
-    #10;
+    #20;
     rst_n <= 1;
     start <= 1;
     #10;
@@ -167,7 +167,7 @@ module verify_tb;
     signature_valid_blocks <= '{2, 0};
 
     rst_n <= 0;
-    #10;
+    #20;
     rst_n <= 1;
     start <= 1;
     #10;
