@@ -22,6 +22,7 @@ module decompress #(
   )(
     input logic clk,
     input logic rst_n,
+    input logic run,  //! The module only runs when this is high
 
     input logic [104:0] compressed_signature, //! Compressed signature
     input logic [6:0] valid_bits, //! Number of valid bits in compressed signature (from the left)
@@ -68,19 +69,22 @@ module decompress #(
       bits_used <= 0;
     end
     else begin
-      // Create coefficient as signed decimals. If it's positive (sign == 0) then it's just {0, high, low}, if it's negative have to compute two's complement
-      if (sign)
-        coefficient = -{1'b0, high, low}; // Negate the magnitude
-      else
-        coefficient = {1'b0, high, low};  // Keep magnitude unchanged
 
-      // Compute number of bits used to compress the current coefficient
-      bits_used <= 1 + 7 + high + 1;  // 1 sign bit + 7 low bits + high bits (zeros) + 1 high bit (one)
+      if(run == 1'b1) begin
+        // Create coefficient as signed decimals. If it's positive (sign == 0) then it's just {0, high, low}, if it's negative have to compute two's complement
+        if (sign)
+          coefficient = -{1'b0, high, low}; // Negate the magnitude
+        else
+          coefficient = {1'b0, high, low};  // Keep magnitude unchanged
+
+        // Compute number of bits used to compress the current coefficient
+        bits_used <= 1 + 7 + high + 1;  // 1 sign bit + 7 low bits + high bits (zeros) + 1 high bit (one)
+      end
     end
   end
 
   // Output shift_by in the same clock cycle as it was computed, so that the parent module can use it to prepare data for the next cycle
-  assign shift_by = valid_bits > 0 ?  1 + 7 + high + 1 : 0;
+  assign shift_by = valid_bits > 0 && run == 1'b1 ?  1 + 7 + high + 1 : 0;
 
   // Stage 2: Save coefficient to polynomial, check for errors and control decompression_done
   always_ff @(posedge clk) begin
@@ -94,7 +98,7 @@ module decompress #(
       decompression_done <= 0;
       total_bits_used <= 0;
     end
-    else if(valid_bits > 0) begin
+    else if(valid_bits > 0 && run == 1'b1) begin
 
       // Check if we already used too many bits to decompress the signature
       if(total_bits_used > SLEN*8)

@@ -46,6 +46,7 @@ module verify#(
 
     input logic [63:0] signature,
     input logic [6:0] signature_valid, //! Is signature valid, bitwise from the left
+    input logic signature_sent, //! This is set high when the entire signature has been sent
     output logic signature_ready, //! Is ready to receive the next signature block
 
     output logic accept, //! Set to true if signature is valid
@@ -90,6 +91,7 @@ module verify#(
   logic [6:0] shift_by; //! Number of bits that were used to compress the coefficient, we need to shift the buffer by this amount
   logic signature_error; //! Set to true if the signature is invalid
   logic decompression_done; //! Set to true if the decompression is done
+  logic run_decompress; //! When true the decompression module is running
 
   decompress #(
                .N(N),
@@ -97,6 +99,7 @@ module verify#(
              ) decompress(
                .clk(clk),
                .rst_n(rst_n),
+               .run(run_decompress),
                .compressed_signature(compressed_signature_buffer[3*64-1 -: 105]), // Provide top 105 bits of the buffer to decompress module
                .valid_bits(compressed_signature_buffer_valid),
                .shift_by(shift_by),
@@ -107,7 +110,7 @@ module verify#(
 
   typedef enum logic [2:0] {
             DECOMPRESS_IDLE, // Waiting for the start signal
-            READY_FOR_SIGNATURE, // Ready to receive the next 64 bits of the signature. If we have any existing compressed data we are also decompressing it in this state.
+            LOAD_SIGNATURE_BLOCK, // Load new block of signature data
             DECOMPRESSING, // Decompressing coefficients, don't need new signature data
             DECOMPRESSION_DONE // Decompression is done
           } decompress_state_t;
@@ -118,27 +121,36 @@ module verify#(
     case (decompress_state)
       DECOMPRESS_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
-          decompress_next_state = READY_FOR_SIGNATURE;
+          decompress_next_state = LOAD_SIGNATURE_BLOCK;
+
+        run_decompress = 1'b0;
       end
-      READY_FOR_SIGNATURE: begin  // Wait for signature buffer to be full
+      LOAD_SIGNATURE_BLOCK: begin  // Wait for signature buffer to be full
         if(decompression_done == 1'b1 || signature_error == 1'b1) // Decompression is done or there was an error
           decompress_next_state = DECOMPRESSION_DONE;
-        else if (compressed_signature_buffer_valid > 128)  // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it)
+        // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it).
+        // If we have some data in the buffer but no more data is available we can also go to DECOMPRESSING
+        // If the entire signature has been sent we can also go to DECOMPRESSING
+        else if (compressed_signature_buffer_valid > 128 || (signature_valid == 0 && compressed_signature_buffer_valid >= 105) || signature_sent == 1'b1)
           decompress_next_state = DECOMPRESSING;
+
+        run_decompress = 1'b0;
       end
-      DECOMPRESSING: begin  // Go to DECOMPRESSION_DONE if we're done or READY_FOR_SIGNATURE if we have space for more data
+      DECOMPRESSING: begin  // Go to DECOMPRESSION_DONE if we're done or LOAD_SIGNATURE_BLOCK if we have space for more data
         if(decompression_done == 1'b1 || signature_error == 1'b1) // Decompression is done or there was an error
           decompress_next_state = DECOMPRESSION_DONE;
-        else if (compressed_signature_buffer_valid < 128) // We have space for more data
-          decompress_next_state = READY_FOR_SIGNATURE;
-        else
-          decompress_next_state = DECOMPRESSING;
+        else if (compressed_signature_buffer_valid < 128 && signature_valid > 0) // We have space for more data and there is more data available
+          decompress_next_state = LOAD_SIGNATURE_BLOCK;
+
+        run_decompress = 1'b1;
       end
       DECOMPRESSION_DONE: begin // Stay here forever
         decompress_next_state = DECOMPRESSION_DONE;
+        run_decompress = 1'b0;
       end
       default: begin
         decompress_next_state = DECOMPRESS_IDLE;
+        run_decompress = 1'b0;
       end
     endcase
   end
@@ -155,33 +167,29 @@ module verify#(
     case (decompress_state)
       DECOMPRESS_IDLE: begin
         signature_ready <= 1'b0;
-        compressed_signature_buffer <= 0;
-        compressed_signature_buffer_valid <= 0;
+        compressed_signature_buffer <= 1'b0;
+        compressed_signature_buffer_valid <= 1'b0;
       end
-      READY_FOR_SIGNATURE: begin
+      LOAD_SIGNATURE_BLOCK: begin
         signature_ready <= 1'b1; // We can receive the next 64 bits of the signature
+
+        // Load new block of signature data
+        if(signature_valid) begin
+          compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] <= signature;
+          compressed_signature_buffer_valid <= compressed_signature_buffer_valid + signature_valid;
+        end
       end
       DECOMPRESSING: begin
         signature_ready <= 1'b0;
+
+        // Shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
+        compressed_signature_buffer <= compressed_signature_buffer << shift_by;
+        compressed_signature_buffer_valid <= compressed_signature_buffer_valid - shift_by;
       end
       DECOMPRESSION_DONE: begin
         signature_ready <= 1'b0;
       end
     endcase
-
-    // Logic for loading new signature data and storing decompressed coefficients
-    if(decompress_state == DECOMPRESSING || decompress_state == READY_FOR_SIGNATURE) begin
-
-      // Load new block of signature data
-      if(signature_valid) begin
-        compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
-        compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
-      end
-
-      // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
-      compressed_signature_buffer <= compressed_signature_buffer << shift_by;
-      compressed_signature_buffer_valid <= compressed_signature_buffer_valid - shift_by;
-    end
   end
 
   /////////////////////////// End decompress ///////////////////////////

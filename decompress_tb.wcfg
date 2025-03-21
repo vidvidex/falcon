@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="147.661 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="19.433 ns"></ZoomStartTime>
+      <ZoomEndTime time="224.593 ns"></ZoomEndTime>
+      <Cursor1Time time="140.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="209"></NameColumnWidth>
-      <ValueColumnWidth column_width="269"></ValueColumnWidth>
+      <ValueColumnWidth column_width="261"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group17">
@@ -31,6 +31,10 @@
       <wvobject type="logic" fp_name="/decompress_tb/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_tb/run">
+         <obj_property name="ElementShortName">run</obj_property>
+         <obj_property name="ObjectShortName">run</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/decompress_tb/compressed_signature">
          <obj_property name="ElementShortName">compressed_signature[191:0]</obj_property>
@@ -69,6 +73,10 @@
          <obj_property name="ElementShortName">signature_error</obj_property>
          <obj_property name="ObjectShortName">signature_error</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/decompress_tb/index">
+         <obj_property name="ElementShortName">index[31:0]</obj_property>
+         <obj_property name="ObjectShortName">index[31:0]</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/decompress_tb/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
          <obj_property name="ObjectShortName">N[31:0]</obj_property>
@@ -89,6 +97,10 @@
       <wvobject type="logic" fp_name="/decompress_tb/uut/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_tb/uut/run">
+         <obj_property name="ElementShortName">run</obj_property>
+         <obj_property name="ObjectShortName">run</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/decompress_tb/uut/compressed_signature">
          <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>

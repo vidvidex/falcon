@@ -3,6 +3,7 @@
 module decompress_tb;
   logic clk;
   logic rst_n;
+  logic run;
 
   parameter int N = 8;
   parameter int SLEN = 11;
@@ -24,6 +25,7 @@ module decompress_tb;
              uut (
                .clk(clk),
                .rst_n(rst_n),
+               .run(run),
 
                .compressed_signature(compressed_signature[191:87]),
                .valid_bits(compressed_signature_valid_bits),
@@ -53,12 +55,14 @@ module decompress_tb;
     valid_bits = 88;
     expected_polynomial = '{151, -156, 81, -176, 170, 68, -23, -165};
 
+    run = 1;
     while(decompression_done == 1'b0 && signature_error == 1'b0) begin
       #10;
       // Prepare for the next iteration
       compressed_signature = compressed_signature << shift_by;
       valid_bits = valid_bits - shift_by;
     end
+    run = 0;
 
     // Check output
     for(int i = 0; i < N; i = i + 1)
@@ -81,12 +85,14 @@ module decompress_tb;
     valid_bits = 192;
     expected_polynomial = '{1920, 1920, 1920, 1920, 1920, 1920, 1920, 1920};
 
+    run = 1;
     while(decompression_done == 1'b0 && signature_error == 1'b0) begin
       #10;
       // Prepare for the next iteration
       compressed_signature = compressed_signature << shift_by;
       valid_bits = valid_bits - shift_by;
     end
+    run = 0;
 
     // Check output
     if(signature_error == 0)
@@ -99,6 +105,40 @@ module decompress_tb;
     #10;
     rst_n = 1;
     #10;
+
+
+    // Test 3: Pause module in the middle of decompression
+    compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
+    valid_bits = 88;
+    expected_polynomial = '{151, -156, 81, -176, 170, 68, -23, -165};
+
+    run = 1;
+    while(decompression_done == 1'b0 && signature_error == 1'b0) begin
+      #10;
+
+      // Pause the module
+      if(index >= 4 && index <= 10)
+        run = 0;
+      else
+        run = 1;
+
+      // Prepare for the next iteration
+      compressed_signature = compressed_signature << shift_by;
+      valid_bits = valid_bits - shift_by;
+
+      index = index + 1;
+    end
+    run = 0;
+
+    // Check output
+    for(int i = 0; i < N; i = i + 1)
+      if(decompressed_polynomial[i] != expected_polynomial[i])
+        $fatal("Test 3: Expected coefficient %d, got %d", expected_polynomial[i], decompressed_polynomial[i]);
+    if(signature_error == 1'b1)
+      $fatal("Test 3: Signature error detected");
+
+    $display("Test 3 passed!");
+
 
 
     $display("All tests for decompress passed!");
