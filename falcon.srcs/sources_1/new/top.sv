@@ -6,7 +6,7 @@ module top (
     output logic [3:0] leds
   );
 
-  logic rst, start, start_i, start_ii, start_pulse;
+  logic rst_n, start, start_i, start_pulse;
 
   logic [63:0] message_blocks [7];   // Buffer for message blocks
   logic [63:0] signature_blocks [2];   // Buffer for signature value blocks
@@ -26,17 +26,17 @@ module top (
 
   logic accept; //! Set to true if signature is valid
   logic reject; //! Set to true if signature is invalid
-  logic running;
 
-  int message_block_index = 0;
-  int signature_block_index = 0;
+  int message_block_index;
+  int signature_block_index;
+  int reset_counter;
 
   verify #(
            .N(8),
            .SBYTELEN(52)
          )verify(
            .clk(clk),
-           .rst_n(!rst),
+           .rst_n(rst_n),
 
            .start(start_pulse),
 
@@ -57,44 +57,99 @@ module top (
            .reject(reject)
          );
 
-  always_ff @(posedge clk) begin
+  typedef enum logic [1:0] {
+            RESET,
+            RUNNING,
+            DONE
+          } state_t;
+  state_t state, next_state;
 
-    if(rst == 1'b1) begin
-      message_block_index <= 0;
-      signature_block_index <= 0;
-      running <= 0;
-    end
+  always_ff @(posedge clk) begin
+    rst_n <= !(btns[0] || btns[1] || btns[2] || btns[3]);
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst_n == 1'b0)
+      state <= RESET;
+    else
+      state <= next_state;
+  end
+
+  always_comb begin
+    next_state = state;
+
+    case (state)
+      RESET: begin
+        if(reset_counter == 125_000_000*5)  // Wait 5 seconds
+          // if(reset_counter == 25)
+          next_state = RUNNING;
+      end
+      RUNNING: begin
+        if(accept == 1'b1 || reject == 1'b1)
+          next_state = DONE;
+      end
+      DONE: begin
+        next_state = DONE;
+      end
+      default: begin
+        next_state = RESET;
+      end
+    endcase
+  end
+
+  always_ff @(posedge clk) begin
+    case (state)
+      RESET: begin
+        leds[0] <= 1'b1;
+        leds[1] <= 1'b0;
+        leds[2] <= 1'b0;
+        leds[3] <= 1'b0;
+
+        message_block_index <= 0;
+        signature_block_index <= 0;
+
+        reset_counter <= reset_counter + 1;
+
+        start <= 1'b0;
+        start_i <= 1'b0;
+      end
+      RUNNING: begin
+        start <= 1'b1;
+
+        leds[0] <= 1'b0;
+        leds[1] <= 1'b1;
+        leds[2] <= 1'b0;
+        leds[3] <= 1'b0;
+
+        // Send new message block if module is ready for it
+        if (message_ready && message_block_index < 7) begin
+          message <= message_blocks[message_block_index];
+          message_valid <= 1;
+          message_block_index <= message_block_index + 1;
+        end
+        else if (message_block_index >= 7)  // Set valid to low after we've sent all message blocks
+          message_valid <= 0;
+
+        message_last <= message_block_index == 6;
+
+        if(signature_ready && signature_block_index < 2) begin
+          signature <= signature_blocks[signature_block_index];
+          signature_valid <= signature_valid_blocks[signature_block_index];
+          signature_block_index <= signature_block_index + 1;
+        end
+        else
+          signature_valid <= 0; // Set valid to low after we've sent all signature value blocks
+
+      end
+      DONE: begin
+        leds[0] <= 1'b0;
+        leds[1] <= 1'b0;
+        leds[2] <= accept;
+        leds[3] <= reject;
+      end
+    endcase
 
     start_i <= start;
-    start_ii <= start_i;
-
-    if(start_pulse)
-      running <= 1'b1;
-
-    if(accept || reject)
-      running <= 1'b0;
-
-    if(!accept && !reject) begin
-
-      // Send new message block if module is ready for it
-      if (message_ready && message_block_index < 7) begin
-        message <= message_blocks[message_block_index];
-        message_valid <= 1;
-        message_block_index <= message_block_index + 1;
-      end
-      else if (message_block_index >= 7)  // Set valid to low after we've sent all message blocks
-        message_valid <= 0;
-
-      message_last <= message_block_index == 6;
-
-      if(signature_ready && signature_block_index < 2) begin
-        signature <= signature_blocks[signature_block_index];
-        signature_valid <= signature_valid_blocks[signature_block_index];
-        signature_block_index <= signature_block_index + 1;
-      end
-      else
-        signature_valid <= 0; // Set valid to low after we've sent all signature value blocks
-    end
   end
 
   assign message_len_bytes = 12; // len("Hello World!") = 12
@@ -105,14 +160,6 @@ module top (
   assign signature_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
   assign signature_valid_blocks = '{64, 24};
 
-  assign start_pulse = start == 1'b1 && start_ii == 1'b0;
-
-  assign rst = btns[3];
-  assign start = btns[2];
-
-  assign leds[0] = accept;
-  assign leds[1] = reject;
-  assign leds[2] = running;
-  assign leds[3] = rst;
+  assign start_pulse = start == 1'b1 && start_i == 1'b0;
 
 endmodule
