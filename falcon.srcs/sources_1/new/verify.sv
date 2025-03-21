@@ -115,6 +115,8 @@ module verify#(
 
   // State machine state changes
   always_comb begin
+    decompress_next_state = decompress_state;
+
     case (decompress_state)
       DECOMPRESS_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
@@ -131,8 +133,6 @@ module verify#(
           decompress_next_state = DECOMPRESSION_DONE;
         else if (compressed_signature_buffer_valid < 128) // We have space for more data
           decompress_next_state = READY_FOR_SIGNATURE;
-        else
-          decompress_next_state = DECOMPRESSING;
       end
       DECOMPRESSION_DONE: begin // Stay here forever
         decompress_next_state = DECOMPRESSION_DONE;
@@ -285,6 +285,8 @@ module verify#(
 
   // State machine state changes
   always_comb begin
+    ntt_next_state = ntt_state;
+
     case (ntt_state)
       NTT_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
