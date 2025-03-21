@@ -123,13 +123,11 @@ module hash_to_point#(
       end
       WAIT_FOR_SQUEEZE: begin
         data_in = 0;
-        data_in = 0;
         data_in_valid = 0;
         ready = 0;
         shake256_reset = 0;
       end
       WAIT_FOR_SQUEEZE_END: begin
-        data_in = 0;
         data_in = 0;
         data_in_valid = 0;
         ready = 0;
