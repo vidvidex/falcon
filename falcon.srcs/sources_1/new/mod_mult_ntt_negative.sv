@@ -40,16 +40,37 @@ module mod_mult_ntt_negative #(
   logic [15:0] a_times_b_times_12287;
   logic signed [30:0] a_times_b_times_12287_times_12289;
   logic signed [14:0] sum_shifted, result_i;
+  logic signed [14:0] a_0, b_0;
 
-  logic valid1, valid2, valid3, valid4, valid5;
-  logic [$clog2(N):0] index1_1, index1_2, index1_3, index1_4, index1_5;
-  logic [$clog2(N):0] index2_1, index2_2, index2_3, index2_4, index2_5;
+  logic valid0, valid1, valid2, valid3, valid4, valid5;
+  logic [$clog2(N):0] index1_0, index1_1, index1_2, index1_3, index1_4, index1_5;
+  logic [$clog2(N):0] index2_0, index2_1, index2_2, index2_3, index2_4, index2_5;
 
-  logic signed [14:0] passthrough_1, passthrough_2, passthrough_3, passthrough_4, passthrough_5;
+  logic signed [14:0] passthrough_0, passthrough_1, passthrough_2, passthrough_3, passthrough_4, passthrough_5;
+
+  // Stage 0: Save inputs
+  always_ff @(posedge clk) begin
+    if(rst_n == 1'b0 || valid_in == 1'b0) begin
+      a_0 <= 0;
+      b_0 <= 0;
+      valid0 <= 0;
+      index1_0 <= 0;
+      index2_0 <= 0;
+      passthrough_0 <= 0;
+    end
+    else begin
+      a_0 <= a;
+      b_0 <= b;
+      valid0 <= valid_in;
+      index1_0 <= index1_in;
+      index2_0 <= index2_in;
+      passthrough_0 <= passthrough_in;
+    end
+  end
 
   // Stage 1: Multiplication
   always_ff @(posedge clk) begin
-    if(rst_n == 1'b0 || valid_in == 1'b0) begin
+    if(rst_n == 1'b0) begin
       a_times_b <= 0;
       valid1 <= 0;
       index1_1 <= 0;
@@ -57,11 +78,11 @@ module mod_mult_ntt_negative #(
       passthrough_1 <= 0;
     end
     else begin
-      a_times_b <= a * b;
-      valid1 <= valid_in;
-      index1_1 <= index1_in;
-      index2_1 <= index2_in;
-      passthrough_1 <= passthrough_in;
+      a_times_b <= a_0 * b_0;
+      valid1 <= valid0;
+      index1_1 <= index1_0;
+      index2_1 <= index2_0;
+      passthrough_1 <= passthrough_0;
     end
   end
 
