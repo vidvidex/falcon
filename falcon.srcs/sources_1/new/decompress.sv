@@ -3,89 +3,124 @@
 //
 // Implements decompression of Falcon coefficients from compressed string.
 //
-// Decompression is finished when decompression_done signal is set high.
-// If at any point during decompression the signal signature_error is set high then an error was detected in the signature.
+// Each clock cycle this module uses up 9 to 105 bits of "compressed_signature" to decompress a coefficient.
+// The number of bits actually used to decompress it is output in "shift_by". Parent module should
+// shift "compressed_signature" to the left by "shift_by" bits to prepare it for decompression of the next coefficient.
 //
-// To check if the signature is not too long (algorithm 18, line 1), we compare the number of bits processed with the expected length of the compressed signature.
+// The module will start working as soon as "valid_bits" is set to a non-zero value.
+//
+// Once all coefficients are decompressed the "decompression_done" signal is set high,
+// along with "signature_error" if an error was detected in the signature.
+// "signature_error" can be set high even before decompression is finished.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
 module decompress #(
     parameter int N,
-    parameter int SIGNATURE_LENGTH
+    parameter int SLEN  //! Expected length of the compressed signature in bytes
   )(
     input logic clk,
     input logic rst_n,
 
     input logic [104:0] compressed_signature, //! Compressed signature
-    input logic [6:0] compressed_signature_valid_bits, //! Number of valid bits in compressed signature (from the left)
+    input logic [6:0] valid_bits, //! Number of valid bits in compressed signature (from the left)
 
-    output logic signed [14:0] coefficient, //! Decompressed coefficient
-    output logic coefficient_valid, //! Is the current coefficient valid?
-    output logic [6:0] compressed_coef_length, //! Number of bits used to compress the current coefficient. Parent module should shift "compressed_signature" to the left by "compressed_coef_length" bits to get the next compressed coefficient
-    output logic signature_error,    //! Was an error detected in the signature?
-    output logic decompression_done      //! Is decompression finished?
+    output logic [6:0] shift_by, //! Instruction to the parent module on how much to shift the compressed signature to the left
+    output logic signed [14:0] polynomial [N], //! Decompressed polynomial
+    output logic decompression_done,      //! Is decompression finished? When this is high the decompression is done. The parent should also check if the signature_error is high to see if there was an error in the signature.
+    output logic signature_error    //! Was an error detected in the signature?
   );
 
-  logic [$clog2(SIGNATURE_LENGTH)-1+3:0] bits_processed; //! Number of bits (not bytes!) of compressed signature processed so far.
-
-  logic coefficient_error_i;  //! Was an error detected while decompressing current coefficient?
-  logic coefficient_error; //! Was an error detected while decompressing any coefficient?
-  logic signature_length_error; //! Was the signature not of the expected length?
-  logic [14:0] coefficient_i; //! Internal version of the coefficient
+  logic signed [14:0] coefficient; //! Decompressed coefficient
   logic [$clog2(N):0] decompressed_count; //! Number of coefficients decompressed so far
 
-  decompress_coefficient decompress_coefficient (
-                           .compressed_signature(compressed_signature),
-                           .coefficient(coefficient_i),
-                           .compressed_coef_length(compressed_coef_length),
-                           .coefficient_error(coefficient_error_i)
-                         );
+  logic [6:0] bits_used; //! Number of bits used to decompress the current coefficient
+  logic [$clog2(SLEN*8):0] total_bits_used; //! Total number of bits used to decompress the signature
 
-  always_ff @(posedge clk) begin
-    if (rst_n  == 1'b0) begin
-      coefficient_error <= 1'b0;
-      signature_length_error <= 1'b0;
-      bits_processed <= 0;
-      decompression_done <= 0;
-      decompressed_count <= 0;
-    end
-    else begin
+  // Parts of the polynomial
+  logic sign;
+  logic [6:0] low;
+  logic [6:0] high;
 
-      // Do nothing if we have no valid data
-      if(compressed_signature_valid_bits > 0) begin
+  logic invalid_bits_used_error;  // Bits that are not valid were used to decompress a coefficient
+  logic used_bit_count_error; // We did not use the expected number of bits to decompress the signature
+  logic remaining_bits_not_zeros_error; // Once we are done decompressing the signature the remaining bits are not all zeros
 
-        if(coefficient_valid) begin
-          // Update the number of bits processed
-          bits_processed = bits_processed + compressed_coef_length;
+  //! Priority encoder for the high part of the coefficient
+  always_comb begin
+    high = 5'b00000;
 
-          decompressed_count = decompressed_count + 1;
-
-          // If there was an error in the coefficient, set the error flag
-          coefficient_error <= coefficient_error || coefficient_error_i;
-        end
-        else begin
-          // Check if the number of bits processed is less or equal to the expected length of the compressed signature
-          // In case it is less than the expected length also check if the remaining bits are all zeros (there can be up to 7 bits of padding)
-          if (bits_processed <= SIGNATURE_LENGTH*8 && compressed_signature[104:98] == 7'b0)
-            decompression_done <= 1'b1;  // We processed all the bits of the compressed signature
-          else
-            signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
-        end
-
-        if (bits_processed > SIGNATURE_LENGTH*8)
-          signature_length_error <= 1'b1;  // Signature is not of the expected length, set the error flag (algorithm 18, line 1)
+    // Go over the encoded high bits and find the first 1, hopefully this gets synthesized to an efficient priority encoder
+    for (int i = 0; i < 17; i++) begin
+      if (compressed_signature[96-i]) begin
+        high = i;
+        break;
       end
     end
+  end
+  assign sign = compressed_signature[104];
+  assign low = compressed_signature[103:97];
 
+  // Stage 1: Decompress coefficient and compute number of bits used
+  always_ff @(posedge clk) begin
+    if (rst_n == 1'b0 || valid_bits == 0 || decompressed_count > N) begin
+      bits_used <= 0;
+    end
+    else begin
+      // Create coefficient as signed decimals. If it's positive (sign == 0) then it's just {0, high, low}, if it's negative have to compute two's complement
+      if (sign)
+        coefficient = -{1'b0, high, low}; // Negate the magnitude
+      else
+        coefficient = {1'b0, high, low};  // Keep magnitude unchanged
+
+      // Compute number of bits used to compress the current coefficient
+      bits_used <= 1 + 7 + high + 1;  // 1 sign bit + 7 low bits + high bits (zeros) + 1 high bit (one)
+    end
   end
 
-  // Check if coefficient is valid by checking if all bits that were used to decompress the coefficient are valid
-  assign coefficient_valid = compressed_coef_length <= compressed_signature_valid_bits && decompressed_count < N;
+  // Output shift_by in the same clock cycle as it was computed, so that the parent module can use it to prepare data for the next cycle
+  assign shift_by = valid_bits > 0 ?  1 + 7 + high + 1 : 0;
 
-  assign coefficient = coefficient_valid ? coefficient_i : 0;
+  // Stage 2: Save coefficient to polynomial, check for errors and control decompression_done
+  always_ff @(posedge clk) begin
+    if (rst_n == 1'b0) begin
+      for(int i = 0; i < N; i = i + 1)
+        polynomial[i] <= 0;
+      decompressed_count <= 0;
+      used_bit_count_error <= 0;
+      invalid_bits_used_error <= 0;
+      remaining_bits_not_zeros_error <= 0;
+      decompression_done <= 0;
+      total_bits_used <= 0;
+    end
+    else if(valid_bits > 0) begin
 
-  assign signature_error = coefficient_error || signature_length_error;
+      // Check if we already used too many bits to decompress the signature
+      if(total_bits_used > SLEN*8)
+        used_bit_count_error <= 1;
+
+      if(decompressed_count < N) begin
+        // Check if we decompressed invalid bits
+        if(bits_used <= valid_bits) begin
+          polynomial[decompressed_count] <= coefficient;
+          decompressed_count <= decompressed_count + 1;
+          total_bits_used <= total_bits_used + bits_used;
+        end
+        else begin
+          invalid_bits_used_error <= 1;
+        end
+      end
+
+      // When we decompressed all coefficient we have to check that any remaining bits are zeros
+      if(decompressed_count == N)
+        if(compressed_signature[104:98] != 0)
+          remaining_bits_not_zeros_error <= 1;
+        else
+          decompression_done <= 1;
+    end
+  end
+
+  assign signature_error = invalid_bits_used_error || used_bit_count_error || remaining_bits_not_zeros_error;
 
 endmodule
