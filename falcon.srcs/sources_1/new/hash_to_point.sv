@@ -74,6 +74,8 @@ module hash_to_point#(
   end
 
   always_comb begin
+    next_state = state;
+
     case (state)
       IDLE: begin   // Waiting for start signal, delayed by 1 cycle
         if (start == 1'b1)
@@ -169,14 +171,14 @@ module hash_to_point#(
       t4_i <= 0;
     end
     else if (data_out_valid_i == 1'b1) begin
-        t1_i_ok <= t1 < k_times_q;
-        t2_i_ok <= t2 < k_times_q;
-        t3_i_ok <= t3 < k_times_q;
-        t4_i_ok <= t4 < k_times_q;
-        t1_i <= t1 % 12289;;
-        t2_i <= t2 % 12289;
-        t3_i <= t3 % 12289;
-        t4_i <= t4 % 12289;
+      t1_i_ok <= t1 < k_times_q;
+      t2_i_ok <= t2 < k_times_q;
+      t3_i_ok <= t3 < k_times_q;
+      t4_i_ok <= t4 < k_times_q;
+      t1_i <= t1 % 12289;
+      t2_i <= t2 % 12289;
+      t3_i <= t3 % 12289;
+      t4_i <= t4 % 12289;
     end
     data_out_valid_ii <= data_out_valid_i;
   end

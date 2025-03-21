@@ -139,6 +139,8 @@ module ntt_negative#(
 
   // State machine state changes
   always_comb begin
+    next_state = state;
+
     case (state)
       IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
