@@ -33,7 +33,7 @@ module top (
 
   verify #(
            .N(8),
-           .SIGNATURE_LENGTH(11)
+           .SBYTELEN(52)
          )verify(
            .clk(clk),
            .rst_n(!rst),

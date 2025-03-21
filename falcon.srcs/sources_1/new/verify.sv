@@ -25,7 +25,7 @@
 
 module verify#(
     parameter int N,
-    parameter int SIGNATURE_LENGTH,
+    parameter int SBYTELEN,
     parameter int MULT_MOD_Q_OPS_PER_CYCLE = 4, //! The number of operations per cycle for the MULT_MOD_Q module. N should be divisible by this number.
     parameter int SUB_AND_NORMALIZE_OPS_PER_CYCLE = 4, //! The number of operations per cycle for the SUB_AND_NORMALIZE module. N should be divisible by this number.
     parameter int SQUARED_NORM_OPS_PER_CYCLE = 4 //! The number of operations per cycle for the SQUARED_NORM module. N should be divisible by this number.
@@ -86,30 +86,26 @@ module verify#(
   logic [3*64-1:0] compressed_signature_buffer;
   logic [6:0] compressed_signature_buffer_valid; //! Number of valid bits in compressed_signature_buffer. Only leftmost bits are valid.
 
-  logic signed [14:0] coefficient; //! Decompressed coefficient
-  logic signed [14:0] decompressed_coefficients [0:N-1];
-  logic [6:0] compressed_coef_length; //! Number of bits that were used to compress the coefficient
-  logic coefficient_valid; //! Is coefficient valid
+  logic signed [14:0] decompressed_polynomial [N];
+  logic [6:0] shift_by; //! Number of bits that were used to compress the coefficient, we need to shift the buffer by this amount
   logic signature_error; //! Set to true if the signature is invalid
   logic decompression_done; //! Set to true if the decompression is done
-  logic [$clog2(N)-1:0] coefficient_index = 0; //! Index of the coefficient that is currently being decompressed
 
   decompress #(
                .N(N),
-               .SIGNATURE_LENGTH(SIGNATURE_LENGTH)
+               .SLEN(8 * SBYTELEN - 328)  // 328 = 8 * (40 + 1), 40 bytes of salt and 1 byte of header
              ) decompress(
                .clk(clk),
                .rst_n(rst_n),
                .compressed_signature(compressed_signature_buffer[3*64-1 -: 105]), // Provide top 105 bits of the buffer to decompress module
-               .compressed_signature_valid_bits(compressed_signature_buffer_valid),
-               .coefficient(coefficient),
-               .coefficient_valid(coefficient_valid),
-               .compressed_coef_length(compressed_coef_length),
-               .signature_error(signature_error),
-               .decompression_done(decompression_done)
+               .valid_bits(compressed_signature_buffer_valid),
+               .shift_by(shift_by),
+               .polynomial(decompressed_polynomial),
+               .decompression_done(decompression_done),
+               .signature_error(signature_error)
              );
 
-  typedef enum logic [1:0] {
+  typedef enum logic [2:0] {
             DECOMPRESS_IDLE, // Waiting for the start signal
             READY_FOR_SIGNATURE, // Ready to receive the next 64 bits of the signature. If we have any existing compressed data we are also decompressing it in this state.
             DECOMPRESSING, // Decompressing coefficients, don't need new signature data
@@ -125,11 +121,13 @@ module verify#(
           decompress_next_state = READY_FOR_SIGNATURE;
       end
       READY_FOR_SIGNATURE: begin  // Wait for signature buffer to be full
-        if (compressed_signature_buffer_valid > 128)  // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it)
+        if(decompression_done == 1'b1 || signature_error == 1'b1) // Decompression is done or there was an error
+          decompress_next_state = DECOMPRESSION_DONE;
+        else if (compressed_signature_buffer_valid > 128)  // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it)
           decompress_next_state = DECOMPRESSING;
       end
       DECOMPRESSING: begin  // Go to DECOMPRESSION_DONE if we're done or READY_FOR_SIGNATURE if we have space for more data
-        if(coefficient_index == N)  // We've decompressed all coefficients
+        if(decompression_done == 1'b1 || signature_error == 1'b1) // Decompression is done or there was an error
           decompress_next_state = DECOMPRESSION_DONE;
         else if (compressed_signature_buffer_valid < 128) // We have space for more data
           decompress_next_state = READY_FOR_SIGNATURE;
@@ -146,11 +144,13 @@ module verify#(
   end
 
   always_ff @(posedge clk) begin
-
     if (rst_n == 1'b0)
-      decompress_state = DECOMPRESS_IDLE;
+      decompress_state <= DECOMPRESS_IDLE;
     else
-      decompress_state = decompress_next_state;
+      decompress_state <= decompress_next_state;
+  end
+
+  always_ff @(posedge clk) begin
 
     case (decompress_state)
       DECOMPRESS_IDLE: begin
@@ -178,16 +178,9 @@ module verify#(
         compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
       end
 
-      // If decompression module produced a valid coefficient we have to shift the buffer to the left by "compressed_coef_length" bits
-      // to provide the next compressed coefficient to the decompression module.
-      // We also need to save the coefficient to the coefficients array.
-      if (coefficient_valid == 1'b1) begin
-        compressed_signature_buffer = compressed_signature_buffer << compressed_coef_length;
-        compressed_signature_buffer_valid = compressed_signature_buffer_valid - compressed_coef_length;
-
-        decompressed_coefficients[coefficient_index] <= coefficient;
-        coefficient_index <= coefficient_index + 1;
-      end
+      // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
+      compressed_signature_buffer <= compressed_signature_buffer << shift_by;
+      compressed_signature_buffer_valid <= compressed_signature_buffer_valid - shift_by;
     end
   end
 
@@ -430,7 +423,7 @@ module verify#(
 
       START_NTT_SIGNATURE: begin
         ntt_mode <= 1'b0;  // NTT
-        ntt_input <= decompressed_coefficients;
+        ntt_input <= decompressed_polynomial;
         ntt_start <= 1'b1;
 
         accept <= 1'b0;
@@ -439,7 +432,7 @@ module verify#(
 
       RUNNING_NTT_SIGNATURE: begin
         ntt_mode <= 1'b0;  // NTT
-        ntt_input <= decompressed_coefficients;
+        ntt_input <= decompressed_polynomial;
         ntt_start <= 1'b0;
 
         accept <= 1'b0;
@@ -544,7 +537,7 @@ module verify#(
         // Send data to verify_compute_squared_norm module
         for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
           squared_norm_a[i] <= ntt_buffer1[squared_norm_index + i];
-          squared_norm_b[i] <= decompressed_coefficients[squared_norm_index + i];
+          squared_norm_b[i] <= decompressed_polynomial[squared_norm_index + i];
         end
         squared_norm_valid_in <= 1'b1;
         squared_norm_index <= squared_norm_index + SQUARED_NORM_OPS_PER_CYCLE;

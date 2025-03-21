@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //
+//  THIS MODULE IS OLD AND PROBABLY NOT IMPLEMENTED CORRECTLY, VERIFY BEFORE USE
+//
 // Implements compression of Falcon coefficients to a compressed string
 //
 // Module can compress one coefficient per clock cycle. The compressed representation

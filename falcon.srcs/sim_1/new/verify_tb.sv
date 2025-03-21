@@ -31,7 +31,7 @@ module verify_tb;
 
   verify #(
            .N(8),
-           .SIGNATURE_LENGTH(11)
+           .SBYTELEN(52)
          )uut(
            .clk(clk),
            .rst_n(rst_n),
@@ -72,9 +72,9 @@ module verify_tb;
       end
       else if (message_block_index >= 7)  // Set valid to low after we've sent all message blocks
         message_valid <= 0;
-
       message_last <= message_block_index == 6;
 
+      // Send new signature block if module is ready for it
       if(signature_ready && signature_block_index < 2) begin
         signature <= signature_blocks[signature_block_index];
         signature_valid <= signature_valid_blocks[signature_block_index];
@@ -103,26 +103,25 @@ module verify_tb;
     // [[-153, -108, 143, -216, -49, 222, 81, 152]] (signed decimal)
     //////////////////////////////////////////////////////////////////////////////////
 
-    message_len_bytes = 12; // len("Hello World!") = 12
+    message_len_bytes <= 12; // len("Hello World!") = 12
     // First 5 blocks of message are the salt (40B), the rest is the message ("Hello World!", reversed and with padding)
-    message_blocks = {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
+    message_blocks <= {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
 
     // len(signature value) = 11 bytes = 88 bits = 64 + 24
-    signature_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
-    signature_valid_blocks = {64, 24};
+    signature_blocks <= {64'h997b21eec3635e54, 64'h6308000000000000};
+    signature_valid_blocks <= '{64, 24};
 
-    rst_n = 0;
+    rst_n <= 0;
     #10;
-    rst_n = 1;
-    start = 1;
+    rst_n <= 1;
+    start <= 1;
     #10;
-    start = 0;
+    start <= 0;
 
     while(!reject && !accept)
       #10;
 
-    // Check that it was accepted
-    if (accept && !reject)
+    if (accept == 1'b1 && reject == 1'b0)
       $display("Test 1: Passed");
     else
       $fatal("Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
@@ -132,57 +131,55 @@ module verify_tb;
     // Test 2: Invalid signature for N=8 (same values as in test 1 but signature is corrupted)
     //////////////////////////////////////////////////////////////////////////////////
 
-
-    message_len_bytes = 12; // len("Hello World!") = 12
+    message_len_bytes <= 12; // len("Hello World!") = 12
     // First 5 blocks of message are the salt (40B), the rest is the message ("Hello World!", reversed and with padding)
-    message_blocks = {64'h8ae56efee299ddaa, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72}; // Last byte of first block should be '5d' but changed to 'aa' to make it invalid
+    message_blocks <= {64'h8ae56efee299ddaa, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72}; // Last byte of first block should be '5d' but changed to 'aa' to make it invalid
 
     // len(signature value) = 11 bytes = 88 bits = 64 + 24
-    signature_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
-    signature_valid_blocks = {64, 24};
+    signature_blocks <= {64'h997b21eec3635e54, 64'h6308000000000000};
+    signature_valid_blocks <= '{64, 24};
 
-    rst_n = 0;
-    #50;
-    rst_n = 1;
-    start = 1;
+    rst_n <= 0;
     #10;
-    start = 0;
+    rst_n <= 1;
+    start <= 1;
+    #10;
+    start <= 0;
 
     while(!reject && !accept)
       #10;
 
-    // Check that it was rejected
-    if (!accept && reject)
+    if (accept == 1'b0 && reject == 1'b1)
       $display("Test 2: Passed");
     else
       $fatal("Test 2: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
+
 
     //////////////////////////////////////////////////////////////////////////////////
     // Test 3: Incorrectly compressed coefficients in signature
     //////////////////////////////////////////////////////////////////////////////////
 
-    message_len_bytes = 12; // len("Hello World!") = 12
+    message_len_bytes <= 12; // len("Hello World!") = 12
     // First 5 blocks of message are the salt (40B), the rest is the message ("Hello World!", reversed and with padding)
-    message_blocks = {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
+    message_blocks <= {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
 
-    signature_blocks = {64'h1111111111111111, 64'h0000000000000000};
-    signature_valid_blocks = {2, 0};
+    signature_blocks <= {64'h1111111111111111, 64'h0000000000000000};
+    signature_valid_blocks <= '{2, 0};
 
-    rst_n = 0;
+    rst_n <= 0;
     #10;
-    rst_n = 1;
-    start = 1;
+    rst_n <= 1;
+    start <= 1;
     #10;
-    start = 0;
+    start <= 0;
 
     while(!reject && !accept)
       #10;
 
-    // Check that it was accepted
-    if (!accept && reject)
+    if (accept == 1'b0 && reject == 1'b1)
       $display("Test 3: Passed");
     else
-      $fatal("Test 3: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
+      $fatal("Test 3: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
 
 
     // Test 3: Valid signature for N=512
