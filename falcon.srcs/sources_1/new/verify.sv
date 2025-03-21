@@ -155,8 +155,8 @@ module verify#(
     case (decompress_state)
       DECOMPRESS_IDLE: begin
         signature_ready <= 1'b0;
-        compressed_signature_buffer <= 0;
-        compressed_signature_buffer_valid <= 0;
+        compressed_signature_buffer = 0;
+        compressed_signature_buffer_valid = 0;
       end
       READY_FOR_SIGNATURE: begin
         signature_ready <= 1'b1; // We can receive the next 64 bits of the signature
@@ -179,8 +179,8 @@ module verify#(
       end
 
       // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
-      compressed_signature_buffer <= compressed_signature_buffer << shift_by;
-      compressed_signature_buffer_valid <= compressed_signature_buffer_valid - shift_by;
+      compressed_signature_buffer = compressed_signature_buffer << shift_by;
+      compressed_signature_buffer_valid = compressed_signature_buffer_valid - shift_by;
     end
   end
 

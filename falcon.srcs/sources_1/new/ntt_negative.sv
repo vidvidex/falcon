@@ -256,30 +256,30 @@ module ntt_negative#(
 
     // Reset/initialize. We do it like this and not with the reset signal because at that point "mode" might not be set yet
     if (state != NTT && state != NTT_WAIT_FOR_MULTIPLY) begin
-      stage       <= mode == 1'b0 ? 1 : N;
-      stride      <= mode == 1'b0 ? N >> 1 : 1;
-      counter_max <= mode == 1'b0 ? N >> 1 : 1;
-      counter     <= mode == 1'b0 ? 0 : 1;
-      butterfly <= 1;
-      group <= 0;
-      i <= 0;
+      stage       = mode == 1'b0 ? 1 : N;
+      stride      = mode == 1'b0 ? N >> 1 : 1;
+      counter_max = mode == 1'b0 ? N >> 1 : 1;
+      counter     = mode == 1'b0 ? 0 : 1;
+      butterfly = 1;
+      group = 0;
+      i = 0;
     end
 
     // Logic for moving to next stage of NTT (here we set some values, but they might be overridden in the next if, that is why there are some = and some <=)
     if (state == NTT_WAIT_FOR_MULTIPLY && mod_mult_last == 1'b1) begin
       if (mode == 1'b0) begin
-        stage <<= 1;
-        stride >>= 1;
+        stage = stage << 1;
+        stride = stride >> 1;
         group = -1;
-        counter_max >>= 1;
+        counter_max = counter_max >> 1;
         counter = N;
         i = 0;
       end
       else begin
-        stage >>= 1;
-        stride <<= 1;
+        stage = stage >> 1;
+        stride = stride << 1;
         group = 0;
-        counter_max <<= 1;
+        counter_max = counter_max << 1;
         counter = 0;
         i = -1;
       end
@@ -290,14 +290,14 @@ module ntt_negative#(
     if (state == NTT || (state == NTT_WAIT_FOR_MULTIPLY && mod_mult_last == 1'b1)) begin
       if (counter >= counter_max) begin
         group = group + 1;
-        i <= group * (stride << 1);
-        counter <= 1;
+        i = group * (stride << 1);
+        counter = 1;
       end
       else begin
-        i <= i + 1;
-        counter <= counter + 1;
+        i = i + 1;
+        counter = counter + 1;
       end
-      butterfly <= butterfly + 1;
+      butterfly = butterfly + 1;
     end
   end
 
