@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="156.601 ns"></ZoomEndTime>
-      <Cursor1Time time="2,615.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,293.564 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,452.165 ns"></ZoomEndTime>
+      <Cursor1Time time="2,455.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="254"></NameColumnWidth>
-      <ValueColumnWidth column_width="214"></ValueColumnWidth>
+      <ValueColumnWidth column_width="210"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group2035">
@@ -92,14 +92,6 @@
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/start_i">
-         <obj_property name="ElementShortName">start_i</obj_property>
-         <obj_property name="ObjectShortName">start_i</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/start_ii">
-         <obj_property name="ElementShortName">start_ii</obj_property>
-         <obj_property name="ObjectShortName">start_ii</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/message_len_bytes">
          <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
          <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
@@ -120,6 +112,10 @@
          <obj_property name="ElementShortName">polynomial[0:511][14:0]</obj_property>
          <obj_property name="ObjectShortName">polynomial[0:511][14:0]</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/polynomial_index">
+         <obj_property name="ElementShortName">polynomial_index[9:0]</obj_property>
+         <obj_property name="ObjectShortName">polynomial_index[9:0]</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/hash_to_point_tb/uut/polynomial_valid">
          <obj_property name="ElementShortName">polynomial_valid</obj_property>
          <obj_property name="ObjectShortName">polynomial_valid</obj_property>
@@ -131,6 +127,10 @@
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/next_state">
          <obj_property name="ElementShortName">next_state[2:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256_reset">
+         <obj_property name="ElementShortName">shake256_reset</obj_property>
+         <obj_property name="ObjectShortName">shake256_reset</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/data_in">
          <obj_property name="ElementShortName">data_in[63:0]</obj_property>
@@ -152,14 +152,6 @@
          <obj_property name="ElementShortName">data_out_valid</obj_property>
          <obj_property name="ObjectShortName">data_out_valid</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256_reset">
-         <obj_property name="ElementShortName">shake256_reset</obj_property>
-         <obj_property name="ObjectShortName">shake256_reset</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/uut/polynomial_index">
-         <obj_property name="ElementShortName">polynomial_index[9:0]</obj_property>
-         <obj_property name="ObjectShortName">polynomial_index[9:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/t1">
          <obj_property name="ElementShortName">t1[15:0]</obj_property>
          <obj_property name="ObjectShortName">t1[15:0]</obj_property>
@@ -176,6 +168,46 @@
          <obj_property name="ElementShortName">t4[15:0]</obj_property>
          <obj_property name="ObjectShortName">t4[15:0]</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/data_out_valid_i">
+         <obj_property name="ElementShortName">data_out_valid_i</obj_property>
+         <obj_property name="ObjectShortName">data_out_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/t1_i">
+         <obj_property name="ElementShortName">t1_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">t1_i[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/t2_i">
+         <obj_property name="ElementShortName">t2_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">t2_i[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/t3_i">
+         <obj_property name="ElementShortName">t3_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">t3_i[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/t4_i">
+         <obj_property name="ElementShortName">t4_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">t4_i[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/data_out_valid_ii">
+         <obj_property name="ElementShortName">data_out_valid_ii</obj_property>
+         <obj_property name="ObjectShortName">data_out_valid_ii</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/t1_i_ok">
+         <obj_property name="ElementShortName">t1_i_ok</obj_property>
+         <obj_property name="ObjectShortName">t1_i_ok</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/t2_i_ok">
+         <obj_property name="ElementShortName">t2_i_ok</obj_property>
+         <obj_property name="ObjectShortName">t2_i_ok</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/t3_i_ok">
+         <obj_property name="ElementShortName">t3_i_ok</obj_property>
+         <obj_property name="ObjectShortName">t3_i_ok</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/t4_i_ok">
+         <obj_property name="ElementShortName">t4_i_ok</obj_property>
+         <obj_property name="ObjectShortName">t4_i_ok</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/k_times_q">
          <obj_property name="ElementShortName">k_times_q[15:0]</obj_property>
          <obj_property name="ObjectShortName">k_times_q[15:0]</obj_property>
@@ -188,7 +220,6 @@
    <wvobject type="group" fp_name="group93">
       <obj_property name="label">shake256</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -301,7 +332,6 @@
    <wvobject type="group" fp_name="group202">
       <obj_property name="label">shake256_absorb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256/shake256_absorb/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -350,10 +380,6 @@
          <obj_property name="ElementShortName">messageLen_InBytes[15:0]</obj_property>
          <obj_property name="ObjectShortName">messageLen_InBytes[15:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256/shake256_absorb/dec_messageLen">
-         <obj_property name="ElementShortName">dec_messageLen</obj_property>
-         <obj_property name="ObjectShortName">dec_messageLen</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/shake256/shake256_absorb/rate_counter">
          <obj_property name="ElementShortName">rate_counter[7:0]</obj_property>
          <obj_property name="ObjectShortName">rate_counter[7:0]</obj_property>
@@ -361,10 +387,6 @@
       <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256/shake256_absorb/rst_rate_counter">
          <obj_property name="ElementShortName">rst_rate_counter</obj_property>
          <obj_property name="ObjectShortName">rst_rate_counter</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256/shake256_absorb/inc_rate_counter">
-         <obj_property name="ElementShortName">inc_rate_counter</obj_property>
-         <obj_property name="ObjectShortName">inc_rate_counter</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/hash_to_point_tb/uut/shake256/shake256_absorb/messageLen_lt_8">
          <obj_property name="ElementShortName">messageLen_lt_8</obj_property>
