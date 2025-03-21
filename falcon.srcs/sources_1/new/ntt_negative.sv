@@ -104,26 +104,14 @@ module ntt_negative#(
   endfunction
 
   // Modulo 12289 addition
-  function [14:0] mod_add1(input logic signed [14:0] a, b);
+  function [14:0] mod_add(input logic signed [14:0] a, b);
     reg [15:0] temp;
     begin
       temp = a + b;
       if (temp >= 12289)
-        mod_add1 = temp - 12289;
+        mod_add = temp - 12289;
       else
-        mod_add1 = temp;
-    end
-  endfunction
-
-  // Modulo 12289 addition
-  function [14:0] mod_add2(input logic signed [14:0] a, b);
-    reg [15:0] temp;
-    begin
-      temp = a + b;
-      if (temp >= 12289)
-        mod_add2 = temp - 12289;
-      else
-        mod_add2 = temp;
+        mod_add = temp;
     end
   endfunction
 
@@ -214,7 +202,7 @@ module ntt_negative#(
           mod_mult_valid_in <= 1'b1;
           mod_mult_index1_in <= i;
           mod_mult_index2_in <= i + stride;
-          mod_mult_passthrough_in <= mod_add1(polynomial[i], polynomial[i + stride]); // Doesn't need mod_mult, so we'll just pass it through
+          mod_mult_passthrough_in <= mod_add(polynomial[i], polynomial[i + stride]); // Doesn't need mod_mult, so we'll just pass it through
         end
       end
 
@@ -227,7 +215,7 @@ module ntt_negative#(
 
         if(mod_mult_valid_out == 1'b1) begin
           if (mode == 1'b0) begin
-            polynomial[mod_mult_index1_out] <= mod_add2(polynomial[mod_mult_index1_out], mod_mult_result);
+            polynomial[mod_mult_index1_out] <= mod_add(polynomial[mod_mult_index1_out], mod_mult_result);
             polynomial[mod_mult_index2_out] <= mod_sub(polynomial[mod_mult_index1_out], mod_mult_result);
           end
           else begin
