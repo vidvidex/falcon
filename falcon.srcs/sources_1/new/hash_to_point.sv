@@ -40,10 +40,13 @@ module hash_to_point#(
   logic data_in_valid;
   logic shake256_ready;
   logic [63:0] data_out;
-  logic data_out_valid;
+  logic data_out_valid, data_out_valid_i, data_out_valid_ii;
   logic shake256_reset; // Reset signal for shake256 module, active high
   logic unsigned [$clog2(N):0] polynomial_index; // Index of the polynomial that we are currently writing to
   logic [15:0] t1, t2, t3, t4; // 16 bits of hash that we are currently processing into a polynomial
+  logic [14:0] t1_i, t2_i, t3_i, t4_i; // Same as above, but further in the pipeline
+
+  logic t1_i_ok, t2_i_ok, t3_i_ok, t4_i_ok; // Are the coefficients less than k*q?
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
@@ -133,31 +136,78 @@ module hash_to_point#(
     endcase
   end
 
-  // When we get valid hash data we can convert it to polynomials
+  // State 1 of converting hash output to polynomial: Create 4 16-bit values from the 64-bit hash
   always_ff @(posedge clk) begin
 
     if (rst_n == 1'b0) begin
-      polynomial_index <= 0;  // Reset the polynomial index here, in the same block as it's used so we don't drive it from two different blocks
+      t1 <= 0;
+      t2 <= 0;
+      t3 <= 0;
+      t4 <= 0;
+      data_out_valid_i <= 0;
     end
-    else if(data_out_valid) begin
+    else if(data_out_valid == 1'b1) begin
       // The bytes of the returned hash have different endianness than what we need, therefore we read them in opposite order
-      t1 = {data_out[7:0], data_out[15:8]};
-      t2 = {data_out[23:16], data_out[31:24]};
-      t3 = {data_out[39:32], data_out[47:40]};
-      t4 = {data_out[55:48], data_out[63:56]};
+      t1 <= {data_out[7:0], data_out[15:8]};
+      t2 <= {data_out[23:16], data_out[31:24]};
+      t3 <= {data_out[39:32], data_out[47:40]};
+      t4 <= {data_out[55:48], data_out[63:56]};
+    end
+    data_out_valid_i <= data_out_valid;
+  end
 
-      // For each of the potential coefficients check if they are less than k*q (part of specification) and also check if we have already filled the polynomial
-      if (t1 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t1 % 12289;
+  // State 2 of converting hash output to polynomial: Check if the coefficients are less than k*q and compute the modulo 12289
+  always_ff @(posedge clk) begin
+    if (rst_n == 1'b0) begin
+      t1_i_ok <= 0;
+      t2_i_ok <= 0;
+      t3_i_ok <= 0;
+      t4_i_ok <= 0;
+      t1_i <= 0;
+      t2_i <= 0;
+      t3_i <= 0;
+      t4_i <= 0;
+    end
+    else if (data_out_valid_i == 1'b1) begin
+        t1_i_ok <= t1 < k_times_q;
+        t2_i_ok <= t2 < k_times_q;
+        t3_i_ok <= t3 < k_times_q;
+        t4_i_ok <= t4 < k_times_q;
+        t1_i <= t1 % 12289;;
+        t2_i <= t2 % 12289;
+        t3_i <= t3 % 12289;
+        t4_i <= t4 % 12289;
+    end
+    data_out_valid_ii <= data_out_valid_i;
+  end
 
-      if (t2 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t2 % 12289;
+  // State 3 of converting hash output to polynomial: Write the coefficients to the polynomial
+  always_ff @(posedge clk) begin
+    if(rst_n == 1'b0) begin
+      for(int i = 0; i < N; i++)
+        polynomial[i] <= 0;
+      polynomial_index <= 0;
+    end
+    else if(data_out_valid_ii == 1'b1) begin
+      if(t1_i_ok == 1 && polynomial_index < N) begin
+        polynomial[polynomial_index] <= t1_i;
+        polynomial_index = polynomial_index + 1;
+      end
 
-      if (t3 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t3 % 12289;
+      if(t2_i_ok == 1 && polynomial_index < N) begin
+        polynomial[polynomial_index] <= t2_i;
+        polynomial_index = polynomial_index + 1;
+      end
 
-      if (t4 < k_times_q && polynomial_index < N)
-        polynomial[polynomial_index++] = t4 % 12289;
+      if(t3_i_ok == 1 && polynomial_index < N) begin
+        polynomial[polynomial_index] <= t3_i;
+        polynomial_index = polynomial_index + 1;
+      end
+
+      if(t4_i_ok == 1 && polynomial_index < N) begin
+        polynomial[polynomial_index] <= t4_i;
+        polynomial_index = polynomial_index + 1;
+      end
     end
   end
 
