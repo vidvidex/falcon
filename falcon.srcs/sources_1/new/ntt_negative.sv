@@ -44,6 +44,7 @@ module ntt_negative#(
   logic signed [14:0] mod_mult_a, mod_mult_b, mod_mult_result;  // Parameters and result for mod_mult module
   logic [$clog2(N):0] mod_mult_index1_in, mod_mult_index2_in, mod_mult_index1_out, mod_mult_index2_out; // Input and output indeces from mod_mult module
   logic mod_mult_valid_in, mod_mult_valid_out, mod_mult_last; // Valid, last signals for mod_mult module
+  logic signed [14:0] mod_mult_passthrough_in, mod_mult_passthrough_out; // Passthrough signals for mod_mult module
 
   // This needs to be in the same module as opposed to being in a submodule because we need to access the value in the same clock cycle (Update: maybe not true anymore, TODO: check)
   // Computed with scripts/NTT_negative_compute_twiddle_factors.py
@@ -70,21 +71,23 @@ module ntt_negative#(
   state_t state, next_state;
 
   mod_mult_ntt_negative #(
-             .N(8)
-           )mod_mult(
-             .clk(clk),
-             .rst_n(rst_n),
-             .a(mod_mult_a),
-             .b(mod_mult_b),
-             .valid_in(mod_mult_valid_in),
-             .index1_in(mod_mult_index1_in),
-             .index2_in(mod_mult_index2_in),
-             .result(mod_mult_result),
-             .valid_out(mod_mult_valid_out),
-             .last(mod_mult_last),
-             .index1_out(mod_mult_index1_out),
-             .index2_out(mod_mult_index2_out)
-           );
+                          .N(8)
+                        )mod_mult(
+                          .clk(clk),
+                          .rst_n(rst_n),
+                          .a(mod_mult_a),
+                          .b(mod_mult_b),
+                          .valid_in(mod_mult_valid_in),
+                          .index1_in(mod_mult_index1_in),
+                          .index2_in(mod_mult_index2_in),
+                          .passthrough_in(mod_mult_passthrough_in),
+                          .result(mod_mult_result),
+                          .valid_out(mod_mult_valid_out),
+                          .last(mod_mult_last),
+                          .index1_out(mod_mult_index1_out),
+                          .index2_out(mod_mult_index2_out),
+                          .passthrough_out(mod_mult_passthrough_out)
+                        );
 
   // Modulo 12289 multiplication as a function (Montgomery multiplication)
   function [14:0] mod_mult_f(input logic signed [14:0] a, b);
@@ -101,14 +104,26 @@ module ntt_negative#(
   endfunction
 
   // Modulo 12289 addition
-  function [14:0] mod_add(input logic signed [14:0] a, b);
+  function [14:0] mod_add1(input logic signed [14:0] a, b);
     reg [15:0] temp;
     begin
       temp = a + b;
       if (temp >= 12289)
-        mod_add = temp - 12289;
+        mod_add1 = temp - 12289;
       else
-        mod_add = temp;
+        mod_add1 = temp;
+    end
+  endfunction
+
+  // Modulo 12289 addition
+  function [14:0] mod_add2(input logic signed [14:0] a, b);
+    reg [15:0] temp;
+    begin
+      temp = a + b;
+      if (temp >= 12289)
+        mod_add2 = temp - 12289;
+      else
+        mod_add2 = temp;
     end
   endfunction
 
@@ -199,8 +214,7 @@ module ntt_negative#(
           mod_mult_valid_in <= 1'b1;
           mod_mult_index1_in <= i;
           mod_mult_index2_in <= i + stride;
-
-          polynomial[i] <= mod_add(polynomial[i], polynomial[i + stride]);  // Doesn't need mod_mult, so we an compute and store immediately
+          mod_mult_passthrough_in <= mod_add1(polynomial[i], polynomial[i + stride]); // Doesn't need mod_mult, so we'll just pass it through
         end
       end
 
@@ -213,11 +227,12 @@ module ntt_negative#(
 
         if(mod_mult_valid_out == 1'b1) begin
           if (mode == 1'b0) begin
-            polynomial[mod_mult_index1_out] <= mod_add(polynomial[mod_mult_index1_out], mod_mult_result);
+            polynomial[mod_mult_index1_out] <= mod_add2(polynomial[mod_mult_index1_out], mod_mult_result);
             polynomial[mod_mult_index2_out] <= mod_sub(polynomial[mod_mult_index1_out], mod_mult_result);
           end
           else begin
-            polynomial[mod_mult_index2_out] <= mod_mult_result;  // The first coefficient doesn't need mod_mult, so we can compute and store it immediately
+            polynomial[mod_mult_index1_out] <= mod_mult_passthrough_out;
+            polynomial[mod_mult_index2_out] <= mod_mult_result;
           end
         end
       end
