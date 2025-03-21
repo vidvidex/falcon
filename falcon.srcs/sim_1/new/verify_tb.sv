@@ -21,6 +21,7 @@ module verify_tb;
 
   logic [63:0] signature;
   logic [6:0] signature_valid; //! Number of valid bits in signature (from the left)
+  logic signature_sent; //! The entire signature has been sent
   logic signature_ready; //! Is ready to receive the next signature block
 
   logic accept; //! Set to true if signature is valid
@@ -49,6 +50,7 @@ module verify_tb;
 
            .signature(signature),
            .signature_valid(signature_valid),
+           .signature_sent(signature_sent),
            .signature_ready(signature_ready),
 
            .accept(accept),
@@ -60,6 +62,8 @@ module verify_tb;
     if(rst_n == 1'b0) begin
       message_block_index <= 0;
       signature_block_index <= 0;
+      signature_valid <= 0;
+      signature_sent <= 0;
     end
 
     if(!accept && !reject) begin
@@ -79,9 +83,12 @@ module verify_tb;
         signature <= signature_blocks[signature_block_index];
         signature_valid <= signature_valid_blocks[signature_block_index];
         signature_block_index <= signature_block_index + 1;
+        signature_sent <= 0;
       end
-      else
-        signature_valid <= 0; // Set valid to low after we've sent all signature value blocks
+      else if(signature_block_index >= 2) begin  // Set valid to low after we've sent all signature value blocks
+        signature_valid <= 0;
+        signature_sent <= 1;
+      end
     end
 
   end
@@ -91,6 +98,10 @@ module verify_tb;
 
   initial begin
     clk = 1;
+
+    rst_n <= 0;
+    #20;
+    rst_n <= 1;
 
     //////////////////////////////////////////////////////////////////////////////////
     // Test 1: Valid signature for N=8
@@ -111,9 +122,7 @@ module verify_tb;
     signature_blocks <= {64'h997b21eec3635e54, 64'h6308000000000000};
     signature_valid_blocks <= '{64, 24};
 
-    rst_n <= 0;
-    #10;
-    rst_n <= 1;
+
     start <= 1;
     #10;
     start <= 0;
@@ -125,6 +134,11 @@ module verify_tb;
       $display("Test 1: Passed");
     else
       $fatal("Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
+
+
+    rst_n <= 0;
+    #10;
+    rst_n <= 1;
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -139,9 +153,6 @@ module verify_tb;
     signature_blocks <= {64'h997b21eec3635e54, 64'h6308000000000000};
     signature_valid_blocks <= '{64, 24};
 
-    rst_n <= 0;
-    #20;
-    rst_n <= 1;
     start <= 1;
     #10;
     start <= 0;
@@ -153,6 +164,10 @@ module verify_tb;
       $display("Test 2: Passed");
     else
       $fatal("Test 2: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
+
+    rst_n <= 0;
+    #10;
+    rst_n <= 1;
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -166,9 +181,7 @@ module verify_tb;
     signature_blocks <= {64'h1111111111111111, 64'h0000000000000000};
     signature_valid_blocks <= '{2, 0};
 
-    rst_n <= 0;
-    #20;
-    rst_n <= 1;
+
     start <= 1;
     #10;
     start <= 0;
