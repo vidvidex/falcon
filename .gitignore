@@ -1,12 +1,14 @@
 # gitignore template for Xilinx Vivado Design Suite
 # website: https://www.xilinx.com/support/download.html
-.stfolder   # Syncthing
-.stignore   # Syncthing
 falcon.sim/
 falcon.runs/
 # a.out is outputted by one of the VSCode extensions I am using for Verilog but I am not sure which one and why
 a.out
 .vscode/
+
+# For syncthing
+.stfolder
+.stignore
 
 
 # [home]
