@@ -206,6 +206,10 @@ module verify#(
   logic signed [14:0] squared_norm_a [MULT_MOD_Q_OPS_PER_CYCLE], squared_norm_b [MULT_MOD_Q_OPS_PER_CYCLE];
   logic squared_norm_valid_in, squared_norm_last, squared_norm_accept, squared_norm_reject;
 
+  logic signed [14:0] sub_and_norm_a [SUB_AND_NORMALIZE_OPS_PER_CYCLE], sub_and_norm_b [SUB_AND_NORMALIZE_OPS_PER_CYCLE], sub_and_norm_result [SUB_AND_NORMALIZE_OPS_PER_CYCLE];
+  logic sub_and_norm_valid_in, sub_and_norm_valid_out, sub_and_norm_last;
+  logic [$clog2(N):0] sub_and_norm_index_in, sub_and_norm_index_out;
+
   ntt_negative #(
                  .N(N)
                )ntt(
@@ -235,7 +239,7 @@ module verify#(
                   );
 
   verify_compute_squared_norm #(
-                                .N(8),
+                                .N(N),
                                 .PARALLEL_OPS_COUNT(SQUARED_NORM_OPS_PER_CYCLE)
                               )verify_compute_squared_norm (
                                 .clk(clk),
@@ -247,6 +251,22 @@ module verify#(
                                 .accept(squared_norm_accept),
                                 .reject(squared_norm_reject)
                               );
+
+  verify_sub_and_normalize #(
+                             .N(N),
+                             .PARALLEL_OPS_COUNT(SUB_AND_NORMALIZE_OPS_PER_CYCLE)
+                           )verify_sub_and_normalize (
+                             .clk(clk),
+                             .rst_n(rst_n),
+                             .a(sub_and_norm_a),
+                             .b(sub_and_norm_b),
+                             .valid_in(sub_and_norm_valid_in),
+                             .index_in(sub_and_norm_index_in),
+                             .result(sub_and_norm_result),
+                             .valid_out(sub_and_norm_valid_out),
+                             .index_out(sub_and_norm_index_out),
+                             .last(sub_and_norm_last)
+                           );
 
   // Modulo 12289 subtraction
   function [14:0] mod_sub(input [14:0] a, b);
@@ -271,6 +291,7 @@ module verify#(
             RUNNING_INTT, // Wait for INTT to finish
             WAIT_FOR_HASH_TO_POINT, // Wait for hash_to_point to finish
             SUB_AND_NORMALIZE, // Compute htp_polynomial - product mod q and normalize to [ceil(-q/2), floor(q/2)]
+            WAIT_FOR_SUB_AND_NORMALIZE, // Wait for the pipeline of SUB_AND_NORMALIZE to finish
             SQUARED_NORM, // Compute the squared norm ||(normalized result, decompressed signature)||^2
             FINISHED // Final state, here we accept the signature if there were no errors
           } ntt_state_t;
@@ -345,9 +366,12 @@ module verify#(
         if(htp_polynomial_valid == 1'b1)
           ntt_next_state = SUB_AND_NORMALIZE;
       end
-      SUB_AND_NORMALIZE: begin // Wait for subtraction and normalization to finish before moving to SQUARED_NORM
-        // Check if we've processed all coefficients
+      SUB_AND_NORMALIZE: begin // Send all data to verify_sub_and_normalize before moving to WAIT_FOR_SUB_AND_NORMALIZE
         if (sub_and_normalize_index == N)
+          ntt_next_state = WAIT_FOR_SUB_AND_NORMALIZE;
+      end
+      WAIT_FOR_SUB_AND_NORMALIZE: begin // Wait for sub_and_normalize to finish before moving to SQUARED_NORM
+        if (sub_and_norm_last == 1'b1)
           ntt_next_state = SQUARED_NORM;
       end
       SQUARED_NORM: begin // Send all data to verify_compute_squared_norm before moving to FINISHED
@@ -385,6 +409,14 @@ module verify#(
         squared_norm_valid_in <= 0;
         squared_norm_index <= 0;
         squared_norm_last <= 0;
+
+        // Initialize sub_and_norm parameters (so they aren't undefined)
+        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
+          sub_and_norm_a[i] <= 0;
+          sub_and_norm_b[i] <= 0;
+        end
+        sub_and_norm_valid_in <= 0;
+        sub_and_norm_index_in <= 0;
 
         accept <= 1'b0;
         reject <= 1'b0;
@@ -514,22 +546,36 @@ module verify#(
         accept <= 1'b0;
         reject <= 1'b0;
 
-        // Compute SUB_AND_NORMALIZE_OPS_PER_CYCLE coefficients per clock cycle
-        for (int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i = i + 1) begin
-
-          logic [14:0] temp;
-
-          // Subtract htp_polynomial from INTT(product)
-          temp = mod_sub(htp_polynomial[i+sub_and_normalize_index], ntt_buffer1[i+sub_and_normalize_index]);
-
-          // Normalize to [-q/2, q/2]
-          if (temp > 6144)
-            ntt_buffer1[i+sub_and_normalize_index] <= temp - 12289;
-          else
-            ntt_buffer1[i+sub_and_normalize_index] <= temp;
+        // Send data to sub_and_normalize module
+        for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++) begin
+          sub_and_norm_a[i] <= htp_polynomial[sub_and_normalize_index + i];
+          sub_and_norm_b[i] <= ntt_buffer1[sub_and_normalize_index + i];
         end
-
+        sub_and_norm_valid_in <= 1'b1;
+        sub_and_norm_index_in <= sub_and_normalize_index;
         sub_and_normalize_index <= sub_and_normalize_index + SUB_AND_NORMALIZE_OPS_PER_CYCLE;
+
+        // If output of mod_mult is valid we can save it
+        if(sub_and_norm_valid_out == 1'b1)
+          for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++)
+            ntt_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
+      end
+
+      WAIT_FOR_SUB_AND_NORMALIZE: begin
+        accept <= 1'b0;
+        reject <= 1'b0;
+
+        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
+          sub_and_norm_a[i] <= 0;
+          sub_and_norm_b[i] <= 0;
+        end
+        sub_and_norm_valid_in <= 0;
+        sub_and_norm_index_in <= 0;
+
+        // If output of mod_mult is valid we can save it
+        if(sub_and_norm_valid_out == 1'b1)
+          for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++)
+            ntt_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
       end
 
       SQUARED_NORM: begin
