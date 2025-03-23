@@ -3,7 +3,9 @@
 //
 // Implements both NTT and inverse NTT for positive-wrapped convolution.
 // This module is not needed for Falcon, but since I accidentally implemented the wrong NTT
-// might as well preserver it, since it could be useful for something else in the future.
+// might as well preserve it, since it could be useful for something else in the future.
+//
+//  NOTE: this is not optimized and the timing is probably way off.
 //
 //  Forward NTT: IDLE -> COPY_BIT_REVERSED -> NTT -> COPY(done=1) -> IDLE
 //  Inverse NTT: IDLE -> COPY -> NTT -> COPY_BIT_REVERSED(done=1) -> IDLE
