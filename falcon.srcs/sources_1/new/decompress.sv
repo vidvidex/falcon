@@ -60,7 +60,7 @@ module decompress #(
     high = 5'b00000;
 
     // Go over the encoded high bits and find the first 1, hopefully this gets synthesized to an efficient priority encoder
-    for (int i = 0; i < 17; i++) begin
+    for (int i = 0; i <= 96; i++) begin
       if (compressed_signature[96-i]) begin
         high = i;
         break;
