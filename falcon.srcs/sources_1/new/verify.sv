@@ -212,7 +212,7 @@ module verify#(
   logic mod_mult_valid_in, mod_mult_valid_out, mod_mult_last;
   logic [$clog2(N):0] mod_mult_index_in, mod_mult_index_out;
 
-  logic signed [14:0] squared_norm_a [MULT_MOD_Q_OPS_PER_CYCLE], squared_norm_b [MULT_MOD_Q_OPS_PER_CYCLE];
+  logic signed [14:0] squared_norm_a [SQUARED_NORM_OPS_PER_CYCLE], squared_norm_b [SQUARED_NORM_OPS_PER_CYCLE];
   logic squared_norm_valid_in, squared_norm_last, squared_norm_accept, squared_norm_reject;
 
   logic signed [14:0] sub_and_norm_a [SUB_AND_NORMALIZE_OPS_PER_CYCLE], sub_and_norm_b [SUB_AND_NORMALIZE_OPS_PER_CYCLE], sub_and_norm_result [SUB_AND_NORMALIZE_OPS_PER_CYCLE];
@@ -392,7 +392,7 @@ module verify#(
           ntt_next_state = SQUARED_NORM;
       end
       SQUARED_NORM: begin // Send all data to verify_compute_squared_norm before moving to FINISHED
-        if(squared_norm_index == N)
+        if(squared_norm_index == N - SQUARED_NORM_OPS_PER_CYCLE)
           ntt_next_state = FINISHED;
       end
       FINISHED: begin // Wait for squared norm to finish and then accept or reject the signature
@@ -621,13 +621,20 @@ module verify#(
         end
         squared_norm_valid_in <= 1'b1;
         squared_norm_index <= squared_norm_index + SQUARED_NORM_OPS_PER_CYCLE;
-        if(squared_norm_index == N)
+        if(squared_norm_index == N - SQUARED_NORM_OPS_PER_CYCLE)
           squared_norm_last <= 1'b1;
         else
           squared_norm_last <= 1'b0;
       end
 
       FINISHED: begin
+
+        for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
+          squared_norm_a[i] <= 0;
+          squared_norm_b[i] <= 0;
+        end
+        squared_norm_valid_in <= 0;
+        squared_norm_last <= 0;
 
         // Wait for squared norm pipeline to finish
         if(squared_norm_accept == 1'b1 || squared_norm_reject == 1'b1) begin

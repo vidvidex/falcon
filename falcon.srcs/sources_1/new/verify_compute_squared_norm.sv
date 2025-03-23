@@ -42,18 +42,16 @@ module verify_compute_squared_norm#(
       $error("N must be 8, 512 or 1024");
   endgenerate
 
-  logic signed [29:0] a_squared[PARALLEL_OPS_COUNT];
-  logic signed [29:0] b_squared[PARALLEL_OPS_COUNT];
+  logic signed [28:0] a_squared[PARALLEL_OPS_COUNT];
+  logic signed [28:0] b_squared[PARALLEL_OPS_COUNT];
   logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] elementwise_sum[PARALLEL_OPS_COUNT];
-  logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] sum; // Sum of all parallel elementwise sums
-  logic signed [32:0] squared_norm;
+  logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] squared_norm; // Sum of all parallel elementwise sums
   logic over_bound; // If this is high we are already over the bound. In that case the data we're processing doesn't matter anymore. We are just waiting for the "last" signal to pass through the pipeline, so we can set "reject" high
-  logic last1, last2, last3, last4;
-
+  logic last1, last2, last3;
 
   // Stage 1: Square a and b
   always_ff @(posedge clk) begin
-    if(rst_n == 1'b0 || valid_in == 1'b0) begin
+    if(rst_n == 1'b0 || valid_in !== 1'b1) begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         a_squared[i] <= 0;
         b_squared[i] <= 0;
@@ -83,44 +81,31 @@ module verify_compute_squared_norm#(
     end
   end
 
-  // Stage 3: Sum all element-wise sums
-  always_ff @(posedge clk) begin
-    if(rst_n == 1'b0) begin
-      sum <= 0;
-      last3 <= 0;
-    end
-    else begin
-      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
-        sum <= sum + elementwise_sum[i];
-      last3 <= last2;
-    end
-  end
-
-  // Stage 4: Add sum to squared_norm and check if we're over the bound
+  // Stage 3: Sum all element-wise sums and check if we're over the bound
   // If we are over the bound we don't immediately set "reject" high, but wait until all data is provided
   // to ensure this module is constant-time
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       squared_norm <= 0;
-      over_bound <= 0;
-      last4 <= 0;
+      last3 <= 0;
     end
     else begin
-      squared_norm <= squared_norm + sum;
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        squared_norm <= squared_norm + elementwise_sum[i];
       if(squared_norm > bound2)
         over_bound <= 1;
-      last4 <= last3;
+      last3 <= last2;
     end
   end
 
-  // Stage 5: Wait for "last" signal and output the result
+  // Stage 4: Wait for "last" signal and output the result
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       accept <= 0;
       reject <= 0;
     end
     else begin
-      if(last4 == 1'b1) begin
+      if(last3 == 1'b1) begin
         if(over_bound == 1 || squared_norm > bound2)
           reject <= 1;
         else
