@@ -39,17 +39,21 @@ module shake256_absorb(
   logic delimitedSuffix_used;
   logic [7:0] delimitedSuffix = 8'h1f;
   logic [7:0] rateInBytes = 8'd136;
+  logic [7:0] data_in_temp;
 
-  assign data_in_padded[7:0] = (messageLen_lt_8==1'b0) ? data_in[7:0] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd0) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd0) ? data_in[7:0] : 8'd0;
-  assign data_in_padded[15:8] = (messageLen_lt_8==1'b0) ? data_in[15:8] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd1) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd1) ? data_in[15:8] : 8'd0;
-  assign data_in_padded[23:16] = (messageLen_lt_8==1'b0) ? data_in[23:16] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd2) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd2) ? data_in[23:16] : 8'd0;
-  assign data_in_padded[31:24] = (messageLen_lt_8==1'b0) ? data_in[31:24] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd3) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd3) ? data_in[31:24] : 8'd0;
-  assign data_in_padded[39:32] = (messageLen_lt_8==1'b0) ? data_in[39:32] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd4) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd4) ? data_in[39:32] : 8'd0;
-  assign data_in_padded[47:40] = (messageLen_lt_8==1'b0) ? data_in[47:40] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd5) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd5) ? data_in[47:40] : 8'd0;
-  assign data_in_padded[55:48] = (messageLen_lt_8==1'b0) ? data_in[55:48] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd6) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd6) ? data_in[55:48] : 8'd0;
-  wire [7:0] data_in_temp = (messageLen_lt_8==1'b0) ? data_in[63:56] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd7) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd7) ? data_in[63:56] : 8'd0;
-  assign data_in_padded[63:56] = (last_rate_byte) ? {1'b1,data_in_temp[6:0]} : data_in_temp;
-
+  always_ff @(posedge clk) begin
+    data_in_padded[7:0] = (messageLen_lt_8==1'b0) ? data_in[7:0] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd0) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd0) ? data_in[7:0] : 8'd0;
+    data_in_padded[15:8] = (messageLen_lt_8==1'b0) ? data_in[15:8] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd1) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd1) ? data_in[15:8] : 8'd0;
+    data_in_padded[23:16] = (messageLen_lt_8==1'b0) ? data_in[23:16] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd2) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd2) ? data_in[23:16] : 8'd0;
+    data_in_padded[31:24] = (messageLen_lt_8==1'b0) ? data_in[31:24] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd3) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd3) ? data_in[31:24] : 8'd0;
+    data_in_padded[39:32] = (messageLen_lt_8==1'b0) ? data_in[39:32] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd4) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd4) ? data_in[39:32] : 8'd0;
+    data_in_padded[47:40] = (messageLen_lt_8==1'b0) ? data_in[47:40] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd5) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd5) ? data_in[47:40] : 8'd0;
+    data_in_padded[55:48] = (messageLen_lt_8==1'b0) ? data_in[55:48] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd6) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd6) ? data_in[55:48] : 8'd0;
+    data_in_temp = (messageLen_lt_8==1'b0) ? data_in[63:56] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd7) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd7) ? data_in[63:56] : 8'd0;
+    data_in_padded[63:56] = (last_rate_byte) ? {1'b1,data_in_temp[6:0]} : data_in_temp;
+  
+    data_in_padded_valid = (data_in_valid == 1'b1 && state == ABSORB) || state == CONSUME_DELIMITED_SUFFIX;
+  end
 
   always_ff @(posedge clk) begin
     if(rst)
@@ -86,8 +90,6 @@ module shake256_absorb(
   assign messageLen_lte_8 = (messageLen_InBytes <= 16'd15) ? 1'b1 : 1'b0;
   assign rate_counter_eq = (rate_counter==(rateInBytes-8'd8)) ? 1'b1 : 1'b0;
   assign last_rate_byte = (messageLen_lt_8==1'b1 && rate_counter_eq==1'b1) ? 1'b1 : 1'b0;
-
-  assign data_in_padded_valid = (data_in_valid == 1'b1 && state == ABSORB) || state == CONSUME_DELIMITED_SUFFIX;
 
   always_ff @(posedge clk) begin
     if(rst)
