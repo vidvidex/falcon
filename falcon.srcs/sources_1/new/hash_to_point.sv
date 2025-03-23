@@ -107,7 +107,6 @@ module hash_to_point#(
       IDLE: begin
         data_in = 0;
         data_in_valid = 0;
-        ready = 0;
 
         // In IDLE shake256_reset is set high, except for the cycle when we start (we have to stop resetting one cycle early so the module is ready for data by the time we switch states)
         if(start == 1'b1)
@@ -118,23 +117,27 @@ module hash_to_point#(
       ABSORB: begin
         data_in = message;
         data_in_valid = message_valid;
-        ready = 1;
         shake256_reset = 0;
       end
       WAIT_FOR_SQUEEZE: begin
         data_in = 0;
         data_in_valid = 0;
-        ready = 0;
         shake256_reset = 0;
       end
       WAIT_FOR_SQUEEZE_END: begin
         data_in = 0;
         data_in_valid = 0;
-        ready = 0;
         shake256_reset = 0;
+      end
+      default: begin
+        data_in = 0;
+        data_in_valid = 0;
+        shake256_reset = 1;
       end
     endcase
   end
+
+  assign ready = (state == ABSORB) ? 1 : 0;
 
   // State 1 of converting hash output to polynomial: Create 4 16-bit values from the 64-bit hash
   always_ff @(posedge clk) begin

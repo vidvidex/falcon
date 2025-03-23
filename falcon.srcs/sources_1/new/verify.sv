@@ -56,6 +56,7 @@ module verify#(
 
   logic signed [14:0] htp_polynomial[0:N-1]; // Output polynomial from hash_to_point
   logic htp_polynomial_valid; // Is htp_polynomial from hash_to_point valid
+  logic [15:0] htp_message_len_bytes;
 
   hash_to_point #(
                   .N(N)
@@ -63,7 +64,7 @@ module verify#(
                   .clk(clk),
                   .rst_n(rst_n),
                   .start(start),
-                  .message_len_bytes(message_len_bytes+40), // +40 because we first send 40B of salt and only then we start sending the message
+                  .message_len_bytes(htp_message_len_bytes),
                   .message(message),
                   .message_valid(message_valid),
                   .message_last(message_last),
@@ -71,6 +72,8 @@ module verify#(
                   .polynomial(htp_polynomial),
                   .polynomial_valid(htp_polynomial_valid)
                 );
+
+  assign htp_message_len_bytes = message_len_bytes + 40; // Add 40 bytes of salt to the message length
 
   /////////////////////////// End hash_to_point ///////////////////////////
 

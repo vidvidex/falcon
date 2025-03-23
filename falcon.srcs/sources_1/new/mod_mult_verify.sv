@@ -32,7 +32,7 @@ module mod_mult_verify #(
     output logic [$clog2(N):0] index_out
   );
   logic signed [29:0] a_times_b[PARALLEL_OPS_COUNT];
-  logic signed [29:0] a_times_b_1[PARALLEL_OPS_COUNT], a_times_b_2[PARALLEL_OPS_COUNT], a_times_b_3[PARALLEL_OPS_COUNT];
+  logic signed [14:0] a_times_b_1[PARALLEL_OPS_COUNT], a_times_b_2[PARALLEL_OPS_COUNT], a_times_b_3[PARALLEL_OPS_COUNT];  // We only need lower 15 bits for this part
   logic signed [43:0] a_times_b_times_21843[PARALLEL_OPS_COUNT];
   logic signed [14:0] shifted[PARALLEL_OPS_COUNT];
   logic signed [14:0] times_12289[PARALLEL_OPS_COUNT];
@@ -62,15 +62,18 @@ module mod_mult_verify #(
   // k = ceil(log2(11289)) = 14
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
-      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         a_times_b_times_21843[i] <= 0;
+        a_times_b_1[i] <= 0;
+      end
       valid2 <= 0;
       index2 <= 0;
     end
     else begin
-      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         a_times_b_times_21843[i] <= a_times_b[i] * 21843;
-      a_times_b_1 <= a_times_b;
+        a_times_b_1[i] <= a_times_b[i][14:0]; // Take lower 15 bits of a_times_b
+      end
       valid2 <= valid1;
       index2 <= index1;
     end
@@ -79,8 +82,10 @@ module mod_mult_verify #(
   // Stage 3: Right shift by 2*k
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
-      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         shifted[i] <= 0;
+        a_times_b_2[i] <= 0;
+      end
       valid3 <= 0;
       index3 <= 0;
     end
