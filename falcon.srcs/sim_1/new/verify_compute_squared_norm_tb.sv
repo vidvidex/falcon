@@ -5,12 +5,13 @@ module verify_compute_squared_norm_tb;
   logic clk;
   logic rst_n;
 
-  parameter int PARALLEL_OPS_COUNT = 2;
+  parameter int N = 8;
+  parameter int PARALLEL_OPS_COUNT = 1;
 
   logic signed [14:0] a [PARALLEL_OPS_COUNT];
   logic signed [14:0] b [PARALLEL_OPS_COUNT];
-  logic signed [14:0] a_arr [8];
-  logic signed [14:0] b_arr [8];
+  logic signed [14:0] a_arr [N];
+  logic signed [14:0] b_arr [N];
 
   logic valid_in;
   logic last;
@@ -20,7 +21,7 @@ module verify_compute_squared_norm_tb;
   logic run_test = 0;
 
   verify_compute_squared_norm #(
-                                .N(8),
+                                .N(N),
                                 .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
                               )uut (
                                 .clk(clk),
@@ -41,13 +42,13 @@ module verify_compute_squared_norm_tb;
       last <= 0;
     end
     else begin
-      if(send_index < 8) begin
+      if(send_index < N) begin
         for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
           a[i] <= a_arr[send_index + i];
           b[i] <= b_arr[send_index + i];
         end
         valid_in <= 1;
-        last <= send_index == 6 ? 1 : 0;
+        last <= send_index == N-PARALLEL_OPS_COUNT ? 1 : 0;
         send_index <= send_index + PARALLEL_OPS_COUNT;
       end
       else begin
