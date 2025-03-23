@@ -265,7 +265,7 @@ module ntt_negative#(
       i = 0;
     end
 
-    // Logic for moving to next stage of NTT (here we set some values, but they might be overridden in the next if, that is why there are some = and some <=)
+    // Logic for moving to next stage of NTT (here we set some values, but they might be overridden in the next if
     if (state == NTT_WAIT_FOR_MULTIPLY && mod_mult_last == 1'b1) begin
       if (mode == 1'b0) begin
         stage = stage << 1;
