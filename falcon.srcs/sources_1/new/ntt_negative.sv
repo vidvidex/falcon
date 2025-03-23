@@ -53,11 +53,11 @@ module ntt_negative#(
 
   // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024
   // R = pow(2, 16, 12289) (constant for Montgomery multiplication)
-  int intt_scale_factor;
-  assign intt_scale_factor =
-         N == 8 ? 8192 :
-         N == 512 ? 128 :
-         N == 1024 ? 64 :
+  int intt_scale_factor_exp;
+  assign intt_scale_factor_exp =
+         N == 8 ? 13 :  // 2^13 = 8192
+         N == 512 ? 7 : // 2^7 = 128
+         N == 1024 ? 6 : // 2^6 = 64
          0;
 
   typedef enum logic [2:0] {
@@ -89,13 +89,13 @@ module ntt_negative#(
                           .passthrough_out(mod_mult_passthrough_out)
                         );
 
-  // Modulo 12289 multiplication as a function (Montgomery multiplication)
-  function [14:0] mod_mult_f(input logic signed [14:0] a, b);
+  // Modulo 12289 multiplication as a function (Montgomery multiplication), where b is 2^k
+  function [14:0] mod_mult_f(input logic signed [14:0] a, input logic [3:0] k);
     logic signed [29:0] temp1;
     logic signed [30:0] temp2;
     logic [15:0] temp3;
     begin
-      temp1 = a * b;
+      temp1 = a << k;
       temp3 = (((temp1 << 3) + (temp1 << 2)) << 10) - temp1;  // Efficient multiplication by 12287
       temp2 = (((temp3 << 3) + (temp3 << 2)) << 10) + temp3;  // Efficient multiplication by 12289
       temp1 = (temp1 + temp2) >> 16;
@@ -104,26 +104,14 @@ module ntt_negative#(
   endfunction
 
   // Modulo 12289 addition
-  function [14:0] mod_add1(input logic signed [14:0] a, b);
+  function [14:0] mod_add(input logic signed [14:0] a, b);
     reg [15:0] temp;
     begin
       temp = a + b;
       if (temp >= 12289)
-        mod_add1 = temp - 12289;
+        mod_add = temp - 12289;
       else
-        mod_add1 = temp;
-    end
-  endfunction
-
-  // Modulo 12289 addition
-  function [14:0] mod_add2(input logic signed [14:0] a, b);
-    reg [15:0] temp;
-    begin
-      temp = a + b;
-      if (temp >= 12289)
-        mod_add2 = temp - 12289;
-      else
-        mod_add2 = temp;
+        mod_add = temp;
     end
   endfunction
 
@@ -223,7 +211,7 @@ module ntt_negative#(
           mod_mult_valid_in <= 1'b1;
           mod_mult_index1_in <= i;
           mod_mult_index2_in <= i + stride;
-          mod_mult_passthrough_in <= mod_add1(polynomial[i], polynomial[i + stride]); // Doesn't need mod_mult, so we'll just pass it through
+          mod_mult_passthrough_in <= mod_add(polynomial[i], polynomial[i + stride]); // Doesn't need mod_mult, so we'll just pass it through
         end
       end
 
@@ -236,7 +224,7 @@ module ntt_negative#(
 
         if(mod_mult_valid_out == 1'b1) begin
           if (mode == 1'b0) begin
-            polynomial[mod_mult_index1_out] <= mod_add2(polynomial[mod_mult_index1_out], mod_mult_result);
+            polynomial[mod_mult_index1_out] <= mod_add(polynomial[mod_mult_index1_out], mod_mult_result);
             polynomial[mod_mult_index2_out] <= mod_sub(polynomial[mod_mult_index1_out], mod_mult_result);
           end
           else begin
@@ -252,7 +240,7 @@ module ntt_negative#(
           if(mode == 1'b0)
             output_polynomial[i] <= polynomial[i];
           else
-            output_polynomial[i] <= mod_mult_f(polynomial[i], intt_scale_factor);  // TODO: there are a lot of multipliers here, maybe do this in multiple clock cycles
+            output_polynomial[i] <= mod_mult_f(polynomial[i], intt_scale_factor_exp);
         end
       end
     endcase
