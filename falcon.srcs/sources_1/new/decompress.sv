@@ -13,6 +13,14 @@
 // along with "signature_error" if an error was detected in the signature.
 // "signature_error" can be set high even before decompression is finished.
 //
+// Each coefficient is compressed as follows:
+// 1. The first bit is the sign of the coefficient
+// 2. The next 7 bits are the low part of the coefficient
+// 3. The next 1-97 bits are the high part of the coefficient, encoded in unary (value=number of zeros, followed by a one), so we have to convert it to binary before outputting it.
+//
+//     [104] - sign, [103:97] - low, [96:0] - high
+//
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
