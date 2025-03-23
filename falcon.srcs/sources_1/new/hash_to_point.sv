@@ -24,7 +24,7 @@ module hash_to_point#(
     input logic message_last, //! Is this the last block of message
 
     output logic ready, //! Are we ready to receive the next message?
-    output logic signed [14:0] polynomial[0:N-1], //! Output polynomial, defined as an array of coefficients
+    output logic signed [14:0] polynomial[N], //! Output polynomial, defined as an array of coefficients
     output logic polynomial_valid //! Is polynomial valid
   );
 

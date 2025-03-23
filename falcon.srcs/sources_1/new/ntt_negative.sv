@@ -193,6 +193,12 @@ module ntt_negative#(
       mod_mult_valid_in <= 0;
       mod_mult_index1_in <= 0;
       mod_mult_index2_in <= 0;
+      mod_mult_passthrough_in <= 0;
+
+      for (int i = 0; i < N; i = i + 1) begin
+        polynomial[i] <= 0;
+        output_polynomial[i] <= 0;
+      end
     end
 
     case (state)
@@ -209,6 +215,7 @@ module ntt_negative#(
           mod_mult_valid_in <= 1'b1;
           mod_mult_index1_in <= i;
           mod_mult_index2_in <= i + stride;
+          mod_mult_passthrough_in <= 0;
         end
         else begin
           mod_mult_a <= mod_sub(polynomial[i], polynomial[i + stride]);

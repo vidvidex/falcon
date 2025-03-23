@@ -80,8 +80,8 @@ module top (
 
     case (state)
       RESET: begin
-        if(reset_counter == 125_000_000*5)  // Wait 5 seconds
-          // if(reset_counter == 25)
+        // if(reset_counter == 125_000_000*5)  // Wait 5 seconds
+          if(reset_counter == 25)
           next_state = RUNNING;
       end
       RUNNING: begin
@@ -111,6 +111,12 @@ module top (
 
         message_block_index <= 0;
         signature_block_index <= 0;
+        message <= 0;
+        message_valid <= 0;
+        message_last <= 0;
+
+        signature <= 0;
+        signature_valid <= 0;
 
         reset_counter <= reset_counter + 1;
 

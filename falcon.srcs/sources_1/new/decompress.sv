@@ -66,6 +66,7 @@ module decompress #(
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0 || valid_bits == 0 || decompressed_count > N) begin
       bits_used <= 0;
+      coefficient <= 0;
     end
     else begin
       // Create coefficient as signed decimals. If it's positive (sign == 0) then it's just {0, high, low}, if it's negative have to compute two's complement

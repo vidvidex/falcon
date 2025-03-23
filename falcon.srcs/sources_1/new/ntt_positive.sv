@@ -27,13 +27,13 @@ module ntt_positive#(
     input logic mode, // 0: NTT, 1: Inverse NTT
 
     input logic start, //! Polynomial is valid, NTT can start
-    input logic [14:0] input_polynomial[0:N-1], //! Polynomial in coefficient form
+    input logic [14:0] input_polynomial[N], //! Polynomial in coefficient form
 
     output logic done, //! NTT is done and output_polynomial is valid
-    output logic [14:0] output_polynomial[0:N-1] //! Polynomial in NTT form
+    output logic [14:0] output_polynomial[N] //! Polynomial in NTT form
   );
 
-  logic [14:0] polynomial[0:N-1]; // Intermediate storage for polynomial
+  logic [14:0] polynomial[N]; // Intermediate storage for polynomial
   logic [$clog2(N):0] index, index_rev; // For bit reversal
   logic [$clog2(N)-1:0] i, starting_i;
   int stage, stride, address_stride;

@@ -35,7 +35,7 @@ module verify#(
 
     input logic start, //! Start signal for the module
 
-    input logic signed [14:0] public_key[0:N-1], //! Public key in coefficient form
+    input logic signed [14:0] public_key[N], //! Public key in coefficient form
     input logic public_key_valid, //! Is public key valid
 
     input logic [15:0] message_len_bytes, //! Length of the message in bytes. This does not take into account the size of the salt, which will also be inputed as "message"
@@ -54,7 +54,7 @@ module verify#(
 
   /////////////////////////// Start hash_to_point ///////////////////////////
 
-  logic signed [14:0] htp_polynomial[0:N-1]; // Output polynomial from hash_to_point
+  logic signed [14:0] htp_polynomial[N]; // Output polynomial from hash_to_point
   logic htp_polynomial_valid; // Is htp_polynomial from hash_to_point valid
   logic [15:0] htp_message_len_bytes;
 
@@ -197,11 +197,11 @@ module verify#(
 
   /////////////////////////// Start NTT and general control logic //////
 
-  logic signed [14:0] ntt_input[0:N-1];
-  logic signed [14:0] ntt_output[0:N-1];
+  logic signed [14:0] ntt_input[N];
+  logic signed [14:0] ntt_output[N];
 
-  logic signed [14:0] ntt_buffer1[0:N-1]; // Buffer for NTT module, here we store the result of NTT(public key), NTT(public key) * NTT(decompressed signature) = product, INTT(product), htp_polynomial - INTT(product)
-  logic signed [14:0] ntt_buffer2[0:N-1]; // Buffer for NTT module, here we store the result of NTT(decompressed signature)
+  logic signed [14:0] ntt_buffer1[N]; // Buffer for NTT module, here we store the result of NTT(public key), NTT(public key) * NTT(decompressed signature) = product, INTT(product), htp_polynomial - INTT(product)
+  logic signed [14:0] ntt_buffer2[N]; // Buffer for NTT module, here we store the result of NTT(decompressed signature)
 
   logic ntt_start; //! Start signal for NTT module
   logic ntt_mode; //! 0 - NTT, 1 - INTT
@@ -401,6 +401,12 @@ module verify#(
       NTT_IDLE: begin
         ntt_mode <= 1'b0;
         ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
+
+        for(int i = 0; i < N; i++) begin
+          ntt_buffer1[i] <= 0;
+          ntt_buffer2[i] <= 0;
+          ntt_input[i] <= 0;
+        end
 
         // Initialize mod_mult parameters (so they aren't undefined)
         for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
