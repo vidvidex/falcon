@@ -51,7 +51,7 @@ module verify_compute_squared_norm#(
 
   // Stage 1: Square a and b
   always_ff @(posedge clk) begin
-    if(rst_n == 1'b0 || valid_in !== 1'b1) begin
+    if(rst_n == 1'b0 || valid_in != 1'b1) begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         a_squared[i] <= 0;
         b_squared[i] <= 0;
