@@ -160,28 +160,34 @@ module verify#(
       end
       READY_FOR_SIGNATURE: begin
         signature_ready <= 1'b1; // We can receive the next 64 bits of the signature
+
+        // Load new block of signature data
+        if(signature_valid) begin
+          compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
+          compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
+        end
+
+        // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
+        compressed_signature_buffer = compressed_signature_buffer << shift_by;
+        compressed_signature_buffer_valid = compressed_signature_buffer_valid - shift_by;
       end
       DECOMPRESSING: begin
         signature_ready <= 1'b0;
+
+        // Load new block of signature data
+        if(signature_valid) begin
+          compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
+          compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
+        end
+
+        // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
+        compressed_signature_buffer = compressed_signature_buffer << shift_by;
+        compressed_signature_buffer_valid = compressed_signature_buffer_valid - shift_by;
       end
       DECOMPRESSION_DONE: begin
         signature_ready <= 1'b0;
       end
     endcase
-
-    // Logic for loading new signature data and storing decompressed coefficients
-    if(decompress_state == DECOMPRESSING || decompress_state == READY_FOR_SIGNATURE) begin
-
-      // Load new block of signature data
-      if(signature_valid) begin
-        compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
-        compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
-      end
-
-      // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
-      compressed_signature_buffer = compressed_signature_buffer << shift_by;
-      compressed_signature_buffer_valid = compressed_signature_buffer_valid - shift_by;
-    end
   end
 
   /////////////////////////// End decompress ///////////////////////////
