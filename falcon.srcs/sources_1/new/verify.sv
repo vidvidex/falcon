@@ -287,8 +287,9 @@ module verify#(
     end
   endfunction
 
-  typedef enum logic [3:0] {
+  typedef enum logic [4:0] {
             NTT_IDLE,
+            WAIT_FOR_PUBLIC_KEY_VALID,  // Wait for public key to be valid
             START_NTT_PUBLIC_KEY, // Run NTT(public key)
             RUNNING_NTT_PUBLIC_KEY, // Wait for NTT(public key) to finish
             WAIT_FOR_DECOMPRESS, // Wait for decompression of signature to finish
@@ -320,6 +321,13 @@ module verify#(
     case (ntt_state)
       NTT_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
+          if(public_key_valid == 1'b1)  // If public key is already valid go straight to START_NTT_PUBLIC_KEY
+            ntt_next_state = START_NTT_PUBLIC_KEY;
+          else
+            ntt_next_state = WAIT_FOR_PUBLIC_KEY_VALID;
+      end
+      WAIT_FOR_PUBLIC_KEY_VALID: begin // Wait for public key to be valid
+        if (public_key_valid == 1'b1)
           ntt_next_state = START_NTT_PUBLIC_KEY;
       end
       START_NTT_PUBLIC_KEY: begin // Immediately go to next state
@@ -440,6 +448,15 @@ module verify#(
         mult_mod_q_index <= 0;
         sub_and_normalize_index <= 0;
         squared_norm_index <= 0;
+      end
+
+      WAIT_FOR_PUBLIC_KEY_VALID: begin
+        ntt_mode <= 1'b0;  // NTT
+        ntt_input = public_key; // Must be non-blocking assignment, doesn't work otherwise
+        ntt_start <= 1'b1;
+
+        accept <= 1'b0;
+        reject <= 1'b0;
       end
 
       START_NTT_PUBLIC_KEY: begin
