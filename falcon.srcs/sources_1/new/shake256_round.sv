@@ -35,7 +35,7 @@ module shake256_round(
   wire [63:0] D_op[0:4];
   assign {D_op[4], D_op[3], D_op[2], D_op[1], D_op[0]} = D;
 
-  wire [64*5*5-1:0] lanes1, lanes2, lanes3, lanes4;
+  wire [64*5*5-1:0] lanes1, lanes2, lanes3;
   assign lanes1[64*1-1:64*0] = lanes_in[64*1-1:64*0]^D[64*1-1:64*0];
   assign lanes1[64*2-1:64*1] = lanes_in[64*2-1:64*1]^D[64*1-1:64*0];
   assign lanes1[64*3-1:64*2] = lanes_in[64*3-1:64*2]^D[64*1-1:64*0];

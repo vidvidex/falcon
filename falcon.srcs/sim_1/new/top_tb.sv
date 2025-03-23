@@ -1,7 +1,6 @@
 module top_tb;
 
   logic clk;
-  logic rst_n;
   logic [3:0] leds;
   logic [3:0] btns;
 
