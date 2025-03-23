@@ -17,7 +17,6 @@ module shake256_squeeze(
     input logic keccak_round_complete,   //! This signal comes from Keccak-f1600 after its completion
 
     output logic call_keccak_f1600,//! This signal is used to start Keccak-f1600 on the state variable
-    output logic[4:0] state_reg_sel,  //! This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
     output logic we_output_buffer,  //! Used to write keccak_state into keccak_output_buffer
     output logic shift_output_buffer,  //! Used to shift the keccak_output_buffer in 64 bits such that one word is output
     output logic data_out_valid,  //! This signal is used to write Keccak-squeeze output
@@ -30,7 +29,6 @@ module shake256_squeeze(
   logic rate_counter_eq;
 
   assign rate_counter_eq = (rate_counter=='d128) ? 1'b1 : 1'b0; // 128 = rate - 8 (rate for SHAKE256 is 1088 bits = 136 bytes)
-  assign state_reg_sel = rate_counter[7:3];
 
   always_ff @(posedge clk) begin
     if(rst || rst_rate_counter)

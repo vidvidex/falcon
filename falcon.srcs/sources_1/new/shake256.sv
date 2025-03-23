@@ -34,7 +34,6 @@ module shake256(
   logic [25*64-1:0] state_in;     //! 25*64 bit new state value that will be written into the state bufer
   logic write_state_in;           //! Write enable signal for writing the new state value into the state buffer.
 
-  logic [4:0] state_reg_sel;      //! This is used to select State[0]..to..State[rate] (at most). Note that only 64-bits are output every cycle.
   logic we_output_buffer;       //! Used to write keccak_state into keccak_output_buffer
   logic shift_output_buffer;    //! Used to shift the keccak_output_buffer in 64 bits such that one word is output
   logic call_keccak_f1600_squeeze;     //! This is 1 to initiate F1600 on the state during Squeeze
@@ -74,7 +73,6 @@ module shake256(
                    .state_out(state_out),
                    .state_in(state_in),
                    .we_state_in(write_state_in),
-                   .state_output_sel(state_reg_sel),
                    .we_output_buffer(we_output_buffer),
                    .shift_output_buffer(shift_output_buffer),
                    .dout_64bit(data_out)
@@ -94,7 +92,6 @@ module shake256(
                      .rst(rst_squeeze),
                      .call_keccak_f1600(call_keccak_f1600_squeeze),
                      .keccak_round_complete(keccak_round_complete),
-                     .state_reg_sel(state_reg_sel),
                      .we_output_buffer(we_output_buffer),
                      .shift_output_buffer(shift_output_buffer),
                      .data_out_valid(data_out_valid),

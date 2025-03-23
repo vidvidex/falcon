@@ -14,7 +14,6 @@ module shake256_state(
     input logic data_in_padded_valid,  //! write enable signal for input data
     input logic [25*64-1:0] state_in,
     input logic we_state_in,
-    input [4:0] state_output_sel,
     input we_output_buffer,  //! When 1, keccak_state is written into the output_buffer
     input shift_output_buffer,  //! When 1, output_buffer is shifted by 64-bits every cycle. One word is output
 
