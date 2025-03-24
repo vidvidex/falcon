@@ -29,7 +29,7 @@ module top_tb;
     if(leds[2] == 1'b1 && leds[3] == 1'b0)
       $display("Test 1: Passed");
     else
-      $fatal("Test 1: Failed");
+      $fatal(1, "Test 1: Failed");
 
     $finish;
   end

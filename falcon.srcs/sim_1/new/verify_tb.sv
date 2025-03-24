@@ -124,7 +124,7 @@ module verify_tb;
     if (accept == 1'b1 && reject == 1'b0)
       $display("Test 1: Passed");
     else
-      $fatal("Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
+      $fatal(1, "Test 1: Failed. Expected accept to be 1 and reject to be 0. Got: accept=%d, reject=%d", accept, reject);
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ module verify_tb;
     if (accept == 1'b0 && reject == 1'b1)
       $display("Test 2: Passed");
     else
-      $fatal("Test 2: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
+      $fatal(1, "Test 2: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
 
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ module verify_tb;
     if (accept == 1'b0 && reject == 1'b1)
       $display("Test 3: Passed");
     else
-      $fatal("Test 3: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
+      $fatal(1, "Test 3: Failed. Expected accept to be 0 and reject to be 1. Got: accept=%d, reject=%d", accept, reject);
 
 
     // Test 3: Valid signature for N=512
