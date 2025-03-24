@@ -124,11 +124,11 @@ module mod_mult_verify #(
       index5 <= 0;
     end
     else begin
-      logic signed [14:0] temp [PARALLEL_OPS_COUNT];
-
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
-        temp[i] = a_times_b_3[i] - times_12289[i];
-        result_i[i] <= (temp[i] >= 12289) ? (temp[i] - 12289) : temp[i];
+        if(a_times_b_3[i] - times_12289[i] >= 12289)
+          result_i[i] = a_times_b_3[i] - times_12289[i] - 12289;
+        else
+          result_i[i] = a_times_b_3[i] - times_12289[i];
       end
       valid5 <= valid4;
       index5 <= index4;
