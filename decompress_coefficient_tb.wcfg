@@ -11,30 +11,131 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="76.701 ns"></ZoomEndTime>
-      <Cursor1Time time="50.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,866.163 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,026.768 ns"></ZoomEndTime>
+      <Cursor1Time time="2,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="209"></NameColumnWidth>
-      <ValueColumnWidth column_width="277"></ValueColumnWidth>
+      <ValueColumnWidth column_width="249"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="4" />
-   <wvobject type="array" fp_name="/decompress_coefficient_tb/compressed_signature">
-      <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>
-      <obj_property name="ObjectShortName">compressed_signature[104:0]</obj_property>
+   <WVObjectSize size="2" />
+   <wvobject type="group" fp_name="group79">
+      <obj_property name="label">tb</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/compressed_signature">
+         <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>
+         <obj_property name="ObjectShortName">compressed_signature[104:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/valid_bits">
+         <obj_property name="ElementShortName">valid_bits[6:0]</obj_property>
+         <obj_property name="ObjectShortName">valid_bits[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/coefficient">
+         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/bits_used">
+         <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
+         <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/coefficient_valid">
+         <obj_property name="ElementShortName">coefficient_valid</obj_property>
+         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/invalid_bits_used_error">
+         <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
+         <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/cannot_find_high_error">
+         <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
+         <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/invalid_zero_representation_error">
+         <obj_property name="ElementShortName">invalid_zero_representation_error</obj_property>
+         <obj_property name="ObjectShortName">invalid_zero_representation_error</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/decompress_coefficient_tb/coefficient">
-      <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
-      <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/decompress_coefficient_tb/compressed_coef_length">
-      <obj_property name="ElementShortName">compressed_coef_length[6:0]</obj_property>
-      <obj_property name="ObjectShortName">compressed_coef_length[6:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/decompress_coefficient_tb/coefficient_error">
-      <obj_property name="ElementShortName">coefficient_error</obj_property>
-      <obj_property name="ObjectShortName">coefficient_error</obj_property>
+   <wvobject type="group" fp_name="group80">
+      <obj_property name="label">decompress_coefficient</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/compressed_signature">
+         <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>
+         <obj_property name="ObjectShortName">compressed_signature[104:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/valid_bits">
+         <obj_property name="ElementShortName">valid_bits[6:0]</obj_property>
+         <obj_property name="ObjectShortName">valid_bits[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/coefficient">
+         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/bits_used">
+         <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
+         <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/coefficient_valid">
+         <obj_property name="ElementShortName">coefficient_valid</obj_property>
+         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/invalid_bits_used_error">
+         <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
+         <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/cannot_find_high_error">
+         <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
+         <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/invalid_zero_representation_error">
+         <obj_property name="ElementShortName">invalid_zero_representation_error</obj_property>
+         <obj_property name="ObjectShortName">invalid_zero_representation_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/sign">
+         <obj_property name="ElementShortName">sign</obj_property>
+         <obj_property name="ObjectShortName">sign</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/low">
+         <obj_property name="ElementShortName">low[6:0]</obj_property>
+         <obj_property name="ObjectShortName">low[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/high">
+         <obj_property name="ElementShortName">high[6:0]</obj_property>
+         <obj_property name="ObjectShortName">high[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/decompress_coefficient_tb/uut/scan_index">
+         <obj_property name="ElementShortName">scan_index[6:0]</obj_property>
+         <obj_property name="ObjectShortName">scan_index[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/decompress_coefficient_tb/uut/found_high">
+         <obj_property name="ElementShortName">found_high</obj_property>
+         <obj_property name="ObjectShortName">found_high</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>
