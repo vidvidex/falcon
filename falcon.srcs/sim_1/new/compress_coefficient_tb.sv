@@ -23,12 +23,12 @@ module compress_coefficient_tb;
 
     begin
       if (compressed_coefficient_shifted !== expected_compressed_coefficient)
-        $fatal("ASSERTION FAILED: Expected compressed coefficient %x, got %x", expected_compressed_coefficient, compressed_coefficient_shifted);
+        $fatal(1, "Test 1 failed: Expected compressed coefficient %x, got %x", expected_compressed_coefficient, compressed_coefficient_shifted);
 
       if (compressed_coefficient_length !== expected_compressed_coefficient_length)
-        $fatal("ASSERTION FAILED: Expected compressed_coefficient_length %d, got %d", expected_compressed_coefficient_length, compressed_coefficient_length);
+        $fatal(1, "Test 1 failed: Expected compressed_coefficient_length %d, got %d", expected_compressed_coefficient_length, compressed_coefficient_length);
 
-      $display("Test passed with compressed coefficient = %d, compressed_coefficient_length = %d", compressed_coefficient_shifted, compressed_coefficient_length);
+      $display("Test 1 passed with compressed coefficient = %d, compressed_coefficient_length = %d", compressed_coefficient_shifted, compressed_coefficient_length);
     end
   endtask
 

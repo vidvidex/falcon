@@ -74,9 +74,9 @@ module decompress_tb;
     // Check output
     for(int i = 0; i < N; i = i + 1)
       if(decompressed_polynomial[i] != expected_polynomial[i])
-        $fatal("Test 1: Expected coefficient %d, got %d", expected_polynomial[i], decompressed_polynomial[i]);
+        $fatal(1, "Test 1: Expected coefficient %d, got %d", expected_polynomial[i], decompressed_polynomial[i]);
     if(signature_error == 1'b1)
-      $fatal("Test 1: Signature error detected");
+      $fatal(1, "Test 1: Signature error detected");
     $display("Test 1 passed!");
 
 
@@ -103,7 +103,7 @@ module decompress_tb;
 
     // Check output
     if(signature_error == 0)
-      $fatal("Test 2: Signature error not detected");
+      $fatal(1, "Test 2: Signature error not detected");
     $display("Test 2 passed!");
 
 
@@ -130,7 +130,7 @@ module decompress_tb;
 
     // Check output
     if(signature_error == 0)
-      $fatal("Test 3: Signature error not detected");
+      $fatal(1, "Test 3: Signature error not detected");
     $display("Test 3 passed!");
 
     

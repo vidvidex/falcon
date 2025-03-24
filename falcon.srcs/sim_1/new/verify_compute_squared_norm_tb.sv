@@ -78,7 +78,7 @@ module verify_compute_squared_norm_tb;
     if(accept == 1'b1 && reject == 1'b0)
       $display("Test 1 passed!");
     else
-      $fatal("Test 1 failed!");
+      $fatal(1, "Test 1 failed!");
 
 
     // Reset
@@ -98,7 +98,7 @@ module verify_compute_squared_norm_tb;
     if(accept == 1'b0 && reject == 1'b1)
       $display("Test 2 passed!");
     else
-      $fatal("Test 2 failed!");
+      $fatal(1, "Test 2 failed!");
 
 
     // Reset
@@ -118,7 +118,7 @@ module verify_compute_squared_norm_tb;
     if(accept == 1'b0 && reject == 1'b1)
       $display("Test 3 passed!");
     else
-      $fatal("Test 3 failed!");
+      $fatal(1, "Test 3 failed!");
 
 
     $display("All tests for verify_compute_squared_norm passed!");
