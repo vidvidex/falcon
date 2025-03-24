@@ -562,7 +562,7 @@ module verify#(
         sub_and_norm_index_in <= sub_and_normalize_index;
         sub_and_normalize_index <= sub_and_normalize_index + SUB_AND_NORMALIZE_OPS_PER_CYCLE;
 
-        // If output of mod_mult is valid we can save it
+        // If output of sub_and_norm is valid we can save it
         if(sub_and_norm_valid_out == 1'b1)
           for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++)
             ntt_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
@@ -579,7 +579,7 @@ module verify#(
         sub_and_norm_valid_in <= 0;
         sub_and_norm_index_in <= 0;
 
-        // If output of mod_mult is valid we can save it
+        // If output of sub_and_norm is valid we can save it
         if(sub_and_norm_valid_out == 1'b1)
           for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++)
             ntt_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
