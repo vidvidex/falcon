@@ -7,14 +7,18 @@ module decompress_tb;
   parameter int N = 8;
   parameter int SLEN = 11;
 
-  logic [191:0] compressed_signature;
+  logic [191:0] compressed_signature_full;
+  logic [104:0] compressed_signature;
 
   logic signed [14:0] decompressed_polynomial [N];
   logic signed [14:0] expected_polynomial [N];
-  logic [6:0] compressed_signature_valid_bits, shift_by;
+  logic [6:0] valid_bits, shift_by;
   logic decompression_done;
 
-  int valid_bits;
+  logic start = 0;
+  logic ready;
+
+  int total_valid_bits;
   int index;
 
   decompress #(
@@ -25,9 +29,12 @@ module decompress_tb;
                .clk(clk),
                .rst_n(rst_n),
 
-               .compressed_signature(compressed_signature[191:87]),
-               .valid_bits(compressed_signature_valid_bits),
+               .start(start),
 
+               .compressed_signature(compressed_signature),
+               .valid_bits(valid_bits),
+
+               .ready(ready),
                .shift_by(shift_by),
                .polynomial(decompressed_polynomial),
                .decompression_done(decompression_done),
@@ -37,7 +44,9 @@ module decompress_tb;
   always #5 clk = ~clk;
 
   // // Limit the number of valid bits in the compressed signature to 104
-  assign compressed_signature_valid_bits = valid_bits > 104 ? 104 : valid_bits;
+  assign valid_bits = total_valid_bits > 104 ? 104 : total_valid_bits;
+
+  assign compressed_signature = compressed_signature_full[191:87];
 
   initial begin
     clk = 1;
@@ -49,15 +58,17 @@ module decompress_tb;
     #30;  // Intentionally long delay, so we see nothing happens before we have any valid bits
 
     // Test 1: Real signature of size 8
-    compressed_signature = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
-    valid_bits = 88;
+    compressed_signature_full = {'h1767151d8254a265f4a800, 'h00000000000000000000000000};
+    total_valid_bits = 88;
     expected_polynomial = '{151, -156, 81, -176, 170, 68, -23, -165};
-
+    start <= 1;
+    #10;
+    start <= 0;
     while(decompression_done == 1'b0 && signature_error == 1'b0) begin
+      compressed_signature_full = compressed_signature_full << shift_by;
+      if(ready == 1'b1)
+        total_valid_bits = total_valid_bits - shift_by;
       #10;
-      // Prepare for the next iteration
-      compressed_signature = compressed_signature << shift_by;
-      valid_bits = valid_bits - shift_by;
     end
 
     // Check output
@@ -66,7 +77,6 @@ module decompress_tb;
         $fatal("Test 1: Expected coefficient %d, got %d", expected_polynomial[i], decompressed_polynomial[i]);
     if(signature_error == 1'b1)
       $fatal("Test 1: Signature error detected");
-
     $display("Test 1 passed!");
 
 
@@ -76,23 +86,26 @@ module decompress_tb;
     rst_n = 1;
     #10;
 
-    // Test 2: Signature too long
-    compressed_signature = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expect
-    valid_bits = 192;
-    expected_polynomial = '{1920, 1920, 1920, 1920, 1920, 1920, 1920, 1920};
 
+    // Test 2: Signature too long
+    compressed_signature_full = 'h000001000001000001000001000001000001000001000001; // Very long representation for each of the signatures, more than the 11B we expect
+    total_valid_bits = 192;
+    expected_polynomial = '{1920, 1920, 1920, 1920, 1920, 1920, 1920, 1920};
+    start <= 1;
+    #10;
+    start <= 0;
     while(decompression_done == 1'b0 && signature_error == 1'b0) begin
+      compressed_signature_full = compressed_signature_full << shift_by;
+      if(ready == 1'b1)
+        total_valid_bits = total_valid_bits - shift_by;
       #10;
-      // Prepare for the next iteration
-      compressed_signature = compressed_signature << shift_by;
-      valid_bits = valid_bits - shift_by;
     end
 
     // Check output
     if(signature_error == 0)
       $fatal("Test 2: Signature error not detected");
-
     $display("Test 2 passed!");
+
 
     // Reset
     rst_n = 0;
@@ -101,6 +114,26 @@ module decompress_tb;
     #10;
 
 
+    // Test 3: Remaining bits are not zeros
+    compressed_signature_full = {'h1767151d8254a265f4a8ff, 'h00000000000000000000000000};
+    total_valid_bits = 88;
+    expected_polynomial = '{151, -156, 81, -176, 170, 68, -23, -165};
+    start <= 1;
+    #10;
+    start <= 0;
+    while(decompression_done == 1'b0 && signature_error == 1'b0) begin
+      compressed_signature_full = compressed_signature_full << shift_by;
+      if(ready == 1'b1)
+        total_valid_bits = total_valid_bits - shift_by;
+      #10;
+    end
+
+    // Check output
+    if(signature_error == 0)
+      $fatal("Test 3: Signature error not detected");
+    $display("Test 3 passed!");
+
+    
     $display("All tests for decompress passed!");
     $finish;
   end

@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3,993.083 ns"></ZoomStartTime>
-      <ZoomEndTime time="4,085.384 ns"></ZoomEndTime>
-      <Cursor1Time time="4,070.000 ns"></Cursor1Time>
+      <ZoomStartTime time="243.900 ns"></ZoomStartTime>
+      <ZoomEndTime time="340.857 ns"></ZoomEndTime>
+      <Cursor1Time time="433.063 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="210"></NameColumnWidth>
-      <ValueColumnWidth column_width="220"></ValueColumnWidth>
+      <ValueColumnWidth column_width="216"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="21" />
+   <WVObjectSize size="47" />
    <wvobject type="group" fp_name="group675">
       <obj_property name="label">TB</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -269,13 +269,13 @@
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_a">
-            <obj_property name="ElementShortName">squared_norm_a[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_a[0:0][14:0]</obj_property>
+            <obj_property name="ElementShortName">squared_norm_a[0:3][14:0]</obj_property>
+            <obj_property name="ObjectShortName">squared_norm_a[0:3][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_b">
-            <obj_property name="ElementShortName">squared_norm_b[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_b[0:0][14:0]</obj_property>
+            <obj_property name="ElementShortName">squared_norm_b[0:3][14:0]</obj_property>
+            <obj_property name="ObjectShortName">squared_norm_b[0:3][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_valid_in">
@@ -349,12 +349,12 @@
             <obj_property name="label">squared_norm</obj_property>
             <obj_property name="DisplayName">label</obj_property>
             <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_a">
-               <obj_property name="ElementShortName">squared_norm_a[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_a[0:0][14:0]</obj_property>
+               <obj_property name="ElementShortName">squared_norm_a[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_a[0:3][14:0]</obj_property>
             </wvobject>
             <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_b">
-               <obj_property name="ElementShortName">squared_norm_b[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_b[0:0][14:0]</obj_property>
+               <obj_property name="ElementShortName">squared_norm_b[0:3][14:0]</obj_property>
+               <obj_property name="ObjectShortName">squared_norm_b[0:3][14:0]</obj_property>
             </wvobject>
             <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_valid_in">
                <obj_property name="ElementShortName">squared_norm_valid_in</obj_property>
@@ -691,13 +691,13 @@
             <obj_property name="ObjectShortName">rst_n</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/a">
-            <obj_property name="ElementShortName">a[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">a[0:0][14:0]</obj_property>
+            <obj_property name="ElementShortName">a[0:3][14:0]</obj_property>
+            <obj_property name="ObjectShortName">a[0:3][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/b">
-            <obj_property name="ElementShortName">b[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">b[0:0][14:0]</obj_property>
+            <obj_property name="ElementShortName">b[0:3][14:0]</obj_property>
+            <obj_property name="ObjectShortName">b[0:3][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/valid_in">
@@ -722,23 +722,23 @@
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/a_squared">
-            <obj_property name="ElementShortName">a_squared[0:0][28:0]</obj_property>
-            <obj_property name="ObjectShortName">a_squared[0:0][28:0]</obj_property>
+            <obj_property name="ElementShortName">a_squared[0:3][28:0]</obj_property>
+            <obj_property name="ObjectShortName">a_squared[0:3][28:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/b_squared">
-            <obj_property name="ElementShortName">b_squared[0:0][28:0]</obj_property>
-            <obj_property name="ObjectShortName">b_squared[0:0][28:0]</obj_property>
+            <obj_property name="ElementShortName">b_squared[0:3][28:0]</obj_property>
+            <obj_property name="ObjectShortName">b_squared[0:3][28:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/elementwise_sum">
-            <obj_property name="ElementShortName">elementwise_sum[0:0][29:0]</obj_property>
-            <obj_property name="ObjectShortName">elementwise_sum[0:0][29:0]</obj_property>
+            <obj_property name="ElementShortName">elementwise_sum[0:3][31:0]</obj_property>
+            <obj_property name="ObjectShortName">elementwise_sum[0:3][31:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/squared_norm">
-            <obj_property name="ElementShortName">squared_norm[29:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm[29:0]</obj_property>
+            <obj_property name="ElementShortName">squared_norm[31:0]</obj_property>
+            <obj_property name="ObjectShortName">squared_norm[31:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/over_bound">
@@ -766,5 +766,107 @@
             <obj_property name="ObjectShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
          </wvobject>
       </wvobject>
+   </wvobject>
+   <wvobject fp_name="divider491" type="divider">
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/rst_n">
+      <obj_property name="ElementShortName">rst_n</obj_property>
+      <obj_property name="ObjectShortName">rst_n</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/start">
+      <obj_property name="ElementShortName">start</obj_property>
+      <obj_property name="ObjectShortName">start</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/compressed_signature">
+      <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>
+      <obj_property name="ObjectShortName">compressed_signature[104:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/valid_bits">
+      <obj_property name="ElementShortName">valid_bits[6:0]</obj_property>
+      <obj_property name="ObjectShortName">valid_bits[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/ready">
+      <obj_property name="ElementShortName">ready</obj_property>
+      <obj_property name="ObjectShortName">ready</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/shift_by">
+      <obj_property name="ElementShortName">shift_by[6:0]</obj_property>
+      <obj_property name="ObjectShortName">shift_by[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/polynomial">
+      <obj_property name="ElementShortName">polynomial[0:7][14:0]</obj_property>
+      <obj_property name="ObjectShortName">polynomial[0:7][14:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/decompression_done">
+      <obj_property name="ElementShortName">decompression_done</obj_property>
+      <obj_property name="ObjectShortName">decompression_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/signature_error">
+      <obj_property name="ElementShortName">signature_error</obj_property>
+      <obj_property name="ObjectShortName">signature_error</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/coefficient">
+      <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+      <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/decompressed_count">
+      <obj_property name="ElementShortName">decompressed_count[3:0]</obj_property>
+      <obj_property name="ObjectShortName">decompressed_count[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/bits_used">
+      <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
+      <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/total_bits_used">
+      <obj_property name="ElementShortName">total_bits_used[10:0]</obj_property>
+      <obj_property name="ObjectShortName">total_bits_used[10:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/invalid_bits_used_error">
+      <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
+      <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/cannot_find_high_error">
+      <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
+      <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/used_bit_count_error">
+      <obj_property name="ElementShortName">used_bit_count_error</obj_property>
+      <obj_property name="ObjectShortName">used_bit_count_error</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/remaining_bits_not_zeros_error">
+      <obj_property name="ElementShortName">remaining_bits_not_zeros_error</obj_property>
+      <obj_property name="ObjectShortName">remaining_bits_not_zeros_error</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/decompress_coefficient_rst_n">
+      <obj_property name="ElementShortName">decompress_coefficient_rst_n</obj_property>
+      <obj_property name="ObjectShortName">decompress_coefficient_rst_n</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/decompress_coefficient_valid_bits">
+      <obj_property name="ElementShortName">decompress_coefficient_valid_bits[6:0]</obj_property>
+      <obj_property name="ObjectShortName">decompress_coefficient_valid_bits[6:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/state">
+      <obj_property name="ElementShortName">state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">state[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/next_state">
+      <obj_property name="ElementShortName">next_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/verify_tb/uut/decompress/coefficient_valid">
+      <obj_property name="ElementShortName">coefficient_valid</obj_property>
+      <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/N">
+      <obj_property name="ElementShortName">N[31:0]</obj_property>
+      <obj_property name="ObjectShortName">N[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/verify_tb/uut/decompress/SLEN">
+      <obj_property name="ElementShortName">SLEN[31:0]</obj_property>
+      <obj_property name="ObjectShortName">SLEN[31:0]</obj_property>
    </wvobject>
 </wave_config>

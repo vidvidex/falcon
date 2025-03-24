@@ -100,8 +100,10 @@ module verify#(
              ) decompress(
                .clk(clk),
                .rst_n(rst_n),
+               .start(start),
                .compressed_signature(compressed_signature_buffer[3*64-1 -: 105]), // Provide top 105 bits of the buffer to decompress module
                .valid_bits(compressed_signature_buffer_valid),
+               .ready(signature_ready),
                .shift_by(shift_by),
                .polynomial(decompressed_polynomial),
                .decompression_done(decompression_done),
@@ -110,8 +112,7 @@ module verify#(
 
   typedef enum logic [2:0] {
             DECOMPRESS_IDLE, // Waiting for the start signal
-            READY_FOR_SIGNATURE, // Ready to receive the next 64 bits of the signature. If we have any existing compressed data we are also decompressing it in this state.
-            DECOMPRESSING, // Decompressing coefficients, don't need new signature data
+            DECOMPRESSING, // Decompressing coefficients
             DECOMPRESSION_DONE // Decompression is done
           } decompress_state_t;
   decompress_state_t decompress_state, decompress_next_state;
@@ -123,19 +124,11 @@ module verify#(
     case (decompress_state)
       DECOMPRESS_IDLE: begin   // Waiting for the start signal
         if (start == 1'b1)
-          decompress_next_state = READY_FOR_SIGNATURE;
-      end
-      READY_FOR_SIGNATURE: begin  // Wait for signature buffer to be full
-        if(decompression_done == 1'b1 || signature_error == 1'b1) // Decompression is done or there was an error
-          decompress_next_state = DECOMPRESSION_DONE;
-        else if (compressed_signature_buffer_valid > 128)  // Buffer is full if we have more than 128 valid bits in it (we cannot add another 64 bit block to it)
           decompress_next_state = DECOMPRESSING;
       end
-      DECOMPRESSING: begin  // Go to DECOMPRESSION_DONE if we're done or READY_FOR_SIGNATURE if we have space for more data
-        if(decompression_done == 1'b1 || signature_error == 1'b1) // Decompression is done or there was an error
+      DECOMPRESSING: begin  // Go to DECOMPRESSION_DONE if we're done
+        if(decompression_done == 1'b1 || signature_error == 1'b1)
           decompress_next_state = DECOMPRESSION_DONE;
-        else if (compressed_signature_buffer_valid < 128) // We have space for more data
-          decompress_next_state = READY_FOR_SIGNATURE;
       end
       DECOMPRESSION_DONE: begin // Stay here forever
         decompress_next_state = DECOMPRESSION_DONE;
@@ -157,25 +150,10 @@ module verify#(
 
     case (decompress_state)
       DECOMPRESS_IDLE: begin
-        signature_ready <= 1'b0;
         compressed_signature_buffer = 0;
         compressed_signature_buffer_valid = 0;
       end
-      READY_FOR_SIGNATURE: begin
-        signature_ready <= 1'b1; // We can receive the next 64 bits of the signature
-
-        // Load new block of signature data
-        if(signature_valid) begin
-          compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
-          compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
-        end
-
-        // We have to shift the buffer to the left by "shift_by" bits to provide the next compressed coefficient to the decompression module.
-        compressed_signature_buffer = compressed_signature_buffer << shift_by;
-        compressed_signature_buffer_valid = compressed_signature_buffer_valid - shift_by;
-      end
       DECOMPRESSING: begin
-        signature_ready <= 1'b0;
 
         // Load new block of signature data
         if(signature_valid) begin
@@ -188,7 +166,6 @@ module verify#(
         compressed_signature_buffer_valid = compressed_signature_buffer_valid - shift_by;
       end
       DECOMPRESSION_DONE: begin
-        signature_ready <= 1'b0;
       end
     endcase
   end
@@ -334,16 +311,14 @@ module verify#(
         ntt_next_state = RUNNING_NTT_PUBLIC_KEY;
       end
       RUNNING_NTT_PUBLIC_KEY: begin // Wait for NTT(public key) to finish and decompressed signature to be ready before moving to START_NTT_SIGNATURE
+        if(signature_error == 1'b1) // If there was an error decompressing the signature go straight to FINISHED
+          ntt_next_state = FINISHED;
+
         if (ntt_done == 1'b1) begin
-          // If there was an error decompressing the signature go straight to FINISHED
-          if(signature_error == 1'b1)
-            ntt_next_state = FINISHED;
-          // Otherwise if decompression is done start NTT(decompressed signature)
-          else if(decompression_done == 1'b1)
-            ntt_next_state = START_NTT_SIGNATURE;
-          // Otherwise wait for decompress to finish
+          if(decompression_done == 1'b1)
+            ntt_next_state = START_NTT_SIGNATURE; // If decompression is done start NTT(decompressed signature)
           else
-            ntt_next_state = WAIT_FOR_DECOMPRESS;
+            ntt_next_state = WAIT_FOR_DECOMPRESS; // Otherwise wait for decompress to finish
         end
       end
       WAIT_FOR_DECOMPRESS: begin // Wait for decompression to finish
@@ -629,22 +604,29 @@ module verify#(
 
       FINISHED: begin
 
-        for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
-          squared_norm_a[i] <= 0;
-          squared_norm_b[i] <= 0;
+        // If there was a signature error we can immediately reject the signature
+        if(signature_error == 1'b1) begin
+          accept <= 1'b0;
+          reject <= 1'b1;
         end
-        squared_norm_valid_in <= 0;
-        squared_norm_last <= 0;
-
-        // Wait for squared norm pipeline to finish
-        if(squared_norm_accept == 1'b1 || squared_norm_reject == 1'b1) begin
-          if (signature_error == 1'b0 && squared_norm_reject == 1'b0 && squared_norm_accept == 1'b1) begin
-            accept <= 1'b1;
-            reject <= 1'b0;
+        else begin // Otherwise we have to finish squared_norm and then decide
+          for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
+            squared_norm_a[i] <= 0;
+            squared_norm_b[i] <= 0;
           end
-          else begin
-            accept <= 1'b0;
-            reject <= 1'b1;
+          squared_norm_valid_in <= 0;
+          squared_norm_last <= 0;
+
+          // Wait for squared norm pipeline to finish
+          if(squared_norm_accept == 1'b1 || squared_norm_reject == 1'b1) begin
+            if (signature_error == 1'b0 && squared_norm_reject == 1'b0 && squared_norm_accept == 1'b1) begin
+              accept <= 1'b1;
+              reject <= 1'b0;
+            end
+            else begin
+              accept <= 1'b0;
+              reject <= 1'b1;
+            end
           end
         end
       end
