@@ -2,8 +2,6 @@
 
 module verify_sub_and_normalize_tb;
 
-
-
   logic clk;
   logic rst_n;
 

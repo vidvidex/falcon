@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 module verify_compute_squared_norm_tb;
 
-
   logic clk;
   logic rst_n;
 
