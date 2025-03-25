@@ -429,32 +429,21 @@ module verify#(
         ntt_mode <= 1'b0;  // NTT
         ntt_input = public_key; // Must be non-blocking assignment, doesn't work otherwise
         ntt_start <= 1'b1;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
       end
 
       START_NTT_PUBLIC_KEY: begin
         ntt_mode <= 1'b0;  // NTT
         ntt_input = public_key; // Must be non-blocking assignment, doesn't work otherwise
         ntt_start <= 1'b1;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
       end
 
       WAIT_FOR_DECOMPRESS: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
       end
 
       RUNNING_NTT_PUBLIC_KEY: begin
         ntt_mode <= 1'b0;  // NTT
         ntt_input = public_key; // Must be non-blocking assignment, doesn't work otherwise
         ntt_start <= 1'b0;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
 
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
@@ -466,18 +455,12 @@ module verify#(
         ntt_mode <= 1'b0;  // NTT
         ntt_input <= decompressed_polynomial;
         ntt_start <= 1'b1;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
       end
 
       RUNNING_NTT_SIGNATURE: begin
         ntt_mode <= 1'b0;  // NTT
         ntt_input <= decompressed_polynomial;
         ntt_start <= 1'b0;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
 
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
@@ -486,9 +469,6 @@ module verify#(
       end
 
       MULT_MOD_Q: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
-
         // Send data to mod_mult module
         for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
           mod_mult_a[i] <= ntt_buffer1[mult_mod_q_index + i];
@@ -505,9 +485,6 @@ module verify#(
       end
 
       WAIT_FOR_MULT_MOD_Q: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
-
         for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
           mod_mult_a[i] <= 0;
           mod_mult_b[i] <= 0;
@@ -525,18 +502,12 @@ module verify#(
         ntt_mode <= 1'b1;  // INTT
         ntt_input <= ntt_buffer1;
         ntt_start <= 1'b1;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
       end
 
       RUNNING_INTT: begin
         ntt_mode <= 1'b1;  // INTT
         ntt_input <= ntt_buffer1;
         ntt_start <= 1'b0;
-
-        accept <= 1'b0;
-        reject <= 1'b0;
 
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
@@ -545,14 +516,9 @@ module verify#(
       end
 
       WAIT_FOR_HASH_TO_POINT: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
       end
 
       SUB_AND_NORMALIZE: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
-
         // Send data to sub_and_normalize module
         for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++) begin
           sub_and_norm_a[i] <= htp_polynomial[sub_and_normalize_index + i];
@@ -569,9 +535,6 @@ module verify#(
       end
 
       WAIT_FOR_SUB_AND_NORMALIZE: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
-
         for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
           sub_and_norm_a[i] <= 0;
           sub_and_norm_b[i] <= 0;
@@ -586,9 +549,6 @@ module verify#(
       end
 
       SQUARED_NORM: begin
-        accept <= 1'b0;
-        reject <= 1'b0;
-
         // Send data to verify_compute_squared_norm module
         for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
           squared_norm_a[i] <= ntt_buffer1[squared_norm_index + i];
