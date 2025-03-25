@@ -39,21 +39,15 @@ module shake256_absorb(
   logic delimitedSuffix_used;
   logic [7:0] delimitedSuffix = 8'h1f;
   logic [7:0] rateInBytes = 8'd136;
-  logic [7:0] data_in_temp;
-
-  always_ff @(posedge clk) begin
-    data_in_padded[7:0] = (messageLen_lt_8==1'b0) ? data_in[7:0] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd0) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd0) ? data_in[7:0] : 8'd0;
-    data_in_padded[15:8] = (messageLen_lt_8==1'b0) ? data_in[15:8] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd1) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd1) ? data_in[15:8] : 8'd0;
-    data_in_padded[23:16] = (messageLen_lt_8==1'b0) ? data_in[23:16] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd2) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd2) ? data_in[23:16] : 8'd0;
-    data_in_padded[31:24] = (messageLen_lt_8==1'b0) ? data_in[31:24] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd3) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd3) ? data_in[31:24] : 8'd0;
-    data_in_padded[39:32] = (messageLen_lt_8==1'b0) ? data_in[39:32] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd4) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd4) ? data_in[39:32] : 8'd0;
-    data_in_padded[47:40] = (messageLen_lt_8==1'b0) ? data_in[47:40] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd5) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd5) ? data_in[47:40] : 8'd0;
-    data_in_padded[55:48] = (messageLen_lt_8==1'b0) ? data_in[55:48] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd6) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd6) ? data_in[55:48] : 8'd0;
-    data_in_temp = (messageLen_lt_8==1'b0) ? data_in[63:56] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd7) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd7) ? data_in[63:56] : 8'd0;
-    data_in_padded[63:56] = (last_rate_byte) ? {1'b1,data_in_temp[6:0]} : data_in_temp;
-  
-    data_in_padded_valid = (data_in_valid == 1'b1 && state == ABSORB) || state == CONSUME_DELIMITED_SUFFIX;
-  end
+  assign data_in_padded[7:0] = (messageLen_lt_8==1'b0) ? data_in[7:0] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd0) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd0) ? data_in[7:0] : 8'd0;
+  assign data_in_padded[15:8] = (messageLen_lt_8==1'b0) ? data_in[15:8] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd1) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd1) ? data_in[15:8] : 8'd0;
+  assign data_in_padded[23:16] = (messageLen_lt_8==1'b0) ? data_in[23:16] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd2) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd2) ? data_in[23:16] : 8'd0;
+  assign data_in_padded[31:24] = (messageLen_lt_8==1'b0) ? data_in[31:24] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd3) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd3) ? data_in[31:24] : 8'd0;
+  assign data_in_padded[39:32] = (messageLen_lt_8==1'b0) ? data_in[39:32] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd4) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd4) ? data_in[39:32] : 8'd0;
+  assign data_in_padded[47:40] = (messageLen_lt_8==1'b0) ? data_in[47:40] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd5) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd5) ? data_in[47:40] : 8'd0;
+  assign data_in_padded[55:48] = (messageLen_lt_8==1'b0) ? data_in[55:48] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd6) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd6) ? data_in[55:48] : 8'd0;
+  wire [7:0] data_in_temp = (messageLen_lt_8==1'b0) ? data_in[63:56] : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]==3'd7) ? delimitedSuffix : (delimitedSuffix_used==1'b0 && messageLen_InBytes[2:0]>3'd7) ? data_in[63:56] : 8'd0;
+  assign data_in_padded[63:56] = (last_rate_byte) ? {1'b1,data_in_temp[6:0]} : data_in_temp;
 
   always_ff @(posedge clk) begin
     if(rst)
@@ -93,49 +87,43 @@ module shake256_absorb(
 
   always_ff @(posedge clk) begin
     if(rst)
-      state = IDLE;
+      state <= IDLE;
     else
-      state = next_state;
+      state <= next_state;
+  end
 
+  always_comb begin
     case(state)
       IDLE: begin // Reset state
-        ready <= 0;
-        rst_rate_counter <= 1;
-        call_keccak_f1600 <= 0;
-        done <= 0;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 0;
       end
       ABSORB: begin // Absorb 8 bytes every cycle; Stays in this state till {rate_counter<=rateInBytes-8; or remaining message len is <8 bytes}
-        ready <= 1;
-        rst_rate_counter <= 0;
-        call_keccak_f1600 <= 0;
-        done <= 0;
+        rst_rate_counter = 0;
+        call_keccak_f1600 = 0;
       end
       CONSUME_DELIMITED_SUFFIX: begin // Visited when messageLen was < rate in ABSORB ; Stay in this state till {rate_counter<=rateInBytes-8}. delimitedSuffix_used is used in this state.
-        ready <= 1;
-        rst_rate_counter <= 0;
-        call_keccak_f1600 <= 0;
-        done <= 0;
+        rst_rate_counter = 0;
+        call_keccak_f1600 = 0;
       end
       RATE_COMPLETE: begin // Visited after ABSORB when rate_counter completes the specified rate. Calls keccak-f1600
-        ready <= 0;
-        rst_rate_counter <= 1;
-        call_keccak_f1600 <= 1;
-        done <= 0;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 1;
       end
       FINALIZE: begin // Absorb complete
-        ready <= 1;
-        rst_rate_counter <= 1;
-        call_keccak_f1600 <= 0;
-        done <= 1;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 0;
       end
       default: begin // Reset state
-        ready <= 1;
-        rst_rate_counter <= 1;
-        call_keccak_f1600 <= 0;
-        done <= 0;
+        rst_rate_counter = 1;
+        call_keccak_f1600 = 0;
       end
     endcase
   end
+
+  assign ready = state==RATE_COMPLETE ? 0 : 1;
+  assign done = state==FINALIZE ? 1 : 0;
+  assign data_in_padded_valid = state == CONSUME_DELIMITED_SUFFIX || (state == ABSORB || data_in_valid == 1'b1) ? 1 : 0;
 
   always_comb begin
     case(state)
