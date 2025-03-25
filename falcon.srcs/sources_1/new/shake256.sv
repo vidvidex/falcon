@@ -101,12 +101,13 @@ module shake256(
   assign rst_rounds = (rst_absorb==1'b0) ? ~call_keccak_f1600_absorb : (rst_squeeze==1'b0) ? ~call_keccak_f1600_squeeze : 1'b1;
 
   always_ff @(posedge clk) begin
-
     if(rst)
-      state = IDLE;
+      state <= IDLE;
     else
-      state = next_state;
+      state <= next_state;
+  end
 
+  always_comb begin
     case(state)
       IDLE: begin     // Reset state; Clear state buffer.
         rst_absorb <= 1;
