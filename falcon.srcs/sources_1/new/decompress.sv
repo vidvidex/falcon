@@ -39,6 +39,7 @@ module decompress #(
 
   logic decompress_coefficient_rst_n;
   logic [6:0] decompress_coefficient_valid_bits;
+  logic coefficient_valid;
 
   decompress_coefficient decompress_coefficient (
                            .clk(clk),
