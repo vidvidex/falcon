@@ -88,6 +88,7 @@ module verify_compute_squared_norm#(
     if(rst_n == 1'b0) begin
       squared_norm <= 0;
       last3 <= 0;
+      over_bound <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
