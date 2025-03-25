@@ -359,7 +359,7 @@ module verify#(
           ntt_next_state = SUB_AND_NORMALIZE;
       end
       SUB_AND_NORMALIZE: begin // Send all data to verify_sub_and_normalize before moving to WAIT_FOR_SUB_AND_NORMALIZE
-        if (sub_and_normalize_index == N)
+        if (sub_and_normalize_index == N - SUB_AND_NORMALIZE_OPS_PER_CYCLE)
           ntt_next_state = WAIT_FOR_SUB_AND_NORMALIZE;
       end
       WAIT_FOR_SUB_AND_NORMALIZE: begin // Wait for sub_and_normalize to finish before moving to SQUARED_NORM
