@@ -71,7 +71,7 @@ module ntt_negative#(
   state_t state, next_state;
 
   mod_mult_ntt_negative #(
-                          .N(8)
+                          .N(N)
                         )mod_mult(
                           .clk(clk),
                           .rst_n(rst_n),
