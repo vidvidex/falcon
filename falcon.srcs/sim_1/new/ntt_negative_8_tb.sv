@@ -1,17 +1,16 @@
 `timescale 1ns / 1ps
 
-module ntt_negative_tb;
+module ntt_negative_8_tb;
 
   logic clk;
   logic rst_n;
 
   logic mode;
   logic start;
-  logic signed [14:0] input_polynomial[0:7];
+  logic signed [14:0] input_polynomial[8];
+  logic signed [14:0] output_polynomial[8];
+  logic signed [14:0] expected_output_polynomial[8];
   logic done;
-  logic [14:0] output_polynomial[0:7];
-
-  logic [14:0] expected_output_polynomial[0:7];
 
   ntt_negative #(
                  .N(8)
@@ -47,7 +46,7 @@ module ntt_negative_tb;
       #10;
 
     // Check output
-    expected_output_polynomial = {10914, 5186, 3052, 6340, 6212, 9196, 9416, 11129};
+    expected_output_polynomial = {10914,5186,3052,6340,6212,9196,9416,11129};
     if (output_polynomial === expected_output_polynomial)
       $display("Test 1: Passed");
     else
@@ -58,7 +57,7 @@ module ntt_negative_tb;
     #10;
     rst_n = 1;
     mode = 1;
-    input_polynomial = {10914, 5186, 3052, 6340, 6212, 9196, 9416, 11129};
+    input_polynomial = {10914,5186,3052,6340,6212,9196,9416,11129};
 
     // Start INTT
     start = 1;
@@ -82,7 +81,7 @@ module ntt_negative_tb;
     #10;
     rst_n = 1;
     mode = 0;
-    input_polynomial = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+    input_polynomial = {7644,6589,8565,4185,1184,607,3842,5361};
 
     // Start NTT
     start = 1;
@@ -94,7 +93,7 @@ module ntt_negative_tb;
       #10;
 
     // Check output
-    expected_output_polynomial = {5550, 7668, 5033, 222, 2053, 777, 6055, 9216};
+    expected_output_polynomial = {5550,7668,5033,222,2053,777,6055,9216};
     if (output_polynomial === expected_output_polynomial)
       $display("Test 3: Passed");
     else
@@ -118,13 +117,13 @@ module ntt_negative_tb;
       #10;
 
     // Check output
-    expected_output_polynomial = {2598, 1143, 7769, 7404, 5910, 11731, 1017, 10360};
+    expected_output_polynomial = {2598,1143,7769,7404,5910,11731,1017,10360};
     if (output_polynomial === expected_output_polynomial)
       $display("Test 4: Passed");
     else
       $fatal(1, "Test 4: Failed. Expected: %p, Got: %p", expected_output_polynomial, output_polynomial);
 
-    $display("All tests for ntt_negative passed!");
+    $display("All tests for ntt_negative_8 passed!");
     $finish;
   end
 
