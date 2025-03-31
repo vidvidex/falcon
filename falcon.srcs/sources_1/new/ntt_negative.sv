@@ -105,7 +105,7 @@ module ntt_negative#(
 
   // Modulo 12289 addition
   function [14:0] mod_add(input logic signed [14:0] a, b);
-    reg [15:0] temp;
+    logic signed [15:0] temp;
     begin
       temp = a + b;
       if (temp >= 12289)
