@@ -12,7 +12,7 @@ module decompress_tb;
 
   logic signed [14:0] decompressed_polynomial [N];
   logic signed [14:0] expected_polynomial [N];
-  logic [6:0] valid_bits, shift_by;
+  logic [7:0] valid_bits, shift_by;
   logic decompression_done;
 
   logic start = 0;

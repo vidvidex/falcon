@@ -28,7 +28,7 @@ module decompress_coefficient(
     input logic rst_n,
 
     input logic [104:0] compressed_signature, //! Compressed signature
-    input logic [6:0] valid_bits, //! Number of valid bits in compressed signature (from the left)
+    input logic [7:0] valid_bits, //! Number of valid bits in compressed signature (from the left)
 
     output logic [14:0] coefficient, //! Decompressed coefficient
     output logic [6:0] bits_used, //! Number of bits used to decompress the current coefficient
@@ -39,7 +39,7 @@ module decompress_coefficient(
   );
 
   logic [104:0] compressed_signature_i;
-  logic [6:0] valid_bits_i;
+  logic [7:0] valid_bits_i;
 
   logic sign;
   logic [6:0] low;

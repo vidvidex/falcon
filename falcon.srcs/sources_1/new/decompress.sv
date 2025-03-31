@@ -16,7 +16,7 @@ module decompress #(
     input logic start, //! Start decompression
 
     input logic [104:0] compressed_signature, //! Compressed signature
-    input logic [6:0] valid_bits, //! Number of valid bits in compressed signature (from the left)
+    input logic [7:0] valid_bits, //! Number of valid bits in compressed signature (from the left)
 
     output logic ready, //! Ready to decompress the next coefficient
     output logic [6:0] shift_by, //! Instruction to the parent module on how much to shift the compressed signature to the left
@@ -38,7 +38,7 @@ module decompress #(
   logic invalid_zero_representation_error; // We found a zero representation that is not valid
 
   logic decompress_coefficient_rst_n;
-  logic [6:0] decompress_coefficient_valid_bits;
+  logic [7:0] decompress_coefficient_valid_bits;
   logic coefficient_valid;
 
   decompress_coefficient decompress_coefficient (
