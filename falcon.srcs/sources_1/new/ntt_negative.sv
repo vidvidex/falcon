@@ -221,17 +221,6 @@ module ntt_negative#(
         mod_mult_valid_in <= 0;
         mod_mult_index1_in <= 0;
         mod_mult_index2_in <= 0;
-
-        if(mod_mult_valid_out == 1'b1) begin
-          if (mode == 1'b0) begin
-            polynomial[mod_mult_index1_out] <= mod_add(polynomial[mod_mult_index1_out], mod_mult_result);
-            polynomial[mod_mult_index2_out] <= mod_sub(polynomial[mod_mult_index1_out], mod_mult_result);
-          end
-          else begin
-            polynomial[mod_mult_index1_out] <= mod_mult_passthrough_out;
-            polynomial[mod_mult_index2_out] <= mod_mult_result;
-          end
-        end
       end
 
       COPY_FROM_INT: begin
@@ -244,6 +233,18 @@ module ntt_negative#(
         end
       end
     endcase
+
+    // If there is valid output from mod_mult save it to the polynomial
+    if(mod_mult_valid_out == 1'b1) begin
+      if (mode == 1'b0) begin
+        polynomial[mod_mult_index1_out] <= mod_add(polynomial[mod_mult_index1_out], mod_mult_result);
+        polynomial[mod_mult_index2_out] <= mod_sub(polynomial[mod_mult_index1_out], mod_mult_result);
+      end
+      else begin
+        polynomial[mod_mult_index1_out] <= mod_mult_passthrough_out;
+        polynomial[mod_mult_index2_out] <= mod_mult_result;
+      end
+    end
   end
 
   // Compute NTT parameters

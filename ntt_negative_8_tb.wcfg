@@ -3,10 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="ntt_negative_tb_behav.wdb" id="1">
+      <db_ref path="ntt_negative_8_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="ntt_negative_tb" />
+            <top_module name="ntt_negative_8_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -24,37 +24,37 @@
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/clk">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/rst_n">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/mode">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/mode">
          <obj_property name="ElementShortName">mode</obj_property>
          <obj_property name="ObjectShortName">mode</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/start">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/start">
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/input_polynomial">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_polynomial">
          <obj_property name="ElementShortName">input_polynomial[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">input_polynomial[0:7][14:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/done">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/done">
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/output_polynomial">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_polynomial">
          <obj_property name="ElementShortName">output_polynomial[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">output_polynomial[0:7][14:0]</obj_property>
          <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/expected_output_polynomial">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/expected_output_polynomial">
          <obj_property name="ElementShortName">expected_output_polynomial[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">expected_output_polynomial[0:7][14:0]</obj_property>
          <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
@@ -64,131 +64,131 @@
       <obj_property name="label">NTT</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/clk">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/rst_n">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/mode">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mode">
          <obj_property name="ElementShortName">mode</obj_property>
          <obj_property name="ObjectShortName">mode</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/start">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/start">
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/input_polynomial">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/input_polynomial">
          <obj_property name="ElementShortName">input_polynomial[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">input_polynomial[0:7][14:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/done">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/done">
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/output_polynomial">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/output_polynomial">
          <obj_property name="ElementShortName">output_polynomial[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">output_polynomial[0:7][14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/polynomial">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/polynomial">
          <obj_property name="ElementShortName">polynomial[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">polynomial[0:7][14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/stage">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/stage">
          <obj_property name="ElementShortName">stage[3:0]</obj_property>
          <obj_property name="ObjectShortName">stage[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/counter">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/counter">
          <obj_property name="ElementShortName">counter[3:0]</obj_property>
          <obj_property name="ObjectShortName">counter[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/counter_max">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/counter_max">
          <obj_property name="ElementShortName">counter_max[3:0]</obj_property>
          <obj_property name="ObjectShortName">counter_max[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/stride">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/stride">
          <obj_property name="ElementShortName">stride[2:0]</obj_property>
          <obj_property name="ObjectShortName">stride[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/butterfly">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/butterfly">
          <obj_property name="ElementShortName">butterfly[2:0]</obj_property>
          <obj_property name="ObjectShortName">butterfly[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/i">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/i">
          <obj_property name="ElementShortName">i[2:0]</obj_property>
          <obj_property name="ObjectShortName">i[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/group">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/group">
          <obj_property name="ElementShortName">group[2:0]</obj_property>
          <obj_property name="ObjectShortName">group[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/twiddle_factor">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_factor">
          <obj_property name="ElementShortName">twiddle_factor[14:0]</obj_property>
          <obj_property name="ObjectShortName">twiddle_factor[14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_a">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_a">
          <obj_property name="ElementShortName">mod_mult_a[14:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_a[14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_b">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_b">
          <obj_property name="ElementShortName">mod_mult_b[14:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_b[14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_result">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_result">
          <obj_property name="ElementShortName">mod_mult_result[14:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_result[14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_index1_in">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index1_in">
          <obj_property name="ElementShortName">mod_mult_index1_in[3:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_index1_in[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_index2_in">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index2_in">
          <obj_property name="ElementShortName">mod_mult_index2_in[3:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_index2_in[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_index1_out">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index1_out">
          <obj_property name="ElementShortName">mod_mult_index1_out[3:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_index1_out[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/mod_mult_index2_out">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index2_out">
          <obj_property name="ElementShortName">mod_mult_index2_out[3:0]</obj_property>
          <obj_property name="ObjectShortName">mod_mult_index2_out[3:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/mod_mult_valid_in">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_valid_in">
          <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
          <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/mod_mult_valid_out">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_valid_out">
          <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
          <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_tb/uut/mod_mult_last">
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_last">
          <obj_property name="ElementShortName">mod_mult_last</obj_property>
          <obj_property name="ObjectShortName">mod_mult_last</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/twiddle_rom_ntt">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_rom_ntt">
          <obj_property name="ElementShortName">twiddle_rom_ntt[0:1023][14:0]</obj_property>
          <obj_property name="ObjectShortName">twiddle_rom_ntt[0:1023][14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/twiddle_rom_intt">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_rom_intt">
          <obj_property name="ElementShortName">twiddle_rom_intt[0:1023][14:0]</obj_property>
          <obj_property name="ObjectShortName">twiddle_rom_intt[0:1023][14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/intt_scale_factor">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/intt_scale_factor">
          <obj_property name="ElementShortName">intt_scale_factor[31:0]</obj_property>
          <obj_property name="ObjectShortName">intt_scale_factor[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/state">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/state">
          <obj_property name="ElementShortName">state[2:0]</obj_property>
          <obj_property name="ObjectShortName">state[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/next_state">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/next_state">
          <obj_property name="ElementShortName">next_state[2:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_tb/uut/N">
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
          <obj_property name="ObjectShortName">N[31:0]</obj_property>
       </wvobject>
