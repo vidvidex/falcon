@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module top (
+module top_8 (
     input logic clk,
     input logic [3:0] btns,
     output logic [3:0] leds
@@ -8,13 +8,19 @@ module top (
 
   logic rst_n, start, start_i, start_pulse;
 
-  logic [63:0] message_blocks [7];   // Buffer for message blocks
-  logic [63:0] signature_blocks [2];   // Buffer for signature value blocks
-  logic [6:0] signature_valid_blocks [2];   // Buffer for signature value valid blocks
+  // public_key - Public key in signed decimal form
+  // message_len_bytes - Length of the message in bytes
+  // message_blocks - Buffer for salt and message (first 5 blocks of message_blocks are the salt (40B), the rest is the message). Message is reversed and padded
+  // signature_blocks - Buffer for signature value blocks
+  // signature_valid_blocks - Buffer for signature value valid blocks; len(signature value) = 11 bytes = 88 bits = 64 + 24
 
-  logic signed [14:0] public_key[8] = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+  logic signed [14:0] public_key[8] = '{7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+  logic [15:0] message_len_bytes = 12;
+  logic [63:0] message_blocks [7]= '{64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
+  logic [63:0] signature_blocks [2] = '{64'h997b21eec3635e54, 64'h6308000000000000};
+  logic [6:0] signature_valid_blocks [2] = '{64, 24};
 
-  logic [15:0] message_len_bytes; //! Length of the message in bytes
+
   logic [63:0] message;
   logic message_valid; //! Is message valid
   logic message_last;
@@ -80,8 +86,7 @@ module top (
 
     case (state)
       RESET: begin
-        // if(reset_counter == 125_000_000*5)  // Wait 5 seconds
-          if(reset_counter == 25)
+        if(reset_counter == 25)
           next_state = RUNNING;
       end
       RUNNING: begin
@@ -161,14 +166,6 @@ module top (
 
     start_i <= start;
   end
-
-  assign message_len_bytes = 12; // len("Hello World!") = 12
-  // First 5 blocks of message are the salt (40B), the rest is the message ("Hello World!", reversed and with padding)
-  assign message_blocks = {64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
-
-  // len(signature) = 11 bytes = 88 bits = 64 + 24
-  assign signature_blocks = {64'h997b21eec3635e54, 64'h6308000000000000};
-  assign signature_valid_blocks = '{64, 24};
 
   assign start_pulse = start == 1'b1 && start_i == 1'b0;
 

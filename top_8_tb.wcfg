@@ -3,157 +3,143 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="top_tb_behav.wdb" id="1">
+      <db_ref path="top_8_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="top_tb" />
+            <top_module name="top_8_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="228.630 ns"></ZoomStartTime>
-      <ZoomEndTime time="471.207 ns"></ZoomEndTime>
-      <Cursor1Time time="3,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="999,995 ps"></ZoomStartTime>
+      <ZoomEndTime time="1,000,002 ps"></ZoomEndTime>
+      <Cursor1Time time="1,000,000 ps"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="273"></NameColumnWidth>
-      <ValueColumnWidth column_width="137"></ValueColumnWidth>
+      <NameColumnWidth column_width="210"></NameColumnWidth>
+      <ValueColumnWidth column_width="208"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
-   <wvobject type="group" fp_name="group151">
+   <wvobject type="group" fp_name="group74">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/top_tb/clk">
+      <wvobject type="logic" fp_name="/top_8_tb/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_tb/leds">
+      <wvobject type="array" fp_name="/top_8_tb/leds">
          <obj_property name="ElementShortName">leds[3:0]</obj_property>
          <obj_property name="ObjectShortName">leds[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/btns">
+      <wvobject type="array" fp_name="/top_8_tb/btns">
          <obj_property name="ElementShortName">btns[3:0]</obj_property>
          <obj_property name="ObjectShortName">btns[3:0]</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="group" fp_name="group150">
-      <obj_property name="label">top</obj_property>
+   <wvobject type="group" fp_name="group75">
+      <obj_property name="label">top_8</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/top_tb/uut/clk">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/btns">
+      <wvobject type="array" fp_name="/top_8_tb/uut/btns">
          <obj_property name="ElementShortName">btns[3:0]</obj_property>
          <obj_property name="ObjectShortName">btns[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/leds">
+      <wvobject type="array" fp_name="/top_8_tb/uut/leds">
          <obj_property name="ElementShortName">leds[3:0]</obj_property>
          <obj_property name="ObjectShortName">leds[3:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/rst_n">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/rst_n_i">
-         <obj_property name="ElementShortName">rst_n_i</obj_property>
-         <obj_property name="ObjectShortName">rst_n_i</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/start">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/start">
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/start_i">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/start_i">
          <obj_property name="ElementShortName">start_i</obj_property>
          <obj_property name="ObjectShortName">start_i</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/start_ii">
-         <obj_property name="ElementShortName">start_ii</obj_property>
-         <obj_property name="ObjectShortName">start_ii</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/start_pulse">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/start_pulse">
          <obj_property name="ElementShortName">start_pulse</obj_property>
          <obj_property name="ObjectShortName">start_pulse</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/message_blocks">
+      <wvobject type="array" fp_name="/top_8_tb/uut/message_blocks">
          <obj_property name="ElementShortName">message_blocks[0:6][63:0]</obj_property>
          <obj_property name="ObjectShortName">message_blocks[0:6][63:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/signature_blocks">
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature_blocks">
          <obj_property name="ElementShortName">signature_blocks[0:1][63:0]</obj_property>
          <obj_property name="ObjectShortName">signature_blocks[0:1][63:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/signature_valid_blocks">
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature_valid_blocks">
          <obj_property name="ElementShortName">signature_valid_blocks[0:1][6:0]</obj_property>
          <obj_property name="ObjectShortName">signature_valid_blocks[0:1][6:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/public_key">
+      <wvobject type="array" fp_name="/top_8_tb/uut/public_key">
          <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
          <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/message_len_bytes">
+      <wvobject type="array" fp_name="/top_8_tb/uut/message_len_bytes">
          <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
          <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/message">
+      <wvobject type="array" fp_name="/top_8_tb/uut/message">
          <obj_property name="ElementShortName">message[63:0]</obj_property>
          <obj_property name="ObjectShortName">message[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/message_valid">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/message_valid">
          <obj_property name="ElementShortName">message_valid</obj_property>
          <obj_property name="ObjectShortName">message_valid</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/message_last">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/message_last">
          <obj_property name="ElementShortName">message_last</obj_property>
          <obj_property name="ObjectShortName">message_last</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/message_ready">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/message_ready">
          <obj_property name="ElementShortName">message_ready</obj_property>
          <obj_property name="ObjectShortName">message_ready</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/signature">
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature">
          <obj_property name="ElementShortName">signature[63:0]</obj_property>
          <obj_property name="ObjectShortName">signature[63:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/signature_valid">
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature_valid">
          <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
          <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/signature_ready">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/signature_ready">
          <obj_property name="ElementShortName">signature_ready</obj_property>
          <obj_property name="ObjectShortName">signature_ready</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/accept">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/accept">
          <obj_property name="ElementShortName">accept</obj_property>
          <obj_property name="ObjectShortName">accept</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_tb/uut/reject">
+      <wvobject type="logic" fp_name="/top_8_tb/uut/reject">
          <obj_property name="ElementShortName">reject</obj_property>
          <obj_property name="ObjectShortName">reject</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/message_block_index">
+      <wvobject type="array" fp_name="/top_8_tb/uut/message_block_index">
          <obj_property name="ElementShortName">message_block_index[31:0]</obj_property>
          <obj_property name="ObjectShortName">message_block_index[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/signature_block_index">
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature_block_index">
          <obj_property name="ElementShortName">signature_block_index[31:0]</obj_property>
          <obj_property name="ObjectShortName">signature_block_index[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/reset_counter">
+      <wvobject type="array" fp_name="/top_8_tb/uut/reset_counter">
          <obj_property name="ElementShortName">reset_counter[31:0]</obj_property>
          <obj_property name="ObjectShortName">reset_counter[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/state">
+      <wvobject type="array" fp_name="/top_8_tb/uut/state">
          <obj_property name="ElementShortName">state[1:0]</obj_property>
          <obj_property name="ObjectShortName">state[1:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_tb/uut/next_state">
+      <wvobject type="array" fp_name="/top_8_tb/uut/next_state">
          <obj_property name="ElementShortName">next_state[1:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[1:0]</obj_property>
       </wvobject>
