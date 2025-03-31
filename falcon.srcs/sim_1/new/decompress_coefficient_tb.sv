@@ -6,10 +6,10 @@ module decompress_coefficient_tb;
   logic rst_n;
 
   logic [104:0] compressed_signature;
-  logic [6:0] valid_bits;
+  logic [7:0] valid_bits;
 
   logic [14:0] coefficient;
-  logic [6:0] bits_used;
+  logic [7:0] bits_used;
   logic coefficient_valid;
   logic invalid_bits_used_error;
   logic cannot_find_high_error;
@@ -34,7 +34,7 @@ module decompress_coefficient_tb;
   task check(
       int test_num,
       logic signed [14:0] expected_coefficient,
-      logic [6:0] expected_bits_used,
+      logic [7:0] expected_bits_used,
       logic expected_coefficient_valid,
       logic expected_invalid_bits_used_error,
       logic expected_cannot_find_high_error,

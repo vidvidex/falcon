@@ -87,12 +87,13 @@ module verify#(
   // With only 2x64 bits we would have a problem when decompression only used for example 65 bits,
   // so we couldn't load a new block in.
   logic [3*64-1:0] compressed_signature_buffer;
-  logic [6:0] compressed_signature_buffer_valid; //! Number of valid bits in compressed_signature_buffer. Only leftmost bits are valid.
+  logic [7:0] compressed_signature_buffer_valid; //! Number of valid bits in compressed_signature_buffer. Only leftmost bits are valid.
 
   logic signed [14:0] decompressed_polynomial [N];
   logic [6:0] shift_by; //! Number of bits that were used to compress the coefficient, we need to shift the buffer by this amount
   logic signature_error; //! Set to true if the signature is invalid
   logic decompression_done; //! Set to true if the decompression is done
+  logic decompress_ready;
 
   decompress #(
                .N(N),
@@ -103,7 +104,7 @@ module verify#(
                .start(start),
                .compressed_signature(compressed_signature_buffer[3*64-1 -: 105]), // Provide top 105 bits of the buffer to decompress module
                .valid_bits(compressed_signature_buffer_valid),
-               .ready(signature_ready),
+               .ready(decompress_ready),
                .shift_by(shift_by),
                .polynomial(decompressed_polynomial),
                .decompression_done(decompression_done),
@@ -156,7 +157,7 @@ module verify#(
       DECOMPRESSING: begin
 
         // Load new block of signature data
-        if(signature_valid) begin
+        if(signature_valid > 0) begin
           compressed_signature_buffer[3*64-1-compressed_signature_buffer_valid -: 64] = signature;
           compressed_signature_buffer_valid = compressed_signature_buffer_valid + signature_valid;
         end
@@ -169,6 +170,8 @@ module verify#(
       end
     endcase
   end
+
+  assign signature_ready = decompress_ready && compressed_signature_buffer_valid < 2*64;
 
   /////////////////////////// End decompress ///////////////////////////
 
