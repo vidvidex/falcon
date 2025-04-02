@@ -180,8 +180,8 @@ module verify#(
   logic signed [14:0] ntt_input[N];
   logic signed [14:0] ntt_output[N];
 
-  logic signed [14:0] ntt_buffer1[N]; // Buffer for NTT module, here we store the result of NTT(public key), NTT(public key) * NTT(decompressed signature) = product, INTT(product), htp_polynomial - INTT(product)
-  logic signed [14:0] ntt_buffer2[N]; // Buffer for NTT module, here we store the result of NTT(decompressed signature)
+  logic signed [14:0] verify_buffer1[N]; // Buffer for NTT module, here we store the result of NTT(public key), NTT(public key) * NTT(decompressed signature) = product, INTT(product), htp_polynomial - INTT(product)
+  logic signed [14:0] verify_buffer2[N]; // Buffer for NTT module, here we store the result of NTT(decompressed signature)
 
   logic ntt_start; //! Start signal for NTT module
   logic ntt_mode; //! 0 - NTT, 1 - INTT
@@ -389,8 +389,8 @@ module verify#(
         ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
 
         for(int i = 0; i < N; i++) begin
-          ntt_buffer1[i] <= 0;
-          ntt_buffer2[i] <= 0;
+          verify_buffer1[i] <= 0;
+          verify_buffer2[i] <= 0;
           ntt_input[i] <= 0;
         end
 
@@ -450,7 +450,7 @@ module verify#(
 
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
-          ntt_buffer1 <= ntt_output;
+          verify_buffer1 <= ntt_output;
         end
       end
 
@@ -467,15 +467,15 @@ module verify#(
 
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
-          ntt_buffer2 <= ntt_output;
+          verify_buffer2 <= ntt_output;
         end
       end
 
       MULT_MOD_Q: begin
         // Send data to mod_mult module
         for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
-          mod_mult_a[i] <= ntt_buffer1[mult_mod_q_index + i];
-          mod_mult_b[i] <= ntt_buffer2[mult_mod_q_index + i];
+          mod_mult_a[i] <= verify_buffer1[mult_mod_q_index + i];
+          mod_mult_b[i] <= verify_buffer2[mult_mod_q_index + i];
         end
         mod_mult_index_in <= mult_mod_q_index;
         mod_mult_valid_in <= 1'b1;
@@ -484,7 +484,7 @@ module verify#(
         // If output of mod_mult is valid we can save it
         if(mod_mult_valid_out == 1'b1)
           for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++)
-            ntt_buffer1[mod_mult_index_out + i] <= mod_mult_result[i];
+            verify_buffer1[mod_mult_index_out + i] <= mod_mult_result[i];
       end
 
       WAIT_FOR_MULT_MOD_Q: begin
@@ -498,23 +498,23 @@ module verify#(
         // If output of mod_mult is valid we can save it
         if(mod_mult_valid_out == 1'b1)
           for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++)
-            ntt_buffer1[mod_mult_index_out + i] <= mod_mult_result[i];
+            verify_buffer1[mod_mult_index_out + i] <= mod_mult_result[i];
       end
 
       START_INTT: begin
         ntt_mode <= 1'b1;  // INTT
-        ntt_input <= ntt_buffer1;
+        ntt_input <= verify_buffer1;
         ntt_start <= 1'b1;
       end
 
       RUNNING_INTT: begin
         ntt_mode <= 1'b1;  // INTT
-        ntt_input <= ntt_buffer1;
+        ntt_input <= verify_buffer1;
         ntt_start <= 1'b0;
 
         if (ntt_done == 1'b1) begin
           // Save output of NTT module for later use
-          ntt_buffer1 <= ntt_output;
+          verify_buffer1 <= ntt_output;
         end
       end
 
@@ -525,7 +525,7 @@ module verify#(
         // Send data to sub_and_normalize module
         for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++) begin
           sub_and_norm_a[i] <= htp_polynomial[sub_and_normalize_index + i];
-          sub_and_norm_b[i] <= ntt_buffer1[sub_and_normalize_index + i];
+          sub_and_norm_b[i] <= verify_buffer1[sub_and_normalize_index + i];
         end
         sub_and_norm_valid_in <= 1'b1;
         sub_and_norm_index_in <= sub_and_normalize_index;
@@ -534,7 +534,7 @@ module verify#(
         // If output of sub_and_norm is valid we can save it
         if(sub_and_norm_valid_out == 1'b1)
           for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++)
-            ntt_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
+            verify_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
       end
 
       WAIT_FOR_SUB_AND_NORMALIZE: begin
@@ -548,13 +548,13 @@ module verify#(
         // If output of sub_and_norm is valid we can save it
         if(sub_and_norm_valid_out == 1'b1)
           for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++)
-            ntt_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
+            verify_buffer1[sub_and_norm_index_out + i] <= sub_and_norm_result[i];
       end
 
       SQUARED_NORM: begin
         // Send data to verify_compute_squared_norm module
         for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
-          squared_norm_a[i] <= ntt_buffer1[squared_norm_index + i];
+          squared_norm_a[i] <= verify_buffer1[squared_norm_index + i];
           squared_norm_b[i] <= decompressed_polynomial[squared_norm_index + i];
         end
         squared_norm_valid_in <= 1'b1;
