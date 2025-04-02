@@ -18,6 +18,7 @@ module hash_to_point_tb;
   logic [63:0] messages [16];
   logic [63:0] message;
   logic message_valid; //! Is message valid
+  logic message_last; //! Is message valid
 
   logic ready; //! Are we ready to receive the next message? When set we are ready to receive the next message
   logic [14:0] polynomial[N]; //! Output polynomial,defined as an array of coefficients
@@ -35,6 +36,7 @@ module hash_to_point_tb;
                   .message_len_bytes(message_len_bytes),
                   .message(message),
                   .message_valid(message_valid),
+                  .message_last(message_last),
                   .ready(ready),
                   .polynomial(polynomial),
                   .polynomial_valid(polynomial_valid)
@@ -73,8 +75,9 @@ module hash_to_point_tb;
 
     while(polynomial_valid !== 1'b1) begin
 
-      message_valid = i < 10; // Valid for 10 blocks of data
-      message = messages[i];
+      message_valid <= i < 10; // Valid for 10 blocks of data
+      message <= messages[i];
+      message_last <= (i == 9) ? 1'b1 : 1'b0; // Last block of data
 
       if(ready == 1'b1 && i < 10)
         i <= i + 1;

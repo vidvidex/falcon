@@ -123,7 +123,7 @@ module shake256_absorb(
 
   assign ready = state==RATE_COMPLETE ? 0 : 1;
   assign done = state==FINALIZE ? 1 : 0;
-  assign data_in_padded_valid = state == CONSUME_DELIMITED_SUFFIX || (state == ABSORB || data_in_valid == 1'b1) ? 1 : 0;
+  assign data_in_padded_valid = state == CONSUME_DELIMITED_SUFFIX || (state == ABSORB && data_in_valid == 1'b1) ? 1 : 0;
 
   always_comb begin
     case(state)
