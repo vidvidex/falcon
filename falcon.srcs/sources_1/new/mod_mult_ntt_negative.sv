@@ -68,6 +68,7 @@ module mod_mult_ntt_negative #(
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       a_times_b_times_12287 <= 0;
+      a_times_b_times_12287_times_12289 <= 0;
       a_times_b_1 <= 0;
       valid2 <= 0;
       index1_2 <= 0;
@@ -89,7 +90,6 @@ module mod_mult_ntt_negative #(
   // Stage 3: Final computation
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
-      a_times_b_times_12287_times_12289 <= 0;
       a_times_b_2 <= 0;
       valid3 <= 0;
       index1_3 <= 0;
