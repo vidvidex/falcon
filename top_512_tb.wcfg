@@ -2977,14 +2977,14 @@
             <obj_property name="ObjectShortName">sub_and_norm_index_out[9:0]</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/ntt_buffer1">
-         <obj_property name="ElementShortName">ntt_buffer1[0:511][14:0]</obj_property>
-         <obj_property name="ObjectShortName">ntt_buffer1[0:511][14:0]</obj_property>
+      <wvobject type="array" fp_name="/top_512_tb/uut/verify/verify_buffer1">
+         <obj_property name="ElementShortName">verify_buffer1[0:511][14:0]</obj_property>
+         <obj_property name="ObjectShortName">verify_buffer1[0:511][14:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/ntt_buffer2">
-         <obj_property name="ElementShortName">ntt_buffer2[0:511][14:0]</obj_property>
-         <obj_property name="ObjectShortName">ntt_buffer2[0:511][14:0]</obj_property>
+      <wvobject type="array" fp_name="/top_512_tb/uut/verify/verify_buffer2">
+         <obj_property name="ElementShortName">verify_buffer2[0:511][14:0]</obj_property>
+         <obj_property name="ObjectShortName">verify_buffer2[0:511][14:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/verify/ntt_state">

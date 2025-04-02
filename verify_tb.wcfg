@@ -248,14 +248,14 @@
             <obj_property name="ElementShortName">signature_error</obj_property>
             <obj_property name="ObjectShortName">signature_error</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer1">
-            <obj_property name="ElementShortName">ntt_buffer1[0:7][14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_buffer1[0:7][14:0]</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/verify_buffer1">
+            <obj_property name="ElementShortName">verify_buffer1[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">verify_buffer1[0:7][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/ntt_buffer2">
-            <obj_property name="ElementShortName">ntt_buffer2[0:7][14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_buffer2[0:7][14:0]</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/verify_buffer2">
+            <obj_property name="ElementShortName">verify_buffer2[0:7][14:0]</obj_property>
+            <obj_property name="ObjectShortName">verify_buffer2[0:7][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/verify_tb/uut/sub_and_normalize_index">
