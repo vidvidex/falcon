@@ -28,13 +28,13 @@ module shake256_squeeze(
   logic [3:0] state, next_state;
   logic rate_counter_eq;
 
-  assign rate_counter_eq = (rate_counter=='d128) ? 1'b1 : 1'b0; // 128 = rate - 8 (rate for SHAKE256 is 1088 bits = 136 bytes)
+  assign rate_counter_eq = (rate_counter=='d128 + 6) ? 1'b1 : 1'b0; // 128 = rate - 8 (rate for SHAKE256 is 1088 bits = 136 bytes); +6 because this code used to work with 64-bit blocks, but now we use 16-bit blocks, but we need to "consume" the other 3x 16 bits (3x 2B)
 
   always_ff @(posedge clk) begin
     if(rst || rst_rate_counter)
       rate_counter <= 8'd0;
     else if(inc_rate_counter)
-      rate_counter <= rate_counter + 8'd8;
+      rate_counter <= rate_counter + 8'd2;  // Every clock cycle we read 16 bit (2 bytes) from the output buffer
     else
       rate_counter <= rate_counter;
   end
