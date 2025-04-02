@@ -2,7 +2,6 @@
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Implements pipelined multiplication a*b mod 12289.
-// The delay of this module is 5 clock cycles.
 //
 // The module is tailored specifically for use in the ntt_negative module. For this reason we also have many other parameters, which we just pass through the pipeline
 // and output as they are. These parameters are for example index1, index2 and valid. They will be used when processing the result of multiplication in the parent module.
@@ -76,7 +75,9 @@ module mod_mult_ntt_negative #(
       passthrough_2 <= 0;
     end
     else begin
-      a_times_b_times_12287 <= 16'((((a_times_b << 3) + (a_times_b << 2)) << 10) - a_times_b);  // We only take the lowest 16 bits
+      logic [15:0] a_times_b_times_12287;
+      a_times_b_times_12287 = 16'(a_times_b * 12287);  // We only take the lowest 16 bits
+      a_times_b_times_12287_times_12289 <= a_times_b_times_12287 * 12289;
       a_times_b_1 <= a_times_b;
       valid2 <= valid1;
       index1_2 <= index1_1;
@@ -85,7 +86,7 @@ module mod_mult_ntt_negative #(
     end
   end
 
-  // Stage 3: Efficient multiplication by 12289
+  // Stage 3: Final computation
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       a_times_b_times_12287_times_12289 <= 0;
@@ -96,8 +97,7 @@ module mod_mult_ntt_negative #(
       passthrough_3 <= 0;
     end
     else begin
-      a_times_b_times_12287_times_12289 <= (((a_times_b_times_12287 << 3) + (a_times_b_times_12287 << 2)) << 10) + a_times_b_times_12287;
-      a_times_b_2 <= a_times_b_1;
+      sum_shifted <= (a_times_b_1 + a_times_b_times_12287_times_12289) >> 16;
       valid3 <= valid2;
       index1_3 <= index1_2;
       index2_3 <= index2_2;
@@ -105,47 +105,11 @@ module mod_mult_ntt_negative #(
     end
   end
 
-  // Stage 4: Final computation
-  always_ff @(posedge clk) begin
-    if(rst_n == 1'b0) begin
-      sum_shifted <= 0;
-      valid4 <= 0;
-      index1_4 <= 0;
-      index2_4 <= 0;
-      passthrough_4 <= 0;
-    end
-    else begin
-      sum_shifted <= (a_times_b_2 + a_times_b_times_12287_times_12289) >> 16;
-      valid4 <= valid3;
-      index1_4 <= index1_3;
-      index2_4 <= index2_3;
-      passthrough_4 <= passthrough_3;
-    end
-  end
-
-  // Stage 5: Modulo reduction
-  always_ff @(posedge clk) begin
-    if(rst_n == 1'b0) begin
-      result_i <= 0;
-      valid5 <= 0;
-      index1_5 <= 0;
-      index2_5 <= 0;
-      passthrough_5 <= 0;
-    end
-    else begin
-      result_i <= (sum_shifted >= 12289) ? (sum_shifted - 12289) : sum_shifted;
-      valid5 <= valid4;
-      index1_5 <= index1_4;
-      index2_5 <= index2_4;
-      passthrough_5 <= passthrough_4;
-    end
-  end
-
-  assign result = result_i;
-  assign index1_out = index1_5;
-  assign index2_out = index2_5;
-  assign passthrough_out = passthrough_5;
-  assign valid_out = valid5;
-  assign last = valid5 == 1'b1 && valid4 == 1'b0;
+  assign result = (sum_shifted >= 12289) ? (sum_shifted - 12289) : sum_shifted;
+  assign index1_out = index1_3;
+  assign index2_out = index2_3;
+  assign passthrough_out = passthrough_3;
+  assign valid_out = valid3;
+  assign last = valid3 == 1'b1 && valid2 == 1'b0;
 
 endmodule
