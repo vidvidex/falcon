@@ -18,7 +18,7 @@ module shake256(
     input logic data_in_valid,
 
     output logic ready_in,  //! When this signal is high, that means we can receive data via "data_in"
-    output logic[63:0] data_out,  //! 64-bit PRNG word output from Keccak state
+    output logic[15:0] data_out,  //! 16-bit PRNG word output from Keccak state
     output logic data_out_valid //! This signal is used to write Keccak-squeeze output
   );
 
@@ -68,14 +68,14 @@ module shake256(
   shake256_state shake256_state(
                    .clk(clk),
                    .rst(rst_state),
-                   .din_64bit(data_in_padded),
+                   .data_in(data_in_padded),
                    .data_in_padded_valid(data_in_padded_valid),
                    .state_out(state_out),
                    .state_in(state_in),
                    .we_state_in(write_state_in),
                    .we_output_buffer(we_output_buffer),
                    .shift_output_buffer(shift_output_buffer),
-                   .dout_64bit(data_out)
+                   .data_out(data_out)
                  );
 
   shake256_rounds shake256_rounds(
