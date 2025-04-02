@@ -62,6 +62,8 @@ module verify_sub_and_normalize#(
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         if (difference[i] > 6144)
           difference_normalized[i] <= difference[i] - 12289;
+        else if (difference[i] < -6144)
+          difference_normalized[i] <= difference[i] + 12289;
         else
           difference_normalized[i] <= difference[i];
       valid2 <= valid1;
