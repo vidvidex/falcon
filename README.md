@@ -22,3 +22,11 @@ Folder `scripts` contains the various scripts used during implementation
 - Falcon-512: 512
 - Falcon-1024: 1024
 
+# TODO:
+
+verify module: it seems like the high resource usage is due to strange access patterns of the "polynomial" array.
+For example mod_mult in verify is using very little resources while mod_mult in ntt_negative is using a lot, probably due to strange access patterns in ntt_negative. 
+Try using an explicit BRAM module inside ntt_negative, which should make the accesses simpler to understand to Vivado.
+In each clock cycle we're doing 2 reads and 2 writes (I think) so it would make sense to use 2 banks of dual port BRAM and exchange them: in one stage of NTT we read from bank A and write to bank B, in the next stage we read from bank B and write to bank A.
+The BRAM approach could be used elsewhere as well: in hash_to_point we could write the results into BRAM, then read them in verify module.
+Same for decompress and everything else. If we used enough banks we could make everything work (I mean we're already using the verify_buffer1 and verify_buffer2 in a similar way so we just need to make the BRAM explicit)
