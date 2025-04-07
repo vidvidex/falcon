@@ -20,13 +20,15 @@ module decompress #(
 
     output logic ready, //! Ready to decompress the next coefficient
     output logic [6:0] shift_by, //! Instruction to the parent module on how much to shift the compressed signature to the left
-    output logic signed [14:0] polynomial [N], //! Decompressed polynomial
+    output logic signed [14:0] coefficient, //! Decompressed coefficient
+    output logic [$clog2(N)-1:0] coefficient_index, //! Index of the decompressed coefficient
+    output logic coefficient_valid, //! Is the coefficient valid?
     output logic decompression_done,      //! Is decompression finished? When this is high the decompression is done. The parent should also check if the signature_error is high to see if there was an error in the signature.
     output logic signature_error    //! Was an error detected in the signature?
   );
 
-  logic signed [14:0] coefficient; //! Decompressed coefficient
-  logic [$clog2(N):0] decompressed_count; //! Number of coefficients decompressed so far
+  logic signed [14:0] coefficient_i; //! Decompressed coefficient
+  logic [$clog2(N):0] coefficient_index_i; //! Number of coefficients decompressed so far
 
   logic [6:0] bits_used; //! Number of bits used to decompress the current coefficient
   logic [$clog2(SLEN*8):0] total_bits_used; //! Total number of bits used to decompress the signature
@@ -48,7 +50,7 @@ module decompress #(
                            .compressed_signature(compressed_signature),
                            .valid_bits(decompress_coefficient_valid_bits),
 
-                           .coefficient(coefficient),
+                           .coefficient(coefficient_i),
                            .bits_used(bits_used),
                            .coefficient_valid(coefficient_valid),
                            .invalid_bits_used_error(invalid_bits_used_error),
@@ -79,7 +81,7 @@ module decompress #(
           next_state = DECOMPRESS_START;
       end
       DECOMPRESS_START: begin
-        if(decompressed_count == N) // If we decompressed all coefficients
+        if(coefficient_index_i == N) // If we decompressed all coefficients
           next_state = DONE;
         else if(valid_bits > 0)  // Wait for valid bits
           next_state = DECOMPRESSING;
@@ -110,18 +112,13 @@ module decompress #(
 
     case (state)
       IDLE: begin
-        for(int i = 0; i < N; i = i + 1)
-          polynomial[i] <= 0;
         total_bits_used <= 0;
-        decompressed_count <= 0;
+        coefficient_index_i <= 0;
         used_bit_count_error <= 0;
       end
       DECOMPRESSING: begin
         if(coefficient_valid == 1'b1) begin
-          // Store the decompressed coefficient
-          polynomial[decompressed_count] <= coefficient;
-          decompressed_count <= decompressed_count + 1;
-
+          coefficient_index_i <= coefficient_index_i + 1;
           // Check if we already used too many bits to decompress the signature
           total_bits_used <= total_bits_used + bits_used;
           if(total_bits_used > SLEN*8)
@@ -133,6 +130,9 @@ module decompress #(
 
   assign remaining_bits_not_zeros_error = (state == DONE && compressed_signature[104:98] != 0);
   assign shift_by = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? bits_used : 0;
+  assign coefficient = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? coefficient_i : 0;
+  assign coefficient_valid = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? 1'b1 : 0;
+  assign coefficient_index = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? coefficient_index_i : 0;
   assign ready = state == DECOMPRESS_START;
   assign decompression_done = state == DONE;
   assign signature_error = invalid_bits_used_error || cannot_find_high_error || used_bit_count_error || remaining_bits_not_zeros_error || invalid_zero_representation_error;

@@ -10,16 +10,18 @@ module decompress_tb;
   logic [191:0] compressed_signature_full;
   logic [104:0] compressed_signature;
 
-  logic signed [14:0] decompressed_polynomial [N];
+  logic signed [14:0] coefficient;
+  logic [$clog2(N)-1:0] coefficient_index ;
+  logic coefficient_valid;
   logic signed [14:0] expected_polynomial [N];
-  logic [7:0] valid_bits, shift_by;
+  logic [7:0] valid_bits;
+  logic [6:0] shift_by;
   logic decompression_done;
 
   logic start = 0;
   logic ready;
 
   int total_valid_bits;
-  int index;
 
   decompress #(
                .N(N),
@@ -36,7 +38,9 @@ module decompress_tb;
 
                .ready(ready),
                .shift_by(shift_by),
-               .polynomial(decompressed_polynomial),
+               .coefficient(coefficient),
+               .coefficient_valid(coefficient_valid),
+               .coefficient_index(coefficient_index),
                .decompression_done(decompression_done),
                .signature_error(signature_error)
              );
@@ -68,15 +72,16 @@ module decompress_tb;
       compressed_signature_full = compressed_signature_full << shift_by;
       if(ready == 1'b1)
         total_valid_bits = total_valid_bits - shift_by;
+
+      if(coefficient_valid == 1'b1) begin
+        if(coefficient != expected_polynomial[coefficient_index])
+          $fatal(1, "Test 1: Coefficient %0d is not equal to expected %0d", coefficient, expected_polynomial[coefficient_index]);
+        if(signature_error == 1'b1)
+          $fatal(1, "Test 1: Signature error detected");
+      end
+
       #10;
     end
-
-    // Check output
-    for(int i = 0; i < N; i = i + 1)
-      if(decompressed_polynomial[i] != expected_polynomial[i])
-        $fatal(1, "Test 1: Expected coefficient %d, got %d", expected_polynomial[i], decompressed_polynomial[i]);
-    if(signature_error == 1'b1)
-      $fatal(1, "Test 1: Signature error detected");
     $display("Test 1 passed!");
 
 
@@ -133,7 +138,7 @@ module decompress_tb;
       $fatal(1, "Test 3: Signature error not detected");
     $display("Test 3 passed!");
 
-    
+
     $display("All tests for decompress passed!");
     $finish;
   end
