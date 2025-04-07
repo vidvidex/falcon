@@ -24,8 +24,10 @@ module hash_to_point#(
     input logic message_last, //! Is this the last block of message
 
     output logic ready, //! Are we ready to receive the next message?
-    output logic signed [14:0] polynomial[N], //! Output polynomial, defined as an array of coefficients
-    output logic polynomial_valid //! Is polynomial valid
+    output logic signed [14:0] coefficient, //! Next coefficient coefficient
+    output logic [$clog2(N)-1:0] coefficient_index, //! Index of the coefficient
+    output logic coefficient_valid, //! Is the coefficient valid?
+    output logic done //! Are we done hashing the message to a polynomial?
   );
 
   typedef enum logic[2:0] {
@@ -40,18 +42,16 @@ module hash_to_point#(
   logic data_in_valid;
   logic shake256_ready;
   logic [15:0] data_out;
-  logic data_out_valid, data_out_valid_i, data_out_valid_ii;
+  logic data_out_valid, data_out_valid_i;
   logic shake256_reset; // Reset signal for shake256 module, active high
-  logic unsigned [$clog2(N):0] polynomial_index; // Index of the polynomial that we are currently writing to
-  logic [15:0] t; // 16 bits of hash that we are currently processing into a polynomial
-  logic [14:0] t_i; // Same as above, but further in the pipeline
-
-  logic t_i_ok; // Is the coefficient less than k*q?
+  logic [$clog2(N):0] coefficient_index_i;
+  logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
+  logic [14:0] coefficient;
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
 
-  assign polynomial_valid = polynomial_index == N; // Polynomial is valid when we have filled all the coefficients
+  assign done = coefficient_index_i == N;
 
   shake256 shake256(
              .clk(clk),
@@ -106,7 +106,7 @@ module hash_to_point#(
       end
       WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low). If we have all coefficients we can go back to IDLE, otherwise we go to WAIT_FOR_SQUEEZE and wait for more data
         if (!data_out_valid)
-          if (polynomial_index < N)
+          if (coefficient_index_i < N)
             next_state = WAIT_FOR_SQUEEZE;
           else
             next_state = IDLE;
@@ -154,7 +154,7 @@ module hash_to_point#(
 
   assign ready = (state == ABSORB) ? 1 : 0;
 
-  // State 1 of converting hash output to polynomial: Read and swap the bytes of the hash output
+  // State 1 of converting hash output to coefficient: Read and swap the bytes of the hash output
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
       data_out_valid_i <= 0;
@@ -166,30 +166,23 @@ module hash_to_point#(
     data_out_valid_i <= data_out_valid;
   end
 
-  // State 2 of converting hash output to polynomial: Check if the coefficient is less than k*q and compute the modulo 12289
+  // State 2 of converting hash output to coefficient: Check if the coefficient is less than k*q and compute the modulo 12289
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
-      t_i_ok <= 0;
+      coefficient_index_i <= 0;
+      coefficient_valid <= 0;
     end
-    else if (data_out_valid_i == 1'b1) begin
-      t_i_ok <= t < k_times_q;
-      t_i <= mod_12289(t);
+    else if (data_out_valid_i == 1'b1 && t < k_times_q) begin
+      coefficient <= mod_12289(t);
+      coefficient_index_i++;
+      coefficient_valid <= 1'b1;
     end
-    data_out_valid_ii <= data_out_valid_i;
+    else
+      coefficient_valid <= 0;
   end
 
-  // State 3 of converting hash output to polynomial: Write the coefficients to the polynomial
-  always_ff @(posedge clk) begin
-    if(rst_n == 1'b0) begin
-      polynomial_index <= 0;
-    end
-    else if(data_out_valid_ii == 1'b1) begin
-      if(t_i_ok == 1 && polynomial_index < N) begin
-        polynomial[polynomial_index] <= t_i;
-        polynomial_index = polynomial_index + 1;
-      end
-    end
-  end
+  // coefficient_index is coefficient_index_i without the top bit and decremented by 1
+  assign coefficient_index = coefficient_index_i - 1;
 
 endmodule
 

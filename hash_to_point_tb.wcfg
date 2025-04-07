@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5,917.333 ns"></ZoomStartTime>
-      <ZoomEndTime time="6,190.534 ns"></ZoomEndTime>
-      <Cursor1Time time="6,145.000 ns"></Cursor1Time>
+      <ZoomStartTime time="6,000.833 ns"></ZoomStartTime>
+      <ZoomEndTime time="6,161.834 ns"></ZoomEndTime>
+      <Cursor1Time time="6,135.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="254"></NameColumnWidth>
-      <ValueColumnWidth column_width="206"></ValueColumnWidth>
+      <ValueColumnWidth column_width="198"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group2035">
@@ -51,17 +51,9 @@
          <obj_property name="ElementShortName">ready</obj_property>
          <obj_property name="ObjectShortName">ready</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/polynomial">
-         <obj_property name="ElementShortName">polynomial[0:511][14:0]</obj_property>
-         <obj_property name="ObjectShortName">polynomial[0:511][14:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/expected_polynomial">
          <obj_property name="ElementShortName">expected_polynomial[0:511][14:0]</obj_property>
          <obj_property name="ObjectShortName">expected_polynomial[0:511][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/polynomial_valid">
-         <obj_property name="ElementShortName">polynomial_valid</obj_property>
-         <obj_property name="ObjectShortName">polynomial_valid</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/i">
          <obj_property name="ElementShortName">i[31:0]</obj_property>
@@ -108,18 +100,24 @@
          <obj_property name="ElementShortName">ready</obj_property>
          <obj_property name="ObjectShortName">ready</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/uut/polynomial">
-         <obj_property name="ElementShortName">polynomial[0:511][14:0]</obj_property>
-         <obj_property name="ObjectShortName">polynomial[0:511][14:0]</obj_property>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/coefficient">
+         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/uut/polynomial_index">
-         <obj_property name="ElementShortName">polynomial_index[9:0]</obj_property>
-         <obj_property name="ObjectShortName">polynomial_index[9:0]</obj_property>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/coefficient_index">
+         <obj_property name="ElementShortName">coefficient_index[8:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient_index[8:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/polynomial_valid">
-         <obj_property name="ElementShortName">polynomial_valid</obj_property>
-         <obj_property name="ObjectShortName">polynomial_valid</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/coefficient_valid">
+         <obj_property name="ElementShortName">coefficient_valid</obj_property>
+         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/hash_to_point_tb/uut/coefficient_index_i">
+         <obj_property name="ElementShortName">coefficient_index_i[9:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient_index_i[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/state">
          <obj_property name="ElementShortName">state[2:0]</obj_property>
@@ -145,16 +143,6 @@
          <obj_property name="ElementShortName">shake256_ready</obj_property>
          <obj_property name="ObjectShortName">shake256_ready</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/uut/t1">
-         <obj_property name="ElementShortName">t1[15:0]</obj_property>
-         <obj_property name="ObjectShortName">t1[15:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/uut/t1_i">
-         <obj_property name="ElementShortName">t1_i[14:0]</obj_property>
-         <obj_property name="ObjectShortName">t1_i[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/data_out">
          <obj_property name="ElementShortName">data_out[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_out[15:0]</obj_property>
@@ -167,10 +155,6 @@
       <wvobject type="logic" fp_name="/hash_to_point_tb/uut/data_out_valid_i">
          <obj_property name="ElementShortName">data_out_valid_i</obj_property>
          <obj_property name="ObjectShortName">data_out_valid_i</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/uut/data_out_valid_ii">
-         <obj_property name="ElementShortName">data_out_valid_ii</obj_property>
-         <obj_property name="ObjectShortName">data_out_valid_ii</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/uut/k_times_q">
          <obj_property name="ElementShortName">k_times_q[15:0]</obj_property>
