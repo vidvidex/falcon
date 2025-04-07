@@ -27,7 +27,7 @@ module pynq_zu_clock(
            .O(clk)
          );
 
-  top_512 uut(
+  top_1024 uut(
           .clk(clk),
           .btns(btns),
           .leds(leds)
