@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="165.125 ns"></ZoomEndTime>
-      <Cursor1Time time="150.000 ns"></Cursor1Time>
+      <ZoomStartTime time="342.880 ns"></ZoomStartTime>
+      <ZoomEndTime time="531.881 ns"></ZoomEndTime>
+      <Cursor1Time time="414.680 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="185"></NameColumnWidth>
-      <ValueColumnWidth column_width="88"></ValueColumnWidth>
+      <NameColumnWidth column_width="245"></NameColumnWidth>
+      <ValueColumnWidth column_width="67"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="2" />
+   <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group152">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -40,28 +40,200 @@
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_polynomial">
-         <obj_property name="ElementShortName">input_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">input_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/ntt_negative_8_tb/done">
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_polynomial">
-         <obj_property name="ElementShortName">output_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">output_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram_addr1">
+         <obj_property name="ElementShortName">input_bram_addr1[2:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_addr1[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/expected_output_polynomial">
-         <obj_property name="ElementShortName">expected_output_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">expected_output_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDMAGRADIX</obj_property>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram_addr2">
+         <obj_property name="ElementShortName">input_bram_addr2[2:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_addr2[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram_addr1">
+         <obj_property name="ElementShortName">output_bram_addr1[2:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_addr1[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram_addr2">
+         <obj_property name="ElementShortName">output_bram_addr2[2:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_addr2[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram_data1">
+         <obj_property name="ElementShortName">input_bram_data1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data1[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram_data2">
+         <obj_property name="ElementShortName">input_bram_data2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data2[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram_data1">
+         <obj_property name="ElementShortName">output_bram_data1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_data1[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram_data2">
+         <obj_property name="ElementShortName">output_bram_data2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_data2[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/output_bram_we1">
+         <obj_property name="ElementShortName">output_bram_we1</obj_property>
+         <obj_property name="ObjectShortName">output_bram_we1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/output_bram_we2">
+         <obj_property name="ElementShortName">output_bram_we2</obj_property>
+         <obj_property name="ObjectShortName">output_bram_we2</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram_data_in_a">
+         <obj_property name="ElementShortName">input_bram_data_in_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data_in_a[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/input_bram_we_a">
+         <obj_property name="ElementShortName">input_bram_we_a</obj_property>
+         <obj_property name="ObjectShortName">input_bram_we_a</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram_data_out_a">
+         <obj_property name="ElementShortName">output_bram_data_out_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_data_out_a[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group227">
+         <obj_property name="label">input_bram</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/input_bram/clk">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/addr_a">
+            <obj_property name="ElementShortName">addr_a[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_a[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/data_in_a">
+            <obj_property name="ElementShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/input_bram/we_a">
+            <obj_property name="ElementShortName">we_a</obj_property>
+            <obj_property name="ObjectShortName">we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/addr_b">
+            <obj_property name="ElementShortName">addr_b[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_b[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/data_in_b">
+            <obj_property name="ElementShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/input_bram/we_b">
+            <obj_property name="ElementShortName">we_b</obj_property>
+            <obj_property name="ObjectShortName">we_b</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/data_out_a">
+            <obj_property name="ElementShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/data_out_b">
+            <obj_property name="ElementShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/ram">
+            <obj_property name="ElementShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/ram_data_a">
+            <obj_property name="ElementShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/ram_data_b">
+            <obj_property name="ElementShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/input_bram/ram_index">
+            <obj_property name="ElementShortName">ram_index[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_index[31:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group227">
+         <obj_property name="label">output_bram</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/output_bram/clk">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/addr_a">
+            <obj_property name="ElementShortName">addr_a[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_a[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/data_in_a">
+            <obj_property name="ElementShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/output_bram/we_a">
+            <obj_property name="ElementShortName">we_a</obj_property>
+            <obj_property name="ObjectShortName">we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/addr_b">
+            <obj_property name="ElementShortName">addr_b[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_b[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/data_in_b">
+            <obj_property name="ElementShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/output_bram/we_b">
+            <obj_property name="ElementShortName">we_b</obj_property>
+            <obj_property name="ObjectShortName">we_b</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/data_out_a">
+            <obj_property name="ElementShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/data_out_b">
+            <obj_property name="ElementShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/ram">
+            <obj_property name="ElementShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/ram_data_a">
+            <obj_property name="ElementShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/ram_data_b">
+            <obj_property name="ElementShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/output_bram/ram_index">
+            <obj_property name="ElementShortName">ram_index[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_index[31:0]</obj_property>
+         </wvobject>
       </wvobject>
    </wvobject>
-   <wvobject type="group" fp_name="group153">
-      <obj_property name="label">NTT</obj_property>
+   <wvobject type="group" fp_name="group111">
+      <obj_property name="label">ntt</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/clk">
@@ -80,21 +252,13 @@
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/input_polynomial">
-         <obj_property name="ElementShortName">input_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">input_polynomial[0:7][14:0]</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/done">
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/output_polynomial">
-         <obj_property name="ElementShortName">output_polynomial[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">output_polynomial[0:7][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/polynomial">
-         <obj_property name="ElementShortName">polynomial[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">polynomial[0:7][14:0]</obj_property>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/stage_counter">
+         <obj_property name="ElementShortName">stage_counter[2:0]</obj_property>
+         <obj_property name="ObjectShortName">stage_counter[2:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/stage">
          <obj_property name="ElementShortName">stage[3:0]</obj_property>
@@ -124,61 +288,276 @@
          <obj_property name="ElementShortName">group[2:0]</obj_property>
          <obj_property name="ObjectShortName">group[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_factor">
-         <obj_property name="ElementShortName">twiddle_factor[14:0]</obj_property>
-         <obj_property name="ObjectShortName">twiddle_factor[14:0]</obj_property>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_address">
+         <obj_property name="ElementShortName">twiddle_address[9:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_address[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_a">
-         <obj_property name="ElementShortName">mod_mult_a[14:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_a[14:0]</obj_property>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_factor_i">
+         <obj_property name="ElementShortName">twiddle_factor_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_factor_i[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_b">
-         <obj_property name="ElementShortName">mod_mult_b[14:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_b[14:0]</obj_property>
+      <wvobject type="group" fp_name="group207">
+         <obj_property name="label">mod_mult</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_a">
+            <obj_property name="ElementShortName">mod_mult_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_b">
+            <obj_property name="ElementShortName">mod_mult_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_result">
+            <obj_property name="ElementShortName">mod_mult_result[14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_result[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index1_in_i">
+            <obj_property name="ElementShortName">mod_mult_index1_in_i[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index1_in_i[3:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index2_in_i">
+            <obj_property name="ElementShortName">mod_mult_index2_in_i[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index2_in_i[3:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index1_out">
+            <obj_property name="ElementShortName">mod_mult_index1_out[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index1_out[3:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index2_out">
+            <obj_property name="ElementShortName">mod_mult_index2_out[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index2_out[3:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_valid_in_i">
+            <obj_property name="ElementShortName">mod_mult_valid_in_i</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_valid_in_i</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_valid_out">
+            <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_last">
+            <obj_property name="ElementShortName">mod_mult_last</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_last</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_write_complete">
+            <obj_property name="ElementShortName">bram_write_complete</obj_property>
+            <obj_property name="ObjectShortName">bram_write_complete</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_passthrough_in">
+            <obj_property name="ElementShortName">mod_mult_passthrough_in[14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_passthrough_in[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_passthrough_out">
+            <obj_property name="ElementShortName">mod_mult_passthrough_out[14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_passthrough_out[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_result">
-         <obj_property name="ElementShortName">mod_mult_result[14:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_result[14:0]</obj_property>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/intt_scale_index">
+         <obj_property name="ElementShortName">intt_scale_index[3:0]</obj_property>
+         <obj_property name="ObjectShortName">intt_scale_index[3:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index1_in">
-         <obj_property name="ElementShortName">mod_mult_index1_in[3:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_index1_in[3:0]</obj_property>
+      <wvobject type="group" fp_name="group204">
+         <obj_property name="label">input_bram</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/input_bram_addr1">
+            <obj_property name="ElementShortName">input_bram_addr1[3:0]</obj_property>
+            <obj_property name="ObjectShortName">input_bram_addr1[3:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/input_bram_data1">
+            <obj_property name="ElementShortName">input_bram_data1[14:0]</obj_property>
+            <obj_property name="ObjectShortName">input_bram_data1[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/input_bram_addr2">
+            <obj_property name="ElementShortName">input_bram_addr2[3:0]</obj_property>
+            <obj_property name="ObjectShortName">input_bram_addr2[3:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/input_bram_data2">
+            <obj_property name="ElementShortName">input_bram_data2[14:0]</obj_property>
+            <obj_property name="ObjectShortName">input_bram_data2[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index2_in">
-         <obj_property name="ElementShortName">mod_mult_index2_in[3:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_index2_in[3:0]</obj_property>
+      <wvobject type="group" fp_name="group208">
+         <obj_property name="label">bram_bank1</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram1_addr_a">
+            <obj_property name="ElementShortName">bram1_addr_a[2:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_addr_a[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram1_data_in_a">
+            <obj_property name="ElementShortName">bram1_data_in_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_data_in_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram1_data_out_a">
+            <obj_property name="ElementShortName">bram1_data_out_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_data_out_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram1_we_a">
+            <obj_property name="ElementShortName">bram1_we_a</obj_property>
+            <obj_property name="ObjectShortName">bram1_we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram1_addr_b">
+            <obj_property name="ElementShortName">bram1_addr_b[2:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_addr_b[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram1_data_in_b">
+            <obj_property name="ElementShortName">bram1_data_in_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_data_in_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram1_data_out_b">
+            <obj_property name="ElementShortName">bram1_data_out_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_data_out_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram1_we_b">
+            <obj_property name="ElementShortName">bram1_we_b</obj_property>
+            <obj_property name="ObjectShortName">bram1_we_b</obj_property>
+         </wvobject>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index1_out">
-         <obj_property name="ElementShortName">mod_mult_index1_out[3:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_index1_out[3:0]</obj_property>
+      <wvobject type="group" fp_name="group210">
+         <obj_property name="label">bram_bank2</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram2_addr_a">
+            <obj_property name="ElementShortName">bram2_addr_a[2:0]</obj_property>
+            <obj_property name="ObjectShortName">bram2_addr_a[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram2_data_in_a">
+            <obj_property name="ElementShortName">bram2_data_in_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram2_data_in_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram2_data_out_a">
+            <obj_property name="ElementShortName">bram2_data_out_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram2_data_out_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram2_we_a">
+            <obj_property name="ElementShortName">bram2_we_a</obj_property>
+            <obj_property name="ObjectShortName">bram2_we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram2_addr_b">
+            <obj_property name="ElementShortName">bram2_addr_b[2:0]</obj_property>
+            <obj_property name="ObjectShortName">bram2_addr_b[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram2_data_in_b">
+            <obj_property name="ElementShortName">bram2_data_in_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram2_data_in_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram2_data_out_b">
+            <obj_property name="ElementShortName">bram2_data_out_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">bram2_data_out_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram2_we_b">
+            <obj_property name="ElementShortName">bram2_we_b</obj_property>
+            <obj_property name="ObjectShortName">bram2_we_b</obj_property>
+         </wvobject>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult_index2_out">
-         <obj_property name="ElementShortName">mod_mult_index2_out[3:0]</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_index2_out[3:0]</obj_property>
+      <wvobject type="group" fp_name="group211">
+         <obj_property name="label">bram read/write</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/read_addr1">
+            <obj_property name="ElementShortName">read_addr1[2:0]</obj_property>
+            <obj_property name="ObjectShortName">read_addr1[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/read_data1">
+            <obj_property name="ElementShortName">read_data1[14:0]</obj_property>
+            <obj_property name="ObjectShortName">read_data1[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/read_addr2">
+            <obj_property name="ElementShortName">read_addr2[2:0]</obj_property>
+            <obj_property name="ObjectShortName">read_addr2[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/read_data2">
+            <obj_property name="ElementShortName">read_data2[14:0]</obj_property>
+            <obj_property name="ObjectShortName">read_data2[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/write_addr1">
+            <obj_property name="ElementShortName">write_addr1[2:0]</obj_property>
+            <obj_property name="ObjectShortName">write_addr1[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/write_data1">
+            <obj_property name="ElementShortName">write_data1[14:0]</obj_property>
+            <obj_property name="ObjectShortName">write_data1[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/write_enable1">
+            <obj_property name="ElementShortName">write_enable1</obj_property>
+            <obj_property name="ObjectShortName">write_enable1</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/write_addr2">
+            <obj_property name="ElementShortName">write_addr2[2:0]</obj_property>
+            <obj_property name="ObjectShortName">write_addr2[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/write_data2">
+            <obj_property name="ElementShortName">write_data2[14:0]</obj_property>
+            <obj_property name="ObjectShortName">write_data2[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/write_enable2">
+            <obj_property name="ElementShortName">write_enable2</obj_property>
+            <obj_property name="ObjectShortName">write_enable2</obj_property>
+         </wvobject>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_valid_in">
-         <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_valid_out">
-         <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult_last">
-         <obj_property name="ElementShortName">mod_mult_last</obj_property>
-         <obj_property name="ObjectShortName">mod_mult_last</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_rom_ntt">
-         <obj_property name="ElementShortName">twiddle_rom_ntt[0:1023][14:0]</obj_property>
-         <obj_property name="ObjectShortName">twiddle_rom_ntt[0:1023][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/twiddle_rom_intt">
-         <obj_property name="ElementShortName">twiddle_rom_intt[0:1023][14:0]</obj_property>
-         <obj_property name="ObjectShortName">twiddle_rom_intt[0:1023][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/intt_scale_factor">
-         <obj_property name="ElementShortName">intt_scale_factor[31:0]</obj_property>
-         <obj_property name="ObjectShortName">intt_scale_factor[31:0]</obj_property>
+      <wvobject type="group" fp_name="group206">
+         <obj_property name="label">output_bram</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/output_bram_addr1">
+            <obj_property name="ElementShortName">output_bram_addr1[3:0]</obj_property>
+            <obj_property name="ObjectShortName">output_bram_addr1[3:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/output_bram_data1">
+            <obj_property name="ElementShortName">output_bram_data1[14:0]</obj_property>
+            <obj_property name="ObjectShortName">output_bram_data1[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/output_bram_we1">
+            <obj_property name="ElementShortName">output_bram_we1</obj_property>
+            <obj_property name="ObjectShortName">output_bram_we1</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/output_bram_addr2">
+            <obj_property name="ElementShortName">output_bram_addr2[3:0]</obj_property>
+            <obj_property name="ObjectShortName">output_bram_addr2[3:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/output_bram_data2">
+            <obj_property name="ElementShortName">output_bram_data2[14:0]</obj_property>
+            <obj_property name="ObjectShortName">output_bram_data2[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/output_bram_we2">
+            <obj_property name="ElementShortName">output_bram_we2</obj_property>
+            <obj_property name="ObjectShortName">output_bram_we2</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/state">
          <obj_property name="ElementShortName">state[2:0]</obj_property>
@@ -188,7 +567,274 @@
          <obj_property name="ElementShortName">next_state[2:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/N">
+      <wvobject type="group" fp_name="group326">
+         <obj_property name="label">bank1</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank1/clk">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/addr_a">
+            <obj_property name="ElementShortName">addr_a[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_a[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/data_in_a">
+            <obj_property name="ElementShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank1/we_a">
+            <obj_property name="ElementShortName">we_a</obj_property>
+            <obj_property name="ObjectShortName">we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/addr_b">
+            <obj_property name="ElementShortName">addr_b[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_b[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/data_in_b">
+            <obj_property name="ElementShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank1/we_b">
+            <obj_property name="ElementShortName">we_b</obj_property>
+            <obj_property name="ObjectShortName">we_b</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/data_out_a">
+            <obj_property name="ElementShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/data_out_b">
+            <obj_property name="ElementShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/ram">
+            <obj_property name="ElementShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/ram_data_a">
+            <obj_property name="ElementShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/ram_data_b">
+            <obj_property name="ElementShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank1/ram_index">
+            <obj_property name="ElementShortName">ram_index[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_index[31:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group326">
+         <obj_property name="label">bank2</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/clk">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/addr_a">
+            <obj_property name="ElementShortName">addr_a[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_a[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/data_in_a">
+            <obj_property name="ElementShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/we_a">
+            <obj_property name="ElementShortName">we_a</obj_property>
+            <obj_property name="ObjectShortName">we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/addr_b">
+            <obj_property name="ElementShortName">addr_b[2:0]</obj_property>
+            <obj_property name="ObjectShortName">addr_b[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/data_in_b">
+            <obj_property name="ElementShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_in_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/we_b">
+            <obj_property name="ElementShortName">we_b</obj_property>
+            <obj_property name="ObjectShortName">we_b</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/data_out_a">
+            <obj_property name="ElementShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/data_out_b">
+            <obj_property name="ElementShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">data_out_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/enable_a">
+            <obj_property name="ElementShortName">enable_a</obj_property>
+            <obj_property name="ObjectShortName">enable_a</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/enable_b">
+            <obj_property name="ElementShortName">enable_b</obj_property>
+            <obj_property name="ObjectShortName">enable_b</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/output_enable_a">
+            <obj_property name="ElementShortName">output_enable_a</obj_property>
+            <obj_property name="ObjectShortName">output_enable_a</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/bram_bank2/output_enable_b">
+            <obj_property name="ElementShortName">output_enable_b</obj_property>
+            <obj_property name="ObjectShortName">output_enable_b</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/ram">
+            <obj_property name="ElementShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram[7:0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/ram_data_a">
+            <obj_property name="ElementShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_a[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/ram_data_b">
+            <obj_property name="ElementShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_data_b[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/bram_bank2/ram_index">
+            <obj_property name="ElementShortName">ram_index[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ram_index[31:0]</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group283">
+      <obj_property name="label">mod_mult</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/a">
+         <obj_property name="ElementShortName">a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">a[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/b">
+         <obj_property name="ElementShortName">b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">b[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index1_in">
+         <obj_property name="ElementShortName">index1_in[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index1_in[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index2_in">
+         <obj_property name="ElementShortName">index2_in[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index2_in[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/last">
+         <obj_property name="ElementShortName">last</obj_property>
+         <obj_property name="ObjectShortName">last</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index1_out">
+         <obj_property name="ElementShortName">index1_out[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index1_out[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index2_out">
+         <obj_property name="ElementShortName">index2_out[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index2_out[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/a_times_b">
+         <obj_property name="ElementShortName">a_times_b[29:0]</obj_property>
+         <obj_property name="ObjectShortName">a_times_b[29:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/a_times_b_1">
+         <obj_property name="ElementShortName">a_times_b_1[29:0]</obj_property>
+         <obj_property name="ObjectShortName">a_times_b_1[29:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/a_times_b_times_12287">
+         <obj_property name="ElementShortName">a_times_b_times_12287[15:0]</obj_property>
+         <obj_property name="ObjectShortName">a_times_b_times_12287[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/a_times_b_times_12287_times_12289">
+         <obj_property name="ElementShortName">a_times_b_times_12287_times_12289[30:0]</obj_property>
+         <obj_property name="ObjectShortName">a_times_b_times_12287_times_12289[30:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/sum_shifted">
+         <obj_property name="ElementShortName">sum_shifted[14:0]</obj_property>
+         <obj_property name="ObjectShortName">sum_shifted[14:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/result">
+         <obj_property name="ElementShortName">result[14:0]</obj_property>
+         <obj_property name="ObjectShortName">result[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/valid1">
+         <obj_property name="ElementShortName">valid1</obj_property>
+         <obj_property name="ObjectShortName">valid1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/valid2">
+         <obj_property name="ElementShortName">valid2</obj_property>
+         <obj_property name="ObjectShortName">valid2</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_negative_8_tb/uut/mod_mult/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index1_1">
+         <obj_property name="ElementShortName">index1_1[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index1_1[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index1_2">
+         <obj_property name="ElementShortName">index1_2[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index1_2[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index2_1">
+         <obj_property name="ElementShortName">index2_1[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index2_1[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/index2_2">
+         <obj_property name="ElementShortName">index2_2[3:0]</obj_property>
+         <obj_property name="ObjectShortName">index2_2[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/passthrough_in">
+         <obj_property name="ElementShortName">passthrough_in[14:0]</obj_property>
+         <obj_property name="ObjectShortName">passthrough_in[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/passthrough_1">
+         <obj_property name="ElementShortName">passthrough_1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">passthrough_1[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/passthrough_2">
+         <obj_property name="ElementShortName">passthrough_2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">passthrough_2[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/passthrough_out">
+         <obj_property name="ElementShortName">passthrough_out[14:0]</obj_property>
+         <obj_property name="ObjectShortName">passthrough_out[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_negative_8_tb/uut/mod_mult/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
          <obj_property name="ObjectShortName">N[31:0]</obj_property>
       </wvobject>
