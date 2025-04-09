@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module twiddle_rom#(
+module ntt_positive_twiddle_rom#(
     parameter int N
   )(
     input logic mode, // 0: NTT, 1: Inverse NTT
