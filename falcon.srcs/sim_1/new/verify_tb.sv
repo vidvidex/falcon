@@ -12,6 +12,9 @@ module verify_tb;
   logic [6:0] signature_valid_blocks [2];   // Buffer for signature value valid blocks
 
   logic signed [14:0] public_key[8] = {7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+  logic signed [14:0] public_key_element; //! Public key element (one of the 8 elements of the public key)
+  logic public_key_valid; //! Is public key valid
+  logic public_key_ready; //! Is ready to receive the next public key element
 
   logic [15:0] message_len_bytes; //! Length of the message in bytes (without salt)
   logic [63:0] message;
@@ -26,6 +29,7 @@ module verify_tb;
   logic accept; //! Set to true if signature is valid
   logic reject; //! Set to true if signature is invalid
 
+  int public_key_block_index = 0;
   int message_block_index = 0;
   int signature_block_index = 0;
 
@@ -38,8 +42,9 @@ module verify_tb;
 
            .start(start),
 
-           .public_key(public_key),
-           .public_key_valid(1'b1),
+           .public_key_element(public_key_element),
+           .public_key_valid(public_key_valid),
+           .public_key_ready(public_key_ready),
 
            .message_len_bytes(message_len_bytes),
            .message(message),
@@ -58,11 +63,21 @@ module verify_tb;
   always_ff @(posedge clk) begin
 
     if(rst_n == 1'b0) begin
+      public_key_block_index <= 0;
       message_block_index <= 0;
       signature_block_index <= 0;
     end
 
     if(!accept && !reject) begin
+
+      // Send new public key element if module is ready for it
+      if (public_key_ready && public_key_block_index < 8) begin
+        public_key_element <= public_key[public_key_block_index];
+        public_key_block_index <= public_key_block_index + 1;
+        public_key_valid <= 1;
+      end
+      else if (public_key_block_index >= 8) // Set valid to low after we've sent all public key elements
+        public_key_valid <= 0;
 
       // Send new message block if module is ready for it
       if (message_ready && message_block_index < 7) begin
