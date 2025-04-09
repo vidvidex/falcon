@@ -58,7 +58,7 @@ module ntt_positive#(
   state_t state, next_state;
 
   // Instantiate twiddle factor ROM
-  twiddle_rom #(.N(N)) twiddle_rom (
+  ntt_positive_twiddle_rom #(.N(N)) twiddle_rom (
                 .mode(mode),
                 .addr(address),
                 .data(twiddle_factor)
