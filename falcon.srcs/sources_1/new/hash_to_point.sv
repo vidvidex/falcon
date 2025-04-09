@@ -47,7 +47,6 @@ module hash_to_point#(
   logic shake256_reset; // Reset signal for shake256 module, active high
   logic [$clog2(N):0] coefficient_index_i;
   logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
-  logic [14:0] coefficient;
   logic coefficient_valid_internal;
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
