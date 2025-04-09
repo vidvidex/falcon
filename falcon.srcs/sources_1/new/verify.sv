@@ -397,14 +397,51 @@ module verify#(
   // BRAM signal routing
   always_comb begin
 
+    bram1_addr_a = 0;
+    bram1_addr_b = 0;
+    bram1_data_in_a = 0;
+    bram1_data_in_b = 0;
     bram1_we_a = 0;
     bram1_we_b = 0;
+
+    bram2_addr_a = 0;
+    bram2_addr_b = 0;
+    bram2_data_in_a = 0;
+    bram2_data_in_b = 0;
     bram2_we_a = 0;
     bram2_we_b = 0;
+
+    bram3_addr_a = 0;
+    bram3_addr_b = 0;
+    bram3_data_in_a = 0;
+    bram3_data_in_b = 0;
     bram3_we_a = 0;
     bram3_we_b = 0;
+
+    bram4_addr_a = 0;
+    bram4_addr_b = 0;
+    bram4_data_in_a = 0;
+    bram4_data_in_b = 0;
     bram4_we_a = 0;
     bram4_we_b = 0;
+
+    ntt_input_data1 = 0;
+    ntt_input_data2 = 0;
+
+    for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
+      mod_mult_a[i] = 0;
+      mod_mult_b[i] = 0;
+    end
+
+    for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++) begin
+      sub_and_norm_a[i] = 0;
+      sub_and_norm_b[i] = 0;
+    end
+
+    for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
+      squared_norm_a[i] = 0;
+      squared_norm_b[i] = 0;
+    end
 
     // In RECEIVE_PUBLIC_KEY we are storing public key in BRAM1 port A
     if(ntt_state == RECEIVE_PUBLIC_KEY) begin
@@ -457,8 +494,8 @@ module verify#(
     if(ntt_state == MULT_MOD_Q || ntt_state == WAIT_FOR_MULT_MOD_Q) begin
       bram1_addr_a = mult_mod_q_index;
       bram2_addr_a = mult_mod_q_index;
-      mod_mult_a[0] <= bram1_data_out_a;
-      mod_mult_b[0] <= bram2_data_out_a;
+      mod_mult_a[0] = bram1_data_out_a;
+      mod_mult_b[0] = bram2_data_out_a;
 
       bram1_we_b = mod_mult_valid_out;
       bram1_data_in_b = mod_mult_result[0];
@@ -469,8 +506,8 @@ module verify#(
     if(ntt_state == SUB_AND_NORMALIZE || ntt_state == WAIT_FOR_SUB_AND_NORMALIZE) begin
       bram2_addr_a = sub_and_normalize_index;
       bram3_addr_b = sub_and_normalize_index;
-      sub_and_norm_a[0] <= bram2_data_out_a;
-      sub_and_norm_b[0] <= bram3_data_out_b;
+      sub_and_norm_a[0] = bram2_data_out_a;
+      sub_and_norm_b[0] = bram3_data_out_b;
 
       bram1_we_a = sub_and_norm_valid_out;
       bram1_data_in_a = sub_and_norm_result[0];
@@ -481,18 +518,10 @@ module verify#(
     if(ntt_state == SQUARED_NORM) begin
       bram1_addr_a = squared_norm_index;
       bram4_addr_b = squared_norm_index;
-      squared_norm_a[0] <= bram1_data_out_a;
-      squared_norm_b[0] <= bram4_data_out_b;
+      squared_norm_a[0] = bram1_data_out_a;
+      squared_norm_b[0] = bram4_data_out_b;
     end
   end
-
-  // BRAM has delay of 1 cycle so we have to delay signals that are not originating from BRAM but need to be in sync with those that are
-  // always_ff @(posedge clk) begin
-  //   if(rst_n == 1'b0) begin
-  //   end
-  //   else begin
-  //   end
-  // end
 
   // State machine state changes
   always_comb begin
@@ -585,28 +614,13 @@ module verify#(
         ntt_mode <= 1'b0;
         ntt_start <= 1'b0;  // Doesn't really matter, we're not running NTT
 
-        // Initialize mod_mult parameters (so they aren't undefined)
-        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
-          mod_mult_a[i] <= 0;
-          mod_mult_b[i] <= 0;
-        end
         mod_mult_valid_in <= 0;
         mod_mult_index_in <= 0;
 
-        // Initialize squared norm parameters (so they aren't undefined)
-        for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
-          squared_norm_a[i] <= 0;
-          squared_norm_b[i] <= 0;
-        end
         squared_norm_valid_in <= 0;
         squared_norm_index <= 0;
         squared_norm_last <= 0;
 
-        // Initialize sub_and_norm parameters (so they aren't undefined)
-        for(int i = 0; i < MULT_MOD_Q_OPS_PER_CYCLE; i++) begin
-          sub_and_norm_a[i] <= 0;
-          sub_and_norm_b[i] <= 0;
-        end
         sub_and_norm_valid_in <= 0;
         sub_and_norm_index_in <= 0;
 

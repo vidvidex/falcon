@@ -33,13 +33,13 @@ module ntt_negative#(
     input logic mode, // 0: NTT, 1: Inverse NTT
     input logic start, //! Data in input BRAM is valid, NTT can start
 
-    output logic [$clog2(N):0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
-    output logic [$clog2(N):0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
+    output logic [$clog2(N)-1:0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
+    output logic [$clog2(N)-1:0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
     input logic signed [14:0] input_bram_data1, //! Data that is read from input_bram[input_bram_addr1]
     input logic signed [14:0] input_bram_data2, //! Data that is read from input_bram[input_bram_addr2]
 
-    output logic [$clog2(N):0] output_bram_addr1, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
-    output logic [$clog2(N):0] output_bram_addr2, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
+    output logic [$clog2(N)-1:0] output_bram_addr1, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
+    output logic [$clog2(N)-1:0] output_bram_addr2, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
     output logic signed [14:0] output_bram_data1, //! Data that is written to output_bram[output_bram_addr1]
     output logic signed [14:0] output_bram_data2, //! Data that is written to output_bram[output_bram_addr2]
     output logic output_bram_we1, //! Write enable for output BRAM
@@ -339,10 +339,11 @@ module ntt_negative#(
   // Assign mod_mult parameters
   always_comb begin
 
+    mod_mult_passthrough_in = 0;
+
     if (rst_n == 1'b0) begin
       mod_mult_a = 0;
       mod_mult_b = 0;
-      mod_mult_passthrough_in <= 0;
     end
     else if(state == NTT || state == NTT_WAIT_FOR_MULTIPLY) begin
       mod_mult_a = mode == 1'b0 ? read_data2 : mod_sub(read_data1, read_data2);

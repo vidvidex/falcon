@@ -41,7 +41,6 @@ module decompress #(
 
   logic decompress_coefficient_rst_n;
   logic [7:0] decompress_coefficient_valid_bits;
-  logic coefficient_valid;
 
   decompress_coefficient decompress_coefficient (
                            .clk(clk),
@@ -131,7 +130,6 @@ module decompress #(
   assign remaining_bits_not_zeros_error = (state == DONE && compressed_signature[104:98] != 0);
   assign shift_by = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? bits_used : 0;
   assign coefficient = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? coefficient_i : 0;
-  assign coefficient_valid = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? 1'b1 : 0;
   assign coefficient_index = (state == DECOMPRESSING && coefficient_valid == 1'b1) ? coefficient_index_i : 0;
   assign ready = state == DECOMPRESS_START;
   assign decompression_done = state == DONE;
