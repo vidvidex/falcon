@@ -34,7 +34,8 @@ module hash_to_point#(
             IDLE,
             ABSORB,
             WAIT_FOR_SQUEEZE,
-            WAIT_FOR_SQUEEZE_END
+            WAIT_FOR_SQUEEZE_END,
+            FINISH
           } state_t;
   state_t state, next_state;
 
@@ -47,11 +48,12 @@ module hash_to_point#(
   logic [$clog2(N):0] coefficient_index_i;
   logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
   logic [14:0] coefficient;
+  logic coefficient_valid_internal;
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
 
-  assign done = coefficient_index_i == N;
+  assign done = coefficient_index_i == N || state == FINISH;
 
   shake256 shake256(
              .clk(clk),
@@ -104,12 +106,14 @@ module hash_to_point#(
         if (data_out_valid)
           next_state = WAIT_FOR_SQUEEZE_END;
       end
-      WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low). If we have all coefficients we can go back to IDLE, otherwise we go to WAIT_FOR_SQUEEZE and wait for more data
-        if (!data_out_valid)
-          if (coefficient_index_i < N)
-            next_state = WAIT_FOR_SQUEEZE;
-          else
-            next_state = IDLE;
+      WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low) or to output all coefficients.
+        if(done) // If we have all coefficients we can go to FINISH
+          next_state = FINISH;
+        else if (!data_out_valid)  // Go to WAIT_FOR_SQUEEZE and wait for more data
+          next_state = WAIT_FOR_SQUEEZE;
+      end
+      FINISH: begin  // Wait forever
+        next_state = FINISH;
       end
       default: begin
         next_state = IDLE;
@@ -144,6 +148,11 @@ module hash_to_point#(
         data_in_valid = 0;
         shake256_reset = 0;
       end
+      FINISH: begin
+        data_in = 0;
+        data_in_valid = 0;
+        shake256_reset = 1;
+      end
       default: begin
         data_in = 0;
         data_in_valid = 0;
@@ -170,19 +179,20 @@ module hash_to_point#(
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
       coefficient_index_i <= 0;
-      coefficient_valid <= 0;
+      coefficient_valid_internal <= 0;
     end
     else if (data_out_valid_i == 1'b1 && t < k_times_q) begin
       coefficient <= mod_12289(t);
       coefficient_index_i++;
-      coefficient_valid <= 1'b1;
+      coefficient_valid_internal <= 1'b1;
     end
     else
-      coefficient_valid <= 0;
+      coefficient_valid_internal <= 0;
   end
 
   // coefficient_index is coefficient_index_i without the top bit and decremented by 1
   assign coefficient_index = coefficient_index_i - 1;
+  assign coefficient_valid = coefficient_valid_internal && (coefficient_index_i <= N);
 
 endmodule
 
