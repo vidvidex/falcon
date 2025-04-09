@@ -35,16 +35,16 @@ module mod_mult_ntt_negative #(
     output logic [$clog2(N):0] index2_out,   //! Outputted index
     output logic signed [14:0] passthrough_out  //! Passthrough output
   );
-  logic signed [29:0] a_times_b, a_times_b_1, a_times_b_2;
+  logic signed [29:0] a_times_b, a_times_b_1;
   logic [15:0] a_times_b_times_12287;
   logic signed [30:0] a_times_b_times_12287_times_12289;
-  logic signed [14:0] sum_shifted, result_i;
+  logic signed [14:0] sum_shifted;
 
-  logic valid1, valid2, valid3, valid4, valid5;
-  logic [$clog2(N):0] index1_1, index1_2, index1_3, index1_4, index1_5;
-  logic [$clog2(N):0] index2_1, index2_2, index2_3, index2_4, index2_5;
+  logic valid1, valid2;
+  logic [$clog2(N):0] index1_1, index1_2;
+  logic [$clog2(N):0] index2_1, index2_2;
 
-  logic signed [14:0] passthrough_1, passthrough_2, passthrough_3, passthrough_4, passthrough_5;
+  logic signed [14:0] passthrough_1, passthrough_2;
 
   // Stage 1: Multiplication
   always_ff @(posedge clk) begin
@@ -90,26 +90,21 @@ module mod_mult_ntt_negative #(
   // Stage 3: Final computation
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
-      a_times_b_2 <= 0;
-      valid3 <= 0;
-      index1_3 <= 0;
-      index2_3 <= 0;
-      passthrough_3 <= 0;
+      valid_out <= 0;
+      index1_out <= 0;
+      index2_out <= 0;
+      passthrough_out <= 0;
     end
     else begin
       sum_shifted <= (a_times_b_1 + a_times_b_times_12287_times_12289) >> 16;
-      valid3 <= valid2;
-      index1_3 <= index1_2;
-      index2_3 <= index2_2;
-      passthrough_3 <= passthrough_2;
+      valid_out <= valid2;
+      index1_out <= index1_2;
+      index2_out <= index2_2;
+      passthrough_out <= passthrough_2;
     end
   end
 
   assign result = (sum_shifted >= 12289) ? (sum_shifted - 12289) : sum_shifted;
-  assign index1_out = index1_3;
-  assign index2_out = index2_3;
-  assign passthrough_out = passthrough_3;
-  assign valid_out = valid3;
-  assign last = valid3 == 1'b1 && valid2 == 1'b0;
+  assign last = valid_out == 1'b1 && valid2 == 1'b0;
 
 endmodule
