@@ -13,13 +13,18 @@ module top_8 (
   // message_blocks - Buffer for salt and message (first 5 blocks of message_blocks are the salt (40B), the rest is the message). Message is reversed and padded
   // signature_blocks - Buffer for signature value blocks
   // signature_valid_blocks - Buffer for signature value valid blocks; len(signature value) = 11 bytes = 88 bits = 64 + 24
-
-  logic signed [14:0] public_key[8] = '{7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
+  parameter int N = 8;
+  parameter int MESSAGE_BLOCKS = 7;
+  parameter int SIGNATURE_BLOCKS = 2;
+  (* ram_style = "block" *) logic signed [14:0] public_key[N] = '{7644, 6589, 8565, 4185, 1184, 607, 3842, 5361};
   logic [15:0] message_len_bytes = 12;
-  logic [63:0] message_blocks [7]= '{64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
-  logic [63:0] signature_blocks [2] = '{64'h997b21eec3635e54, 64'h6308000000000000};
-  logic [6:0] signature_valid_blocks [2] = '{64, 24};
+  (* ram_style = "block" *) logic [63:0] message_blocks [MESSAGE_BLOCKS]= '{64'h8ae56efee299dd5d, 64'h0ddf5a76484a58c2, 64'he5c9678b2d3ccf73, 64'haeb69f7b17f6be7d, 64'h0bdfb438301f6d76, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
+  (* ram_style = "block" *) logic [63:0] signature_blocks [SIGNATURE_BLOCKS] = '{64'h997b21eec3635e54, 64'h6308000000000000};
+  (* ram_style = "block" *) logic [6:0] signature_valid_blocks [SIGNATURE_BLOCKS] = '{64, 24};
 
+  logic signed [14:0] public_key_element; //! Public key element (one of the 8 elements of the public key)
+  logic public_key_valid; //! Is public key valid
+  logic public_key_ready; //! Is ready to receive the next public key element
 
   logic [63:0] message;
   logic message_valid; //! Is message valid
@@ -33,6 +38,7 @@ module top_8 (
   logic accept; //! Set to true if signature is valid
   logic reject; //! Set to true if signature is invalid
 
+  int public_key_block_index;
   int message_block_index;
   int signature_block_index;
   int reset_counter;
@@ -46,8 +52,9 @@ module top_8 (
 
            .start(start_pulse),
 
-           .public_key(public_key),
-           .public_key_valid(1'b1),
+           .public_key_element(public_key_element),
+           .public_key_valid(public_key_valid),
+           .public_key_ready(public_key_ready),
 
            .message_len_bytes(message_len_bytes),
            .message(message),
@@ -114,6 +121,7 @@ module top_8 (
         leds[2] <= 1'b0;
         leds[3] <= 1'b0;
 
+        public_key_block_index <= 0;
         message_block_index <= 0;
         signature_block_index <= 0;
         message <= 0;
@@ -136,6 +144,15 @@ module top_8 (
         leds[2] <= 1'b0;
         leds[3] <= 1'b0;
 
+        // Send new public key element if module is ready for it
+        if (public_key_ready && public_key_block_index < N) begin
+          public_key_element <= public_key[public_key_block_index];
+          public_key_block_index <= public_key_block_index + 1;
+          public_key_valid <= 1;
+        end
+        else if (public_key_block_index >= N) // Set valid to low after we've sent all public key elements
+          public_key_valid <= 0;
+
         // Send new message block if module is ready for it
         if (message_ready && message_block_index < 7) begin
           message <= message_blocks[message_block_index];
@@ -144,9 +161,9 @@ module top_8 (
         end
         else if (message_block_index >= 7)  // Set valid to low after we've sent all message blocks
           message_valid <= 0;
-
         message_last <= message_block_index == 6;
 
+        // Send new signature block if module is ready for it
         if(signature_ready && signature_block_index < 2) begin
           signature <= signature_blocks[signature_block_index];
           signature_valid <= signature_valid_blocks[signature_block_index];
