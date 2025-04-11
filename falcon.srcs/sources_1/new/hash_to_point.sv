@@ -41,7 +41,6 @@ module hash_to_point#(
 
   logic [63:0] data_in;
   logic data_in_valid;
-  logic shake256_ready;
   logic [15:0] data_out;
   logic data_out_valid, data_out_valid_i;
   logic shake256_reset; // Reset signal for shake256 module, active high
@@ -58,7 +57,6 @@ module hash_to_point#(
              .clk(clk),
              .rst(shake256_reset),
              .input_len_bytes(message_len_bytes),
-             .ready_in(shake256_ready),
              .data_in(data_in),
              .data_in_valid(data_in_valid),
              .data_out(data_out),
