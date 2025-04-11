@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3,290.833 ns"></ZoomStartTime>
-      <ZoomEndTime time="3,457.834 ns"></ZoomEndTime>
-      <Cursor1Time time="3,430.000 ns"></Cursor1Time>
+      <ZoomStartTime time="3,090.914 ns"></ZoomStartTime>
+      <ZoomEndTime time="3,281.818 ns"></ZoomEndTime>
+      <Cursor1Time time="3,250.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="238"></NameColumnWidth>
-      <ValueColumnWidth column_width="184"></ValueColumnWidth>
+      <ValueColumnWidth column_width="180"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group675">
@@ -47,6 +47,7 @@
       <wvobject type="array" fp_name="/verify_tb/signature_valid_blocks">
          <obj_property name="ElementShortName">signature_valid_blocks[0:1][6:0]</obj_property>
          <obj_property name="ObjectShortName">signature_valid_blocks[0:1][6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/verify_tb/public_key">
          <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
@@ -351,84 +352,39 @@
             </wvobject>
          </wvobject>
          <wvobject type="group" fp_name="group715">
-            <obj_property name="label">sub_and_norm</obj_property>
+            <obj_property name="label">sub_normalize_squared_norm</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-            <wvobject type="array" fp_name="/verify_tb/uut/sub_and_normalize_index">
-               <obj_property name="ElementShortName">sub_and_normalize_index[3:0]</obj_property>
-               <obj_property name="ObjectShortName">sub_and_normalize_index[3:0]</obj_property>
-               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/sub_and_norm_a">
-               <obj_property name="ElementShortName">sub_and_norm_a[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_a[0:0][14:0]</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm_a">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_a[0:0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_a[0:0][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/sub_and_norm_b">
-               <obj_property name="ElementShortName">sub_and_norm_b[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_b[0:0][14:0]</obj_property>
+            <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm_b">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_b[0:0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_b[0:0][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/sub_and_norm_result">
-               <obj_property name="ElementShortName">sub_and_norm_result[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_result[0:0][14:0]</obj_property>
+            <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm_c">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_c[0:0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_c[0:0][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/sub_and_norm_valid_in">
-               <obj_property name="ElementShortName">sub_and_norm_valid_in</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_valid_in</obj_property>
+            <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm_valid">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_valid</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_valid</obj_property>
             </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/sub_and_norm_valid_out">
-               <obj_property name="ElementShortName">sub_and_norm_valid_out</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_valid_out</obj_property>
+            <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm_last">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_last</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_last</obj_property>
             </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/sub_and_norm_last">
-               <obj_property name="ElementShortName">sub_and_norm_last</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_last</obj_property>
+            <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm_accept">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_accept</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_accept</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/sub_and_norm_index_in">
-               <obj_property name="ElementShortName">sub_and_norm_index_in[3:0]</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_index_in[3:0]</obj_property>
-               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/sub_and_norm_index_out">
-               <obj_property name="ElementShortName">sub_and_norm_index_out[3:0]</obj_property>
-               <obj_property name="ObjectShortName">sub_and_norm_index_out[3:0]</obj_property>
-               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            </wvobject>
-         </wvobject>
-         <wvobject type="group" fp_name="group714">
-            <obj_property name="label">squared_norm</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-            <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_index">
-               <obj_property name="ElementShortName">squared_norm_index[3:0]</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_index[3:0]</obj_property>
-               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_a">
-               <obj_property name="ElementShortName">squared_norm_a[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_a[0:0][14:0]</obj_property>
-               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-            </wvobject>
-            <wvobject type="array" fp_name="/verify_tb/uut/squared_norm_b">
-               <obj_property name="ElementShortName">squared_norm_b[0:0][14:0]</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_b[0:0][14:0]</obj_property>
-               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-            </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_valid_in">
-               <obj_property name="ElementShortName">squared_norm_valid_in</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_valid_in</obj_property>
-            </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_last">
-               <obj_property name="ElementShortName">squared_norm_last</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_last</obj_property>
-            </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_accept">
-               <obj_property name="ElementShortName">squared_norm_accept</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_accept</obj_property>
-            </wvobject>
-            <wvobject type="logic" fp_name="/verify_tb/uut/squared_norm_reject">
-               <obj_property name="ElementShortName">squared_norm_reject</obj_property>
-               <obj_property name="ObjectShortName">squared_norm_reject</obj_property>
+            <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm_reject">
+               <obj_property name="ElementShortName">sub_normalize_squared_norm_reject</obj_property>
+               <obj_property name="ObjectShortName">sub_normalize_squared_norm_reject</obj_property>
             </wvobject>
          </wvobject>
          <wvobject type="group" fp_name="group716">
@@ -889,164 +845,121 @@
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group6555">
-         <obj_property name="label">sub_and_normalize</obj_property>
+         <obj_property name="label">sub_normalize_squared_norm</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/clk">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/clk">
             <obj_property name="ElementShortName">clk</obj_property>
             <obj_property name="ObjectShortName">clk</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/rst_n">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/rst_n">
             <obj_property name="ElementShortName">rst_n</obj_property>
             <obj_property name="ObjectShortName">rst_n</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/a">
-            <obj_property name="ElementShortName">a[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">a[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/b">
-            <obj_property name="ElementShortName">b[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">b[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/valid_in">
-            <obj_property name="ElementShortName">valid_in</obj_property>
-            <obj_property name="ObjectShortName">valid_in</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/index_in">
-            <obj_property name="ElementShortName">index_in[3:0]</obj_property>
-            <obj_property name="ObjectShortName">index_in[3:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/valid_out">
-            <obj_property name="ElementShortName">valid_out</obj_property>
-            <obj_property name="ObjectShortName">valid_out</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/last">
-            <obj_property name="ElementShortName">last</obj_property>
-            <obj_property name="ObjectShortName">last</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/index_out">
-            <obj_property name="ElementShortName">index_out[3:0]</obj_property>
-            <obj_property name="ObjectShortName">index_out[3:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/result">
-            <obj_property name="ElementShortName">result[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">result[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/difference">
-            <obj_property name="ElementShortName">difference[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">difference[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/difference_normalized">
-            <obj_property name="ElementShortName">difference_normalized[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">difference_normalized[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/valid1">
-            <obj_property name="ElementShortName">valid1</obj_property>
-            <obj_property name="ObjectShortName">valid1</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_sub_and_normalize/valid2">
-            <obj_property name="ElementShortName">valid2</obj_property>
-            <obj_property name="ObjectShortName">valid2</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/index1">
-            <obj_property name="ElementShortName">index1[3:0]</obj_property>
-            <obj_property name="ObjectShortName">index1[3:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/index2">
-            <obj_property name="ElementShortName">index2[3:0]</obj_property>
-            <obj_property name="ObjectShortName">index2[3:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/N">
-            <obj_property name="ElementShortName">N[31:0]</obj_property>
-            <obj_property name="ObjectShortName">N[31:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_sub_and_normalize/PARALLEL_OPS_COUNT">
-            <obj_property name="ElementShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
-            <obj_property name="ObjectShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
-         </wvobject>
-      </wvobject>
-      <wvobject type="group" fp_name="group6554">
-         <obj_property name="label">squared_norm</obj_property>
-         <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/clk">
-            <obj_property name="ElementShortName">clk</obj_property>
-            <obj_property name="ObjectShortName">clk</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/rst_n">
-            <obj_property name="ElementShortName">rst_n</obj_property>
-            <obj_property name="ObjectShortName">rst_n</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/a">
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/a">
             <obj_property name="ElementShortName">a[0:0][14:0]</obj_property>
             <obj_property name="ObjectShortName">a[0:0][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/b">
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/b">
             <obj_property name="ElementShortName">b[0:0][14:0]</obj_property>
             <obj_property name="ObjectShortName">b[0:0][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/valid_in">
-            <obj_property name="ElementShortName">valid_in</obj_property>
-            <obj_property name="ObjectShortName">valid_in</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/c">
+            <obj_property name="ElementShortName">c[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">c[0:0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/last">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/valid">
+            <obj_property name="ElementShortName">valid</obj_property>
+            <obj_property name="ObjectShortName">valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/last">
             <obj_property name="ElementShortName">last</obj_property>
             <obj_property name="ObjectShortName">last</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/accept">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/accept">
             <obj_property name="ElementShortName">accept</obj_property>
             <obj_property name="ObjectShortName">accept</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/reject">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/reject">
             <obj_property name="ElementShortName">reject</obj_property>
             <obj_property name="ObjectShortName">reject</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/bound2">
-            <obj_property name="ElementShortName">bound2[26:0]</obj_property>
-            <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/difference">
+            <obj_property name="ElementShortName">difference[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">difference[0:0][14:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/a_squared">
-            <obj_property name="ElementShortName">a_squared[0:0][28:0]</obj_property>
-            <obj_property name="ObjectShortName">a_squared[0:0][28:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/difference_normalized">
+            <obj_property name="ElementShortName">difference_normalized[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">difference_normalized[0:0][14:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/b_squared">
-            <obj_property name="ElementShortName">b_squared[0:0][28:0]</obj_property>
-            <obj_property name="ObjectShortName">b_squared[0:0][28:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/difference_normalized_squared">
+            <obj_property name="ElementShortName">difference_normalized_squared[0:0][28:0]</obj_property>
+            <obj_property name="ObjectShortName">difference_normalized_squared[0:0][28:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/elementwise_sum">
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/c_squared">
+            <obj_property name="ElementShortName">c_squared[0:0][28:0]</obj_property>
+            <obj_property name="ObjectShortName">c_squared[0:0][28:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/elementwise_sum">
             <obj_property name="ElementShortName">elementwise_sum[0:0][29:0]</obj_property>
             <obj_property name="ObjectShortName">elementwise_sum[0:0][29:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/c1">
+            <obj_property name="ElementShortName">c1[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">c1[0:0][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/squared_norm">
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/c2">
+            <obj_property name="ElementShortName">c2[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">c2[0:0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/squared_norm">
             <obj_property name="ElementShortName">squared_norm[29:0]</obj_property>
             <obj_property name="ObjectShortName">squared_norm[29:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/over_bound">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/over_bound">
             <obj_property name="ElementShortName">over_bound</obj_property>
             <obj_property name="ObjectShortName">over_bound</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/last1">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/last1">
             <obj_property name="ElementShortName">last1</obj_property>
             <obj_property name="ObjectShortName">last1</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/last2">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/last2">
             <obj_property name="ElementShortName">last2</obj_property>
             <obj_property name="ObjectShortName">last2</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/verify_tb/uut/verify_compute_squared_norm/last3">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/last3">
             <obj_property name="ElementShortName">last3</obj_property>
             <obj_property name="ObjectShortName">last3</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/N">
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/last4">
+            <obj_property name="ElementShortName">last4</obj_property>
+            <obj_property name="ObjectShortName">last4</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/verify_tb/uut/sub_normalize_squared_norm/last5">
+            <obj_property name="ElementShortName">last5</obj_property>
+            <obj_property name="ObjectShortName">last5</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/bound2">
+            <obj_property name="ElementShortName">bound2[26:0]</obj_property>
+            <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/N">
             <obj_property name="ElementShortName">N[31:0]</obj_property>
             <obj_property name="ObjectShortName">N[31:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/verify_tb/uut/verify_compute_squared_norm/PARALLEL_OPS_COUNT">
+         <wvobject type="array" fp_name="/verify_tb/uut/sub_normalize_squared_norm/PARALLEL_OPS_COUNT">
             <obj_property name="ElementShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
             <obj_property name="ObjectShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
          </wvobject>

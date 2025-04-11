@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="264.410 ns"></ZoomStartTime>
-      <ZoomEndTime time="459.616 ns"></ZoomEndTime>
-      <Cursor1Time time="310.985 ns"></Cursor1Time>
+      <ZoomStartTime time="300,832.275 ns"></ZoomStartTime>
+      <ZoomEndTime time="301,033.546 ns"></ZoomEndTime>
+      <Cursor1Time time="301,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="210"></NameColumnWidth>
       <ValueColumnWidth column_width="192"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="5" />
+   <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group167">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -39,7 +39,6 @@
    <wvobject type="group" fp_name="group168">
       <obj_property name="label">top_512</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/top_512_tb/uut/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -68,39 +67,25 @@
          <obj_property name="ElementShortName">start_pulse</obj_property>
          <obj_property name="ObjectShortName">start_pulse</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/public_key">
-         <obj_property name="ElementShortName">public_key[0:511][14:0]</obj_property>
-         <obj_property name="ObjectShortName">public_key[0:511][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/message_len_bytes">
-         <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
-         <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/message_blocks">
          <obj_property name="ElementShortName">message_blocks[0:6][63:0]</obj_property>
          <obj_property name="ObjectShortName">message_blocks[0:6][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/signature_blocks">
-         <obj_property name="ElementShortName">signature_blocks[0:78][63:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_blocks[0:78][63:0]</obj_property>
+         <obj_property name="ElementShortName">signature_blocks[0:154][63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_blocks[0:154][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/signature_valid_blocks">
-         <obj_property name="ElementShortName">signature_valid_blocks[0:78][6:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_valid_blocks[0:78][6:0]</obj_property>
+         <obj_property name="ElementShortName">signature_valid_blocks[0:154][6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_valid_blocks[0:154][6:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/public_key_element">
-         <obj_property name="ElementShortName">public_key_element[14:0]</obj_property>
-         <obj_property name="ObjectShortName">public_key_element[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <wvobject type="array" fp_name="/top_512_tb/uut/public_key">
+         <obj_property name="ElementShortName">public_key[0:1023][14:0]</obj_property>
+         <obj_property name="ObjectShortName">public_key[0:1023][14:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/public_key_valid">
-         <obj_property name="ElementShortName">public_key_valid</obj_property>
-         <obj_property name="ObjectShortName">public_key_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/public_key_ready">
-         <obj_property name="ElementShortName">public_key_ready</obj_property>
-         <obj_property name="ObjectShortName">public_key_ready</obj_property>
+      <wvobject type="array" fp_name="/top_512_tb/uut/message_len_bytes">
+         <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
+         <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/message">
          <obj_property name="ElementShortName">message[63:0]</obj_property>
@@ -118,14 +103,6 @@
          <obj_property name="ElementShortName">message_ready</obj_property>
          <obj_property name="ObjectShortName">message_ready</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/signature">
-         <obj_property name="ElementShortName">signature[63:0]</obj_property>
-         <obj_property name="ObjectShortName">signature[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/signature_valid">
-         <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/top_512_tb/uut/signature_ready">
          <obj_property name="ElementShortName">signature_ready</obj_property>
          <obj_property name="ObjectShortName">signature_ready</obj_property>
@@ -138,21 +115,29 @@
          <obj_property name="ElementShortName">reject</obj_property>
          <obj_property name="ObjectShortName">reject</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/public_key_block_index">
-         <obj_property name="ElementShortName">public_key_block_index[31:0]</obj_property>
-         <obj_property name="ObjectShortName">public_key_block_index[31:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/message_block_index">
          <obj_property name="ElementShortName">message_block_index[31:0]</obj_property>
          <obj_property name="ObjectShortName">message_block_index[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/signature_block_index">
          <obj_property name="ElementShortName">signature_block_index[31:0]</obj_property>
          <obj_property name="ObjectShortName">signature_block_index[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_512_tb/uut/signature">
+         <obj_property name="ElementShortName">signature[63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_512_tb/uut/signature_valid">
+         <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/reset_counter">
          <obj_property name="ElementShortName">reset_counter[31:0]</obj_property>
          <obj_property name="ObjectShortName">reset_counter[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/state">
          <obj_property name="ElementShortName">state[1:0]</obj_property>
@@ -161,18 +146,6 @@
       <wvobject type="array" fp_name="/top_512_tb/uut/next_state">
          <obj_property name="ElementShortName">next_state[1:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[1:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/MESSAGE_BLOCKS">
-         <obj_property name="ElementShortName">MESSAGE_BLOCKS[31:0]</obj_property>
-         <obj_property name="ObjectShortName">MESSAGE_BLOCKS[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/SIGNATURE_BLOCKS">
-         <obj_property name="ElementShortName">SIGNATURE_BLOCKS[31:0]</obj_property>
-         <obj_property name="ObjectShortName">SIGNATURE_BLOCKS[31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group157">
@@ -302,8 +275,8 @@
          <obj_property name="label">verify mod_mult</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <wvobject type="array" fp_name="/top_512_tb/uut/verify/mult_mod_q_index">
-            <obj_property name="ElementShortName">mult_mod_q_index[9:0]</obj_property>
-            <obj_property name="ObjectShortName">mult_mod_q_index[9:0]</obj_property>
+            <obj_property name="ElementShortName">mult_mod_q_index[10:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_index[10:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/top_512_tb/uut/verify/mod_mult_a">
             <obj_property name="ElementShortName">mod_mult_a[0:0][14:0]</obj_property>
@@ -330,87 +303,52 @@
             <obj_property name="ObjectShortName">mod_mult_last</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/top_512_tb/uut/verify/mod_mult_index_in">
-            <obj_property name="ElementShortName">mod_mult_index_in[9:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_index_in[9:0]</obj_property>
+            <obj_property name="ElementShortName">mod_mult_index_in[10:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index_in[10:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/top_512_tb/uut/verify/mod_mult_index_out">
-            <obj_property name="ElementShortName">mod_mult_index_out[9:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_index_out[9:0]</obj_property>
+            <obj_property name="ElementShortName">mod_mult_index_out[10:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index_out[10:0]</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group227">
          <obj_property name="label">verify - squared_norm</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/squared_norm_index">
-            <obj_property name="ElementShortName">squared_norm_index[9:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_index[9:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/squared_norm_a">
-            <obj_property name="ElementShortName">squared_norm_a[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_a[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/squared_norm_b">
-            <obj_property name="ElementShortName">squared_norm_b[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_b[0:0][14:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/squared_norm_valid_in">
-            <obj_property name="ElementShortName">squared_norm_valid_in</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_valid_in</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/squared_norm_last">
-            <obj_property name="ElementShortName">squared_norm_last</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_last</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/squared_norm_accept">
-            <obj_property name="ElementShortName">squared_norm_accept</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_accept</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/squared_norm_reject">
-            <obj_property name="ElementShortName">squared_norm_reject</obj_property>
-            <obj_property name="ObjectShortName">squared_norm_reject</obj_property>
-         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group229">
-         <obj_property name="label">verify - sub_and_normalize</obj_property>
+         <obj_property name="label">verify - sub_normalize_squared_norm</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_and_norm_a">
-            <obj_property name="ElementShortName">sub_and_norm_a[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_a[0:0][14:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_a">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_and_normalize_index">
-            <obj_property name="ElementShortName">sub_and_normalize_index[9:0]</obj_property>
-            <obj_property name="ObjectShortName">sub_and_normalize_index[9:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_and_norm_b">
-            <obj_property name="ElementShortName">sub_and_norm_b[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_b[0:0][14:0]</obj_property>
+         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_b">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_and_norm_result">
-            <obj_property name="ElementShortName">sub_and_norm_result[0:0][14:0]</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_result[0:0][14:0]</obj_property>
+         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_c">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_and_norm_valid_in">
-            <obj_property name="ElementShortName">sub_and_norm_valid_in</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_valid_in</obj_property>
+         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_valid">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_valid</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_valid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_and_norm_valid_out">
-            <obj_property name="ElementShortName">sub_and_norm_valid_out</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_valid_out</obj_property>
+         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_last">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_last</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_last</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_and_norm_last">
-            <obj_property name="ElementShortName">sub_and_norm_last</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_last</obj_property>
+         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_accept">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_accept</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_accept</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_and_norm_index_in">
-            <obj_property name="ElementShortName">sub_and_norm_index_in[9:0]</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_index_in[9:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/top_512_tb/uut/verify/sub_and_norm_index_out">
-            <obj_property name="ElementShortName">sub_and_norm_index_out[9:0]</obj_property>
-            <obj_property name="ObjectShortName">sub_and_norm_index_out[9:0]</obj_property>
+         <wvobject type="logic" fp_name="/top_512_tb/uut/verify/sub_normalize_squared_norm_reject">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_reject</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_reject</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="array" fp_name="/top_512_tb/uut/verify/ntt_state">
@@ -432,189 +370,6 @@
       <wvobject type="array" fp_name="/top_512_tb/uut/verify/MULT_MOD_Q_OPS_PER_CYCLE">
          <obj_property name="ElementShortName">MULT_MOD_Q_OPS_PER_CYCLE[31:0]</obj_property>
          <obj_property name="ObjectShortName">MULT_MOD_Q_OPS_PER_CYCLE[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/SUB_AND_NORMALIZE_OPS_PER_CYCLE">
-         <obj_property name="ElementShortName">SUB_AND_NORMALIZE_OPS_PER_CYCLE[31:0]</obj_property>
-         <obj_property name="ObjectShortName">SUB_AND_NORMALIZE_OPS_PER_CYCLE[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/SQUARED_NORM_OPS_PER_CYCLE">
-         <obj_property name="ElementShortName">SQUARED_NORM_OPS_PER_CYCLE[31:0]</obj_property>
-         <obj_property name="ObjectShortName">SQUARED_NORM_OPS_PER_CYCLE[31:0]</obj_property>
-      </wvobject>
-   </wvobject>
-   <wvobject type="group" fp_name="group230">
-      <obj_property name="label">decompress</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/start">
-         <obj_property name="ElementShortName">start</obj_property>
-         <obj_property name="ObjectShortName">start</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/compressed_signature">
-         <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>
-         <obj_property name="ObjectShortName">compressed_signature[104:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/valid_bits">
-         <obj_property name="ElementShortName">valid_bits[7:0]</obj_property>
-         <obj_property name="ObjectShortName">valid_bits[7:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/ready">
-         <obj_property name="ElementShortName">ready</obj_property>
-         <obj_property name="ObjectShortName">ready</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/shift_by">
-         <obj_property name="ElementShortName">shift_by[6:0]</obj_property>
-         <obj_property name="ObjectShortName">shift_by[6:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompression_done">
-         <obj_property name="ElementShortName">decompression_done</obj_property>
-         <obj_property name="ObjectShortName">decompression_done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/signature_error">
-         <obj_property name="ElementShortName">signature_error</obj_property>
-         <obj_property name="ObjectShortName">signature_error</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/coefficient">
-         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
-         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/bits_used">
-         <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
-         <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/total_bits_used">
-         <obj_property name="ElementShortName">total_bits_used[16:0]</obj_property>
-         <obj_property name="ObjectShortName">total_bits_used[16:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/invalid_bits_used_error">
-         <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
-         <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/cannot_find_high_error">
-         <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
-         <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/used_bit_count_error">
-         <obj_property name="ElementShortName">used_bit_count_error</obj_property>
-         <obj_property name="ObjectShortName">used_bit_count_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/remaining_bits_not_zeros_error">
-         <obj_property name="ElementShortName">remaining_bits_not_zeros_error</obj_property>
-         <obj_property name="ObjectShortName">remaining_bits_not_zeros_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/invalid_zero_representation_error">
-         <obj_property name="ElementShortName">invalid_zero_representation_error</obj_property>
-         <obj_property name="ObjectShortName">invalid_zero_representation_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient_rst_n">
-         <obj_property name="ElementShortName">decompress_coefficient_rst_n</obj_property>
-         <obj_property name="ObjectShortName">decompress_coefficient_rst_n</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient_valid_bits">
-         <obj_property name="ElementShortName">decompress_coefficient_valid_bits[7:0]</obj_property>
-         <obj_property name="ObjectShortName">decompress_coefficient_valid_bits[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/coefficient_valid">
-         <obj_property name="ElementShortName">coefficient_valid</obj_property>
-         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/state">
-         <obj_property name="ElementShortName">state[2:0]</obj_property>
-         <obj_property name="ObjectShortName">state[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/next_state">
-         <obj_property name="ElementShortName">next_state[2:0]</obj_property>
-         <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/SLEN">
-         <obj_property name="ElementShortName">SLEN[31:0]</obj_property>
-         <obj_property name="ObjectShortName">SLEN[31:0]</obj_property>
-      </wvobject>
-   </wvobject>
-   <wvobject type="group" fp_name="group257">
-      <obj_property name="label">decompress_coefficient</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/compressed_signature">
-         <obj_property name="ElementShortName">compressed_signature[104:0]</obj_property>
-         <obj_property name="ObjectShortName">compressed_signature[104:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/valid_bits">
-         <obj_property name="ElementShortName">valid_bits[7:0]</obj_property>
-         <obj_property name="ObjectShortName">valid_bits[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/coefficient">
-         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
-         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/bits_used">
-         <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
-         <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/coefficient_valid">
-         <obj_property name="ElementShortName">coefficient_valid</obj_property>
-         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/invalid_bits_used_error">
-         <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
-         <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/cannot_find_high_error">
-         <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
-         <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/invalid_zero_representation_error">
-         <obj_property name="ElementShortName">invalid_zero_representation_error</obj_property>
-         <obj_property name="ObjectShortName">invalid_zero_representation_error</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/compressed_signature_i">
-         <obj_property name="ElementShortName">compressed_signature_i[104:0]</obj_property>
-         <obj_property name="ObjectShortName">compressed_signature_i[104:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/valid_bits_i">
-         <obj_property name="ElementShortName">valid_bits_i[7:0]</obj_property>
-         <obj_property name="ObjectShortName">valid_bits_i[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/sign">
-         <obj_property name="ElementShortName">sign</obj_property>
-         <obj_property name="ObjectShortName">sign</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/low">
-         <obj_property name="ElementShortName">low[6:0]</obj_property>
-         <obj_property name="ObjectShortName">low[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/high">
-         <obj_property name="ElementShortName">high[6:0]</obj_property>
-         <obj_property name="ObjectShortName">high[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/scan_index">
-         <obj_property name="ElementShortName">scan_index[6:0]</obj_property>
-         <obj_property name="ObjectShortName">scan_index[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top_512_tb/uut/verify/decompress/decompress_coefficient/found_high">
-         <obj_property name="ElementShortName">found_high</obj_property>
-         <obj_property name="ObjectShortName">found_high</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
