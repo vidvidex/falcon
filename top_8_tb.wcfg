@@ -11,16 +11,16 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="999,995 ps"></ZoomStartTime>
-      <ZoomEndTime time="1,000,002 ps"></ZoomEndTime>
-      <Cursor1Time time="1,000,000 ps"></Cursor1Time>
+      <ZoomStartTime time="300,832.275 ns"></ZoomStartTime>
+      <ZoomEndTime time="301,033.546 ns"></ZoomEndTime>
+      <Cursor1Time time="301,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="210"></NameColumnWidth>
-      <ValueColumnWidth column_width="208"></ValueColumnWidth>
+      <ValueColumnWidth column_width="192"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="2" />
-   <wvobject type="group" fp_name="group74">
+   <WVObjectSize size="3" />
+   <wvobject type="group" fp_name="group167">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <wvobject type="logic" fp_name="/top_8_tb/clk">
@@ -36,7 +36,7 @@
          <obj_property name="ObjectShortName">btns[3:0]</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="group" fp_name="group75">
+   <wvobject type="group" fp_name="group168">
       <obj_property name="label">top_8</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <wvobject type="logic" fp_name="/top_8_tb/uut/clk">
@@ -72,16 +72,16 @@
          <obj_property name="ObjectShortName">message_blocks[0:6][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/signature_blocks">
-         <obj_property name="ElementShortName">signature_blocks[0:1][63:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_blocks[0:1][63:0]</obj_property>
+         <obj_property name="ElementShortName">signature_blocks[0:154][63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_blocks[0:154][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/signature_valid_blocks">
-         <obj_property name="ElementShortName">signature_valid_blocks[0:1][6:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_valid_blocks[0:1][6:0]</obj_property>
+         <obj_property name="ElementShortName">signature_valid_blocks[0:154][6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_valid_blocks[0:154][6:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/public_key">
-         <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
-         <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
+         <obj_property name="ElementShortName">public_key[0:1023][14:0]</obj_property>
+         <obj_property name="ObjectShortName">public_key[0:1023][14:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/message_len_bytes">
          <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
@@ -103,14 +103,6 @@
          <obj_property name="ElementShortName">message_ready</obj_property>
          <obj_property name="ObjectShortName">message_ready</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/top_8_tb/uut/signature">
-         <obj_property name="ElementShortName">signature[63:0]</obj_property>
-         <obj_property name="ObjectShortName">signature[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/top_8_tb/uut/signature_valid">
-         <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/top_8_tb/uut/signature_ready">
          <obj_property name="ElementShortName">signature_ready</obj_property>
          <obj_property name="ObjectShortName">signature_ready</obj_property>
@@ -126,14 +118,26 @@
       <wvobject type="array" fp_name="/top_8_tb/uut/message_block_index">
          <obj_property name="ElementShortName">message_block_index[31:0]</obj_property>
          <obj_property name="ObjectShortName">message_block_index[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/signature_block_index">
          <obj_property name="ElementShortName">signature_block_index[31:0]</obj_property>
          <obj_property name="ObjectShortName">signature_block_index[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature">
+         <obj_property name="ElementShortName">signature[63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/signature_valid">
+         <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/reset_counter">
          <obj_property name="ElementShortName">reset_counter[31:0]</obj_property>
          <obj_property name="ObjectShortName">reset_counter[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/state">
          <obj_property name="ElementShortName">state[1:0]</obj_property>
@@ -142,6 +146,230 @@
       <wvobject type="array" fp_name="/top_8_tb/uut/next_state">
          <obj_property name="ElementShortName">next_state[1:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[1:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group157">
+      <obj_property name="label">verify</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/top_8_tb/uut/verify/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_8_tb/uut/verify/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_8_tb/uut/verify/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_8_tb/uut/verify/accept">
+         <obj_property name="ElementShortName">accept</obj_property>
+         <obj_property name="ObjectShortName">accept</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_8_tb/uut/verify/reject">
+         <obj_property name="ElementShortName">reject</obj_property>
+         <obj_property name="ObjectShortName">reject</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top_8_tb/uut/verify/public_key_valid">
+         <obj_property name="ElementShortName">public_key_valid</obj_property>
+         <obj_property name="ObjectShortName">public_key_valid</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group224">
+         <obj_property name="label">verify - htp</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/htp_message_len_bytes">
+            <obj_property name="ElementShortName">htp_message_len_bytes[15:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_message_len_bytes[15:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/message_len_bytes">
+            <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
+            <obj_property name="ObjectShortName">message_len_bytes[15:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/message">
+            <obj_property name="ElementShortName">message[63:0]</obj_property>
+            <obj_property name="ObjectShortName">message[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/message_valid">
+            <obj_property name="ElementShortName">message_valid</obj_property>
+            <obj_property name="ObjectShortName">message_valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/message_last">
+            <obj_property name="ElementShortName">message_last</obj_property>
+            <obj_property name="ObjectShortName">message_last</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/message_ready">
+            <obj_property name="ElementShortName">message_ready</obj_property>
+            <obj_property name="ObjectShortName">message_ready</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group223">
+         <obj_property name="label">verify - decompress</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/signature">
+            <obj_property name="ElementShortName">signature[63:0]</obj_property>
+            <obj_property name="ObjectShortName">signature[63:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/signature_valid">
+            <obj_property name="ElementShortName">signature_valid[6:0]</obj_property>
+            <obj_property name="ObjectShortName">signature_valid[6:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/decompress_ready">
+            <obj_property name="ElementShortName">decompress_ready</obj_property>
+            <obj_property name="ObjectShortName">decompress_ready</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/signature_ready">
+            <obj_property name="ElementShortName">signature_ready</obj_property>
+            <obj_property name="ObjectShortName">signature_ready</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/compressed_signature_buffer">
+            <obj_property name="ElementShortName">compressed_signature_buffer[191:0]</obj_property>
+            <obj_property name="ObjectShortName">compressed_signature_buffer[191:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/compressed_signature_buffer_valid">
+            <obj_property name="ElementShortName">compressed_signature_buffer_valid[7:0]</obj_property>
+            <obj_property name="ObjectShortName">compressed_signature_buffer_valid[7:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/shift_by">
+            <obj_property name="ElementShortName">shift_by[6:0]</obj_property>
+            <obj_property name="ObjectShortName">shift_by[6:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/signature_error">
+            <obj_property name="ElementShortName">signature_error</obj_property>
+            <obj_property name="ObjectShortName">signature_error</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/decompression_done">
+            <obj_property name="ElementShortName">decompression_done</obj_property>
+            <obj_property name="ObjectShortName">decompression_done</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/decompress_state">
+            <obj_property name="ElementShortName">decompress_state[2:0]</obj_property>
+            <obj_property name="ObjectShortName">decompress_state[2:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/decompress_next_state">
+            <obj_property name="ElementShortName">decompress_next_state[2:0]</obj_property>
+            <obj_property name="ObjectShortName">decompress_next_state[2:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group225">
+         <obj_property name="label">verify - ntt</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/ntt_mode">
+            <obj_property name="ElementShortName">ntt_mode</obj_property>
+            <obj_property name="ObjectShortName">ntt_mode</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/ntt_start">
+            <obj_property name="ElementShortName">ntt_start</obj_property>
+            <obj_property name="ObjectShortName">ntt_start</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/ntt_done">
+            <obj_property name="ElementShortName">ntt_done</obj_property>
+            <obj_property name="ObjectShortName">ntt_done</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group226">
+         <obj_property name="label">verify mod_mult</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/mult_mod_q_index">
+            <obj_property name="ElementShortName">mult_mod_q_index[10:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_index[10:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_a">
+            <obj_property name="ElementShortName">mod_mult_a[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_a[0:0][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_b">
+            <obj_property name="ElementShortName">mod_mult_b[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_b[0:0][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_result">
+            <obj_property name="ElementShortName">mod_mult_result[0:0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_result[0:0][14:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/mod_mult_valid_in">
+            <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/mod_mult_valid_out">
+            <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/mod_mult_last">
+            <obj_property name="ElementShortName">mod_mult_last</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_last</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_index_in">
+            <obj_property name="ElementShortName">mod_mult_index_in[10:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index_in[10:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_index_out">
+            <obj_property name="ElementShortName">mod_mult_index_out[10:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index_out[10:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group227">
+         <obj_property name="label">verify - squared_norm</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group229">
+         <obj_property name="label">verify - sub_normalize_squared_norm</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_a">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_b">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_c">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_valid">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_valid</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_last">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_last</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_last</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_accept">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_accept</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_accept</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top_8_tb/uut/verify/sub_normalize_squared_norm_reject">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_reject</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_reject</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/verify/ntt_state">
+         <obj_property name="ElementShortName">ntt_state[4:0]</obj_property>
+         <obj_property name="ObjectShortName">ntt_state[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/verify/ntt_next_state">
+         <obj_property name="ElementShortName">ntt_next_state[4:0]</obj_property>
+         <obj_property name="ObjectShortName">ntt_next_state[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/verify/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/verify/SBYTELEN">
+         <obj_property name="ElementShortName">SBYTELEN[31:0]</obj_property>
+         <obj_property name="ObjectShortName">SBYTELEN[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top_8_tb/uut/verify/MULT_MOD_Q_OPS_PER_CYCLE">
+         <obj_property name="ElementShortName">MULT_MOD_Q_OPS_PER_CYCLE[31:0]</obj_property>
+         <obj_property name="ObjectShortName">MULT_MOD_Q_OPS_PER_CYCLE[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

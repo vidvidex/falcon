@@ -26,9 +26,8 @@
 module verify#(
     parameter int N,
     parameter int SBYTELEN,
-    parameter int MULT_MOD_Q_OPS_PER_CYCLE = 1, //! The number of operations per cycle for the MULT_MOD_Q module. N should be divisible by this number.
-    parameter int SUB_AND_NORMALIZE_OPS_PER_CYCLE = 1, //! The number of operations per cycle for the SUB_AND_NORMALIZE module. N should be divisible by this number.
-    parameter int SQUARED_NORM_OPS_PER_CYCLE = 1 //! The number of operations per cycle for the SQUARED_NORM module. N should be divisible by this number.
+    parameter int MULT_MOD_Q_OPS_PER_CYCLE = 1, //! The number of operations per cycle for the mod_mult module. N should be divisible by this number.
+    parameter int SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE = 2 //! The number of operations per cycle for the sub_normalize_squared_norm module. N should be divisible by this number. Currently this has to be 2 because we can read 2 values per cycle from the BRAM
   )(
     input logic clk,
     input logic rst_n,
@@ -192,18 +191,15 @@ module verify#(
   logic ntt_start; //! Start signal for NTT module
   logic ntt_mode; //! 0 - NTT, 1 - INTT
   logic ntt_done; //! Set high when NTT module is done and ntt_output is valid
-  logic [$clog2(N):0] mult_mod_q_index, sub_and_normalize_index, squared_norm_index; //! Indices used for iterating over the buffer arrays. Need to be large enough to store N.
+  logic [$clog2(N):0] mult_mod_q_index, sub_normalize_squared_norm_index;
 
   logic signed [14:0] mod_mult_a [MULT_MOD_Q_OPS_PER_CYCLE], mod_mult_b [MULT_MOD_Q_OPS_PER_CYCLE], mod_mult_result [MULT_MOD_Q_OPS_PER_CYCLE];
   logic mod_mult_valid_in, mod_mult_valid_out, mod_mult_last;
   logic [$clog2(N):0] mod_mult_index_in, mod_mult_index_out;
 
-  logic signed [14:0] sub_and_norm_a [SUB_AND_NORMALIZE_OPS_PER_CYCLE], sub_and_norm_b [SUB_AND_NORMALIZE_OPS_PER_CYCLE], sub_and_norm_result [SUB_AND_NORMALIZE_OPS_PER_CYCLE];
-  logic sub_and_norm_valid_in, sub_and_norm_valid_out, sub_and_norm_last;
-  logic [$clog2(N):0] sub_and_norm_index_in, sub_and_norm_index_out;
-
-  logic signed [14:0] squared_norm_a [SQUARED_NORM_OPS_PER_CYCLE], squared_norm_b [SQUARED_NORM_OPS_PER_CYCLE];
-  logic squared_norm_valid_in, squared_norm_last, squared_norm_accept, squared_norm_reject;
+  logic signed [14:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE];
+  logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_last;
+  logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
 
   // BRAM1
   logic [$clog2(N-1)-1:0] bram1_addr_a, bram1_addr_b;
@@ -327,35 +323,20 @@ module verify#(
                     .last(mod_mult_last)
                   );
 
-  verify_sub_and_normalize #(
-                             .N(N),
-                             .PARALLEL_OPS_COUNT(SUB_AND_NORMALIZE_OPS_PER_CYCLE)
-                           )verify_sub_and_normalize (
-                             .clk(clk),
-                             .rst_n(rst_n),
-                             .a(sub_and_norm_a),
-                             .b(sub_and_norm_b),
-                             .valid_in(sub_and_norm_valid_in),
-                             .index_in(sub_and_norm_index_in),
-                             .result(sub_and_norm_result),
-                             .valid_out(sub_and_norm_valid_out),
-                             .index_out(sub_and_norm_index_out),
-                             .last(sub_and_norm_last)
-                           );
-
-  verify_compute_squared_norm #(
-                                .N(N),
-                                .PARALLEL_OPS_COUNT(SQUARED_NORM_OPS_PER_CYCLE)
-                              )verify_compute_squared_norm (
-                                .clk(clk),
-                                .rst_n(rst_n),
-                                .a(squared_norm_a),
-                                .b(squared_norm_b),
-                                .valid_in(squared_norm_valid_in),
-                                .last(squared_norm_last),
-                                .accept(squared_norm_accept),
-                                .reject(squared_norm_reject)
-                              );
+  sub_normalize_squared_norm #(
+                               .N(N),
+                               .PARALLEL_OPS_COUNT(SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE)
+                             )sub_normalize_squared_norm (
+                               .clk(clk),
+                               .rst_n(rst_n),
+                               .a(sub_normalize_squared_norm_a),
+                               .b(sub_normalize_squared_norm_b),
+                               .c(sub_normalize_squared_norm_c),
+                               .valid(sub_normalize_squared_norm_valid),
+                               .last(sub_normalize_squared_norm_last),
+                               .accept(sub_normalize_squared_norm_accept),
+                               .reject(sub_normalize_squared_norm_reject)
+                             );
 
   // Modulo 12289 subtraction
   function [14:0] mod_sub(input [14:0] a, b);
@@ -380,9 +361,7 @@ module verify#(
             START_INTT, // Run INTT(product)
             RUNNING_INTT, // Wait for INTT to finish
             WAIT_FOR_HASH_TO_POINT, // Wait for hash_to_point to finish
-            SUB_AND_NORMALIZE, // Compute htp_polynomial - product mod q and normalize to [ceil(-q/2), floor(q/2)]
-            WAIT_FOR_SUB_AND_NORMALIZE, // Wait for the pipeline of SUB_AND_NORMALIZE to finish
-            SQUARED_NORM, // Compute the squared norm ||(normalized result, decompressed signature)||^2
+            SUB_NORMALIZE_SQUARED_NORM, // Compute htp_polynomial - product mod q, normalize to [ceil(-q/2), floor(q/2)] = [-6144, 6144], compute the squared norm ||(normalized result, decompressed signature)||^2 and accept/reject
             FINISHED // Final state, here we accept the signature if there were no errors
           } ntt_state_t;
   ntt_state_t ntt_state, ntt_next_state;
@@ -433,14 +412,10 @@ module verify#(
       mod_mult_b[i] = 0;
     end
 
-    for(int i = 0; i < SUB_AND_NORMALIZE_OPS_PER_CYCLE; i++) begin
-      sub_and_norm_a[i] = 0;
-      sub_and_norm_b[i] = 0;
-    end
-
-    for(int i = 0; i < SQUARED_NORM_OPS_PER_CYCLE; i++) begin
-      squared_norm_a[i] = 0;
-      squared_norm_b[i] = 0;
+    for(int i = 0; i < SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE; i++) begin
+      sub_normalize_squared_norm_a[i] = 0;
+      sub_normalize_squared_norm_b[i] = 0;
+      sub_normalize_squared_norm_c[i] = 0;
     end
 
     // In RECEIVE_PUBLIC_KEY we are storing public key in BRAM1 port A
@@ -450,15 +425,19 @@ module verify#(
       bram1_we_a = 1'b1;
     end
 
-    // decompress is permanently connected to BRAM4 port A
-    bram4_addr_a = decompressed_coefficient_index;
-    bram4_data_in_a = decompressed_coefficient;
-    bram4_we_a = decompressed_coefficient_valid;
+    // While decompress is not done it is connected to BRAM4 port A
+    if(decompression_done == 1'b0) begin
+      bram4_addr_a = decompressed_coefficient_index;
+      bram4_data_in_a = decompressed_coefficient;
+      bram4_we_a = decompressed_coefficient_valid;
+    end
 
-    // hash_to_point is permanently connected to BRAM3 port A
-    bram3_addr_a = htp_coefficient_index;
-    bram3_data_in_a = htp_coefficient;
-    bram3_we_a = htp_coefficient_valid;
+    // While hash_to_point is not done it is connected to BRAM3 port A
+    if(htp_done == 1'b0) begin
+      bram3_addr_a = htp_coefficient_index;
+      bram3_data_in_a = htp_coefficient;
+      bram3_we_a = htp_coefficient_valid;
+    end
 
     // In START_NTT_PUBLIC_KEY, RUNNING_NTT_PUBLIC_KEY AND START_INTT, RUNNING_INTT we are connecting ntt_input to BRAM1 and ntt_output to BRAM2
     if(ntt_state == START_NTT_PUBLIC_KEY || ntt_state == RUNNING_NTT_PUBLIC_KEY || ntt_state == START_INTT || ntt_state == RUNNING_INTT) begin
@@ -502,24 +481,20 @@ module verify#(
       bram1_addr_b = mod_mult_index_out;
     end
 
-    // In SUB_AND_NORMALIZE and WAIT_FOR_SUB_AND_NORMALIZE we are reading from BRAM2 port A and BRAM 3 port B and writing to BRAM1 port A
-    if(ntt_state == SUB_AND_NORMALIZE || ntt_state == WAIT_FOR_SUB_AND_NORMALIZE) begin
-      bram2_addr_a = sub_and_normalize_index;
-      bram3_addr_b = sub_and_normalize_index;
-      sub_and_norm_a[0] = bram2_data_out_a;
-      sub_and_norm_b[0] = bram3_data_out_b;
-
-      bram1_we_a = sub_and_norm_valid_out;
-      bram1_data_in_a = sub_and_norm_result[0];
-      bram1_addr_a = sub_and_norm_index_out;
-    end
-
-    // In SQUARED_NORM we are reading from BRAM1 port A and BRAM4 port B
-    if(ntt_state == SQUARED_NORM) begin
-      bram1_addr_a = squared_norm_index;
-      bram4_addr_b = squared_norm_index;
-      squared_norm_a[0] = bram1_data_out_a;
-      squared_norm_b[0] = bram4_data_out_b;
+    // In SUB_NORMALIZE_SQUARED_NORM we are reading from both ports of BRAM2, BRAM 3 and BRAM4
+    if(decompression_done == 1'b1 && htp_done == 1'b1 && ntt_state == SUB_NORMALIZE_SQUARED_NORM) begin
+      bram2_addr_a = sub_normalize_squared_norm_index;
+      bram2_addr_b = sub_normalize_squared_norm_index;
+      bram3_addr_a = sub_normalize_squared_norm_index;
+      bram3_addr_b = sub_normalize_squared_norm_index;
+      bram4_addr_a = sub_normalize_squared_norm_index;
+      bram4_addr_b = sub_normalize_squared_norm_index;
+      sub_normalize_squared_norm_a[0] = bram2_data_out_a;
+      sub_normalize_squared_norm_a[1] = bram2_data_out_b;
+      sub_normalize_squared_norm_b[0] = bram3_data_out_a;
+      sub_normalize_squared_norm_b[1] = bram3_data_out_b;
+      sub_normalize_squared_norm_c[0] = bram4_data_out_a;
+      sub_normalize_squared_norm_c[1] = bram4_data_out_b;
     end
   end
 
@@ -576,30 +551,22 @@ module verify#(
       end
       RUNNING_INTT: begin // Wait for INTT to finish before moving to WAIT_FOR_HASH_TO_POINT
         if (ntt_done == 1'b1) begin
-          // If hash_to_point is finished go to SUB_AND_NORMALIZE, otherwise wait for it to finish
+          // If hash_to_point is finished go to SUB_NORMALIZE_SQUARED_NORM, otherwise wait for it to finish
           if(htp_done == 1'b1)
-            ntt_next_state =  SUB_AND_NORMALIZE;
+            ntt_next_state =  SUB_NORMALIZE_SQUARED_NORM;
           else
             ntt_next_state = WAIT_FOR_HASH_TO_POINT;
         end
       end
       WAIT_FOR_HASH_TO_POINT: begin // Wait for hash_to_point to finish before moving to SUB
         if(htp_done == 1'b1)
-          ntt_next_state = SUB_AND_NORMALIZE;
+          ntt_next_state = SUB_NORMALIZE_SQUARED_NORM;
       end
-      SUB_AND_NORMALIZE: begin // Send all data to verify_sub_and_normalize before moving to WAIT_FOR_SUB_AND_NORMALIZE
-        if (sub_and_normalize_index == N - SUB_AND_NORMALIZE_OPS_PER_CYCLE)
-          ntt_next_state = WAIT_FOR_SUB_AND_NORMALIZE;
-      end
-      WAIT_FOR_SUB_AND_NORMALIZE: begin // Wait for sub_and_normalize to finish before moving to SQUARED_NORM
-        if (sub_and_norm_last == 1'b1)
-          ntt_next_state = SQUARED_NORM;
-      end
-      SQUARED_NORM: begin // Send all data to verify_compute_squared_norm before moving to FINISHED
-        if(squared_norm_index == N - SQUARED_NORM_OPS_PER_CYCLE)
+      SUB_NORMALIZE_SQUARED_NORM: begin // Send all data to sub_normalize_squared_norm, then move to FINISHED
+        if (sub_normalize_squared_norm_index == N - SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE)
           ntt_next_state = FINISHED;
       end
-      FINISHED: begin // Wait for squared norm to finish and then accept or reject the signature
+      FINISHED: begin // Wait for sub_normalize_squared_norm to finish and output the result
         ntt_next_state = FINISHED;
       end
       default: begin
@@ -617,21 +584,14 @@ module verify#(
         mod_mult_valid_in <= 0;
         mod_mult_index_in <= 0;
 
-        squared_norm_valid_in <= 0;
-        squared_norm_index <= 0;
-        squared_norm_last <= 0;
-
-        sub_and_norm_valid_in <= 0;
-        sub_and_norm_index_in <= 0;
+        sub_normalize_squared_norm_valid <= 0;
+        sub_normalize_squared_norm_last <= 0;
 
         accept <= 1'b0;
         reject <= 1'b0;
 
-        // Reset variables in case we run the module multiple times
         mult_mod_q_index <= 0;
-        sub_and_normalize_index <= 0;
-        squared_norm_index <= 0;
-
+        sub_normalize_squared_norm_index <= 0;
         public_key_element_index <= 0;
       end
 
@@ -687,24 +647,14 @@ module verify#(
       WAIT_FOR_HASH_TO_POINT: begin
       end
 
-      SUB_AND_NORMALIZE: begin
-        sub_and_norm_valid_in <= 1'b1;
-        sub_and_norm_index_in <= sub_and_normalize_index;
-        sub_and_normalize_index <= sub_and_normalize_index + 1;
-      end
+      SUB_NORMALIZE_SQUARED_NORM: begin
+        sub_normalize_squared_norm_valid <= 1'b1;
+        sub_normalize_squared_norm_index <= sub_normalize_squared_norm_index + 1;
 
-      WAIT_FOR_SUB_AND_NORMALIZE: begin
-        sub_and_norm_valid_in <= 0;
-        sub_and_norm_index_in <= 0;
-      end
-
-      SQUARED_NORM: begin
-        squared_norm_valid_in <= 1'b1;
-        squared_norm_index <= squared_norm_index + 1;
-        if(squared_norm_index == N - 1)
-          squared_norm_last <= 1'b1;
+        if(sub_normalize_squared_norm_index == N - SUB_NORMALIZE_SQUARED_NORM_OPS_PER_CYCLE)
+          sub_normalize_squared_norm_last <= 1'b1;
         else
-          squared_norm_last <= 1'b0;
+          sub_normalize_squared_norm_last <= 1'b0;
       end
 
       FINISHED: begin
@@ -714,13 +664,13 @@ module verify#(
           accept <= 1'b0;
           reject <= 1'b1;
         end
-        else begin // Otherwise we have to finish squared_norm and then decide
-          squared_norm_valid_in <= 0;
-          squared_norm_last <= 0;
+        else begin // Otherwise we have to finish sub_normalize_squared_norm and then decide
+          sub_normalize_squared_norm_valid <= 0;
+          sub_normalize_squared_norm_last <= 0;
 
           // Wait for squared norm pipeline to finish
-          if(squared_norm_accept == 1'b1 || squared_norm_reject == 1'b1) begin
-            if (signature_error == 1'b0 && squared_norm_reject == 1'b0 && squared_norm_accept == 1'b1) begin
+          if(sub_normalize_squared_norm_accept == 1'b1 || sub_normalize_squared_norm_reject == 1'b1) begin
+            if (signature_error == 1'b0 && sub_normalize_squared_norm_reject == 1'b0 && sub_normalize_squared_norm_accept == 1'b1) begin
               accept <= 1'b1;
               reject <= 1'b0;
             end
