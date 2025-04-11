@@ -15,7 +15,6 @@ module shake256_absorb(
     input logic data_in_valid, //! This signal is provided by a data source to indicate that data_in is valid
     input logic keccak_round_complete,  //! This signal comes from Keccak-f1600 after its completion
 
-    output logic ready,  //! When this signal is high, that means Keccak is ready to absorb.
     output logic [63:0] data_in_padded, //! This is properly processed data that will get written into state buffer.
     output logic data_in_padded_valid,   //! Used to write processed 64-bit data to the state buffer.
     output logic call_keccak_f1600, //! This signal is used to start Keccak-f1600 on the state variable
@@ -121,7 +120,6 @@ module shake256_absorb(
     endcase
   end
 
-  assign ready = state==RATE_COMPLETE ? 0 : 1;
   assign done = state==FINALIZE ? 1 : 0;
   assign data_in_padded_valid = state == CONSUME_DELIMITED_SUFFIX || (state == ABSORB && data_in_valid == 1'b1) ? 1 : 0;
 
