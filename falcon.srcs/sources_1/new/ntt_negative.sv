@@ -256,7 +256,7 @@ module ntt_negative#(
     read_data1 = 0;
     read_data2 = 0;
 
-    if(stage_counter == 0) begin  // Read from input_bram when stage_counter == 0
+    if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
       input_bram_addr1 = read_addr1;
       read_data1 = input_bram_data1;
 
