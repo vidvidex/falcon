@@ -36,7 +36,6 @@ module mod_mult_ntt_negative #(
     output logic signed [14:0] passthrough_out  //! Passthrough output
   );
   logic signed [29:0] a_times_b, a_times_b_1;
-  logic [15:0] a_times_b_times_12287;
   logic signed [30:0] a_times_b_times_12287_times_12289;
   logic signed [14:0] sum_shifted;
 
