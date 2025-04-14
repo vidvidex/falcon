@@ -6,6 +6,9 @@ falcon.runs/
 a.out
 .vscode/
 
+# Personal testing file
+test.py
+
 # For syncthing
 .stfolder
 .stignore
