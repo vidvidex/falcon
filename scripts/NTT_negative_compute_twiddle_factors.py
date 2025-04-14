@@ -7,7 +7,7 @@ N = 1024  # N = 1024 also works for all smaller Ns that are powers of 2
 Q = 12289  # Modulus
 g = 7  # Primitive root
 g_inv = pow(g, -1, Q)
-R = 4091  # Constant for Montgomery reduction
+R = 1  # Constant for Montgomery reduction
 
 # Computes NTT twiddle factor at index i
 def ntt_twiddle_factor(i):
