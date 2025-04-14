@@ -10,7 +10,7 @@
 // but we need to read 2 AND write 2 coefficients at the same time, so we use separate BRAM banks.
 //
 // Forward NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
-// Inverse NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> SCALE -> DONE -> IDLE
+// Inverse NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
 //
 // The module is based on the reference C implementation via a modified Python version to allow for easier implementing
 // See also scripts/ntt_from_reference_C.py and scripts/ntt_from_reference_C_for_FPGA.py
@@ -62,8 +62,6 @@ module ntt_negative#(
   logic mod_mult_valid_in, mod_mult_valid_in_i, mod_mult_valid_out, mod_mult_last; // Valid, last signals for mod_mult module
   logic signed [14:0] mod_mult_passthrough_in, mod_mult_passthrough_out; // Passthrough signals for mod_mult module
 
-  logic [$clog2(N):0] intt_scale_index;
-
   logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM (bank1/bank2/output_bram). It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
 
 
@@ -79,21 +77,27 @@ module ntt_negative#(
   logic signed [14:0] read_data1, read_data2, write_data1, write_data2;
   logic write_enable1, write_enable2;
 
+  // Signals for scaling pipeline
+  logic signed [14:0] scale_data1_in, scale_data2_in, scale_mod_mult1, scale_mod_mult2;
+  logic signed [28:0] scale_a_times_b1, scale_a_times_b2;
+  logic [$clog2(N)-1:0] scale_addr1_in, scale_addr2_in, scale_addr1_1, scale_addr2_1, scale_addr1_out, scale_addr2_out;
+  logic scale_we1_in, scale_we2_in, scale_we1_1, scale_we2_1, scale_we1_out, scale_we2_out;
+  logic signed [14:0] scale_temp1, scale_temp2;
+
 
   // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024
-  // R = pow(2, 16, 12289) (constant for Montgomery multiplication)
+  // R = pow(2, 16, 12289) (constant for Montgomery multiplication), if not using Montgomery reduction R=1
   int intt_scale_factor;
   assign intt_scale_factor =
-         N == 8 ? 8192 :
-         N == 512 ? 128 :
-         N == 1024 ? 64 :
+         N == 8 ? 10753 :
+         N == 512 ? 12265 :
+         N == 1024 ? 12277 :
          0;
 
   typedef enum logic [2:0] {
             IDLE,   // Waiting for start signal
             NTT, // Perform NTT/INTT
             NTT_WAIT_FOR_MULTIPLY, // Wait for multiplication to finish, because it is pipelined it will take a few cycles longer than NTT
-            SCALE, // Scale the coefficients for INTT
             DONE  // Output "done" pulse
           } state_t;
   state_t state, next_state;
@@ -196,19 +200,16 @@ module ntt_negative#(
           next_state = NTT_WAIT_FOR_MULTIPLY;
       end
       NTT_WAIT_FOR_MULTIPLY: begin // Wait for mod_mult to finish and coefficient to be written to BRAM
-        // When we write everything to BRAM we go to DONE for NTT and SCALE for INTT if we're finished with NTT or to the next stage of NTT if we're not
+        // When we write everything to BRAM we go to DONE if we're finished or to the next stage of NTT if we're not
         if(bram_write_complete == 1'b1)
           if(butterfly - 1 == N >> 1 && ((mode == 1'b0 && stride == 1) || (mode == 1'b1 && stride == N >> 1)))
-            next_state = mode == 1'b0 ? DONE : SCALE;
+            next_state = DONE;
           else
             next_state = NTT;
       end
-      SCALE: begin // Scale coefficients.
-        if( bram_write_complete == 1'b1)  // Wait for the scaling pipeline to finish and all coefficients to be written to BRAM
-          next_state = DONE;
-      end
       DONE: begin
-        next_state = IDLE;
+        if(done == 1'b1)  // After we've send the done pulse we go back to IDLE
+          next_state = IDLE;
       end
       default: begin
         next_state = IDLE;
@@ -216,15 +217,51 @@ module ntt_negative#(
     endcase
   end
 
-  // Output decision (since we only have one output signal we don't need a whole always_comb for that)
-  assign done = state == DONE;
+  // Pipeline for scaling output of INTT
+  always_ff @(posedge clk) begin
+
+    // Stage 1: Multiply by scale factor
+    scale_a_times_b1 <= scale_data1_in * intt_scale_factor;
+    scale_a_times_b2 <= scale_data2_in * intt_scale_factor;
+    scale_addr1_1 <= scale_addr1_in;
+    scale_addr2_1 <= scale_addr2_in;
+    scale_we1_1 <= scale_we1_in;
+    scale_we2_1 <= scale_we2_in;
+
+    // Stage 2: Modulo 12289
+    scale_temp1 = scale_a_times_b1 % 12289;
+    scale_temp2 = scale_a_times_b2 % 12289;
+    scale_mod_mult1 <= scale_temp1 < 0 ? scale_temp1 + 12289 : scale_temp1; // Make sure the result is positive
+    scale_mod_mult2 <= scale_temp2 < 0 ? scale_temp2 + 12289 : scale_temp2; // Make sure the result is positive
+    scale_addr1_out <= scale_addr1_1;
+    scale_addr2_out <= scale_addr2_1;
+    scale_we1_out <= scale_we1_1;
+    scale_we2_out <= scale_we2_1;
+  end
+
+  // Output decision
+  always_comb begin
+    done = 1'b0;
+
+    if(state == DONE) begin
+
+      if(mode == 1'b0)  // For NTT we just set done to 1
+        done = 1'b1;
+      else begin  // For INTT we set done to 1 when the scaling pipeline is done
+        if(scale_we1_out == 1'b0 && scale_we2_out == 1'b0)
+          done = 1'b1;
+        else
+          done = 1'b0;
+      end
+    end
+  end
 
   // Determine which signals are used to read/write to the BRAMs
   // stage 0: read from input_bram, write to bank1
   // stage 1: read from bank1, write to bank2
   // stage 2: read from bank2, write to bank1
   // ...
-  // stage log2(N) for NTT | state=SCALE for INTT: read from bank1/bank2, write to output_bram
+  // stage log2(N): read from bank1/bank2, write to output_bram
   always_comb begin
 
     // Default values
@@ -256,6 +293,13 @@ module ntt_negative#(
     read_data1 = 0;
     read_data2 = 0;
 
+    scale_data1_in = 0;
+    scale_data2_in = 0;
+    scale_addr1_in = 0;
+    scale_addr2_in = 0;
+    scale_we1_in = 0;
+    scale_we2_in = 0;
+
     if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
       input_bram_addr1 = read_addr1;
       read_data1 = input_bram_data1;
@@ -278,14 +322,36 @@ module ntt_negative#(
       end
     end
 
-    if((mode == 1'b0 && stage_counter == $clog2(N)-1) || (mode == 1'b1 && state == SCALE)) begin      // Write to output_bram when stage_counter == log2(N)-1 (for NTT) and when state == SCALE (for INTT)
-      output_bram_addr1 = write_addr1;
-      output_bram_data1 = write_data1;
-      output_bram_we1 = write_enable1;
+    if(stage_counter == $clog2(N)-1 || scale_we1_out == 1'b1 || scale_we2_out == 1'b1) begin      // Write to output_bram when stage_counter == log2(N)-1
 
-      output_bram_addr2 = write_addr2;
-      output_bram_data2 = write_data2;
-      output_bram_we2 = write_enable2;
+      if(mode == 1'b0) begin        // For NTT we write directly to output_bram
+        output_bram_addr1 = write_addr1;
+        output_bram_data1 = write_data1;
+        output_bram_we1 = write_enable1;
+
+        output_bram_addr2 = write_addr2;
+        output_bram_data2 = write_data2;
+        output_bram_we2 = write_enable2;
+      end
+      else begin // For INTT we go through scaling pipeline
+
+        // Input into scaling pipeline
+        scale_data1_in = write_data1;
+        scale_data2_in = write_data2;
+        scale_addr1_in = write_addr1;
+        scale_addr2_in = write_addr2;
+        scale_we1_in = write_enable1;
+        scale_we2_in = write_enable2;
+
+        // Output from scaling pipeline
+        output_bram_addr1 = scale_addr1_out;
+        output_bram_data1 = scale_mod_mult1;
+        output_bram_we1 = scale_we1_out;
+
+        output_bram_addr2 = scale_addr2_out;
+        output_bram_data2 = scale_mod_mult2;
+        output_bram_we2 = scale_we2_out;
+      end
     end
     else begin  // Write to bank1/bank2 when stage_counter > 0
       if(stage_counter % 2 == 0) begin        // When stage_counter is even we write to bank1
@@ -350,10 +416,6 @@ module ntt_negative#(
       mod_mult_b = twiddle_factor_i;
       mod_mult_passthrough_in = mode == 1'b0 ? read_data1 : mod_add(read_data1, read_data2);
     end
-    else if(state == SCALE) begin
-      mod_mult_a = read_data1;
-      mod_mult_b = intt_scale_factor;
-    end
     else begin
       mod_mult_a = 0;
       mod_mult_b = 0;
@@ -367,8 +429,6 @@ module ntt_negative#(
       mod_mult_valid_in <= 0;
       mod_mult_index1_in <= 0;
       mod_mult_index2_in <= 0;
-
-      intt_scale_index <= 0;
     end
 
     case (state)
@@ -394,18 +454,6 @@ module ntt_negative#(
         mod_mult_index1_in <= 0;
         mod_mult_index2_in <= 0;
       end
-
-      SCALE: begin
-        if(intt_scale_index < N) begin
-          read_addr1 <= intt_scale_index;
-          mod_mult_valid_in <= 1'b1;
-          mod_mult_index1_in <= intt_scale_index;
-          intt_scale_index <= intt_scale_index + 1;
-        end
-        else begin
-          mod_mult_valid_in <= 0;
-        end
-      end
     endcase
 
     // If there is valid output from mod_mult for main NTT operation we store the result
@@ -429,23 +477,13 @@ module ntt_negative#(
       write_enable1 <= 1'b0;
       write_enable2 <= 1'b0;
     end
-
-    // If there is valid output from mod_mult for main final scaling operation we store the result
-    if(state == SCALE && mod_mult_valid_out == 1'b1) begin
-      write_addr1 <= mod_mult_index1_out;
-      write_data1 <= mod_mult_result;
-      write_enable1 <= 1'b1;
-    end
-    else if(state == SCALE) begin
-      write_enable1 <= 1'b0;
-    end
   end
 
   // Compute NTT parameters
   always_ff @(posedge clk) begin
 
     // Reset/initialize. We do it like this and not with the reset signal because at that point "mode" might not be set yet
-    if (state != NTT && state != NTT_WAIT_FOR_MULTIPLY && state != SCALE) begin
+    if (state != NTT && state != NTT_WAIT_FOR_MULTIPLY) begin
       stage       = mode == 1'b0 ? 1 : N;
       stride      = mode == 1'b0 ? N >> 1 : 1;
       counter_max = mode == 1'b0 ? N >> 1 : 1;

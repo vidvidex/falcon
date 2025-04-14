@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="300,832.275 ns"></ZoomStartTime>
-      <ZoomEndTime time="301,033.546 ns"></ZoomEndTime>
-      <Cursor1Time time="301,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="33,983.070 ns"></ZoomStartTime>
+      <ZoomEndTime time="34,208.825 ns"></ZoomEndTime>
+      <Cursor1Time time="201,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="210"></NameColumnWidth>
-      <ValueColumnWidth column_width="192"></ValueColumnWidth>
+      <ValueColumnWidth column_width="188"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="3" />
+   <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group167">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -72,16 +72,16 @@
          <obj_property name="ObjectShortName">message_blocks[0:6][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/signature_blocks">
-         <obj_property name="ElementShortName">signature_blocks[0:154][63:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_blocks[0:154][63:0]</obj_property>
+         <obj_property name="ElementShortName">signature_blocks[0:1][63:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_blocks[0:1][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/signature_valid_blocks">
-         <obj_property name="ElementShortName">signature_valid_blocks[0:154][6:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_valid_blocks[0:154][6:0]</obj_property>
+         <obj_property name="ElementShortName">signature_valid_blocks[0:1][6:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_valid_blocks[0:1][6:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/public_key">
-         <obj_property name="ElementShortName">public_key[0:1023][14:0]</obj_property>
-         <obj_property name="ObjectShortName">public_key[0:1023][14:0]</obj_property>
+         <obj_property name="ElementShortName">public_key[0:7][14:0]</obj_property>
+         <obj_property name="ObjectShortName">public_key[0:7][14:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top_8_tb/uut/message_len_bytes">
          <obj_property name="ElementShortName">message_len_bytes[15:0]</obj_property>
@@ -275,8 +275,8 @@
          <obj_property name="label">verify mod_mult</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <wvobject type="array" fp_name="/top_8_tb/uut/verify/mult_mod_q_index">
-            <obj_property name="ElementShortName">mult_mod_q_index[10:0]</obj_property>
-            <obj_property name="ObjectShortName">mult_mod_q_index[10:0]</obj_property>
+            <obj_property name="ElementShortName">mult_mod_q_index[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_index[3:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_a">
             <obj_property name="ElementShortName">mod_mult_a[0:0][14:0]</obj_property>
@@ -303,12 +303,12 @@
             <obj_property name="ObjectShortName">mod_mult_last</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_index_in">
-            <obj_property name="ElementShortName">mod_mult_index_in[10:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_index_in[10:0]</obj_property>
+            <obj_property name="ElementShortName">mod_mult_index_in[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index_in[3:0]</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/top_8_tb/uut/verify/mod_mult_index_out">
-            <obj_property name="ElementShortName">mod_mult_index_out[10:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_index_out[10:0]</obj_property>
+            <obj_property name="ElementShortName">mod_mult_index_out[3:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index_out[3:0]</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group227">
