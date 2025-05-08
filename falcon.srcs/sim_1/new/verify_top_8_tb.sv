@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
-module top_1024_tb;
+module verify_top_8_tb;
 
   logic clk;
   logic [3:0] leds;
   logic [3:0] btns;
 
-  top_1024 uut(
+  verify_top_8 uut(
         .clk(clk),
         .btns(btns),
         .leds(leds)
