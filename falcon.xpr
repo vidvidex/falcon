@@ -411,73 +411,79 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/hash_to_point_tb.wcfg">
+      <File Path="$PPRDIR/hash_to_point_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/verify_tb.wcfg">
+      <File Path="$PPRDIR/verify_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/ntt_negative_8_tb.wcfg">
+      <File Path="$PPRDIR/ntt_negative_8_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/ntt_negative_512_tb.wcfg">
+      <File Path="$PPRDIR/ntt_negative_512_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/ntt_positive_tb.wcfg">
+      <File Path="$PPRDIR/ntt_positive_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/decompress_tb.wcfg">
+      <File Path="$PPRDIR/decompress_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/mod_mult_ntt_negative_tb.wcfg">
+      <File Path="$PPRDIR/mod_mult_ntt_negative_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/mod_mult_verify_tb.wcfg">
+      <File Path="$PPRDIR/mod_mult_verify_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/sub_normalize_squared_norm_tb.wcfg">
+      <File Path="$PPRDIR/sub_normalize_squared_norm_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/decompress_coefficient_tb.wcfg">
+      <File Path="$PPRDIR/decompress_coefficient_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/verify_top_8_tb.wcfg">
+      <File Path="$PPRDIR/verify_top_8_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/verify_top_512_tb.wcfg">
+      <File Path="$PPRDIR/verify_top_512_tb_behav.wcfg">
+        <FileInfo>
+          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/verify_top_1024_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -501,26 +507,27 @@
         <Option Name="PamSignalDriverFile" Val="xil_bypass_driver"/>
         <Option Name="PamPseudoTop" Val="pseudo_tb"/>
         <Option Name="SrcSet" Val="sources_1"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/shake256_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/hash_to_point_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_negative_8_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_negative_512_tb.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/shake256_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/hash_to_point_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_negative_8_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_negative_512_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_tbwcfg.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_coefficient_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/top_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_ntt_negative_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_verify_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_compute_squared_norm_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/sub_normalize_squared_norm_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/compress_coefficient_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_coefficient_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/shake256_tb.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_coefficient_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/top_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_ntt_negative_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_verify_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_compute_squared_norm_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/sub_normalize_squared_norm_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/compress_coefficient_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_coefficient_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/shake256_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_8_tb_behav.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_8_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_512_tb.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_1024_tb.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_8_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_512_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_top_1024_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/add_tb_behav.wcfg"/>
         <Option Name="NLNetlistMode" Val="funcsim"/>
       </Config>
     </FileSet>
