@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module top_8 (
+module verify_top_8 (
     input logic clk,
     input logic [3:0] btns,
     output logic [3:0] leds
