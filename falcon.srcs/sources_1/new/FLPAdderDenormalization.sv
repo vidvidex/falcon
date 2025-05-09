@@ -70,11 +70,8 @@ module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
   assign bit_shifted_out = denorm_shift_value == 6'd1 && !denorm_underflow ? significant_a_1DP[0] : 1'd0;
 
   logic [`SIGNIFICANT_BITS:0] denorm_significant_a;
-  `ifdef SINGLE_PRECISION
-    RShift23 rshft_23(.in(significant_a_1DP), .shift(denorm_shift_value), .result(denorm_significant_a));
-  `else
-    assign denorm_significant_a = significant_a_1DP >> denorm_shift_value;
-  `endif
+  assign denorm_significant_a = significant_a_1DP >> denorm_shift_value;
+
 
   ////////////// Pipeline stage /////////////////////////
   logic sign_result_internal_2DP, data_valid_internal_2DP, bit_shifted_out_internal_2DP, denorm_underflow_internal_2DP, signs_equal_internal_2DP, switched_operands_internal_2DP;

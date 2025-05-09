@@ -135,11 +135,7 @@ module FLPAdderSigAddNormalize(
   assign significant_shifted_one = {significant_tmp_result_5DP[`SIGNIFICANT_BITS-2:0], bit_shifted_out_5DP};
 
   logic [`SIGNIFICANT_BITS-1:0] significant_result, significant_shifted;
-  `ifdef SINGLE_PRECISION
-    LShift22 lshft_22(.in(significant_shifted_one), .shift(norm_shift_value_5DP), .result(significant_shifted));
-  `else
-    assign significant_shifted = significant_shifted_one << norm_shift_value_5DP;
-  `endif
+  assign significant_shifted = significant_shifted_one << norm_shift_value_5DP;
   assign significant_result = leftshift_needed_5DP ? significant_shifted : significant_tmp_result_5DP;
   
   ////////////// final pipeline stage /////////////////////////
