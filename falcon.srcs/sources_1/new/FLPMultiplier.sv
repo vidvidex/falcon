@@ -1,5 +1,8 @@
 `timescale 1ns / 1ps
 
+// Changes compared to the original code:
+// - removed external integer multiplication option. Instead we instantiate dedicated multipliers in this module (because we don't need to share them with anything else)
+
 // This is the implementation of the IEEE-754 multiplier without subnormal
 // number support
 // input: unbuffered
@@ -11,29 +14,24 @@ module FLPMultiplier(
     input [`OVERALL_BITS-1:0] a,
     input [`OVERALL_BITS-1:0] b,
     output [`OVERALL_BITS-1:0] result,
-    output done,
-
-    // integer multiplier interface
-    output [53:0] mult_a,
-    output [53:0] mult_b,
-    input [107:0] int_mult_result
+    output done
   );
-  
+
   logic sign_a, sign_b;
   assign sign_a = a[`OVERALL_BITS-1];
   assign sign_b = b[`OVERALL_BITS-1];
-  
+
   logic [`EXPONENT_BITS-1:0] exponent_a, exponent_b;
   assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
   assign exponent_b = b[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
-  
+
   logic [`SIGNIFICANT_BITS:0] significant_a, significant_b;
   logic implicit_bit_a, implicit_bit_b;
   assign implicit_bit_a = exponent_a != `EXPONENT_BITS'd0;
   assign implicit_bit_b = exponent_b != `EXPONENT_BITS'd0;
   assign significant_a = {implicit_bit_a, a[`SIGNIFICANT_BITS-1:0]};
   assign significant_b = {implicit_bit_b, b[`SIGNIFICANT_BITS-1:0]};
-  
+
   logic sign_result;
   assign sign_result = sign_a ^ sign_b;
 
@@ -42,9 +40,9 @@ module FLPMultiplier(
 
   logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted;
 
-  assign mult_a = {1'd0, significant_a};
-  assign mult_b = {1'd0, significant_b};
-  assign multiplied_significants_shifted = int_mult_result[2*`SIGNIFICANT_BITS+1:`SIGNIFICANT_BITS];
+  logic [107:0] a_times_b;
+  assign a_times_b = {1'd0, significant_a} * {1'd0, significant_b};
+  assign multiplied_significants_shifted = a_times_b[2*`SIGNIFICANT_BITS+1:`SIGNIFICANT_BITS];
 
 
   ////////////////////////// Pipeline stage ///////////////////
@@ -57,7 +55,7 @@ module FLPMultiplier(
 
   logic [`EXPONENT_BITS+1:0] exponent_uncorrected;
   assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - `EXPONENT_BIAS;
-  
+
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_2DP, data_valid_2DP;
   logic [`EXPONENT_BITS+1:0] exponent_uncorrected_2DP;
@@ -72,7 +70,7 @@ module FLPMultiplier(
 
   logic exponent_is_negative;
   assign exponent_is_negative = exponent_uncorrected_2DP[`EXPONENT_BITS+1];
-  
+
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_3DP, data_valid_3DP, exponent_is_negative_3DP;
   logic [`EXPONENT_BITS-1:0] exponent_uncorrected_3DP, exponent_corrected_3DP;
@@ -98,9 +96,9 @@ module FLPMultiplier(
 
   logic [`SIGNIFICANT_BITS-1:0] significant_result;
   assign significant_result = carry_bit ? multiplied_significants_shifted[`SIGNIFICANT_BITS:1]
-                                        : multiplied_significants_shifted[`SIGNIFICANT_BITS-1:0];
-  
-                             
+         : multiplied_significants_shifted[`SIGNIFICANT_BITS-1:0];
+
+
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_4DP, data_valid_4DP, zero_result_4DP;
   logic [`EXPONENT_BITS-1:0] exponent_tmp_4DP;
@@ -126,5 +124,5 @@ module FLPMultiplier(
 
   assign result = {sign_result_5DP, exponent_result_5DP, significant_result_5DP};
   assign done = data_valid_5DP;
-  
+
 endmodule
