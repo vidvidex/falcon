@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
 
-module mul_complex_tb;
+module ComplexMultiplier_tb;
 
   logic clk;
   logic start, done;
@@ -11,7 +11,7 @@ module mul_complex_tb;
 
   always #5 clk = ~clk;
 
-  ComplexMultiplier multiplier(
+  ComplexMultiplier ComplexMultiplier(
                       .clk(clk),
                       .start(start),
                       .a_real(a_real),

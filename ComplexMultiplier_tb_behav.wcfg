@@ -3,10 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="mul_complex_tb_behav.wdb" id="1">
+      <db_ref path="ComplexMultiplier_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="mul_complex_tb" />
+            <top_module name="ComplexMultiplier_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -20,19 +20,19 @@
       <ValueColumnWidth column_width="160"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="9" />
-   <wvobject type="logic" fp_name="/mul_complex_tb/clk">
+   <wvobject type="logic" fp_name="/ComplexMultiplier_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/mul_complex_tb/start">
+   <wvobject type="logic" fp_name="/ComplexMultiplier_tb/start">
       <obj_property name="ElementShortName">start</obj_property>
       <obj_property name="ObjectShortName">start</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/mul_complex_tb/done">
+   <wvobject type="logic" fp_name="/ComplexMultiplier_tb/done">
       <obj_property name="ElementShortName">done</obj_property>
       <obj_property name="ObjectShortName">done</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_complex_tb/a_real">
+   <wvobject type="array" fp_name="/ComplexMultiplier_tb/a_real">
       <obj_property name="ElementShortName">a_real[63:0]</obj_property>
       <obj_property name="ObjectShortName">a_real[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -40,7 +40,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_complex_tb/a_imag">
+   <wvobject type="array" fp_name="/ComplexMultiplier_tb/a_imag">
       <obj_property name="ElementShortName">a_imag[63:0]</obj_property>
       <obj_property name="ObjectShortName">a_imag[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -48,7 +48,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_complex_tb/b_real">
+   <wvobject type="array" fp_name="/ComplexMultiplier_tb/b_real">
       <obj_property name="ElementShortName">b_real[63:0]</obj_property>
       <obj_property name="ObjectShortName">b_real[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -56,7 +56,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_complex_tb/b_imag">
+   <wvobject type="array" fp_name="/ComplexMultiplier_tb/b_imag">
       <obj_property name="ElementShortName">b_imag[63:0]</obj_property>
       <obj_property name="ObjectShortName">b_imag[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -64,7 +64,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_complex_tb/result_real">
+   <wvobject type="array" fp_name="/ComplexMultiplier_tb/result_real">
       <obj_property name="ElementShortName">result_real[63:0]</obj_property>
       <obj_property name="ObjectShortName">result_real[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -72,7 +72,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_complex_tb/result_imag">
+   <wvobject type="array" fp_name="/ComplexMultiplier_tb/result_imag">
       <obj_property name="ElementShortName">result_imag[63:0]</obj_property>
       <obj_property name="ObjectShortName">result_imag[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>

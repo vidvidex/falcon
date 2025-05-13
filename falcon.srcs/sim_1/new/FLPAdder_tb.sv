@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
 
-module add_tb;
+module FLPAdder_tb;
 
   logic clk;
   logic start, done;

@@ -3,10 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="mul_tb_behav.wdb" id="1">
+      <db_ref path="FLPMultiplier_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="mul_tb" />
+            <top_module name="FLPMultiplier_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -20,19 +20,19 @@
       <ValueColumnWidth column_width="164"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
-   <wvobject type="logic" fp_name="/mul_tb/clk">
+   <wvobject type="logic" fp_name="/FLPMultiplier_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/mul_tb/start">
+   <wvobject type="logic" fp_name="/FLPMultiplier_tb/start">
       <obj_property name="ElementShortName">start</obj_property>
       <obj_property name="ObjectShortName">start</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/mul_tb/done">
+   <wvobject type="logic" fp_name="/FLPMultiplier_tb/done">
       <obj_property name="ElementShortName">done</obj_property>
       <obj_property name="ObjectShortName">done</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_tb/a">
+   <wvobject type="array" fp_name="/FLPMultiplier_tb/a">
       <obj_property name="ElementShortName">a[63:0]</obj_property>
       <obj_property name="ObjectShortName">a[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -40,7 +40,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_tb/b">
+   <wvobject type="array" fp_name="/FLPMultiplier_tb/b">
       <obj_property name="ElementShortName">b[63:0]</obj_property>
       <obj_property name="ObjectShortName">b[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -48,7 +48,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/mul_tb/result">
+   <wvobject type="array" fp_name="/FLPMultiplier_tb/result">
       <obj_property name="ElementShortName">result[63:0]</obj_property>
       <obj_property name="ObjectShortName">result[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -60,167 +60,167 @@
       <obj_property name="label">FLPMultiplier</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_a">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_a">
          <obj_property name="ElementShortName">sign_a</obj_property>
          <obj_property name="ObjectShortName">sign_a</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_b">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_b">
          <obj_property name="ElementShortName">sign_b</obj_property>
          <obj_property name="ObjectShortName">sign_b</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_a">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_a">
          <obj_property name="ElementShortName">exponent_a[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_a[10:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_b">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_b">
          <obj_property name="ElementShortName">exponent_b[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_b[10:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/significant_a">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/significant_a">
          <obj_property name="ElementShortName">significant_a[52:0]</obj_property>
          <obj_property name="ObjectShortName">significant_a[52:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/significant_b">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/significant_b">
          <obj_property name="ElementShortName">significant_b[52:0]</obj_property>
          <obj_property name="ObjectShortName">significant_b[52:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/implicit_bit_a">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/implicit_bit_a">
          <obj_property name="ElementShortName">implicit_bit_a</obj_property>
          <obj_property name="ObjectShortName">implicit_bit_a</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/implicit_bit_b">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/implicit_bit_b">
          <obj_property name="ElementShortName">implicit_bit_b</obj_property>
          <obj_property name="ObjectShortName">implicit_bit_b</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_result">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_result">
          <obj_property name="ElementShortName">sign_result</obj_property>
          <obj_property name="ObjectShortName">sign_result</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_sum">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_sum">
          <obj_property name="ElementShortName">exponent_sum[11:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_sum[11:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/multiplied_significants_shifted">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/multiplied_significants_shifted">
          <obj_property name="ElementShortName">multiplied_significants_shifted[53:0]</obj_property>
          <obj_property name="ObjectShortName">multiplied_significants_shifted[53:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/a_times_b">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/a_times_b">
          <obj_property name="ElementShortName">a_times_b[107:0]</obj_property>
          <obj_property name="ObjectShortName">a_times_b[107:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_result_1DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_result_1DP">
          <obj_property name="ElementShortName">sign_result_1DP</obj_property>
          <obj_property name="ObjectShortName">sign_result_1DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/data_valid_1DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/data_valid_1DP">
          <obj_property name="ElementShortName">data_valid_1DP</obj_property>
          <obj_property name="ObjectShortName">data_valid_1DP</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_sum_1DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_sum_1DP">
          <obj_property name="ElementShortName">exponent_sum_1DP[11:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_sum_1DP[11:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/multiplied_significants_shifted_3DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/multiplied_significants_shifted_3DP">
          <obj_property name="ElementShortName">multiplied_significants_shifted_3DP[53:0]</obj_property>
          <obj_property name="ObjectShortName">multiplied_significants_shifted_3DP[53:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_uncorrected">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_uncorrected">
          <obj_property name="ElementShortName">exponent_uncorrected[12:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_uncorrected[12:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_result_2DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_result_2DP">
          <obj_property name="ElementShortName">sign_result_2DP</obj_property>
          <obj_property name="ObjectShortName">sign_result_2DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/data_valid_2DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/data_valid_2DP">
          <obj_property name="ElementShortName">data_valid_2DP</obj_property>
          <obj_property name="ObjectShortName">data_valid_2DP</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_uncorrected_2DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_uncorrected_2DP">
          <obj_property name="ElementShortName">exponent_uncorrected_2DP[12:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_uncorrected_2DP[12:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_corrected">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_corrected">
          <obj_property name="ElementShortName">exponent_corrected[12:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_corrected[12:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/exponent_is_negative">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_is_negative">
          <obj_property name="ElementShortName">exponent_is_negative</obj_property>
          <obj_property name="ObjectShortName">exponent_is_negative</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_result_3DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_result_3DP">
          <obj_property name="ElementShortName">sign_result_3DP</obj_property>
          <obj_property name="ObjectShortName">sign_result_3DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/data_valid_3DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/data_valid_3DP">
          <obj_property name="ElementShortName">data_valid_3DP</obj_property>
          <obj_property name="ObjectShortName">data_valid_3DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/exponent_is_negative_3DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_is_negative_3DP">
          <obj_property name="ElementShortName">exponent_is_negative_3DP</obj_property>
          <obj_property name="ObjectShortName">exponent_is_negative_3DP</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_uncorrected_3DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_uncorrected_3DP">
          <obj_property name="ElementShortName">exponent_uncorrected_3DP[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_uncorrected_3DP[10:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_corrected_3DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_corrected_3DP">
          <obj_property name="ElementShortName">exponent_corrected_3DP[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_corrected_3DP[10:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/carry_bit">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/carry_bit">
          <obj_property name="ElementShortName">carry_bit</obj_property>
          <obj_property name="ObjectShortName">carry_bit</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_tmp">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_tmp">
          <obj_property name="ElementShortName">exponent_tmp[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_tmp[10:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/significant_is_zero">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/significant_is_zero">
          <obj_property name="ElementShortName">significant_is_zero</obj_property>
          <obj_property name="ObjectShortName">significant_is_zero</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/zero_result">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/zero_result">
          <obj_property name="ElementShortName">zero_result</obj_property>
          <obj_property name="ObjectShortName">zero_result</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/significant_result">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/significant_result">
          <obj_property name="ElementShortName">significant_result[51:0]</obj_property>
          <obj_property name="ObjectShortName">significant_result[51:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_result_4DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_result_4DP">
          <obj_property name="ElementShortName">sign_result_4DP</obj_property>
          <obj_property name="ObjectShortName">sign_result_4DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/data_valid_4DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/data_valid_4DP">
          <obj_property name="ElementShortName">data_valid_4DP</obj_property>
          <obj_property name="ObjectShortName">data_valid_4DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/zero_result_4DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/zero_result_4DP">
          <obj_property name="ElementShortName">zero_result_4DP</obj_property>
          <obj_property name="ObjectShortName">zero_result_4DP</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_tmp_4DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_tmp_4DP">
          <obj_property name="ElementShortName">exponent_tmp_4DP[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_tmp_4DP[10:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/significant_result_4DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/significant_result_4DP">
          <obj_property name="ElementShortName">significant_result_4DP[51:0]</obj_property>
          <obj_property name="ObjectShortName">significant_result_4DP[51:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/sign_result_5DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/sign_result_5DP">
          <obj_property name="ElementShortName">sign_result_5DP</obj_property>
          <obj_property name="ObjectShortName">sign_result_5DP</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/mul_tb/FLPMultiplier/data_valid_5DP">
+      <wvobject type="logic" fp_name="/FLPMultiplier_tb/FLPMultiplier/data_valid_5DP">
          <obj_property name="ElementShortName">data_valid_5DP</obj_property>
          <obj_property name="ObjectShortName">data_valid_5DP</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/exponent_result_5DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/exponent_result_5DP">
          <obj_property name="ElementShortName">exponent_result_5DP[10:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_result_5DP[10:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/mul_tb/FLPMultiplier/significant_result_5DP">
+      <wvobject type="array" fp_name="/FLPMultiplier_tb/FLPMultiplier/significant_result_5DP">
          <obj_property name="ElementShortName">significant_result_5DP[51:0]</obj_property>
          <obj_property name="ObjectShortName">significant_result_5DP[51:0]</obj_property>
       </wvobject>
