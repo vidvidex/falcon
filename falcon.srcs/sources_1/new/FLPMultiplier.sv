@@ -2,6 +2,7 @@
 
 // Changes compared to the original code:
 // - removed external integer multiplication option. Instead we instantiate dedicated multipliers in this module (because we don't need to share them with anything else)
+// - fixed delay of multiplied_significants_shifted so that the whole module can work as a pipeline
 
 // This is the implementation of the IEEE-754 multiplier without subnormal
 // number support
@@ -48,6 +49,7 @@ module FLPMultiplier(
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_1DP, data_valid_1DP;
   logic [`EXPONENT_BITS:0] exponent_sum_1DP;
+  logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted_3DP;
 
   DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) data_valid_delay(.clk(clk), .in(start), .out(data_valid_1DP));
   DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) sign_result_delay(.clk(clk), .in(sign_result), .out(sign_result_1DP));
@@ -55,6 +57,8 @@ module FLPMultiplier(
 
   logic [`EXPONENT_BITS+1:0] exponent_uncorrected;
   assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - `EXPONENT_BIAS;
+
+  DelayRegister #(.BITWIDTH(`SIGNIFICANT_BITS+2), .CYCLE_COUNT(1+4)) multiplied_significants_shifted_delay(.clk(clk), .in(multiplied_significants_shifted), .out(multiplied_significants_shifted_3DP));
 
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_2DP, data_valid_2DP;
@@ -83,20 +87,19 @@ module FLPMultiplier(
   end
 
   logic carry_bit;
-  assign carry_bit = multiplied_significants_shifted[`SIGNIFICANT_BITS+1];
+  assign carry_bit = multiplied_significants_shifted_3DP[`SIGNIFICANT_BITS+1];
 
   logic [`EXPONENT_BITS-1:0] exponent_tmp;
   assign exponent_tmp = carry_bit ? exponent_corrected_3DP : exponent_uncorrected_3DP;
 
   logic significant_is_zero;
-  assign significant_is_zero = multiplied_significants_shifted == {2'd0, `SIGNIFICANT_BITS'd0};
+  assign significant_is_zero = multiplied_significants_shifted_3DP == {2'd0, `SIGNIFICANT_BITS'd0};
 
   logic zero_result;
   assign zero_result = exponent_is_negative_3DP || significant_is_zero || exponent_tmp == `EXPONENT_BITS'd0;
 
   logic [`SIGNIFICANT_BITS-1:0] significant_result;
-  assign significant_result = carry_bit ? multiplied_significants_shifted[`SIGNIFICANT_BITS:1]
-         : multiplied_significants_shifted[`SIGNIFICANT_BITS-1:0];
+  assign significant_result = carry_bit ? multiplied_significants_shifted_3DP[`SIGNIFICANT_BITS:1] : multiplied_significants_shifted_3DP[`SIGNIFICANT_BITS-1:0];
 
 
   ////////////////////////// Pipeline stage ///////////////////

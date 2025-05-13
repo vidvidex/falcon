@@ -11,7 +11,7 @@ module mul_tb;
 
   always #5 clk = ~clk;
 
-  FLPMultiplier multiplier(
+  FLPMultiplier FLPMultiplier(
                   .clk(clk),
                   .start(start),
                   .a(a),
@@ -23,12 +23,26 @@ module mul_tb;
   initial begin
 
     clk = 1;
-    
+
     start = 1;
-    a = $realtobits(-5.0);
-    b = $realtobits(2.0);
+    a = $realtobits(2.0);
+    b = $realtobits(-4.5);
     #10;
+
+    a = $realtobits(1.0);
+    b = $realtobits(1.5);
+    #10;
+
+    a = $realtobits(-12.1);
+    b = $realtobits(-3.0);
+    #10;
+
+    a = $realtobits(0.0);
+    b = $realtobits(0.0);
+    #10;
+
     start = 0;
+
   end
 
 endmodule
