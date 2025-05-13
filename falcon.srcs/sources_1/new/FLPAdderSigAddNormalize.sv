@@ -18,9 +18,9 @@ module FLPAdderSigAddNormalize(
 
   logic [`SIGNIFICANT_BITS+1:0] signed_significant_a;
   assign signed_significant_a = denorm_underflow_2DP  ? {2'b0, `SIGNIFICANT_BITS'd0}
-                                : signs_equal_2DP     ? {1'b0, denorm_significant_a_2DP} 
-                                : bit_shifted_out_2DP ? {1'b1, ~denorm_significant_a_2DP}
-                                : -{1'b0, denorm_significant_a_2DP};
+         : signs_equal_2DP     ? {1'b0, denorm_significant_a_2DP}
+         : bit_shifted_out_2DP ? {1'b1, ~denorm_significant_a_2DP}
+         : -{1'b0, denorm_significant_a_2DP};
 
   ////////////// Pipeline stage /////////////////////////
   logic sign_result_2aDP, data_valid_2aDP, bit_shifted_out_2aDP;
@@ -60,12 +60,12 @@ module FLPAdderSigAddNormalize(
 
   logic [$clog2(`SIGNIFICANT_BITS+1)-1:0] leading_zeros;
   LeadingZeroCount #(.BITWIDTH(`SIGNIFICANT_BITS+1)) leading_zero_cnt(.in(significants_added_3DP[`SIGNIFICANT_BITS:0]),
-                                                                      .out(leading_zeros), 
-                                                                      .input_is_zero(significant_is_zero));
-  
+                   .out(leading_zeros),
+                   .input_is_zero(significant_is_zero));
+
   logic [`SIGNIFICANT_BITS-1:0] significant_tmp_result;
   assign significant_tmp_result = carry_bit ? significants_added_3DP[`SIGNIFICANT_BITS:1]
-                                            : significants_added_3DP[`SIGNIFICANT_BITS-1:0];
+         : significants_added_3DP[`SIGNIFICANT_BITS-1:0];
 
   ////////////// Pipeline stage /////////////////////////
   logic sign_result_4DP, data_valid_4DP, bit_shifted_out_4DP;
@@ -92,10 +92,10 @@ module FLPAdderSigAddNormalize(
   assign exponent_negative = exponent_minus_leading_zeros[`EXPONENT_BITS];
   logic [$clog2(`SIGNIFICANT_BITS+1):0] norm_shift_value;
   assign norm_shift_value = (exponent_negative ? exponent_b_4DP[$clog2(`SIGNIFICANT_BITS+1)-1:0]
-                                               : leading_zeros_4DP) - 1'd1;
+                             : leading_zeros_4DP) - 1'd1;
 
-  
-  
+
+
   ////////////// Pipeline stage /////////////////////////
   logic sign_result_5DP, data_valid_5DP, bit_shifted_out_5DP;
   logic [`SIGNIFICANT_BITS-1:0] significant_tmp_result_5DP;
@@ -121,7 +121,7 @@ module FLPAdderSigAddNormalize(
 
   logic [`EXPONENT_BITS-1:0] exponent_result;
   always_comb begin
-    if (carry_bit_5DP) 
+    if (carry_bit_5DP)
       exponent_result = exponent_b_5DP + 1'd1;
     else if (exponent_result_is_zero_5DP)
       exponent_result = `EXPONENT_BITS'd0;
@@ -137,7 +137,7 @@ module FLPAdderSigAddNormalize(
   logic [`SIGNIFICANT_BITS-1:0] significant_result, significant_shifted;
   assign significant_shifted = significant_shifted_one << norm_shift_value_5DP;
   assign significant_result = leftshift_needed_5DP ? significant_shifted : significant_tmp_result_5DP;
-  
+
   ////////////// final pipeline stage /////////////////////////
   logic sign_result_6DP, data_valid_6DP;
   logic [`EXPONENT_BITS-1:0] exponent_result_6DP;

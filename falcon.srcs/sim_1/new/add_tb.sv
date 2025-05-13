@@ -13,7 +13,7 @@ module add_tb;
 
   FLPAdder #(
              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-           ) adder(
+           ) FLPAdder(
              .clk(clk),
              .start(start),
              .a(a),
@@ -26,8 +26,18 @@ module add_tb;
 
     clk = 1;
 
+    a = $realtobits(1.0);
+    b = $realtobits(2.0);
+    start = 1;
+    #10;
+
     a = $realtobits(10.5);
     b = $realtobits(20.5);
+    start = 1;
+    #10;
+
+    a = $realtobits(4.5);
+    b = $realtobits(8.5);
     start = 1;
     #10;
     start = 0;

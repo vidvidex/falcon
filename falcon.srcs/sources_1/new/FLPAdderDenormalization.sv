@@ -25,14 +25,14 @@ module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
   logic [`EXPONENT_BITS-1:0] exponent_a, exponent_b;
   assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
   assign exponent_b = b[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
-  
+
   logic [`SIGNIFICANT_BITS:0] significant_a, significant_b;
   logic implicit_bit_a, implicit_bit_b;
   assign implicit_bit_a = exponent_a != `EXPONENT_BITS'd0;
   assign implicit_bit_b = exponent_b != `EXPONENT_BITS'd0;
   assign significant_a = {implicit_bit_a, a[`SIGNIFICANT_BITS-1:0]};
   assign significant_b = {implicit_bit_b, b[`SIGNIFICANT_BITS-1:0]};
-  
+
   logic signs_equal;
   assign signs_equal = sign_a == sign_b;
 
