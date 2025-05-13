@@ -3,10 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="int_to_double_tb_behav.wdb" id="1">
+      <db_ref path="IntToDouble_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="int_to_double_tb" />
+            <top_module name="IntToDouble_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -20,16 +20,16 @@
       <ValueColumnWidth column_width="168"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
-   <wvobject type="logic" fp_name="/int_to_double_tb/clk">
+   <wvobject type="logic" fp_name="/IntToDouble_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/int_to_double_tb/int_in">
+   <wvobject type="array" fp_name="/IntToDouble_tb/int_in">
       <obj_property name="ElementShortName">int_in[14:0]</obj_property>
       <obj_property name="ObjectShortName">int_in[14:0]</obj_property>
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/int_to_double_tb/double_out">
+   <wvobject type="array" fp_name="/IntToDouble_tb/double_out">
       <obj_property name="ElementShortName">double_out[63:0]</obj_property>
       <obj_property name="ObjectShortName">double_out[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
 
-module mul_tb;
+module FLPMultiplier_tb;
 
   logic clk;
   logic start, done;
