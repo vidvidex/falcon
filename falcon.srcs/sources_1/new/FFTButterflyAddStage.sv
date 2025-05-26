@@ -18,6 +18,8 @@ module FFTButterflyAddStage(
     input [`OVERALL_BITS-1:0] b_real,
     input [`OVERALL_BITS-1:0] b_imag,
 
+    input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
+
     output [`OVERALL_BITS-1:0] a_p_b_real,
     output [`OVERALL_BITS-1:0] a_p_b_imag,
     output [`OVERALL_BITS-1:0] a_m_b_real,
@@ -56,7 +58,7 @@ module FFTButterflyAddStage(
                             .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
                             .denorm_underflow_2DP(denorm_underflow_real_2DP),
                             .signs_equal_2DP(signs_equal_real_2DP),
-                            .exponent_b_2DP(exponent_b_real_2DP),
+                            .exponent_b_2DP(signed'(exponent_b_real_2DP)+scale_factor),
                             .significant_b_2DP(significant_b_real_2DP),
                             .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
 
@@ -109,7 +111,7 @@ module FFTButterflyAddStage(
                             .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
                             .denorm_underflow_2DP(denorm_underflow_imag_2DP),
                             .signs_equal_2DP(signs_equal_imag_2DP),
-                            .exponent_b_2DP(exponent_b_imag_2DP),
+                            .exponent_b_2DP(signed'(exponent_b_imag_2DP)+scale_factor),
                             .significant_b_2DP(significant_b_imag_2DP),
                             .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
 

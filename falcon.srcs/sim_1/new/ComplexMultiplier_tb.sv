@@ -8,6 +8,7 @@ module ComplexMultiplier_tb;
   logic [`OVERALL_BITS-1:0] a_real, a_imag;
   logic [`OVERALL_BITS-1:0] b_real, b_imag;
   logic [`OVERALL_BITS-1:0] result_real, result_imag;
+  logic signed [4:0] scale_factor;
 
   always #5 clk = ~clk;
 
@@ -18,6 +19,7 @@ module ComplexMultiplier_tb;
                       .a_imag(a_imag),
                       .b_real(b_real),
                       .b_imag(b_imag),
+                      .scale_factor(scale_factor),
                       .a_x_b_real(result_real),
                       .a_x_b_imag(result_imag),
                       .done(done)
@@ -26,6 +28,7 @@ module ComplexMultiplier_tb;
   initial begin
 
     clk = 1;
+    scale_factor = -1;
 
     start = 1;
     a_real = $realtobits(1.5);

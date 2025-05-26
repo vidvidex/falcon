@@ -14,6 +14,7 @@ module FLPMultiplier(
     input start,
     input [`OVERALL_BITS-1:0] a,
     input [`OVERALL_BITS-1:0] b,
+    input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
     output [`OVERALL_BITS-1:0] result,
     output done
   );
@@ -22,7 +23,7 @@ module FLPMultiplier(
   assign sign_a = a[`OVERALL_BITS-1];
   assign sign_b = b[`OVERALL_BITS-1];
 
-  logic [`EXPONENT_BITS-1:0] exponent_a, exponent_b;
+  logic [`EXPONENT_BITS:0] exponent_a, exponent_b;
   assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
   assign exponent_b = b[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
 
@@ -37,7 +38,7 @@ module FLPMultiplier(
   assign sign_result = sign_a ^ sign_b;
 
   logic [`EXPONENT_BITS:0] exponent_sum;
-  assign exponent_sum = exponent_a + exponent_b;
+  assign exponent_sum = signed'(exponent_a) + signed'(exponent_b) + scale_factor;
 
   logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted;
 

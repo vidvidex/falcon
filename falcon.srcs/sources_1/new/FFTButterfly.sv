@@ -20,6 +20,8 @@ module FFTButterfly(
     input [`OVERALL_BITS-1:0] tw_real,
     input [`OVERALL_BITS-1:0] tw_imag,
 
+    input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
+
     output [`OVERALL_BITS-1:0] a_out_real,
     output [`OVERALL_BITS-1:0] a_out_imag,
     output [`OVERALL_BITS-1:0] b_out_real,
@@ -63,6 +65,7 @@ module FFTButterfly(
                          .a_imag(a_imag),
                          .b_real(b_real),
                          .b_imag(b_imag),
+                         .scale_factor(scale_factor),
 
                          .a_p_b_real(a_p_b_real),
                          .a_p_b_imag(a_p_b_imag),
@@ -91,6 +94,7 @@ module FFTButterfly(
                       .a_imag(a_m_b_imag_1DP),
                       .b_real(tw_real),
                       .b_imag(tw_imag),
+                      .scale_factor(scale_factor),
 
                       .a_x_b_real(mul_out_real),
                       .a_x_b_imag(mul_out_imag),
