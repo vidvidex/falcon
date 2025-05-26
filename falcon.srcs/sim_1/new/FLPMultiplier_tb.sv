@@ -8,6 +8,7 @@ module FLPMultiplier_tb;
   logic [`OVERALL_BITS-1:0] a;
   logic [`OVERALL_BITS-1:0] b;
   logic [`OVERALL_BITS-1:0] result;
+  logic signed [4:0] scale_factor;
 
   always #5 clk = ~clk;
 
@@ -16,6 +17,7 @@ module FLPMultiplier_tb;
                   .start(start),
                   .a(a),
                   .b(b),
+                  .scale_factor(scale_factor),
                   .result(result),
                   .done(done)
                 );
@@ -23,6 +25,7 @@ module FLPMultiplier_tb;
   initial begin
 
     clk = 1;
+    scale_factor = 0;
 
     start = 1;
     a = $realtobits(2.0);

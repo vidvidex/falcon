@@ -16,6 +16,7 @@ module ComplexMultiplier(
     input [`OVERALL_BITS-1:0] a_imag,
     input [`OVERALL_BITS-1:0] b_real,
     input [`OVERALL_BITS-1:0] b_imag,
+    input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
 
     output [`OVERALL_BITS-1:0] a_x_b_real,
     output [`OVERALL_BITS-1:0] a_x_b_imag,
@@ -31,6 +32,7 @@ module ComplexMultiplier(
                   .start(start),
                   .a(a_real),
                   .b(b_real),
+                  .scale_factor(scale_factor),
                   .result(ar_x_br),
                   .done(mult_done)
                 );
@@ -38,6 +40,7 @@ module ComplexMultiplier(
                   .clk(clk),
                   .a(a_real),
                   .b(b_imag),
+                  .scale_factor(scale_factor),
                   .result(ar_x_bi),
                   .start(),
                   .done()
@@ -46,6 +49,7 @@ module ComplexMultiplier(
                   .clk(clk),
                   .a(a_imag),
                   .b(b_real),
+                  .scale_factor(scale_factor),
                   .result(ai_x_br),
                   .start(),
                   .done()
@@ -54,6 +58,7 @@ module ComplexMultiplier(
                   .clk(clk),
                   .a(a_imag),
                   .b(b_imag),
+                  .scale_factor(scale_factor),
                   .result(ai_x_bi),
                   .start(),
                   .done()
