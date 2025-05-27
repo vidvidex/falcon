@@ -64,9 +64,15 @@ module FFTButterfly_tb;
     a_in_imag = $realtobits(1.0);
     b_in_real = $realtobits(2.0);
     b_in_imag = $realtobits(2.0);
+    #10 // Example of "correct" usage where we only have the twiddle factors set for 1 cycle, that being 1 cycle later than the other inputs
+    start = 0;
     tw_real = $realtobits(1.0);
     tw_imag = $realtobits(0.0);
-    #10;    // output: 3+3i, -1-1i
+    #10;
+    tw_real = $realtobits(0.0);
+    tw_imag = $realtobits(0.0);
+    // output: 3+3i, -1-1i
+
 
     start = 1;
     scale_factor = 0;
@@ -97,9 +103,15 @@ module FFTButterfly_tb;
     // a_in_imag = $realtobits(1.0);
     // b_in_real = $realtobits(2.0);
     // b_in_imag = $realtobits(2.0);
+    // #10;    
+    // start = 0;
+    // #70;
     // tw_real = $realtobits(1.0);
     // tw_imag = $realtobits(0.0);
-    // #10;    // output: 1.5+1.5i, -0.5-0.5i
+    // #10;
+    // tw_real = $realtobits(0.0);
+    // tw_imag = $realtobits(0.0);
+    // output: 1.5+1.5i, -0.5-0.5i
 
     // start = 1;
     // scale_factor = -1;

@@ -17,8 +17,8 @@ module FFTButterfly(
     input [`OVERALL_BITS-1:0] b_in_real,
     input [`OVERALL_BITS-1:0] b_in_imag,
 
-    input [`OVERALL_BITS-1:0] tw_real,
-    input [`OVERALL_BITS-1:0] tw_imag,
+    input [`OVERALL_BITS-1:0] tw_real,  // Should be supplied 1 cycle later than a_in_real, a_in_imag, b_in_real, b_in_imag for FFT and 8 cycles later for IFFT.
+    input [`OVERALL_BITS-1:0] tw_imag,  // TODO: these two should probably not be external signals, ROM for constants should be managed by this module so we don't have this "strange" delayed signals going out
 
     input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
 

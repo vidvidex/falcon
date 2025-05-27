@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="105.140 ns"></ZoomStartTime>
-      <ZoomEndTime time="353.558 ns"></ZoomEndTime>
+      <ZoomStartTime time="108.540 ns"></ZoomStartTime>
+      <ZoomEndTime time="347.128 ns"></ZoomEndTime>
       <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="222"></NameColumnWidth>
-      <ValueColumnWidth column_width="77"></ValueColumnWidth>
+      <ValueColumnWidth column_width="69"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="16" />
+   <WVObjectSize size="15" />
    <wvobject type="logic" fp_name="/FFTButterfly_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -120,170 +120,5 @@
       <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
-   </wvobject>
-   <wvobject type="group" fp_name="group507">
-      <obj_property name="label">New Group 9</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/start">
-         <obj_property name="ElementShortName">start</obj_property>
-         <obj_property name="ObjectShortName">start</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/use_ct">
-         <obj_property name="ElementShortName">use_ct</obj_property>
-         <obj_property name="ObjectShortName">use_ct</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_in_real">
-         <obj_property name="ElementShortName">a_in_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_in_imag">
-         <obj_property name="ElementShortName">a_in_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_in_real">
-         <obj_property name="ElementShortName">b_in_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_in_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_in_imag">
-         <obj_property name="ElementShortName">b_in_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_in_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/tw_real">
-         <obj_property name="ElementShortName">tw_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/tw_imag">
-         <obj_property name="ElementShortName">tw_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/scale_factor">
-         <obj_property name="ElementShortName">scale_factor[4:0]</obj_property>
-         <obj_property name="ObjectShortName">scale_factor[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_out_real">
-         <obj_property name="ElementShortName">a_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_out_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_out_imag">
-         <obj_property name="ElementShortName">a_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_out_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_out_real">
-         <obj_property name="ElementShortName">b_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_out_imag">
-         <obj_property name="ElementShortName">b_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/done">
-         <obj_property name="ElementShortName">done</obj_property>
-         <obj_property name="ObjectShortName">done</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_m_b_real_1DP">
-         <obj_property name="ElementShortName">a_m_b_real_1DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_m_b_real_1DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_m_b_imag_1DP">
-         <obj_property name="ElementShortName">a_m_b_imag_1DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_m_b_imag_1DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/mul_out_real_1DP">
-         <obj_property name="ElementShortName">mul_out_real_1DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">mul_out_real_1DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/mul_out_imag_1DP">
-         <obj_property name="ElementShortName">mul_out_imag_1DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">mul_out_imag_1DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_m_b_real">
-         <obj_property name="ElementShortName">a_m_b_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_m_b_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_m_b_imag">
-         <obj_property name="ElementShortName">a_m_b_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_m_b_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/add_done">
-         <obj_property name="ElementShortName">add_done</obj_property>
-         <obj_property name="ObjectShortName">add_done</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_real">
-         <obj_property name="ElementShortName">a_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_imag">
-         <obj_property name="ElementShortName">a_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_in_real_15D">
-         <obj_property name="ElementShortName">a_in_real_15D[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_real_15D[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_in_imag_15D">
-         <obj_property name="ElementShortName">a_in_imag_15D[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_imag_15D[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_p_b_real">
-         <obj_property name="ElementShortName">a_p_b_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_p_b_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_p_b_imag">
-         <obj_property name="ElementShortName">a_p_b_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_p_b_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_p_b_real_15D">
-         <obj_property name="ElementShortName">a_p_b_real_15D[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_p_b_real_15D[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/a_p_b_imag_15D">
-         <obj_property name="ElementShortName">a_p_b_imag_15D[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_p_b_imag_15D[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_real">
-         <obj_property name="ElementShortName">b_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_imag">
-         <obj_property name="ElementShortName">b_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/mul_out_real">
-         <obj_property name="ElementShortName">mul_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">mul_out_real[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/mul_out_imag">
-         <obj_property name="ElementShortName">mul_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">mul_out_imag[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/add_done_1DP">
-         <obj_property name="ElementShortName">add_done_1DP</obj_property>
-         <obj_property name="ObjectShortName">add_done_1DP</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/FFTButterfly_tb/FFTButterfly/add_done_2DP">
-         <obj_property name="ElementShortName">add_done_2DP</obj_property>
-         <obj_property name="ObjectShortName">add_done_2DP</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_out_real_0DP">
-         <obj_property name="ElementShortName">b_out_real_0DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_real_0DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_out_imag_0DP">
-         <obj_property name="ElementShortName">b_out_imag_0DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_imag_0DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_out_real_1DP">
-         <obj_property name="ElementShortName">b_out_real_1DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_real_1DP[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/FFTButterfly_tb/FFTButterfly/b_out_imag_1DP">
-         <obj_property name="ElementShortName">b_out_imag_1DP[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_imag_1DP[63:0]</obj_property>
-      </wvobject>
    </wvobject>
 </wave_config>
