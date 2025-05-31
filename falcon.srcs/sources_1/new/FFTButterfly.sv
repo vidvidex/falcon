@@ -10,7 +10,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module FFTButterfly(
     input clk,
-    input start,
+    input in_valid, // Are inputs valid
     input use_ct, // 0 = DIT = IFFT; 1 = DIF = FFT
     input [`OVERALL_BITS-1:0] a_in_real,
     input [`OVERALL_BITS-1:0] a_in_imag,
@@ -59,7 +59,7 @@ module FFTButterfly(
 
   FFTButterflyAddStage add_stage(
                          .clk(clk),
-                         .start(start),
+                         .start(in_valid),
 
                          .a_real(a_real),
                          .a_imag(a_imag),
