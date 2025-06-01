@@ -8,8 +8,8 @@
 module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
     input clk,
     input start,
-    input [`OVERALL_BITS-1:0] a,
-    input [`OVERALL_BITS-1:0] b,
+    input [63:0] a,
+    input [63:0] b,
 
     output logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP,
     output logic [`EXPONENT_BITS-1:0] exponent_b_2DP,
@@ -19,8 +19,8 @@ module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
   );
 
   logic sign_a, sign_b;
-  assign sign_a = a[`OVERALL_BITS-1];
-  assign sign_b = DO_SUBSTRACTION ? ~b[`OVERALL_BITS-1] : b[`OVERALL_BITS-1];
+  assign sign_a = a[63];
+  assign sign_b = DO_SUBSTRACTION ? ~b[63] : b[63];
 
   logic [`EXPONENT_BITS-1:0] exponent_a, exponent_b;
   assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
@@ -38,7 +38,7 @@ module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
 
   // swap operands if necessary s.t. a is always the smaller operand
   logic a_smaller_b, switched_operands;
-  assign a_smaller_b = a[`OVERALL_BITS-2:0] < b[`OVERALL_BITS-2:0];
+  assign a_smaller_b = a[62:0] < b[62:0];
   assign switched_operands = ~a_smaller_b;
 
   logic [`EXPONENT_BITS:0] diff_exponent;

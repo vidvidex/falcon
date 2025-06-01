@@ -5,9 +5,9 @@ module ComplexMultiplier_tb;
 
   logic clk;
   logic start, done;
-  logic [`OVERALL_BITS-1:0] a_real, a_imag;
-  logic [`OVERALL_BITS-1:0] b_real, b_imag;
-  logic [`OVERALL_BITS-1:0] result_real, result_imag;
+  logic [63:0] a_real, a_imag;
+  logic [63:0] b_real, b_imag;
+  logic [63:0] result_real, result_imag;
   logic signed [4:0] scale_factor;
 
   always #5 clk = ~clk;

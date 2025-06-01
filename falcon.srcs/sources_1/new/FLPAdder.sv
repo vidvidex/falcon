@@ -11,9 +11,9 @@ module FLPAdder #(
   ) (
     input clk,
     input start,
-    input [`OVERALL_BITS-1:0] a,
-    input [`OVERALL_BITS-1:0] b,
-    output [`OVERALL_BITS-1:0] result,
+    input [63:0] a,
+    input [63:0] b,
+    output [63:0] result,
     output done
   );
 

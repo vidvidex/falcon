@@ -13,17 +13,17 @@
 module FFTButterflyAddStage(
     input clk,
     input start,
-    input [`OVERALL_BITS-1:0] a_real,
-    input [`OVERALL_BITS-1:0] a_imag,
-    input [`OVERALL_BITS-1:0] b_real,
-    input [`OVERALL_BITS-1:0] b_imag,
+    input [63:0] a_real,
+    input [63:0] a_imag,
+    input [63:0] b_real,
+    input [63:0] b_imag,
 
     input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
 
-    output [`OVERALL_BITS-1:0] a_p_b_real,
-    output [`OVERALL_BITS-1:0] a_p_b_imag,
-    output [`OVERALL_BITS-1:0] a_m_b_real,
-    output [`OVERALL_BITS-1:0] a_m_b_imag,
+    output [63:0] a_p_b_real,
+    output [63:0] a_p_b_imag,
+    output [63:0] a_m_b_real,
+    output [63:0] a_m_b_imag,
 
     output done
   );

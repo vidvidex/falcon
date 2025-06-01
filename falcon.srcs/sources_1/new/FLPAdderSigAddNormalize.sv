@@ -12,7 +12,7 @@ module FLPAdderSigAddNormalize(
     input logic [`SIGNIFICANT_BITS:0] significant_b_2DP,
     input logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP,
 
-    output logic [`OVERALL_BITS-1:0] result,
+    output logic [63:0] result,
     output logic done
   );
 

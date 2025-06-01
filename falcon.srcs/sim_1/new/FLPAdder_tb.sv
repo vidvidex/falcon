@@ -5,9 +5,9 @@ module FLPAdder_tb;
 
   logic clk;
   logic start, done;
-  logic [`OVERALL_BITS-1:0] a;
-  logic [`OVERALL_BITS-1:0] b;
-  logic [`OVERALL_BITS-1:0] result;
+  logic [63:0] a;
+  logic [63:0] b;
+  logic [63:0] result;
 
   always #5 clk = ~clk;
 

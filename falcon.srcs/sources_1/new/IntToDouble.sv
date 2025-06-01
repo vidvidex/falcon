@@ -7,7 +7,7 @@ module IntToDouble
   (
     input  logic clk,
     input  logic signed [14:0] int_in,
-    output logic [`OVERALL_BITS-1:0] double_out
+    output logic [63:0] double_out
   );
 
   logic        sign;
@@ -17,7 +17,7 @@ module IntToDouble
   logic [14:0] normalized;
   logic [5:0]  shift;
   integer i;
-  logic [`OVERALL_BITS-1:0] double_out_i;
+  logic [63:0] double_out_i;
 
   always_comb begin
     sign = int_in[14];
