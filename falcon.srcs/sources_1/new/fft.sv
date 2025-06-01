@@ -33,10 +33,11 @@ module fft#(
   logic [63:0] a_in_real, a_in_imag, b_in_real, b_in_imag;
   logic [63:0] a_out_real, a_out_imag, b_out_real, b_out_imag;
   logic butterfly_output_valid;
+  logic butterfly_paused; // If high then we pause sending data into butterfly. We need to pause after each stage completes to wait for the remaining operations to finish
 
   // Since read delay from BRAM is a few cycles we need to also delay the valid signal for the butterfly
-  logic butterfly_input_valid, butterfly_input_valid_3DP;
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(butterfly_input_valid_3DP));
+  logic butterfly_input_valid, butterfly_input_valid_2DP;
+  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(butterfly_input_valid_2DP));
 
   logic [31:0] u, t, m;
   logic [31:0] i1, j1;
@@ -55,7 +56,7 @@ module fft#(
 
   FFTButterfly FFTButterfly(
                  .clk(clk),
-                 .in_valid(butterfly_input_valid_3DP),
+                 .in_valid(butterfly_input_valid_2DP),
                  .use_ct(!mode),
 
                  .a_in_real(a_in_real),
@@ -77,7 +78,9 @@ module fft#(
 
   // Twiddle factor ROM
   logic [9:0] tw_addr;
-  assign tw_addr = m + i1;
+  always_ff @(posedge clk) begin
+    tw_addr <= m + i1;
+  end
   logic [127:0] tw_real_tw_imag;
   fft_twiddle_factors fft_twiddle_factors (
                         .clka(clk),
@@ -85,10 +88,9 @@ module fft#(
                         .douta(tw_real_tw_imag)
                       );
 
-  // Router between BRAM1 and BRAM2
-  // On even stages read from BRAM1 and write to BRAM2, on odd stages read from BRAM and write to BRAM1
+  // Router between BRAM1 and BRAM2. On odd stages read from BRAM1 and write to BRAM2, on even stages read from BRAM and write to BRAM1 (we start with stage 1)
   always_comb begin
-    if(u % 2 == 0) begin  // Even stage
+    if(u % 2 == 1) begin  // Odd stage
       // Read from BRAM1
       bram1_addr_a = j;
       bram1_addr_b = j + t;
@@ -103,7 +105,7 @@ module fft#(
       bram2_we_a = butterfly_output_valid;
       bram2_we_b = butterfly_output_valid;
     end
-    else begin  // Odd stage
+    else begin  // Even stage
       // Read from BRAM2
       bram2_addr_a = j;
       bram2_addr_b = j + t;
@@ -122,20 +124,29 @@ module fft#(
 
   // Register after reading from BRAM/ROM
   always @(posedge clk) begin
-    {a_in_real, a_in_imag} <= bram1_dout_a;
-    {b_in_real, b_in_imag} <= bram1_dout_b;
-    {a_in_real, a_in_imag} <= bram2_dout_a;
-    {b_in_real, b_in_imag} <= bram2_dout_b;
-
+    if(u % 2 == 1) begin
+      {a_in_real, a_in_imag} <= bram1_dout_a;
+      {b_in_real, b_in_imag} <= bram1_dout_b;
+    end
+    else begin
+      {a_in_real, a_in_imag} <= bram2_dout_a;
+      {b_in_real, b_in_imag} <= bram2_dout_b;
+    end
     {tw_real, tw_imag} <= tw_real_tw_imag;
   end
 
   // Delay write addresses until butterfly finished operation so we know where to write the values back into BRAM
   logic [$clog2(N):0] write_addr1, write_addr2;
-  DelayRegister #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(1+22)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
-  DelayRegister #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(1+22)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
+  DelayRegister #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(1+25)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
+  DelayRegister #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(1+25)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
 
-  assign butterfly_input_valid = state == RUN_FFT;
+  always_ff @(posedge clk) begin
+    butterfly_input_valid <= state == RUN_FFT && !butterfly_paused;
+  end
+
+  logic butterfly_unpause_pulse, butterfly_unpause_pulse_delayed; // When we pause the butterfly we set this high and then delay it for the latency of butterfly. Once the delayed version is high we can unpause
+  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(1+24)) buttefly_unpause_pulse_delay(.clk(clk), .in(butterfly_unpause_pulse), .out(butterfly_unpause_pulse_delayed));
+
 
   always_ff @(posedge clk) begin
     if (rst)
@@ -175,6 +186,20 @@ module fft#(
       m <= 2;
       j2 <= N >> 1;
 
+      butterfly_paused <= 1'b0;
+      butterfly_unpause_pulse <= 1'b0;
+    end
+    else if (butterfly_paused) begin
+      // While butterfly is paused we just wait for the unpause signal
+
+      butterfly_unpause_pulse <= 1'b0;  // Reset pulse signal
+
+      // Unpause butterfly
+      if(butterfly_unpause_pulse_delayed == 1'b1) begin
+        butterfly_paused <= 1'b0;
+
+        u <= u + 1; // Only increment stage counter (u) after the pause to make sure reading/writing from BRAM is correct
+      end
     end
     else begin
       if (j == j2 - 1) begin
@@ -187,10 +212,12 @@ module fft#(
           i1 <= 0;  // Middle Loop reset
           j1 <= 0;  // Middle Loop reset
           j <= 0;   // Inner Loop reset
-          u <= u + 1;
           m <= m << 1;
           t <= t >> 1;
           j2 <= t >> 1;
+
+          butterfly_paused <= 1'b1;
+          butterfly_unpause_pulse <= 1'b1;
         end
         else begin
           // Continuing in middle loop

@@ -74,6 +74,35 @@ module fft_tb;
         .done(done)
       );
 
+  // Signals that split 128 bit BRAM line into real and imag part, used mostly for debugging
+  logic [63:0] bram1_out_a_real, bram1_out_a_imag;
+  logic [63:0] bram1_out_b_real, bram1_out_b_imag;
+  logic [63:0] bram2_out_a_real, bram2_out_a_imag;
+  logic [63:0] bram2_out_b_real, bram2_out_b_imag;
+  assign {bram1_out_a_real, bram1_out_a_imag} = bram1_dout_a;
+  assign {bram1_out_b_real, bram1_out_b_imag} = bram1_dout_b;
+  assign {bram2_out_a_real, bram2_out_a_imag} = bram2_dout_a;
+  assign {bram2_out_b_real, bram2_out_b_imag} = bram2_dout_b;
+  logic [63:0] bram1_in_a_real, bram1_in_a_imag;
+  logic [63:0] bram1_in_b_real, bram1_in_b_imag;
+  logic [63:0] bram2_in_a_real, bram2_in_a_imag;
+  logic [63:0] bram2_in_b_real, bram2_in_b_imag;
+  assign {bram1_in_a_real, bram1_in_a_imag} = bram1_din_a;
+  assign {bram1_in_b_real, bram1_in_b_imag} = bram1_din_b;
+  assign {bram2_in_a_real, bram2_in_a_imag} = bram2_din_a;
+  assign {bram2_in_b_real, bram2_in_b_imag} = bram2_din_b;
+
+  // For result verification
+  real a_real_double, a_imag_double, b_real_double, b_imag_double;
+
+  function bit double_equal(real a, real b, real epsilon = 1e-6);
+    real diff;
+    diff = a - b;
+    if (diff < 0.0)
+      diff = -diff;
+    return (diff < epsilon);
+  endfunction
+
   always #5 clk = ~clk;
 
   initial begin
@@ -81,7 +110,7 @@ module fft_tb;
     mode = 0;
     rst = 1;
     start = 0;
-    #10;
+    #15;
 
     rst = 0;
     #30;
@@ -94,6 +123,30 @@ module fft_tb;
     while(!done)
       #10;
 
+    // Check if first and last values are as expected (for N=512 the results will be in BRAM2)
+    bram2_addr_a = 0;
+    bram2_addr_b = 511;
+    #20;
+
+    a_real_double = $bitstoreal(bram2_out_a_real);
+    if(!double_equal(a_real_double, -211974.089585))
+      $fatal(1, "FFT 512: Expected first real part to be -211974.089585, got %f", a_real_double);
+
+    a_imag_double = $bitstoreal(bram2_out_a_imag);
+    if(!double_equal(a_imag_double, 333771.845416))
+      $fatal(1, "FFT 512: Expected first imag part to be 333771.845416, got %f", a_imag_double);
+
+    b_real_double = $bitstoreal(bram2_out_b_real);
+    if(!double_equal(b_real_double, 0.000014))
+      $fatal(1, "FFT 512: Expected last real part to be 0.000014, got %f", b_real_double);
+
+    b_imag_double = $bitstoreal(bram2_out_b_imag);
+    if(!double_equal(b_imag_double, -0.000004))
+      $fatal(1, "FFT 512: Expected last imag part to be -0.000004, got %f", b_imag_double);
+
+
+    $display("All tests for fft_512 passed!");
+    $finish;
   end
 
 endmodule
