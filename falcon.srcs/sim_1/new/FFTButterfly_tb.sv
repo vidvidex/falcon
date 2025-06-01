@@ -5,18 +5,18 @@ module FFTButterfly_tb;
 
   logic clk;
   logic in_valid, done, use_ct;
-  logic [`OVERALL_BITS-1:0] a_in_real;
-  logic [`OVERALL_BITS-1:0] a_in_imag;
-  logic [`OVERALL_BITS-1:0] b_in_real;
-  logic [`OVERALL_BITS-1:0] b_in_imag;
+  logic [63:0] a_in_real;
+  logic [63:0] a_in_imag;
+  logic [63:0] b_in_real;
+  logic [63:0] b_in_imag;
 
-  logic [`OVERALL_BITS-1:0] tw_real;
-  logic [`OVERALL_BITS-1:0] tw_imag;
+  logic [63:0] tw_real;
+  logic [63:0] tw_imag;
 
-  logic [`OVERALL_BITS-1:0] a_out_real;
-  logic [`OVERALL_BITS-1:0] a_out_imag;
-  logic [`OVERALL_BITS-1:0] b_out_real;
-  logic [`OVERALL_BITS-1:0] b_out_imag;
+  logic [63:0] a_out_real;
+  logic [63:0] a_out_imag;
+  logic [63:0] b_out_real;
+  logic [63:0] b_out_imag;
 
   logic signed [4:0] scale_factor;
 

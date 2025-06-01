@@ -12,16 +12,16 @@
 module FLPMultiplier(
     input clk,
     input start,
-    input [`OVERALL_BITS-1:0] a,
-    input [`OVERALL_BITS-1:0] b,
+    input [63:0] a,
+    input [63:0] b,
     input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
-    output [`OVERALL_BITS-1:0] result,
+    output [63:0] result,
     output done
   );
 
   logic sign_a, sign_b;
-  assign sign_a = a[`OVERALL_BITS-1];
-  assign sign_b = b[`OVERALL_BITS-1];
+  assign sign_a = a[63];
+  assign sign_b = b[63];
 
   logic [`EXPONENT_BITS:0] exponent_a, exponent_b;
   assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
@@ -57,7 +57,7 @@ module FLPMultiplier(
   DelayRegister #(.BITWIDTH(`EXPONENT_BITS+1), .CYCLE_COUNT(1+2)) exponent_sum_delay(.clk(clk), .in(exponent_sum), .out(exponent_sum_1DP));
 
   logic [`EXPONENT_BITS+1:0] exponent_uncorrected;
-  assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - `EXPONENT_BIAS;
+  assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - 11'd1023;
 
   DelayRegister #(.BITWIDTH(`SIGNIFICANT_BITS+2), .CYCLE_COUNT(1+4)) multiplied_significants_shifted_delay(.clk(clk), .in(multiplied_significants_shifted), .out(multiplied_significants_shifted_3DP));
 

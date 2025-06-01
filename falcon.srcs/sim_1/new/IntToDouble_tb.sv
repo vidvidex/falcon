@@ -5,7 +5,7 @@ module IntToDouble_tb;
   logic clk;
 
   logic [14:0] int_in;
-  logic [`OVERALL_BITS-1:0] double_out;
+  logic [63:0] double_out;
 
   always #5 clk = ~clk;
 

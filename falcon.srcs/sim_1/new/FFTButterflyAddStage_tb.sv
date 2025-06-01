@@ -5,15 +5,15 @@ module FFTButterflyAddStage_tb;
 
   logic clk;
   logic start, done;
-  logic [`OVERALL_BITS-1:0] a_real;
-  logic [`OVERALL_BITS-1:0] a_imag;
-  logic [`OVERALL_BITS-1:0] b_real;
-  logic [`OVERALL_BITS-1:0] b_imag;
+  logic [63:0] a_real;
+  logic [63:0] a_imag;
+  logic [63:0] b_real;
+  logic [63:0] b_imag;
 
-  logic [`OVERALL_BITS-1:0] a_p_b_real;
-  logic [`OVERALL_BITS-1:0] a_p_b_imag;
-  logic [`OVERALL_BITS-1:0] a_m_b_real;
-  logic [`OVERALL_BITS-1:0] a_m_b_imag;
+  logic [63:0] a_p_b_real;
+  logic [63:0] a_p_b_imag;
+  logic [63:0] a_m_b_real;
+  logic [63:0] a_m_b_imag;
 
 
   always #5 clk = ~clk;
