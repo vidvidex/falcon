@@ -8,8 +8,8 @@ module fft#(
     input logic mode,  // 0 = FFT, 1 = IFFT
     input logic start, // Start pulse
 
-    output logic [$clog2(N)-1:0] bram1_addr_a,
-    output logic [$clog2(N)-1:0] bram1_addr_b,
+    output logic [$clog2(N)-2:0] bram1_addr_a,
+    output logic [$clog2(N)-2:0] bram1_addr_b,
     output logic [127:0] bram1_din_a,
     output logic [127:0] bram1_din_b,
     input logic [127:0] bram1_dout_a,
@@ -17,8 +17,8 @@ module fft#(
     output logic bram1_we_a,
     output logic bram1_we_b,
 
-    output logic [$clog2(N)-1:0] bram2_addr_a,
-    output logic [$clog2(N)-1:0] bram2_addr_b,
+    output logic [$clog2(N)-2:0] bram2_addr_a,
+    output logic [$clog2(N)-2:0] bram2_addr_b,
     output logic [127:0] bram2_din_a,
     output logic [127:0] bram2_din_b,
     input logic [127:0] bram2_dout_a,
@@ -39,12 +39,23 @@ module fft#(
   logic butterfly_input_valid, butterfly_input_valid_2DP;
   DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(butterfly_input_valid_2DP));
 
-  logic [31:0] u, t, m;
-  logic [31:0] i1, j1;
-  logic [31:0] j, j2;
+  logic [3:0] u, u_2DP; // Will be at most 8 for N=512 and 9 for N=1024
+  logic [$clog2(N)-1:0] t;
+  logic [$clog2(N):0] m;
+  logic [$clog2(N)-1:0] i1;
+  logic [$clog2(N)-1:0] j1;
+  logic [$clog2(N)-1:0] j, j2;
 
-  logic [31:0] j_delayed; // Debug only to make j and data for butterfly be in sync
-  DelayRegister #(.BITWIDTH(32), .CYCLE_COUNT(3)) j_delay(.clk(clk), .in(j), .out(j_delayed));
+  DelayRegister #(.BITWIDTH(4), .CYCLE_COUNT(2)) u_delay(.clk(clk), .in(u), .out(u_2DP));
+
+  logic signed [4:0] scale_factor;
+  always_comb begin
+    // scale_factor should be 0 always, except on the last stage of INTT, where we should scale (divide) by N-1
+    if (mode == 1'b0 || (mode == 1'b1 && u_2DP != $clog2(N)-2))
+      scale_factor = 0;
+    else
+      scale_factor = -($clog2(N)-1);
+  end
 
   typedef enum logic [2:0] {
             IDLE,
@@ -66,7 +77,7 @@ module fft#(
 
                  .tw_real(tw_real),
                  .tw_imag(tw_imag),
-                 .scale_factor(0),
+                 .scale_factor(scale_factor),
 
                  .a_out_real(a_out_real),
                  .a_out_imag(a_out_imag),
@@ -77,14 +88,15 @@ module fft#(
                );
 
   // Twiddle factor ROM
-  logic [9:0] tw_addr;
+  logic [9:0] tw_addr, tw_addr_delayed; // For IFFT we need twiddles delayed
   always_ff @(posedge clk) begin
     tw_addr <= m + i1;
   end
+  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(7)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(tw_addr_delayed));
   logic [127:0] tw_real_tw_imag;
   fft_twiddle_factors fft_twiddle_factors (
                         .clka(clk),
-                        .addra(tw_addr),
+                        .addra(mode == 1'b0 ? tw_addr : tw_addr_delayed),
                         .douta(tw_real_tw_imag)
                       );
 
@@ -132,13 +144,19 @@ module fft#(
       {a_in_real, a_in_imag} <= bram2_dout_a;
       {b_in_real, b_in_imag} <= bram2_dout_b;
     end
-    {tw_real, tw_imag} <= tw_real_tw_imag;
+
+    if(mode == 1'b0) // FFT
+      {tw_real, tw_imag} <= tw_real_tw_imag;
+    else begin  // IFFT
+      tw_real <= tw_real_tw_imag[127:64];
+      tw_imag <= {~tw_real_tw_imag[63], tw_real_tw_imag[62:0]}; // Negate imaginary part
+    end
   end
 
   // Delay write addresses until butterfly finished operation so we know where to write the values back into BRAM
-  logic [$clog2(N):0] write_addr1, write_addr2;
-  DelayRegister #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(1+25)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
-  DelayRegister #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(1+25)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
+  logic [$clog2(N)-1:0] write_addr1, write_addr2;
+  DelayRegister #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
+  DelayRegister #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
 
   always_ff @(posedge clk) begin
     butterfly_input_valid <= state == RUN_FFT && !butterfly_paused;
@@ -146,7 +164,6 @@ module fft#(
 
   logic butterfly_unpause_pulse, butterfly_unpause_pulse_delayed; // When we pause the butterfly we set this high and then delay it for the latency of butterfly. Once the delayed version is high we can unpause
   DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(1+24)) buttefly_unpause_pulse_delay(.clk(clk), .in(butterfly_unpause_pulse), .out(butterfly_unpause_pulse_delayed));
-
 
   always_ff @(posedge clk) begin
     if (rst)
@@ -163,7 +180,7 @@ module fft#(
         if(start)
           next_state = RUN_FFT;
       RUN_FFT:
-        if(j == N - 2 && m == N)
+        if((mode == 1'b0 && j == (N >> 1) - 2 && m == (N >> 1)) || (mode == 1'b1 && j == (N >> 2) - 1 && m == 2))
           next_state = WAIT_FOR_BUTTERFLY;
       WAIT_FOR_BUTTERFLY:
         if(butterfly_output_valid == 1'b0)  // Wait for butterfly unit to output all data
@@ -176,15 +193,15 @@ module fft#(
   end
 
   always_ff @(posedge clk) begin
-    if (rst || state != RUN_FFT) begin
+    if (rst || state == IDLE) begin
       j1 <= 0;
       j <= 0;
       i1 <= 0;
 
-      t <= N >> 1;
+      t <= mode == 1'b0 ? N >> 2 : 1;
       u <= 1;
-      m <= 2;
-      j2 <= N >> 1;
+      m <= mode == 1'b0 ? 2 : N >> 1;
+      j2 <= mode == 1'b0 ? N >> 2 : 1;
 
       butterfly_paused <= 1'b0;
       butterfly_unpause_pulse <= 1'b0;
@@ -212,9 +229,9 @@ module fft#(
           i1 <= 0;  // Middle Loop reset
           j1 <= 0;  // Middle Loop reset
           j <= 0;   // Inner Loop reset
-          m <= m << 1;
-          t <= t >> 1;
-          j2 <= t >> 1;
+          m <= mode == 1'b0 ? m << 1 : m >> 1;
+          t <= mode == 1'b0 ? t >> 1 : t << 1;
+          j2 <= mode == 1'b0 ? t >> 1 : t << 1;
 
           butterfly_paused <= 1'b1;
           butterfly_unpause_pulse <= 1'b1;
@@ -223,7 +240,7 @@ module fft#(
           // Continuing in middle loop
           j <= j1 + (t << 1); // Inner Loop reset
           i1 <= i1 + 1;
-          j1 <= j1 + t*2;
+          j1 <= j1 + (t << 1);
           j2 <= j1 + t*3;
         end
       end
