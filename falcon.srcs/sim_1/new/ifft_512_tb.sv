@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module fft_tb;
+module ifft_512_tb;
 
   parameter int N = 512;
 
@@ -9,41 +9,41 @@ module fft_tb;
   logic start;
   logic done;
 
-  logic [$clog2(N)-1:0] bram1_addr_a, bram1_addr_b;
+  logic [$clog2(N)-2:0] bram1_addr_a, bram1_addr_b;
   logic [127:0] bram1_din_a, bram1_din_b;
   logic [127:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
-  fft_bram_512 fft_bram_512_1 (
-                 .addra(bram1_addr_a),
-                 .clka(clk),
-                 .dina(bram1_din_a),
-                 .douta(bram1_dout_a),
-                 .wea(bram1_we_a),
+  fft_bram_512_preinit_for_tb fft_bram_512_preinit_for_tb_1 (
+                                .addra(bram1_addr_a),
+                                .clka(clk),
+                                .dina(bram1_din_a),
+                                .douta(bram1_dout_a),
+                                .wea(bram1_we_a),
 
-                 .addrb(bram1_addr_b),
-                 .clkb(clk),
-                 .dinb(bram1_din_b),
-                 .doutb(bram1_dout_b),
-                 .web(bram1_we_b)
-               );
+                                .addrb(bram1_addr_b),
+                                .clkb(clk),
+                                .dinb(bram1_din_b),
+                                .doutb(bram1_dout_b),
+                                .web(bram1_we_b)
+                              );
 
-  logic [$clog2(N)-1:0] bram2_addr_a, bram2_addr_b;
+  logic [$clog2(N)-2:0] bram2_addr_a, bram2_addr_b;
   logic [127:0] bram2_din_a, bram2_din_b;
   logic [127:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  fft_bram_512 fft_bram_512_2 (
-                 .addra(bram2_addr_a),
-                 .clka(clk),
-                 .dina(bram2_din_a),
-                 .douta(bram2_dout_a),
-                 .wea(bram2_we_a),
+  fft_bram_512_preinit_for_tb fft_bram_512_preinit_for_tb_2 (
+                                .addra(bram2_addr_a),
+                                .clka(clk),
+                                .dina(bram2_din_a),
+                                .douta(bram2_dout_a),
+                                .wea(bram2_we_a),
 
-                 .addrb(bram2_addr_b),
-                 .clkb(clk),
-                 .dinb(bram2_din_b),
-                 .doutb(bram2_dout_b),
-                 .web(bram2_we_b)
-               );
+                                .addrb(bram2_addr_b),
+                                .clkb(clk),
+                                .dinb(bram2_din_b),
+                                .doutb(bram2_dout_b),
+                                .web(bram2_we_b)
+                              );
 
   fft #(
         .N(N)
@@ -107,7 +107,7 @@ module fft_tb;
 
   initial begin
     clk = 0;
-    mode = 0;
+    mode = 1;
     rst = 1;
     start = 0;
     #15;
@@ -123,29 +123,28 @@ module fft_tb;
     while(!done)
       #10;
 
-    // Check if first and last values are as expected (for N=512 the results will be in BRAM2)
-    bram2_addr_a = 0;
-    bram2_addr_b = 511;
+    // Check if first and last values are as expected (for N=512 the results will be in BRAM1)
+    bram1_addr_a = 0;
+    bram1_addr_b = 255;
     #20;
 
-    a_real_double = $bitstoreal(bram2_out_a_real);
-    if(!double_equal(a_real_double, -211974.089585))
-      $fatal(1, "FFT 512: Expected first real part to be -211974.089585, got %f", a_real_double);
+    a_real_double = $bitstoreal(bram1_out_a_real);
+    if(!double_equal(a_real_double, 127.500000))
+      $fatal(1, "IFFT 512: Expected first real part to be 127.500000, got %f", a_real_double);
 
-    a_imag_double = $bitstoreal(bram2_out_a_imag);
-    if(!double_equal(a_imag_double, 333771.845416))
-      $fatal(1, "FFT 512: Expected first imag part to be 333771.845416, got %f", a_imag_double);
+    a_imag_double = $bitstoreal(bram1_out_a_imag);
+    if(!double_equal(a_imag_double, 383.500000))
+      $fatal(1, "IFFT 512: Expected first imag part to be 383.500000, got %f", a_imag_double);
 
-    b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, 0.000014))
-      $fatal(1, "FFT 512: Expected last real part to be 0.000014, got %f", b_real_double);
+    b_real_double = $bitstoreal(bram1_out_b_real);
+    if(!double_equal(b_real_double, 0.011607))
+      $fatal(1, "IFFT 512: Expected last real part to be 0.011607, got %f", b_real_double);
 
-    b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -0.000004))
-      $fatal(1, "FFT 512: Expected last imag part to be -0.000004, got %f", b_imag_double);
+    b_imag_double = $bitstoreal(bram1_out_b_imag);
+    if(!double_equal(b_imag_double, -0.036728))
+      $fatal(1, "IFFT 512: Expected last imag part to be -0.036728, got %f", b_imag_double);
 
-
-    $display("All tests for fft_512 passed!");
+    $display("All tests for ifft_512 passed!");
     $finish;
   end
 
