@@ -29,7 +29,6 @@ module fft#(
     output logic done
   );
 
-  logic [63:0] tw_real, tw_imag;
   logic [63:0] a_in_real, a_in_imag, b_in_real, b_in_imag;
   logic [63:0] a_out_real, a_out_imag, b_out_real, b_out_imag;
   logic butterfly_output_valid;
@@ -75,8 +74,8 @@ module fft#(
                  .b_in_real(b_in_real),
                  .b_in_imag(b_in_imag),
 
-                 .tw_real(tw_real),
-                 .tw_imag(tw_imag),
+                 .tw_addr(tw_addr_2DP),
+
                  .scale_factor(scale_factor),
 
                  .a_out_real(a_out_real),
@@ -87,18 +86,12 @@ module fft#(
                  .done(butterfly_output_valid)
                );
 
-  // Twiddle factor ROM
-  logic [9:0] tw_addr, tw_addr_delayed; // For IFFT we need twiddles delayed
+  logic [9:0] tw_addr, tw_addr_1DP, tw_addr_2DP,tw_addr_3DP,tw_addr_4DP;
   always_ff @(posedge clk) begin
     tw_addr <= m + i1;
+    tw_addr_1DP <= tw_addr;
+    tw_addr_2DP <= tw_addr_1DP;
   end
-  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(7)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(tw_addr_delayed));
-  logic [127:0] tw_real_tw_imag;
-  fft_twiddle_factors fft_twiddle_factors (
-                        .clka(clk),
-                        .addra(mode == 1'b0 ? tw_addr : tw_addr_delayed),
-                        .douta(tw_real_tw_imag)
-                      );
 
   // Router between BRAM1 and BRAM2. On odd stages read from BRAM1 and write to BRAM2, on even stages read from BRAM and write to BRAM1 (we start with stage 1)
   always_comb begin
@@ -143,13 +136,6 @@ module fft#(
     else begin
       {a_in_real, a_in_imag} <= bram2_dout_a;
       {b_in_real, b_in_imag} <= bram2_dout_b;
-    end
-
-    if(mode == 1'b0) // FFT
-      {tw_real, tw_imag} <= tw_real_tw_imag;
-    else begin  // IFFT
-      tw_real <= tw_real_tw_imag[127:64];
-      tw_imag <= {~tw_real_tw_imag[63], tw_real_tw_imag[62:0]}; // Negate imaginary part
     end
   end
 
