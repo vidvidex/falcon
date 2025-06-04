@@ -17,8 +17,7 @@ module FFTButterfly(
     input [63:0] b_in_real,
     input [63:0] b_in_imag,
 
-    input [63:0] tw_real,  // Should be supplied 1 cycle later than a_in_real, a_in_imag, b_in_real, b_in_imag for FFT and 8 cycles later for IFFT.
-    input [63:0] tw_imag,  // TODO: these two should probably not be external signals, ROM for constants should be managed by this module so we don't have this "strange" delayed signals going out
+    input [9:0] tw_addr, // Address for the twiddle factor ROM
 
     input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
 
@@ -74,6 +73,19 @@ module FFTButterfly(
 
                          .done(add_done)
                        );
+
+  // For IFFT we need to delay the twiddle factor address
+  logic [9:0] tw_addr_delayed;
+  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(7)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(tw_addr_delayed));
+
+  logic [63:0] tw_real, tw_imag;
+  fft_twiddle_factor_rom fft_twiddle_factor_rom (
+                        .clk(clk),
+                        .mode(!use_ct),
+                        .tw_addr(use_ct == 1'b1 ? tw_addr : tw_addr_delayed),
+                        .tw_real(tw_real),
+                        .tw_imag(tw_imag)
+                      );
 
   ///////////////////// Mult stage ///////////////////////////
   logic [63:0] mul_out_real, mul_out_imag;

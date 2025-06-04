@@ -10,8 +10,7 @@ module FFTButterfly_tb;
   logic [63:0] b_in_real;
   logic [63:0] b_in_imag;
 
-  logic [63:0] tw_real;
-  logic [63:0] tw_imag;
+  logic [9:0] tw_addr;
 
   logic [63:0] a_out_real;
   logic [63:0] a_out_imag;
@@ -32,8 +31,8 @@ module FFTButterfly_tb;
                  .b_in_real(b_in_real),
                  .b_in_imag(b_in_imag),
 
-                 .tw_real(tw_real),
-                 .tw_imag(tw_imag),
+                 .tw_addr(tw_addr),
+
                  .scale_factor(scale_factor),
 
                  .a_out_real(a_out_real),
@@ -52,8 +51,6 @@ module FFTButterfly_tb;
     a_in_imag = 0;
     b_in_real = 0;
     b_in_imag = 0;
-    tw_real = 0;
-    tw_imag = 0;
     scale_factor = 0;
     #10;
 
@@ -61,18 +58,11 @@ module FFTButterfly_tb;
     scale_factor = 0;
     use_ct = 1; // FFT
     a_in_real = $realtobits(1.0);
-    a_in_imag = $realtobits(1.0);
-    b_in_real = $realtobits(2.0);
-    b_in_imag = $realtobits(2.0);
-    #10 // Example of "correct" usage where we only have the twiddle factors set for 1 cycle, that being 1 cycle later than the other inputs
-    in_valid = 0;
-    tw_real = $realtobits(1.0);
-    tw_imag = $realtobits(0.0);
+    a_in_imag = $realtobits(2.0);
+    b_in_real = $realtobits(3.0);
+    b_in_imag = $realtobits(4.0);
+    tw_addr = 2;  // Output: 0.29289+6.94974i, 1.70710-2.9497i
     #10;
-    tw_real = $realtobits(0.0);
-    tw_imag = $realtobits(0.0);
-    // output: 3+3i, -1-1i
-
 
     in_valid = 1;
     scale_factor = 0;
@@ -81,59 +71,56 @@ module FFTButterfly_tb;
     a_in_imag = $realtobits(2.7);
     b_in_real = $realtobits(1.5);
     b_in_imag = $realtobits(-4.2);
-    tw_real = $realtobits(1.0);
-    tw_imag = $realtobits(0.0);
-    #10;    // output: 14.0-1.5i, 11.0+6.9i
+    tw_addr = 4;  // Output: 15.49308-0.60626i, 9.50691+6.00626i
+    #10;
 
     in_valid = 1;
     scale_factor = 0;
     use_ct = 1; // FFT
-    a_in_real = $realtobits(2.0);
+    a_in_real = $realtobits(3.0);
     a_in_imag = $realtobits(2.0);
-    b_in_real = $realtobits(4.0);
+    b_in_real = $realtobits(1.0);
+    b_in_imag = $realtobits(0.0);
+    tw_addr = 2;  // Output: 3.70710+2.70710i, 2.29289+1.29289i
+    #10;
+
+    in_valid = 0;
+
+
+    // Wait for done from FFT before starting IFFT
+    while(done !== 1'b1)
+      #10;
+    #50;  // Wait for FFT results to be outputted (FFTButterfly does not like changing the mode during processing)
+
+    in_valid = 1;
+    scale_factor = -1;
+    use_ct = 0; // IFFT
+    a_in_real = $realtobits(1.0);
+    a_in_imag = $realtobits(2.0);
+    b_in_real = $realtobits(3.0);
     b_in_imag = $realtobits(4.0);
-    tw_real = $realtobits(1.0);
-    tw_imag = $realtobits(0.0);
-    #10;    // output: 6+6i, -2-2i
+    tw_addr = 2;  // Output: 2 + 3i, -1.41421i + 0
+    #10;
 
-    // in_valid = 1;
-    // scale_factor = -1;
-    // use_ct = 0; // IFFT
-    // a_in_real = $realtobits(1.0);
-    // a_in_imag = $realtobits(1.0);
-    // b_in_real = $realtobits(2.0);
-    // b_in_imag = $realtobits(2.0);
-    // #10;    
-    // in_valid = 0;
-    // #70;
-    // tw_real = $realtobits(1.0);
-    // tw_imag = $realtobits(0.0);
-    // #10;
-    // tw_real = $realtobits(0.0);
-    // tw_imag = $realtobits(0.0);
-    // output: 1.5+1.5i, -0.5-0.5i
+    in_valid = 1;
+    scale_factor = -1;
+    use_ct = 0; // IFFT
+    a_in_real = $realtobits(12.5);
+    a_in_imag = $realtobits(2.7);
+    b_in_real = $realtobits(1.5);
+    b_in_imag = $realtobits(-4.2);
+    tw_addr = 4;  // Output: 7 - 0.75i, 6.401595 + 1.08262i
+    #10;
 
-    // in_valid = 1;
-    // scale_factor = -1;
-    // use_ct = 0; // IFFT
-    // a_in_real = $realtobits(1.0);
-    // a_in_imag = $realtobits(2.3);
-    // b_in_real = $realtobits(4.5);
-    // b_in_imag = $realtobits(5.0);
-    // tw_real = $realtobits(1.0);
-    // tw_imag = $realtobits(0.0);
-    // #10;    // output: 2.75+3.65i, -1.75-1.35i
-
-    // in_valid = 1;
-    // scale_factor = -1;
-    // use_ct = 0; // IFFT
-    // a_in_real = $realtobits(5.0);
-    // a_in_imag = $realtobits(5.0);
-    // b_in_real = $realtobits(4.0);
-    // b_in_imag = $realtobits(4.0);
-    // tw_real = $realtobits(1.0);
-    // tw_imag = $realtobits(0.0);
-    // #10;    // output: 4.5+4.5i, 0.5+0.5i
+    in_valid = 1;
+    scale_factor = -1;
+    use_ct = 0; // IFFT
+    a_in_real = $realtobits(3.0);
+    a_in_imag = $realtobits(2.0);
+    b_in_real = $realtobits(1.0);
+    b_in_imag = $realtobits(0.0);
+    tw_addr = 2;  // Output: 2 + 1i, 1.41421i - 0 
+    #10;
 
     in_valid = 0;
 

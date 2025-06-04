@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="999,994 ps"></ZoomStartTime>
-      <ZoomEndTime time="1,000,002 ps"></ZoomEndTime>
-      <Cursor1Time time="1,000,000 ps"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="204.001 ns"></ZoomEndTime>
+      <Cursor1Time time="0.005 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="171"></NameColumnWidth>
+      <NameColumnWidth column_width="167"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -49,13 +49,13 @@
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ifft_512_tb/bram1_we_a">
@@ -67,13 +67,13 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ifft_512_tb/bram2_we_a">
@@ -250,13 +250,13 @@
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ifft_512_tb/fft/bram1_we_a">
@@ -268,13 +268,13 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[7:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[7:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ifft_512_tb/fft/bram2_we_a">
@@ -288,22 +288,6 @@
       <wvobject type="logic" fp_name="/ifft_512_tb/fft/done">
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ifft_512_tb/fft/tw_real">
-         <obj_property name="ElementShortName">tw_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ifft_512_tb/fft/tw_imag">
-         <obj_property name="ElementShortName">tw_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/a_in_real">
          <obj_property name="ElementShortName">a_in_real[63:0]</obj_property>
@@ -443,19 +427,14 @@
          <obj_property name="ObjectShortName">tw_addr[9:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ifft_512_tb/fft/tw_addr_delayed">
-         <obj_property name="ElementShortName">tw_addr_delayed[9:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_addr_delayed[9:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/write_addr1">
-         <obj_property name="ElementShortName">write_addr1[9:0]</obj_property>
-         <obj_property name="ObjectShortName">write_addr1[9:0]</obj_property>
+         <obj_property name="ElementShortName">write_addr1[8:0]</obj_property>
+         <obj_property name="ObjectShortName">write_addr1[8:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ifft_512_tb/fft/write_addr2">
-         <obj_property name="ElementShortName">write_addr2[9:0]</obj_property>
-         <obj_property name="ObjectShortName">write_addr2[9:0]</obj_property>
+         <obj_property name="ElementShortName">write_addr2[8:0]</obj_property>
+         <obj_property name="ObjectShortName">write_addr2[8:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ifft_512_tb/fft/butterfly_unpause_pulse">
