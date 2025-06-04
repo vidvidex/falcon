@@ -1,12 +1,17 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
+//////////////////////////////////////////////////////////////////////////////////
+//
+// FFT butterfly unit for both FFT and IFFT
+//
+// This module and it's submodules were originally developed for Aloha-HE
+// (https://github.com/flokrieger/Aloha-HE; https://ieeexplore.ieee.org/document/10546608)
+// and were adapted for Falcon. Most notable changes:
+// - added support for fully pipelined operation
+// - twiddle factor ROM is part of the FFTButterfly module
+//
+//////////////////////////////////////////////////////////////////////////////////
 
-//  a_in_real + j*a_in_imag ----\-/|+|-- a_out_real + j*a_out_imag
-//                               X
-//  b_in_real + j*b_in_imag ----/-\|-|--|x|- b_out_real + j*b_out_imag
-// load and store logic needs to make sure to deliver inputs / twiddle factors and consume results in right point in time
-// input: unbuffered
-// output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module FFTButterfly(
     input clk,
@@ -80,12 +85,12 @@ module FFTButterfly(
 
   logic [63:0] tw_real, tw_imag;
   fft_twiddle_factor_rom fft_twiddle_factor_rom (
-                        .clk(clk),
-                        .mode(!use_ct),
-                        .tw_addr(use_ct == 1'b1 ? tw_addr : tw_addr_delayed),
-                        .tw_real(tw_real),
-                        .tw_imag(tw_imag)
-                      );
+                           .clk(clk),
+                           .mode(!use_ct),
+                           .tw_addr(use_ct == 1'b1 ? tw_addr : tw_addr_delayed),
+                           .tw_real(tw_real),
+                           .tw_imag(tw_imag)
+                         );
 
   ///////////////////// Mult stage ///////////////////////////
   logic [63:0] mul_out_real, mul_out_imag;
