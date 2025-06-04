@@ -16,7 +16,7 @@
 module FFTButterfly(
     input clk,
     input in_valid, // Are inputs valid
-    input use_ct, // 0 = DIT = IFFT; 1 = DIF = FFT
+    input mode, // 0  = FFT; 1 = IFFT
     input [63:0] a_in_real,
     input [63:0] a_in_imag,
     input [63:0] b_in_real,
@@ -45,8 +45,8 @@ module FFTButterfly(
   DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_real_delay(.clk(clk), .in(a_in_real), .out(a_in_real_15D));
   DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_imag_delay(.clk(clk), .in(a_in_imag), .out(a_in_imag_15D));
 
-  assign a_real = use_ct ? a_in_real_15D : a_in_real;
-  assign a_imag = use_ct ? a_in_imag_15D : a_in_imag;
+  assign a_real = mode ?  a_in_real: a_in_real_15D;
+  assign a_imag = mode ? a_in_imag : a_in_imag_15D;
 
   // For IFFT we have to delay a_p_b_real and a_p_b_imag before outputting the final result (pipelining doesn't work without it)
   logic [63:0] a_p_b_real, a_p_b_imag;
@@ -54,12 +54,12 @@ module FFTButterfly(
   DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_real_delay(.clk(clk), .in(a_p_b_real), .out(a_p_b_real_15D));
   DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_imag_delay(.clk(clk), .in(a_p_b_imag), .out(a_p_b_imag_15D));
 
-  assign a_out_real = use_ct ? a_p_b_real : a_p_b_real_15D;
-  assign a_out_imag = use_ct ? a_p_b_imag : a_p_b_imag_15D;
+  assign a_out_real = mode ? a_p_b_real_15D : a_p_b_real;
+  assign a_out_imag = mode ? a_p_b_imag_15D : a_p_b_imag;
 
   logic [63:0] b_real, b_imag;
-  assign b_real = use_ct ? mul_out_real_1DP : b_in_real;
-  assign b_imag = use_ct ? mul_out_imag_1DP : b_in_imag;
+  assign b_real = mode ? b_in_real : mul_out_real_1DP;
+  assign b_imag = mode ?  b_in_imag : mul_out_imag_1DP;
 
   FFTButterflyAddStage add_stage(
                          .clk(clk),
@@ -86,8 +86,8 @@ module FFTButterfly(
   logic [63:0] tw_real, tw_imag;
   fft_twiddle_factor_rom fft_twiddle_factor_rom (
                            .clk(clk),
-                           .mode(!use_ct),
-                           .tw_addr(use_ct == 1'b1 ? tw_addr : tw_addr_delayed),
+                           .mode(mode),
+                           .tw_addr(mode == 1'b0 ? tw_addr : tw_addr_delayed),
                            .tw_real(tw_real),
                            .tw_imag(tw_imag)
                          );
@@ -96,8 +96,8 @@ module FFTButterfly(
   logic [63:0] mul_out_real, mul_out_imag;
   logic add_done_1DP, add_done_2DP;
   always_ff @(posedge clk) begin
-    a_m_b_real_1DP <= use_ct ? b_in_real : a_m_b_real;
-    a_m_b_imag_1DP <= use_ct ? b_in_imag : a_m_b_imag;
+    a_m_b_real_1DP <= mode ? a_m_b_real : b_in_real;
+    a_m_b_imag_1DP <= mode ? a_m_b_imag : b_in_imag;
     mul_out_real_1DP <= mul_out_real;
     mul_out_imag_1DP <= mul_out_imag;
     add_done_1DP <= add_done;
@@ -120,13 +120,13 @@ module FFTButterfly(
                     );
 
   logic [63:0] b_out_real_0DP, b_out_imag_0DP;
-  assign b_out_real_0DP = use_ct ? a_m_b_real : mul_out_real;
-  assign b_out_imag_0DP = use_ct ? a_m_b_imag : mul_out_imag;
+  assign b_out_real_0DP = mode ? mul_out_real : a_m_b_real;
+  assign b_out_imag_0DP = mode ? mul_out_imag : a_m_b_imag;
 
   logic [63:0] b_out_real_1DP, b_out_imag_1DP;
   DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+0)) b_out_real_delay(.clk(clk), .in(b_out_real_0DP), .out(b_out_real_1DP));
   DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+0)) b_out_imag_delay(.clk(clk), .in(b_out_imag_0DP), .out(b_out_imag_1DP));
-  assign b_out_real = use_ct ? b_out_real_0DP : b_out_real_1DP;
-  assign b_out_imag = use_ct ? b_out_imag_0DP : b_out_imag_1DP;
+  assign b_out_real = mode ? b_out_real_1DP : b_out_real_0DP;
+  assign b_out_imag = mode ? b_out_imag_1DP : b_out_imag_0DP;
 
 endmodule

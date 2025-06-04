@@ -32,9 +32,9 @@
       <obj_property name="ElementShortName">done</obj_property>
       <obj_property name="ObjectShortName">done</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/FFTButterfly_tb/use_ct">
-      <obj_property name="ElementShortName">use_ct</obj_property>
-      <obj_property name="ObjectShortName">use_ct</obj_property>
+   <wvobject type="logic" fp_name="/FFTButterfly_tb/mode">
+      <obj_property name="ElementShortName">mode</obj_property>
+      <obj_property name="ObjectShortName">mode</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/FFTButterfly_tb/scale_factor">
       <obj_property name="ElementShortName">scale_factor[4:0]</obj_property>

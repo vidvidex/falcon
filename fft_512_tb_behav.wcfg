@@ -465,9 +465,9 @@
             <obj_property name="ElementShortName">in_valid</obj_property>
             <obj_property name="ObjectShortName">in_valid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/fft_512_tb/fft/FFTButterfly/use_ct">
-            <obj_property name="ElementShortName">use_ct</obj_property>
-            <obj_property name="ObjectShortName">use_ct</obj_property>
+         <wvobject type="logic" fp_name="/fft_512_tb/fft/FFTButterfly/mode">
+            <obj_property name="ElementShortName">mode</obj_property>
+            <obj_property name="ObjectShortName">mode</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/fft_512_tb/fft/FFTButterfly/a_in_real">
             <obj_property name="ElementShortName">a_in_real[63:0]</obj_property>
