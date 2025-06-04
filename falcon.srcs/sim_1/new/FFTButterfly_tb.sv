@@ -4,7 +4,7 @@
 module FFTButterfly_tb;
 
   logic clk;
-  logic in_valid, done, use_ct;
+  logic in_valid, done, mode;
   logic [63:0] a_in_real;
   logic [63:0] a_in_imag;
   logic [63:0] b_in_real;
@@ -24,7 +24,7 @@ module FFTButterfly_tb;
   FFTButterfly FFTButterfly(
                  .clk(clk),
                  .in_valid(in_valid),
-                 .use_ct(use_ct),
+                 .mode(mode),
 
                  .a_in_real(a_in_real),
                  .a_in_imag(a_in_imag),
@@ -46,7 +46,7 @@ module FFTButterfly_tb;
 
     clk = 1;
     in_valid = 0;
-    use_ct = 0;
+    mode = 0;
     a_in_real = 0;
     a_in_imag = 0;
     b_in_real = 0;
@@ -56,7 +56,7 @@ module FFTButterfly_tb;
 
     in_valid = 1;
     scale_factor = 0;
-    use_ct = 1; // FFT
+    mode = 0; // FFT
     a_in_real = $realtobits(1.0);
     a_in_imag = $realtobits(2.0);
     b_in_real = $realtobits(3.0);
@@ -66,7 +66,7 @@ module FFTButterfly_tb;
 
     in_valid = 1;
     scale_factor = 0;
-    use_ct = 1; // FFT
+    mode = 0; // FFT
     a_in_real = $realtobits(12.5);
     a_in_imag = $realtobits(2.7);
     b_in_real = $realtobits(1.5);
@@ -76,7 +76,7 @@ module FFTButterfly_tb;
 
     in_valid = 1;
     scale_factor = 0;
-    use_ct = 1; // FFT
+    mode = 0; // FFT
     a_in_real = $realtobits(3.0);
     a_in_imag = $realtobits(2.0);
     b_in_real = $realtobits(1.0);
@@ -94,7 +94,7 @@ module FFTButterfly_tb;
 
     in_valid = 1;
     scale_factor = -1;
-    use_ct = 0; // IFFT
+    mode = 1; // IFFT
     a_in_real = $realtobits(1.0);
     a_in_imag = $realtobits(2.0);
     b_in_real = $realtobits(3.0);
@@ -104,7 +104,7 @@ module FFTButterfly_tb;
 
     in_valid = 1;
     scale_factor = -1;
-    use_ct = 0; // IFFT
+    mode = 1; // IFFT
     a_in_real = $realtobits(12.5);
     a_in_imag = $realtobits(2.7);
     b_in_real = $realtobits(1.5);
@@ -114,7 +114,7 @@ module FFTButterfly_tb;
 
     in_valid = 1;
     scale_factor = -1;
-    use_ct = 0; // IFFT
+    mode = 1; // IFFT
     a_in_real = $realtobits(3.0);
     a_in_imag = $realtobits(2.0);
     b_in_real = $realtobits(1.0);

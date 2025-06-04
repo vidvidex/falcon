@@ -84,7 +84,7 @@ module fft#(
   FFTButterfly FFTButterfly(
                  .clk(clk),
                  .in_valid(butterfly_input_valid_2DP),
-                 .use_ct(!mode),
+                 .mode(mode),
 
                  .a_in_real(a_in_real),
                  .a_in_imag(a_in_imag),
