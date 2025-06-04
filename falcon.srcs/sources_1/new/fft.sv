@@ -1,7 +1,24 @@
 `timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+//
+// Implements FFT and IFFT with 512 or 1024 coefficients (256 or 512 complex points).
+// The implementation is essentially a port of the reference Falcon C implementation of the FFT/IFFT algorithm.
+//
+// Uses 2 BRAMs to store the data. During any stage it will read from one BRAM and write to the other.
+// Stage 1: read from BRAM1, write to BRAM2
+// Stage 2: read from BRAM2, write to BRAM1
+// ... and so on
+//
+// Input is always in BRAM1
+// Output will be either in the BRAM1 or BRAM2 depending on the stage number. For N=512 it will be in BRAM1 and for N=1024 it will be in BRAM2.
+//
+// After each stage we have to wait until the butterfly unit finishes processing all data before we can continue to the next stage.
+// If we continued to the next stage immediately we'd have the problem that we would be reading from the same BRAM as we're writing the previous stage's output to.
+//
+//////////////////////////////////////////////////////////////////////////////////
 
 module fft#(
-    parameter int N = 512 // Number of complex points
+    parameter int N = 512
   )(
     input logic clk,
     input logic rst,
