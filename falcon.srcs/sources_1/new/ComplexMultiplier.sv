@@ -11,7 +11,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module ComplexMultiplier(
     input clk,
-    input start,
+    input in_valid,
     input [63:0] a_real,
     input [63:0] a_imag,
     input [63:0] b_real,
@@ -21,7 +21,7 @@ module ComplexMultiplier(
     output [63:0] a_x_b_real,
     output [63:0] a_x_b_imag,
 
-    output done
+    output out_valid
   );
 
   logic mult_done;
@@ -29,12 +29,12 @@ module ComplexMultiplier(
 
   FLPMultiplier mult_ar_x_br(
                   .clk(clk),
-                  .start(start),
+                  .in_valid(in_valid),
                   .a(a_real),
                   .b(b_real),
                   .scale_factor(scale_factor),
                   .result(ar_x_br),
-                  .done(mult_done)
+                  .out_valid(mult_done)
                 );
   FLPMultiplier mult_ar_x_bi(
                   .clk(clk),
@@ -42,8 +42,8 @@ module ComplexMultiplier(
                   .b(b_imag),
                   .scale_factor(scale_factor),
                   .result(ar_x_bi),
-                  .start(),
-                  .done()
+                  .in_valid(),
+                  .out_valid()
                 );
   FLPMultiplier mult_ai_x_br(
                   .clk(clk),
@@ -51,8 +51,8 @@ module ComplexMultiplier(
                   .b(b_real),
                   .scale_factor(scale_factor),
                   .result(ai_x_br),
-                  .start(),
-                  .done()
+                  .in_valid(),
+                  .out_valid()
                 );
   FLPMultiplier mult_ai_x_bi(
                   .clk(clk),
@@ -60,17 +60,17 @@ module ComplexMultiplier(
                   .b(b_imag),
                   .scale_factor(scale_factor),
                   .result(ai_x_bi),
-                  .start(),
-                  .done()
+                  .in_valid(),
+                  .out_valid()
                 );
 
   FLPAdder #(.DO_SUBSTRACTION(1)) adder_real_result(
              .clk(clk),
-             .start(mult_done),
+             .in_valid(mult_done),
              .a(ar_x_br),
              .b(ai_x_bi),
              .result(a_x_b_real),
-             .done(done)
+             .out_valid(out_valid)
            );
 
   FLPAdder #(.DO_SUBSTRACTION(0)) adder_imag_result(
@@ -78,8 +78,8 @@ module ComplexMultiplier(
              .a(ar_x_bi),
              .b(ai_x_br),
              .result(a_x_b_imag),
-             .start(),
-             .done()
+             .in_valid(),
+             .out_valid()
            );
 
 endmodule

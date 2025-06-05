@@ -70,7 +70,7 @@ module fft_512_tb;
                  .b_out_real(btf_b_out_real),
                  .b_out_imag(btf_b_out_imag),
 
-                 .done(btf_out_valid)
+                 .out_valid(btf_out_valid)
                );
 
   fft #(

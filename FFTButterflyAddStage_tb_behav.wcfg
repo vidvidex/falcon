@@ -24,13 +24,13 @@
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/FFTButterflyAddStage_tb/start">
-      <obj_property name="ElementShortName">start</obj_property>
-      <obj_property name="ObjectShortName">start</obj_property>
+   <wvobject type="logic" fp_name="/FFTButterflyAddStage_tb/in_valid">
+      <obj_property name="ElementShortName">in_valid</obj_property>
+      <obj_property name="ObjectShortName">in_valid</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/FFTButterflyAddStage_tb/done">
-      <obj_property name="ElementShortName">done</obj_property>
-      <obj_property name="ObjectShortName">done</obj_property>
+   <wvobject type="logic" fp_name="/FFTButterflyAddStage_tb/out_valid">
+      <obj_property name="ElementShortName">out_valid</obj_property>
+      <obj_property name="ObjectShortName">out_valid</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/FFTButterflyAddStage_tb/mode">
       <obj_property name="ElementShortName">mode</obj_property>

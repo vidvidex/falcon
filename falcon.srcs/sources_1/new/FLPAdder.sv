@@ -10,11 +10,11 @@ module FLPAdder #(
     DO_SUBSTRACTION = 0 // 0 for addition, 1 for subtraction
   ) (
     input clk,
-    input start,
+    input in_valid,
     input [63:0] a,
     input [63:0] b,
     output [63:0] result,
-    output done
+    output out_valid
   );
 
   logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP;
@@ -23,7 +23,7 @@ module FLPAdder #(
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP;
   FLPAdderDenormalization #(.DO_SUBSTRACTION(DO_SUBSTRACTION)) denormalize (
                             .clk(clk),
-                            .start(start),
+                            .in_valid(in_valid),
                             .a(a),
                             .b(b),
                             .sign_result_2DP(sign_result_2DP),
@@ -49,7 +49,7 @@ module FLPAdder #(
                             .denorm_significant_a_2DP(denorm_significant_a_2DP),
 
                             .result(result),
-                            .done(done)
+                            .out_valid(out_valid)
                           );
 
 endmodule

@@ -4,7 +4,7 @@
 module FLPMultiplier_tb;
 
   logic clk;
-  logic start, done;
+  logic in_valid, out_valid;
   logic [63:0] a;
   logic [63:0] b;
   logic [63:0] result;
@@ -14,12 +14,12 @@ module FLPMultiplier_tb;
 
   FLPMultiplier FLPMultiplier(
                   .clk(clk),
-                  .start(start),
+                  .in_valid(in_valid),
                   .a(a),
                   .b(b),
                   .scale_factor(scale_factor),
                   .result(result),
-                  .done(done)
+                  .out_valid(out_valid)
                 );
 
   initial begin
@@ -27,7 +27,7 @@ module FLPMultiplier_tb;
     clk = 1;
     scale_factor = 0;
 
-    start = 1;
+    in_valid = 1;
     a = $realtobits(2.0);
     b = $realtobits(-4.5);
     #10;
@@ -44,7 +44,7 @@ module FLPMultiplier_tb;
     b = $realtobits(0.0);
     #10;
 
-    start = 0;
+    in_valid = 0;
 
   end
 

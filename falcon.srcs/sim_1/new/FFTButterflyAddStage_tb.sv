@@ -4,7 +4,7 @@
 module FFTButterflyAddStage_tb;
 
   logic clk;
-  logic start, done;
+  logic in_valid, out_valid;
   logic [63:0] a_real;
   logic [63:0] a_imag;
   logic [63:0] b_real;
@@ -20,7 +20,7 @@ module FFTButterflyAddStage_tb;
 
   FFTButterflyAddStage FFTButterflyAddStage(
                  .clk(clk),
-                 .start(start),
+                 .in_valid(in_valid),
 
                  .a_real(a_real),
                  .a_imag(a_imag),
@@ -32,35 +32,35 @@ module FFTButterflyAddStage_tb;
                  .a_m_b_real(a_m_b_real),
                  .a_m_b_imag(a_m_b_imag),
 
-                 .done(done)
+                 .out_valid(out_valid)
                );
 
   initial begin
 
     clk = 1;
 
-    start = 0;
+    in_valid = 0;
     a_real = 0;
     a_imag = 0;
     b_real = 0;
     b_imag = 0;
     #10;
 
-    start = 1;
+    in_valid = 1;
     a_real = $realtobits(1.0);
     a_imag = $realtobits(1.0);
     b_real = $realtobits(2.0);
     b_imag = $realtobits(2.0);
     #10;    
 
-    start = 1;
+    in_valid = 1;
     a_real = $realtobits(5.0);
     a_imag = $realtobits(6.0);
     b_real = $realtobits(7.0);
     b_imag = $realtobits(8.0);
     #10;    
 
-    start = 0;
+    in_valid = 0;
 
   end
 
