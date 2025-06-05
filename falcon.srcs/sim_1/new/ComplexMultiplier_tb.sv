@@ -4,7 +4,7 @@
 module ComplexMultiplier_tb;
 
   logic clk;
-  logic start, done;
+  logic in_valid, out_valid;
   logic [63:0] a_real, a_imag;
   logic [63:0] b_real, b_imag;
   logic [63:0] result_real, result_imag;
@@ -14,7 +14,7 @@ module ComplexMultiplier_tb;
 
   ComplexMultiplier ComplexMultiplier(
                       .clk(clk),
-                      .start(start),
+                      .in_valid(in_valid),
                       .a_real(a_real),
                       .a_imag(a_imag),
                       .b_real(b_real),
@@ -22,7 +22,7 @@ module ComplexMultiplier_tb;
                       .scale_factor(scale_factor),
                       .a_x_b_real(result_real),
                       .a_x_b_imag(result_imag),
-                      .done(done)
+                      .out_valid(out_valid)
                     );
 
   initial begin
@@ -30,7 +30,7 @@ module ComplexMultiplier_tb;
     clk = 1;
     scale_factor = -1;
 
-    start = 1;
+    in_valid = 1;
     a_real = $realtobits(1.5);
     a_imag = $realtobits(2.5);
     b_real = $realtobits(3.5);
@@ -43,7 +43,7 @@ module ComplexMultiplier_tb;
     b_imag = $realtobits(16.5);
     #10;
 
-    start = 0;
+    in_valid = 0;
 
   end
 

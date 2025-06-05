@@ -13,7 +13,7 @@ module FLPAdderSigAddNormalize(
     input logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP,
 
     output logic [63:0] result,
-    output logic done
+    output logic out_valid
   );
 
   logic [`SIGNIFICANT_BITS+1:0] signed_significant_a;
@@ -151,5 +151,5 @@ module FLPAdderSigAddNormalize(
   end
 
   assign result = {sign_result_6DP, exponent_result_6DP,  exponent_result_6DP != `EXPONENT_BITS'd0 ? significant_result_6DP : `SIGNIFICANT_BITS'd0};
-  assign done = data_valid_6DP;
+  assign out_valid = data_valid_6DP;
 endmodule

@@ -4,7 +4,7 @@
 module FLPAdder_tb;
 
   logic clk;
-  logic start, done;
+  logic in_valid, out_valid;
   logic [63:0] a;
   logic [63:0] b;
   logic [63:0] result;
@@ -15,11 +15,11 @@ module FLPAdder_tb;
              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
            ) FLPAdder(
              .clk(clk),
-             .start(start),
+             .in_valid(in_valid),
              .a(a),
              .b(b),
              .result(result),
-             .done(done)
+             .out_valid(out_valid)
            );
 
   initial begin
@@ -28,19 +28,19 @@ module FLPAdder_tb;
 
     a = $realtobits(1.0);
     b = $realtobits(2.0);
-    start = 1;
+    in_valid = 1;
     #10;
 
     a = $realtobits(10.5);
     b = $realtobits(20.5);
-    start = 1;
+    in_valid = 1;
     #10;
 
     a = $realtobits(4.5);
     b = $realtobits(8.5);
-    start = 1;
+    in_valid = 1;
     #10;
-    start = 0;
+    in_valid = 0;
 
   end
 

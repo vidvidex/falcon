@@ -4,7 +4,7 @@
 module FFTButterfly_tb;
 
   logic clk;
-  logic in_valid, done, mode;
+  logic in_valid, out_valid, mode;
   logic [63:0] a_in_real;
   logic [63:0] a_in_imag;
   logic [63:0] b_in_real;
@@ -39,7 +39,7 @@ module FFTButterfly_tb;
                  .a_out_imag(a_out_imag),
                  .b_out_real(b_out_real),
                  .b_out_imag(b_out_imag),
-                 .done(done)
+                 .out_valid(out_valid)
                );
 
   initial begin
@@ -87,8 +87,8 @@ module FFTButterfly_tb;
     in_valid = 0;
 
 
-    // Wait for done from FFT before starting IFFT
-    while(done !== 1'b1)
+    // Wait for out_valid from FFT before starting IFFT
+    while(out_valid !== 1'b1)
       #10;
     #50;  // Wait for FFT results to be outputted (FFTButterfly does not like changing the mode during processing)
 

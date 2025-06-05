@@ -7,7 +7,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
     input clk,
-    input start,
+    input in_valid,
     input [63:0] a,
     input [63:0] b,
 
@@ -49,7 +49,7 @@ module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
   logic [`EXPONENT_BITS-1:0] diff_exponent_1DP, exponent_b_1DP;
   logic [`SIGNIFICANT_BITS:0] significant_a_1DP, significant_b_1DP;
   always_ff @(posedge clk) begin
-    data_valid_1DP <= start;
+    data_valid_1DP <= in_valid;
     signs_equal_1DP <= signs_equal;
     switched_operands_1DP <= switched_operands;
 

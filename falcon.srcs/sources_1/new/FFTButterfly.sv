@@ -31,7 +31,7 @@ module FFTButterfly(
     output [63:0] b_out_real,
     output [63:0] b_out_imag,
 
-    output done
+    output out_valid
   );
 
   /////////////////////// Add stage //////////////////////
@@ -63,7 +63,7 @@ module FFTButterfly(
 
   FFTButterflyAddStage add_stage(
                          .clk(clk),
-                         .start(in_valid),
+                         .in_valid(in_valid),
 
                          .a_real(a_real),
                          .a_imag(a_imag),
@@ -76,7 +76,7 @@ module FFTButterfly(
                          .a_m_b_real(a_m_b_real),
                          .a_m_b_imag(a_m_b_imag),
 
-                         .done(add_done)
+                         .out_valid(add_done)
                        );
 
   // For IFFT we need to delay the twiddle factor address
@@ -106,7 +106,7 @@ module FFTButterfly(
 
   ComplexMultiplier tw_factor_mult(
                       .clk(clk),
-                      .start(add_done_2DP),
+                      .in_valid(add_done_2DP),
                       .a_real(a_m_b_real_1DP),
                       .a_imag(a_m_b_imag_1DP),
                       .b_real(tw_real),
@@ -116,7 +116,7 @@ module FFTButterfly(
                       .a_x_b_real(mul_out_real),
                       .a_x_b_imag(mul_out_imag),
 
-                      .done(done)
+                      .out_valid(out_valid)
                     );
 
   logic [63:0] b_out_real_0DP, b_out_imag_0DP;

@@ -12,7 +12,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module FFTButterflyAddStage(
     input clk,
-    input start,
+    input in_valid,
     input [63:0] a_real,
     input [63:0] a_imag,
     input [63:0] b_real,
@@ -25,7 +25,7 @@ module FFTButterflyAddStage(
     output [63:0] a_m_b_real,
     output [63:0] a_m_b_imag,
 
-    output done
+    output out_valid
   );
 
 
@@ -37,7 +37,7 @@ module FFTButterflyAddStage(
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_real_2DP;
   FLPAdderDenormalization denormalize_real_part (
                             .clk(clk),
-                            .start(start),
+                            .in_valid(in_valid),
                             .a(a_real),
                             .b(b_real),
                             .sign_result_2DP(sign_result_real_2DP),
@@ -63,7 +63,7 @@ module FFTButterflyAddStage(
                             .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
 
                             .result(a_p_b_real),
-                            .done(done)
+                            .out_valid(out_valid)
                           );
   FLPAdderSigAddNormalize sub_and_normalize_real(
                             .clk(clk),
@@ -79,7 +79,7 @@ module FFTButterflyAddStage(
 
                             // unused:
                             .data_valid_2DP(),
-                            .done()
+                            .out_valid()
                           );
 
   /////////////////// Imaginary part ////////////////////
@@ -101,7 +101,7 @@ module FFTButterflyAddStage(
                             .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
                             .switched_operands_2DP(switched_operands_imag_2DP),
                             // unused:
-                            .start(),
+                            .in_valid(),
                             .data_valid_2DP()
                           );
 
@@ -119,7 +119,7 @@ module FFTButterflyAddStage(
 
                             // unused:
                             .data_valid_2DP(),
-                            .done()
+                            .out_valid()
                           );
   FLPAdderSigAddNormalize sub_and_normalize_imag(
                             .clk(clk),
@@ -134,7 +134,7 @@ module FFTButterflyAddStage(
                             .result(a_m_b_imag),
                             // unused:
                             .data_valid_2DP(),
-                            .done()
+                            .out_valid()
                           );
 
 endmodule
