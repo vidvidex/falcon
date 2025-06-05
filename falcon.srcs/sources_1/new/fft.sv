@@ -103,7 +103,7 @@ module fft#(
                  .done(butterfly_output_valid)
                );
 
-  logic [9:0] tw_addr, tw_addr_1DP, tw_addr_2DP,tw_addr_3DP,tw_addr_4DP;
+  logic [9:0] tw_addr, tw_addr_1DP, tw_addr_2DP;
   always_ff @(posedge clk) begin
     tw_addr <= m + i1;
     tw_addr_1DP <= tw_addr;
