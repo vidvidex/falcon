@@ -25,6 +25,9 @@
 //
 // When size is less than N/2 there will be empty space at the end of each BRAM
 //
+// To save resources we share a single butterfly unit between fft, split_fft and merge_fft modules.
+// For this reason this module also includes a bunch of signals for the butterfly unit.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -55,8 +58,26 @@ module split_fft#(
     output logic bram2_we_a,
     output logic bram2_we_b,
 
-    output logic done
+    output logic done,
+
+    // Signals for external butterfly unit
+    output logic btf_mode,
+    output logic btf_in_valid,
+    output logic [63:0] btf_a_in_real,
+    output logic [63:0] btf_a_in_imag,
+    output logic [63:0] btf_b_in_real,
+    output logic [63:0] btf_b_in_imag,
+    output logic signed [4:0] btf_scale_factor,
+    output logic [9:0] btf_tw_addr,
+    input logic [63:0] btf_a_out_real,
+    input logic [63:0] btf_a_out_imag,
+    input logic [63:0] btf_b_out_real,
+    input logic [63:0] btf_b_out_imag,
+    input logic btf_out_valid
   );
+
+  assign btf_mode = 1'b1; // For split_fft we always need mode = 1 (IFFT)
+  assign btf_scale_factor = -1;
 
   logic [$clog2(N/4)-1:0] u, u_delayed; // Counter over the input. Will be at most N/4. We need the delayed version to know where to write the butterfly output
   DelayRegister #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(27)) u_delay(.clk(clk), .in(u), .out(u_delayed));
@@ -70,50 +91,25 @@ module split_fft#(
           } state_t;
   state_t state, next_state;
 
+  logic butterfly_input_valid;
+  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_in_valid));
 
-  logic [63:0] a_in_real, a_in_imag, b_in_real, b_in_imag;
-  logic [63:0] a_out_real, a_out_imag, b_out_real, b_out_imag;
-  logic butterfly_input_valid, butterfly_input_valid_delayed, butterfly_output_valid;
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(butterfly_input_valid_delayed));
-
-  FFTButterfly FFTButterfly(
-                 .clk(clk),
-                 .in_valid(butterfly_input_valid_delayed),
-                 .mode(1'b1),
-
-                 .a_in_real(a_in_real),
-                 .a_in_imag(a_in_imag),
-                 .b_in_real(b_in_real),
-                 .b_in_imag(b_in_imag),
-
-                 .tw_addr(tw_addr_delayed),
-
-                 .scale_factor(-1),
-
-                 .a_out_real(a_out_real),
-                 .a_out_imag(a_out_imag),
-                 .b_out_real(b_out_real),
-                 .b_out_imag(b_out_imag),
-
-                 .done(butterfly_output_valid)
-               );
-
-  logic [9:0] tw_addr, tw_addr_delayed;
-  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(tw_addr_delayed));
+  logic [9:0] tw_addr;
+  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(btf_tw_addr));
 
   // Reading inputs from BRAM 1
   always @(posedge clk) begin
-    {a_in_real, a_in_imag} <= bram1_dout_a;
-    {b_in_real, b_in_imag} <= bram1_dout_b;
+    {btf_a_in_real, btf_a_in_imag} <= bram1_dout_a;
+    {btf_b_in_real, btf_b_in_imag} <= bram1_dout_b;
   end
 
   // Writing results to BRAM 2
   always_ff @(posedge clk) begin
-    if (butterfly_output_valid) begin
+    if (btf_out_valid) begin
       bram2_addr_a <= u_delayed;
       bram2_addr_b <= u_delayed + (size >> 2);
-      bram2_din_a <= {a_out_real, a_out_imag};
-      bram2_din_b <= {b_out_real, b_out_imag};
+      bram2_din_a <= {btf_a_out_real, btf_a_out_imag};
+      bram2_din_b <= {btf_b_out_real, btf_b_out_imag};
       bram2_we_a <= 1'b1;
       bram2_we_b <= 1'b1;
     end
@@ -141,10 +137,10 @@ module split_fft#(
         if(u == (size >> 2) - 1)
           next_state = WAIT_FOR_BUTTERFLY_START;
       WAIT_FOR_BUTTERFLY_START:
-        if(butterfly_output_valid == 1'b1)  // Wait for butterfly unit to start outputting data
+        if(btf_out_valid == 1'b1)  // Wait for butterfly unit to start outputting data
           next_state = WAIT_FOR_BUTTERFLY_END;
       WAIT_FOR_BUTTERFLY_END:
-        if(butterfly_output_valid == 1'b0)  // Wait for butterfly unit to finish outputting all data
+        if(btf_out_valid == 1'b0)  // Wait for butterfly unit to finish outputting all data
           next_state = DONE;
       DONE:
         next_state = IDLE;

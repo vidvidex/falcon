@@ -46,6 +46,34 @@ module merge_fft_tb;
                   .web(bram2_we_b)
                 );
 
+  logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
+  logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
+  logic btf_mode;
+  logic signed [4:0] btf_scale_factor;
+  logic [9:0] btf_tw_addr;
+  logic btf_in_valid, btf_out_valid;
+  FFTButterfly FFTButterfly(
+                 .clk(clk),
+                 .mode(btf_mode),
+                 .in_valid(btf_in_valid),
+
+                 .a_in_real(btf_a_in_real),
+                 .a_in_imag(btf_a_in_imag),
+                 .b_in_real(btf_b_in_real),
+                 .b_in_imag(btf_b_in_imag),
+
+                 .tw_addr(btf_tw_addr),
+
+                 .scale_factor(btf_scale_factor),
+
+                 .a_out_real(btf_a_out_real),
+                 .a_out_imag(btf_a_out_imag),
+                 .b_out_real(btf_b_out_real),
+                 .b_out_imag(btf_b_out_imag),
+
+                 .done(btf_out_valid)
+               );
+
   merge_fft #(
               .N(N)
             )merge_fft(
@@ -72,7 +100,21 @@ module merge_fft_tb;
               .bram2_dout_b(bram2_dout_b),
               .bram2_we_b(bram2_we_b),
 
-              .done(done)
+              .done(done),
+
+              .btf_mode(btf_mode),
+              .btf_in_valid(btf_in_valid),
+              .btf_a_in_real(btf_a_in_real),
+              .btf_a_in_imag(btf_a_in_imag),
+              .btf_b_in_real(btf_b_in_real),
+              .btf_b_in_imag(btf_b_in_imag),
+              .btf_scale_factor(btf_scale_factor),
+              .btf_tw_addr(btf_tw_addr),
+              .btf_a_out_real(btf_a_out_real),
+              .btf_a_out_imag(btf_a_out_imag),
+              .btf_b_out_real(btf_b_out_real),
+              .btf_b_out_imag(btf_b_out_imag),
+              .btf_out_valid(btf_out_valid)
             );
 
   // Signals that split 128 bit BRAM line into real and imag part, used mostly for debugging
