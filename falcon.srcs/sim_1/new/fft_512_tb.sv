@@ -14,36 +14,64 @@ module fft_512_tb;
   logic [127:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
   fft_bram_512_preinit_for_tb fft_bram_512_preinit_for_tb_1 (
-                    .addra(bram1_addr_a),
-                    .clka(clk),
-                    .dina(bram1_din_a),
-                    .douta(bram1_dout_a),
-                    .wea(bram1_we_a),
+                                .addra(bram1_addr_a),
+                                .clka(clk),
+                                .dina(bram1_din_a),
+                                .douta(bram1_dout_a),
+                                .wea(bram1_we_a),
 
-                    .addrb(bram1_addr_b),
-                    .clkb(clk),
-                    .dinb(bram1_din_b),
-                    .doutb(bram1_dout_b),
-                    .web(bram1_we_b)
-                  );
+                                .addrb(bram1_addr_b),
+                                .clkb(clk),
+                                .dinb(bram1_din_b),
+                                .doutb(bram1_dout_b),
+                                .web(bram1_we_b)
+                              );
 
   logic [$clog2(N)-2:0] bram2_addr_a, bram2_addr_b;
   logic [127:0] bram2_din_a, bram2_din_b;
   logic [127:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
   fft_bram_512_preinit_for_tb fft_bram_512_preinit_for_tb_2 (
-                    .addra(bram2_addr_a),
-                    .clka(clk),
-                    .dina(bram2_din_a),
-                    .douta(bram2_dout_a),
-                    .wea(bram2_we_a),
+                                .addra(bram2_addr_a),
+                                .clka(clk),
+                                .dina(bram2_din_a),
+                                .douta(bram2_dout_a),
+                                .wea(bram2_we_a),
 
-                    .addrb(bram2_addr_b),
-                    .clkb(clk),
-                    .dinb(bram2_din_b),
-                    .doutb(bram2_dout_b),
-                    .web(bram2_we_b)
-                  );
+                                .addrb(bram2_addr_b),
+                                .clkb(clk),
+                                .dinb(bram2_din_b),
+                                .doutb(bram2_dout_b),
+                                .web(bram2_we_b)
+                              );
+
+  logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
+  logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
+  logic btf_mode;
+  logic signed [4:0] btf_scale_factor;
+  logic [9:0] btf_tw_addr;
+  logic btf_in_valid, btf_out_valid;
+  FFTButterfly FFTButterfly(
+                 .clk(clk),
+                 .mode(btf_mode),
+                 .in_valid(btf_in_valid),
+
+                 .a_in_real(btf_a_in_real),
+                 .a_in_imag(btf_a_in_imag),
+                 .b_in_real(btf_b_in_real),
+                 .b_in_imag(btf_b_in_imag),
+
+                 .tw_addr(btf_tw_addr),
+
+                 .scale_factor(btf_scale_factor),
+
+                 .a_out_real(btf_a_out_real),
+                 .a_out_imag(btf_a_out_imag),
+                 .b_out_real(btf_b_out_real),
+                 .b_out_imag(btf_b_out_imag),
+
+                 .done(btf_out_valid)
+               );
 
   fft #(
         .N(N)
@@ -71,7 +99,21 @@ module fft_512_tb;
         .bram2_dout_b(bram2_dout_b),
         .bram2_we_b(bram2_we_b),
 
-        .done(done)
+        .done(done),
+
+        .btf_mode(btf_mode),
+        .btf_in_valid(btf_in_valid),
+        .btf_a_in_real(btf_a_in_real),
+        .btf_a_in_imag(btf_a_in_imag),
+        .btf_b_in_real(btf_b_in_real),
+        .btf_b_in_imag(btf_b_in_imag),
+        .btf_scale_factor(btf_scale_factor),
+        .btf_tw_addr(btf_tw_addr),
+        .btf_a_out_real(btf_a_out_real),
+        .btf_a_out_imag(btf_a_out_imag),
+        .btf_b_out_real(btf_b_out_real),
+        .btf_b_out_imag(btf_b_out_imag),
+        .btf_out_valid(btf_out_valid)
       );
 
   // Signals that split 128 bit BRAM line into real and imag part, used mostly for debugging

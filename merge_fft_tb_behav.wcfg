@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="7,396.161 ns"></ZoomStartTime>
-      <ZoomEndTime time="7,495.362 ns"></ZoomEndTime>
-      <Cursor1Time time="8,015.000 ns"></Cursor1Time>
+      <ZoomStartTime time="5,782.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="5,881.601 ns"></ZoomEndTime>
+      <Cursor1Time time="5,865.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="195"></NameColumnWidth>
+      <NameColumnWidth column_width="191"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -24,10 +24,6 @@
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="array" fp_name="/merge_fft_tb/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/merge_fft_tb/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -134,13 +130,13 @@
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/merge_fft_tb/bram2_we_b">
-         <obj_property name="ElementShortName">bram2_we_b</obj_property>
-         <obj_property name="ObjectShortName">bram2_we_b</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/merge_fft_tb/bram2_we_a">
          <obj_property name="ElementShortName">bram2_we_a</obj_property>
          <obj_property name="ObjectShortName">bram2_we_a</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/bram2_we_b">
+         <obj_property name="ElementShortName">bram2_we_b</obj_property>
+         <obj_property name="ObjectShortName">bram2_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram2_addr_a">
          <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
@@ -216,21 +212,61 @@
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/merge_fft_tb/a_real_double">
-         <obj_property name="ElementShortName">a_real_double</obj_property>
-         <obj_property name="ObjectShortName">a_real_double</obj_property>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_a_in_real">
+         <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_real[63:0]</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/merge_fft_tb/a_imag_double">
-         <obj_property name="ElementShortName">a_imag_double</obj_property>
-         <obj_property name="ObjectShortName">a_imag_double</obj_property>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_a_in_imag">
+         <obj_property name="ElementShortName">btf_a_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_imag[63:0]</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/merge_fft_tb/b_real_double">
-         <obj_property name="ElementShortName">b_real_double</obj_property>
-         <obj_property name="ObjectShortName">b_real_double</obj_property>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_b_in_real">
+         <obj_property name="ElementShortName">btf_b_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_real[63:0]</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/merge_fft_tb/b_imag_double">
-         <obj_property name="ElementShortName">b_imag_double</obj_property>
-         <obj_property name="ObjectShortName">b_imag_double</obj_property>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_b_in_imag">
+         <obj_property name="ElementShortName">btf_b_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_imag[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_a_out_real">
+         <obj_property name="ElementShortName">btf_a_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_real[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_a_out_imag">
+         <obj_property name="ElementShortName">btf_a_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_imag[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_b_out_real">
+         <obj_property name="ElementShortName">btf_b_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_real[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_b_out_imag">
+         <obj_property name="ElementShortName">btf_b_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_imag[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/btf_mode">
+         <obj_property name="ElementShortName">btf_mode</obj_property>
+         <obj_property name="ObjectShortName">btf_mode</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_scale_factor">
+         <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/btf_tw_addr">
+         <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/btf_in_valid">
+         <obj_property name="ElementShortName">btf_in_valid</obj_property>
+         <obj_property name="ObjectShortName">btf_in_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/btf_out_valid">
+         <obj_property name="ElementShortName">btf_out_valid</obj_property>
+         <obj_property name="ObjectShortName">btf_out_valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group902">
@@ -248,23 +284,10 @@
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/size">
          <obj_property name="ElementShortName">size[10:0]</obj_property>
          <obj_property name="ObjectShortName">size[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/start">
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/done">
-         <obj_property name="ElementShortName">done</obj_property>
-         <obj_property name="ObjectShortName">done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/butterfly_input_valid_delayed">
-         <obj_property name="ElementShortName">butterfly_input_valid_delayed</obj_property>
-         <obj_property name="ObjectShortName">butterfly_input_valid_delayed</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/tw_addr_delayed">
-         <obj_property name="ElementShortName">tw_addr_delayed[9:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_addr_delayed[9:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/bram1_addr_a">
          <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
@@ -302,9 +325,101 @@
          <obj_property name="ElementShortName">bram2_we_b</obj_property>
          <obj_property name="ObjectShortName">bram2_we_b</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/butterfly_output_valid">
-         <obj_property name="ElementShortName">butterfly_output_valid</obj_property>
-         <obj_property name="ObjectShortName">butterfly_output_valid</obj_property>
+      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/btf_mode">
+         <obj_property name="ElementShortName">btf_mode</obj_property>
+         <obj_property name="ObjectShortName">btf_mode</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/btf_in_valid">
+         <obj_property name="ElementShortName">btf_in_valid</obj_property>
+         <obj_property name="ObjectShortName">btf_in_valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_a_in_real">
+         <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_a_in_imag">
+         <obj_property name="ElementShortName">btf_a_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_b_in_real">
+         <obj_property name="ElementShortName">btf_b_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_b_in_imag">
+         <obj_property name="ElementShortName">btf_b_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_scale_factor">
+         <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_tw_addr">
+         <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_a_out_real">
+         <obj_property name="ElementShortName">btf_a_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_a_out_imag">
+         <obj_property name="ElementShortName">btf_a_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_b_out_real">
+         <obj_property name="ElementShortName">btf_b_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_b_out_imag">
+         <obj_property name="ElementShortName">btf_b_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/btf_out_valid">
+         <obj_property name="ElementShortName">btf_out_valid</obj_property>
+         <obj_property name="ObjectShortName">btf_out_valid</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/u">
          <obj_property name="ElementShortName">u[7:0]</obj_property>
@@ -324,69 +439,13 @@
          <obj_property name="ElementShortName">next_state[2:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/a_in_real">
-         <obj_property name="ElementShortName">a_in_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
+      <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/butterfly_input_valid">
+         <obj_property name="ElementShortName">butterfly_input_valid</obj_property>
+         <obj_property name="ObjectShortName">butterfly_input_valid</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/a_in_imag">
-         <obj_property name="ElementShortName">a_in_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/b_in_real">
-         <obj_property name="ElementShortName">b_in_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_in_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/b_in_imag">
-         <obj_property name="ElementShortName">b_in_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_in_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/a_out_real">
-         <obj_property name="ElementShortName">a_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_out_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/a_out_imag">
-         <obj_property name="ElementShortName">a_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_out_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/b_out_real">
-         <obj_property name="ElementShortName">b_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/b_out_imag">
-         <obj_property name="ElementShortName">b_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
+      <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/tw_addr">
+         <obj_property name="ElementShortName">tw_addr[9:0]</obj_property>
+         <obj_property name="ObjectShortName">tw_addr[9:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
