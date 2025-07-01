@@ -213,7 +213,7 @@ import falconsoar_pkg::*;
           );
 
   // Vid's note: this IP core is not defined in the GitHub repo, so I tried to reverse engineer it
-  // input is 16 bit integer (says so in the comments below)
+  // ~~input is 16 bit integer (says so in the comments below)~~. Comment seems to be wrong, input is 32 bit (see size of int_sample_value)
   // output is 64 bit floating point number (says so in the comments below)
   // Is blocking because it also has a result ready signal
   // Latency I set to minimum because all other modules also have minimum latency

@@ -34,7 +34,8 @@
         typedef logic [VEC_BW-1:0] vect_t;
         typedef logic [VEC_PER_ROW-1:0][VEC_BW-1:0] row_data_pack_t;
 
-        parameter  SAMPLERZ_READ_DELAY =  4'd4 ;
+        parameter  SAMPLERZ_READ_DELAY =  4'd1 ;    // CHANGED BY VID FOR TESTBENCH
+        // parameter  SAMPLERZ_READ_DELAY =  4'd4 ;
 
         ///////////////////////////////////////////////////////////////////////////////////
         //here is about the architecture 
