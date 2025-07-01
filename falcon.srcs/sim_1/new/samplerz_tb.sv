@@ -44,9 +44,9 @@ import falconsoar_pkg::*;
     rst_n = 1;
 
     src0 = 32'h00000000; // Source 0 address (mu)
-    src1 = 32'h00000001; // Source 1 address (sigma)
+    src1 = 32'h00000001; // Source 1 address (inverse sigma)
     dst = 32'h00000002; // Destination address
-    task_type = 4'b0001; // 512
+    task_type = 4'b0001; // 512 mode
 
     // Set up a task
     rst = 1;
@@ -76,10 +76,8 @@ import falconsoar_pkg::*;
   logic [255:0] mem [BANK_DEPTH];
 
   initial begin
-    // Initialize memory
-    
-    mem[0] = $realtobits(21.432826104646395);  // mu
-    mem[1] = $realtobits(1.7393509544223873);  // sigma
+    mem[0] = {64'b0, 64'b0, $realtobits(33.198144682236155), $realtobits(33.198144682236155)};  // mu
+    mem[1] = $realtobits(1/1.724965058508814);  // inverse sigma (I guess so we can use multiplication instead of division)
     
     for (int i = 2; i < BANK_DEPTH; i++) begin
       mem[i] = 64'h0000000000000000; 
