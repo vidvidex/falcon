@@ -1,0 +1,100 @@
+`timescale 1ns/1ps
+
+module samplerz_tb;
+
+import falconsoar_pkg::*;
+
+  logic clk;
+  logic rst_n;
+
+  mem_addr_t src0;
+  mem_addr_t src1;
+  mem_addr_t dst;
+  logic rst;
+  logic [3:0] task_type;
+
+  always #5 clk = ~clk;
+
+
+  exec_operator_if task_itf();
+  mem_inst_if mem_rd();
+  mem_inst_if mem_wr();
+
+  samplerz samplerz (
+             .clk(clk),
+             .rst_n(rst_n),
+             .task_itf(task_itf),
+             .mem_rd(mem_rd),
+             .mem_wr(mem_wr)
+           );
+
+  bram_model bram_inst (
+               .clk(clk),
+               .rst_n(rst_n),
+               .mem_rd(mem_rd.slave_rd),
+               .mem_wr(mem_wr.slave_wr)
+             );
+
+  initial begin
+
+    clk = 1;
+
+    rst_n = 0;
+    #20;
+    rst_n = 1;
+
+    src0 = 32'h00000000; // Source 0 address (mu)
+    src1 = 32'h00000001; // Source 1 address (sigma)
+    dst = 32'h00000002; // Destination address
+    task_type = 4'b0001; // 512
+
+    // Set up a task
+    rst = 1;
+    task_itf.master.start <= 1;
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    #10;
+    rst = 0;
+    task_itf.master.start <= 0;
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+
+    while(task_itf.master.op_done !== 1)
+      #10;
+
+  end
+
+endmodule
+
+module bram_model 
+import falconsoar_pkg::*;
+ (
+    input logic clk,
+    input logic rst_n,
+    mem_inst_if.slave_rd mem_rd,
+    mem_inst_if.slave_wr mem_wr
+  );
+
+  logic [255:0] mem [BANK_DEPTH];
+
+  initial begin
+    // Initialize memory
+    
+    mem[0] = $realtobits(21.432826104646395);  // mu
+    mem[1] = $realtobits(1.7393509544223873);  // sigma
+    
+    for (int i = 2; i < BANK_DEPTH; i++) begin
+      mem[i] = 64'h0000000000000000; 
+    end
+  end
+
+  // Write logic
+  always_ff @(posedge clk) begin
+    if (mem_wr.en)
+      mem[mem_wr.addr] <= mem_wr.data;
+  end
+
+  // Read logic
+  always_ff @(posedge clk) begin
+    if (mem_rd.en)
+      mem_rd.data <= mem[mem_rd.addr];
+  end
+endmodule
