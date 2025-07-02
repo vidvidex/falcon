@@ -30,7 +30,7 @@ module hash_to_point_tb;
   logic [`BRAM_DATA_WIDTH:0] bram_din_b;
   logic [`BRAM_DATA_WIDTH:0] bram_dout_a, bram_dout_b;
   logic bram_we_b;
-  fft_bram_1024 fft_bram_1024 (
+  bram_1024x128 bram_1024x128 (
                   .addra(bram_addr_a),
                   .clka(clk),
                   .dina(0),
