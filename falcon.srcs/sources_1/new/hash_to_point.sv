@@ -13,7 +13,7 @@
 // THE COMMENTED VERSION IS THE VERSION THAT WORKS WITH VERIFY MODULE. THE UNCOMMENTED VERSION IS THE ONE THAT IS ADJUSTED
 // FOR SIGNING (READS DIRECTLY FROM MEMORY). AT THE END BOTH SIGNING AND VERIFYING SHOULD USE THE SAME IMPLEMENTATION.
 //
-// Module will read message_len_bytes bytes of the message and salt from memory, starting at address message_address.
+// Module will read "message_len_bytes" from input_bram_addr. Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address message_address+1. Currently it only reads bottom 64 bits of each memory location
 // The resulting polynomial coefficients will be written to memory at address result_address (1 coefficient per memory address).
 //
 //////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,6 @@ module hash_to_point#(
     input logic rst_n,
     input logic start,
 
-    input logic [15:0] message_len_bytes, //! Length of the message in bytes.
     input logic [`BRAM_ADDR_WIDTH-1:0] message_address, //! Address of the message in memory
     input logic [`BRAM_ADDR_WIDTH-1:0] result_address, //! Where to write the result in memory
 
@@ -41,6 +40,7 @@ module hash_to_point#(
 
   typedef enum logic[2:0] {
             IDLE,
+            READ_MESSAGE_LENGTH, // Read message length from memory
             ABSORB,
             WAIT_FOR_SQUEEZE,
             WAIT_FOR_SQUEEZE_END,
@@ -48,6 +48,8 @@ module hash_to_point#(
           } state_t;
   state_t state, next_state;
 
+  logic [`BRAM_ADDR_WIDTH-1:0] input_bram_offset;
+  logic [15:0] message_len_bytes;
   logic [63:0] data_in;
   logic [15:0] data_out;
   logic data_out_valid, data_out_valid_i;
@@ -55,10 +57,8 @@ module hash_to_point#(
   logic [$clog2(N):0] coefficient_index_i;
   logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
   logic [15:0] bytes_processed;
-
-  // Delay valid signal to account for BRAM read latency
-  logic data_in_valid, data_in_valid_2DP;
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(2)) data_valid_delay(.clk(clk), .in(data_in_valid), .out(data_in_valid_2DP));
+  logic [1:0] read_message_length_counter; // Counter for how many cycles we've been in the READ_MESSAGE_LENGTH state
+  logic data_in_valid, data_in_valid_i;
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
@@ -68,7 +68,7 @@ module hash_to_point#(
              .rst(shake256_reset),
              .input_len_bytes(message_len_bytes),
              .data_in(data_in),
-             .data_in_valid(data_in_valid_2DP),
+             .data_in_valid(data_in_valid_i),
              .data_out(data_out),
              .data_out_valid(data_out_valid)
            );
@@ -101,13 +101,15 @@ module hash_to_point#(
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
       bytes_processed <= 0;
-      input_bram_addr <= message_address; // Start reading from the message address
+      input_bram_offset <= 0;
     end
-    else if (state == ABSORB) begin
+    else if (state == READ_MESSAGE_LENGTH || state == ABSORB) begin
       bytes_processed <= bytes_processed + 8; // 8 bytes per cycle
-      input_bram_addr <= input_bram_addr + 1; // Increment address to read next 8 bytes
+      input_bram_offset <= input_bram_offset + 1; // Increment address to read next 8 bytes
     end
   end
+
+  assign input_bram_addr = message_address + input_bram_offset; // Address for input BRAM
 
   always_comb begin
     next_state = state;
@@ -115,10 +117,14 @@ module hash_to_point#(
     case (state)
       IDLE: begin   // Waiting for start signal, delayed by 1 cycle
         if (start == 1'b1)
+          next_state = READ_MESSAGE_LENGTH;
+      end
+      READ_MESSAGE_LENGTH: begin
+        if(read_message_length_counter == 2)
           next_state = ABSORB;
       end
       ABSORB: begin // Input other blocks of the message to the shake256
-        if (bytes_processed >= message_len_bytes - 8)  // If the message is done, then squeeze out the hash
+        if (bytes_processed >= message_len_bytes + 16)  // If the message is done, then squeeze out the hash
           next_state = WAIT_FOR_SQUEEZE;
       end
       WAIT_FOR_SQUEEZE: begin  // Wait for the shake256 to start outputting the hash
@@ -144,15 +150,19 @@ module hash_to_point#(
     case(state)
       IDLE: begin
         data_in_valid = 0;
+        shake256_reset = 1;
+      end
+      READ_MESSAGE_LENGTH: begin
+        data_in_valid = 0;
 
-        // In IDLE shake256_reset is set high, except for the cycle when we start (we have to stop resetting one cycle early so the module is ready for data by the time we switch states)
-        if(start == 1'b1)
+        // For the first few cycles we hold reset high, but for the last cycle we set it low so that the shake256 module is ready to accept data
+        if (read_message_length_counter == 2)
           shake256_reset = 0;
         else
           shake256_reset = 1;
       end
       ABSORB: begin
-        data_in_valid = 1'b1;
+        data_in_valid = 1;
         shake256_reset = 0;
       end
       WAIT_FOR_SQUEEZE: begin
@@ -174,9 +184,27 @@ module hash_to_point#(
     endcase
   end
 
-  assign data_in = data_in_valid_2DP ? input_bram_data : 64'b0;
+  // Read message length, message from BRAM
+  always_ff @(posedge clk) begin
+    if (rst_n == 1'b0) begin
+      read_message_length_counter <= 0;
+      message_len_bytes <= 0;
+    end
+    else begin
+      if(state == READ_MESSAGE_LENGTH)
+        read_message_length_counter <= read_message_length_counter + 1;
+
+      if (read_message_length_counter == 2)
+        message_len_bytes <= input_bram_data[15:0];
+    end
+
+    data_in <= data_in_valid ? input_bram_data : 64'b0;
+
+    data_in_valid_i <= data_in_valid;
+  end
+
   assign done = state == FINISH;
-  assign ready = (state == ABSORB) ? 1 : 0;
+  assign ready = state == ABSORB;
 
   // State 1 of converting hash output to coefficient: Read and swap the bytes of the hash output
   always_ff @(posedge clk) begin
@@ -195,7 +223,7 @@ module hash_to_point#(
     if (rst_n == 1'b0) begin
       coefficient_index_i <= 0;
     end
-    else if (data_out_valid_i == 1'b1 && t < k_times_q) begin
+    else if (data_out_valid_i == 1'b1 && t < k_times_q && done != 1) begin
       output_bram_data <= mod_12289(t);
       output_bram_addr <= result_address + coefficient_index_i++;
       output_bram_we <= 1'b1; // Write to output BRAM

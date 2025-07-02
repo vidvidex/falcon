@@ -16,8 +16,6 @@ module hash_to_point_tb;
   logic rst_n;
   logic start;
 
-  logic [15:0] message_len_bytes; //! Length of the message in bytes
-
   logic[14:0] expected_polynomial [N];
   logic done;
 
@@ -27,8 +25,8 @@ module hash_to_point_tb;
   logic initializing = 1'b1; // Are we still initializing the testbench (changes who writes to the BRAM)
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a, bram_addr_b;
-  logic [`BRAM_DATA_WIDTH:0] bram_din_b;
-  logic [`BRAM_DATA_WIDTH:0] bram_dout_a, bram_dout_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a, bram_dout_b;
   logic bram_we_b;
   bram_1024x128 bram_1024x128 (
                   .addra(bram_addr_a),
@@ -51,7 +49,6 @@ module hash_to_point_tb;
                   .clk(clk),
                   .rst_n(rst_n),
                   .start(start),
-                  .message_len_bytes(message_len_bytes),
 
                   .message_address(message_address),
                   .result_address(result_address),
@@ -66,57 +63,60 @@ module hash_to_point_tb;
                   .done(done)
                 );
 
-  logic [`BRAM_ADDR_WIDTH:0] init_bram_addr;
-  logic [`BRAM_DATA_WIDTH:0] init_bram_din;
+  logic [`BRAM_ADDR_WIDTH-1:0] init_bram_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] init_bram_din;
   logic init_bram_we;
 
   logic signed [14:0] coefficient;
 
   always #5 clk = ~clk;
 
-
   initial begin
     message_address = 0;
     result_address = 64;
-
 
     clk = 0;
     rst_n = 0;
     #15;
     rst_n = 1;
 
-    message_len_bytes = 16'h0049;
-
     // Careful: endianness is different than in the python implementation
     init_bram_we = 1;
+
+    // At address 0 we write the message length in bytes
     init_bram_addr = 0;
+    init_bram_din = 16'h0049;
+    #10;
+
+    // Then we write the message and salt
+    init_bram_addr = 1;
     init_bram_din = 64'h33b3c07507e42017;
     #10;
-    init_bram_addr = 1;
+    init_bram_addr = 2;
     init_bram_din = 64'h48494d832b6ee2a6;
     #10;
-    init_bram_addr = 2;
+    init_bram_addr = 3;
     init_bram_din = 64'hc93bff9b0ee343b5;
     #10;
-    init_bram_addr = 3;
+    init_bram_addr = 4;
     init_bram_din = 64'h50d1f85a3d0de0d7;
     #10;
-    init_bram_addr = 4;
+    init_bram_addr = 5;
     init_bram_din = 64'h04c6d17842951309;
     #10;
-    init_bram_addr = 5;
+    init_bram_addr = 6;
     init_bram_din = 64'hd81c4d8d734fcbfb;
     #10;
-    init_bram_addr = 6;
+    init_bram_addr = 7;
     init_bram_din = 64'heade3d3f8a039faa;
     #10;
-    init_bram_addr = 7;
+    init_bram_addr = 8;
     init_bram_din = 64'h2a2c9957e835ad55;
     #10;
-    init_bram_addr = 8;
+    init_bram_addr = 9;
     init_bram_din = 64'hb22e75bf57bb556a;
     #10;
-    init_bram_addr = 9;
+    init_bram_addr = 10;
     init_bram_din = 64'h00000000000000c8;
     #10;
     init_bram_we = 0;
@@ -126,9 +126,9 @@ module hash_to_point_tb;
     #20;
 
     // Start the module
-    start = 1;
+    start <= 1;
     #10;
-    start = 0;
+    start <= 0;
     #20;
 
     while(done !== 1'b1)
