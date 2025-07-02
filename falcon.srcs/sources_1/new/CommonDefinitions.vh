@@ -1,6 +1,8 @@
-
 // set this to "true" for gathering area utilization results
 `define KEEP_HIERARCHY  "false"
+
+// BRAM
+`define BRAM_DATA_WIDTH 128
 
 // IEEE 754 double precision:
 `define SIGNIFICANT_BITS 52
