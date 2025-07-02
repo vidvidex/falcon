@@ -323,44 +323,44 @@
       <obj_property name="label">bram</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/fft_bram_1024/clka">
+      <wvobject type="logic" fp_name="/hash_to_point_tb/bram_1024x128/clka">
          <obj_property name="ElementShortName">clka</obj_property>
          <obj_property name="ObjectShortName">clka</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/wea">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/wea">
          <obj_property name="ElementShortName">wea[0:0]</obj_property>
          <obj_property name="ObjectShortName">wea[0:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/addra">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/addra">
          <obj_property name="ElementShortName">addra[8:0]</obj_property>
          <obj_property name="ObjectShortName">addra[8:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/dina">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/dina">
          <obj_property name="ElementShortName">dina[127:0]</obj_property>
          <obj_property name="ObjectShortName">dina[127:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/douta">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/douta">
          <obj_property name="ElementShortName">douta[127:0]</obj_property>
          <obj_property name="ObjectShortName">douta[127:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/fft_bram_1024/clkb">
+      <wvobject type="logic" fp_name="/hash_to_point_tb/bram_1024x128/clkb">
          <obj_property name="ElementShortName">clkb</obj_property>
          <obj_property name="ObjectShortName">clkb</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/web">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/web">
          <obj_property name="ElementShortName">web[0:0]</obj_property>
          <obj_property name="ObjectShortName">web[0:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/addrb">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/addrb">
          <obj_property name="ElementShortName">addrb[8:0]</obj_property>
          <obj_property name="ObjectShortName">addrb[8:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/dinb">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/dinb">
          <obj_property name="ElementShortName">dinb[127:0]</obj_property>
          <obj_property name="ObjectShortName">dinb[127:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/hash_to_point_tb/fft_bram_1024/doutb">
+      <wvobject type="array" fp_name="/hash_to_point_tb/bram_1024x128/doutb">
          <obj_property name="ElementShortName">doutb[127:0]</obj_property>
          <obj_property name="ObjectShortName">doutb[127:0]</obj_property>
       </wvobject>

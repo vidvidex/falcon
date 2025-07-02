@@ -14,7 +14,7 @@ module merge_fft_tb;
   logic [127:0] bram1_din_a, bram1_din_b;
   logic [127:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
-  fft_bram_1024 fft_bram_1024_1 (
+  bram_1024x128 bram_1024x128_1 (
                   .addra(bram1_addr_a),
                   .clka(clk),
                   .dina(bram1_din_a),
@@ -32,7 +32,7 @@ module merge_fft_tb;
   logic [127:0] bram2_din_a, bram2_din_b;
   logic [127:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  fft_bram_1024 fft_bram_1024_2 (
+  bram_1024x128 bram_1024x128_2 (
                   .addra(bram2_addr_a),
                   .clka(clk),
                   .dina(bram2_din_a),

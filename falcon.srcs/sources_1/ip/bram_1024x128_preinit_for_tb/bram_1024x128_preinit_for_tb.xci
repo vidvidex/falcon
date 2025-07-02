@@ -1,13 +1,13 @@
 {
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
-    "xci_name": "fft_bram_1024_preinit_for_tb",
+    "xci_name": "bram_1024x128_preinit_for_tb",
     "component_reference": "xilinx.com:ip:blk_mem_gen:8.4",
     "ip_revision": "6",
-    "gen_directory": "../../../../falcon.gen/sources_1/ip/fft_bram_1024_preinit_for_tb",
+    "gen_directory": "../../../../falcon.gen/sources_1/ip/bram_1024x128_preinit_for_tb",
     "parameters": {
       "component_parameters": {
-        "Component_Name": [ { "value": "fft_bram_1024_preinit_for_tb", "resolve_type": "user", "usage": "all" } ],
+        "Component_Name": [ { "value": "bram_1024x128_preinit_for_tb", "resolve_type": "user", "usage": "all" } ],
         "Interface_Type": [ { "value": "Native", "resolve_type": "user", "usage": "all" } ],
         "AXI_Type": [ { "value": "AXI4_Full", "resolve_type": "user", "usage": "all" } ],
         "AXI_Slave_Type": [ { "value": "Memory_Slave", "resolve_type": "user", "usage": "all" } ],
@@ -97,8 +97,8 @@
         "C_ALGORITHM": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_PRIM_TYPE": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_LOAD_INIT_FILE": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "C_INIT_FILE_NAME": [ { "value": "fft_bram_1024_preinit_for_tb.mif", "resolve_type": "generated", "usage": "all" } ],
-        "C_INIT_FILE": [ { "value": "fft_bram_1024_preinit_for_tb.mem", "resolve_type": "generated", "usage": "all" } ],
+        "C_INIT_FILE_NAME": [ { "value": "bram_1024x128_preinit_for_tb.mif", "resolve_type": "generated", "usage": "all" } ],
+        "C_INIT_FILE": [ { "value": "bram_1024x128_preinit_for_tb.mem", "resolve_type": "generated", "usage": "all" } ],
         "C_USE_DEFAULT_DATA": [ { "value": "0", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_DEFAULT_DATA": [ { "value": "0", "resolve_type": "generated", "usage": "all" } ],
         "C_HAS_RSTA": [ { "value": "0", "resolve_type": "generated", "format": "long", "usage": "all" } ],
@@ -174,7 +174,7 @@
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
         "IPREVISION": [ { "value": "6" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../falcon.gen/sources_1/ip/fft_bram_1024_preinit_for_tb" } ],
+        "OUTPUTDIR": [ { "value": "../../../../falcon.gen/sources_1/ip/bram_1024x128_preinit_for_tb" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
         "SWVERSION": [ { "value": "2023.1" } ],
