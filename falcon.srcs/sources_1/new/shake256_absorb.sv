@@ -49,7 +49,7 @@ module shake256_absorb(
   assign data_in_padded[63:56] = (last_rate_byte) ? {1'b1,data_in_temp[6:0]} : data_in_temp;
 
   always_ff @(posedge clk) begin
-    if(rst)
+    if(rst || state == IDLE)
       messageLen_InBytes <= inputlen_InBytes;
     else if(data_in_padded_valid==1'b1 && messageLen_lt_8==1'b0)
       messageLen_InBytes <= messageLen_InBytes - 8;
