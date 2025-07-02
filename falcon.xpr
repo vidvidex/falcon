@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynq-z2"/>
-    <Option Name="WTXSimLaunchSim" Val="8930"/>
+    <Option Name="WTXSimLaunchSim" Val="9065"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -93,6 +93,7 @@
       <Filter Type="Srcs"/>
       <File Path="$PSRCDIR/sources_1/imports/include/falconsoar_pkg.sv">
         <FileInfo SFType="VHeader">
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/include/falconsoar_pkg.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -102,6 +103,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/include/sample_pkg.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/include/sample_pkg.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -111,6 +113,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/chacha20.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/chacha20.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -120,6 +123,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/berexp.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/berexp.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -129,6 +133,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/fpr_cal.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/fpr_cal.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -138,6 +143,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/pre_samp.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/pre_samp.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -147,6 +153,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/refill_control.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/refill_control.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -156,6 +163,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/samp_loop.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/samp_loop.sv"/>
           <Attr Name="ImportTime" Val="1749634238"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -165,6 +173,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/imports/sampler/samplerz.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/sampler/samplerz.sv"/>
           <Attr Name="ImportTime" Val="1750085804"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -174,7 +183,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256_absorb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -182,7 +191,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256_round.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -190,7 +199,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256_round_constants.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -198,7 +207,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256_rounds.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -206,7 +215,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256_squeeze.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -214,7 +223,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256_state.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -222,7 +231,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/ip/fft_bram_512/fft_bram_512.xci">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -230,7 +239,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/LeadingZeroCount.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -238,7 +247,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/bram.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -246,7 +255,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/decompress_coefficient.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -254,7 +263,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/mod_mult_ntt_negative.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -262,7 +271,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/ntt_negative_twiddle_rom.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -270,7 +279,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/shake256.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -278,7 +287,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/CommonDefinitions.vh">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
           <Attr Name="IsVisible" Val="1"/>
@@ -286,7 +295,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/FLPAdderDenormalization.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -294,7 +303,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/FLPAdderSigAddNormalize.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -302,7 +311,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/decompress.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -310,7 +319,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/hash_to_point.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -318,7 +327,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/mod_mult_verify.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -326,7 +335,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/ntt_negative.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -334,7 +343,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/sub_normalize_squared_norm.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -342,7 +351,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/FLPAdder.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -350,7 +359,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/FLPMultiplier.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -358,7 +367,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/verify.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -366,7 +375,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/ComplexMultiplier.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -374,7 +383,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/FFTButterflyAddStage.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -382,7 +391,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/compress_coefficient.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -390,7 +399,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/fft_twiddle_factor_rom.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -398,7 +407,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/ntt_positive_twiddle_rom.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -406,7 +415,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/trivium64_update.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -414,7 +423,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/verify_top_1024.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -422,7 +431,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/DelayRegister.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -430,7 +439,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/fft.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -438,7 +447,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/FFTButterfly.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -446,7 +455,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/DoubleToInt.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -454,7 +463,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/IntToDouble.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -462,7 +471,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/compress.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -470,7 +479,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/ntt_positive.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -478,7 +487,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/pynq_zu_clock.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -486,7 +495,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/verify_top_512.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -494,7 +503,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/verify_top_8.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -520,7 +529,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/split_fft.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -528,7 +537,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/merge_fft.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -536,7 +545,7 @@
       </File>
       <File Path="$PSRCDIR/sources_1/new/trivium64.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -554,7 +563,7 @@
       </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
-        <Option Name="TopModule" Val="samplerz"/>
+        <Option Name="TopModule" Val="ControlUnit"/>
       </Config>
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1" RelGenDir="$PGENDIR/constrs_1">
@@ -572,8 +581,16 @@
     </FileSet>
     <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1" RelGenDir="$PGENDIR/sim_1">
       <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sim_1/new/hash_to_point_tb.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sim_1/new/samplerz_tb.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -581,7 +598,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/trivium64_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -589,7 +606,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/ifft_1024_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -597,7 +614,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/ifft_512_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -605,7 +622,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/fft_1024_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -613,7 +630,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/fft_512_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -621,7 +638,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/split_fft_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -629,7 +646,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/merge_fft_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -637,7 +654,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/FFTButterfly_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -645,7 +662,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/ComplexMultiplier_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -653,7 +670,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/DoubleToInt_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -661,7 +678,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/FFTButterflyAddStage_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -669,7 +686,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/FLPAdder_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -677,7 +694,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/FLPMultiplier_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -685,7 +702,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/IntToDouble_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -693,7 +710,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/compress_coefficient_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -701,7 +718,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/compress_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -709,7 +726,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/decompress_coefficient_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -717,15 +734,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/decompress_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sim_1/new/hash_to_point_tb.sv">
-        <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -733,7 +742,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/mod_mult_ntt_negative_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -741,7 +750,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/mod_mult_verify_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -749,7 +758,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/ntt_negative_512_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -757,7 +766,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/ntt_negative_8_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -765,7 +774,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/ntt_positive_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -773,7 +782,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/sub_normalize_squared_norm_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -781,7 +790,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/verify_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -789,7 +798,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/verify_top_1024_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -797,7 +806,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/verify_top_512_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -805,7 +814,7 @@
       </File>
       <File Path="$PSRCDIR/sim_1/new/verify_top_8_tb.sv">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -813,7 +822,6 @@
       </File>
       <File Path="$PPRDIR/hash_to_point_tb_behav.wcfg">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
@@ -975,12 +983,13 @@
       </File>
       <File Path="$PPRDIR/samplerz_tb_behav.wcfg">
         <FileInfo>
+          <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
-        <Option Name="TopModule" Val="samplerz_tb"/>
+        <Option Name="TopModule" Val="hash_to_point_tb"/>
         <Option Name="TopLib" Val="xil_defaultlib"/>
         <Option Name="TransportPathDelay" Val="0"/>
         <Option Name="TransportIntDelay" Val="0"/>
@@ -1035,7 +1044,7 @@
     <FileSet Name="fft_bram_1024_preinit_for_tb" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fft_bram_1024_preinit_for_tb" RelGenDir="$PGENDIR/fft_bram_1024_preinit_for_tb">
       <File Path="$PSRCDIR/sources_1/ip/fft_bram_1024_preinit_for_tb/fft_bram_1024_preinit_for_tb.xci">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1049,7 +1058,7 @@
     <FileSet Name="fft_bram_512_preinit_for_tb" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fft_bram_512_preinit_for_tb" RelGenDir="$PGENDIR/fft_bram_512_preinit_for_tb">
       <File Path="$PSRCDIR/sources_1/ip/fft_bram_512_preinit_for_tb/fft_bram_512_preinit_for_tb.xci">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1063,7 +1072,7 @@
     <FileSet Name="fft_bram_1024" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fft_bram_1024" RelGenDir="$PGENDIR/fft_bram_1024">
       <File Path="$PSRCDIR/sources_1/ip/fft_bram_1024/fft_bram_1024.xci">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1077,6 +1086,7 @@
     <FileSet Name="fp_mult_s" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_mult_s" RelGenDir="$PGENDIR/fp_mult_s">
       <File Path="$PSRCDIR/sources_1/ip/fp_mult_s/fp_mult_s.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1090,6 +1100,7 @@
     <FileSet Name="fp_flt2i_int32_s" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_flt2i_int32_s" RelGenDir="$PGENDIR/fp_flt2i_int32_s">
       <File Path="$PSRCDIR/sources_1/ip/fp_flt2i_int32_s/fp_flt2i_int32_s.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1103,6 +1114,7 @@
     <FileSet Name="fp_i2flt_int32_s" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_i2flt_int32_s" RelGenDir="$PGENDIR/fp_i2flt_int32_s">
       <File Path="$PSRCDIR/sources_1/ip/fp_i2flt_int32_s/fp_i2flt_int32_s.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1116,6 +1128,7 @@
     <FileSet Name="fp_flt2i_int64_s" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_flt2i_int64_s" RelGenDir="$PGENDIR/fp_flt2i_int64_s">
       <File Path="$PSRCDIR/sources_1/ip/fp_flt2i_int64_s/fp_flt2i_int64_s.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1129,6 +1142,7 @@
     <FileSet Name="fp_i2flt_int64_s" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_i2flt_int64_s" RelGenDir="$PGENDIR/fp_i2flt_int64_s">
       <File Path="$PSRCDIR/sources_1/ip/fp_i2flt_int64_s/fp_i2flt_int64_s.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1142,6 +1156,7 @@
     <FileSet Name="fp_sub_s" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_sub_s" RelGenDir="$PGENDIR/fp_sub_s">
       <File Path="$PSRCDIR/sources_1/ip/fp_sub_s/fp_sub_s.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1155,6 +1170,7 @@
     <FileSet Name="fp_i2flt_int32" Type="BlockSrcs" RelSrcDir="$PSRCDIR/fp_i2flt_int32" RelGenDir="$PGENDIR/fp_i2flt_int32">
       <File Path="$PSRCDIR/sources_1/ip/fp_i2flt_int32/fp_i2flt_int32.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
