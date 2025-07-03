@@ -13,8 +13,8 @@
 // THE COMMENTED VERSION IS THE VERSION THAT WORKS WITH VERIFY MODULE. THE UNCOMMENTED VERSION IS THE ONE THAT IS ADJUSTED
 // FOR SIGNING (READS DIRECTLY FROM MEMORY). AT THE END BOTH SIGNING AND VERIFYING SHOULD USE THE SAME IMPLEMENTATION.
 //
-// Module will read "message_len_bytes" from input_bram_addr. Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address message_address+1. Currently it only reads bottom 64 bits of each memory location
-// The resulting polynomial coefficients will be written to memory at address result_address (1 coefficient per memory address).
+// Module will read "message_len_bytes" from the first location of input BRAM. Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address 1. Currently it only reads bottom 64 bits of each memory location
+// The resulting polynomial coefficients will be written to output BRAM 1 coefficient per memory address.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +24,6 @@ module hash_to_point#(
     input logic clk,
     input logic rst_n,
     input logic start,
-
-    input logic [`BRAM_ADDR_WIDTH-1:0] message_address, //! Address of the message in memory
-    input logic [`BRAM_ADDR_WIDTH-1:0] result_address, //! Where to write the result in memory
 
     output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr, //! Address for input BRAM.
     input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data, //! Data that is read from input_bram[input_bram_addr]
@@ -48,7 +45,6 @@ module hash_to_point#(
           } state_t;
   state_t state, next_state;
 
-  logic [`BRAM_ADDR_WIDTH-1:0] input_bram_offset;
   logic [15:0] message_len_bytes;
   logic [63:0] data_in;
   logic [15:0] data_out;
@@ -101,15 +97,13 @@ module hash_to_point#(
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
       bytes_processed <= 0;
-      input_bram_offset <= 0;
+      input_bram_addr <= 0;
     end
     else if (state == READ_MESSAGE_LENGTH || state == ABSORB) begin
       bytes_processed <= bytes_processed + 8; // 8 bytes per cycle
-      input_bram_offset <= input_bram_offset + 1; // Increment address to read next 8 bytes
+      input_bram_addr <= input_bram_addr + 1; // Increment address to read next 8 bytes
     end
   end
-
-  assign input_bram_addr = message_address + input_bram_offset; // Address for input BRAM
 
   always_comb begin
     next_state = state;
@@ -225,7 +219,7 @@ module hash_to_point#(
     end
     else if (data_out_valid_i == 1'b1 && t < k_times_q && done != 1) begin
       output_bram_data <= mod_12289(t);
-      output_bram_addr <= result_address + coefficient_index_i++;
+      output_bram_addr <= coefficient_index_i++;
       output_bram_we <= 1'b1; // Write to output BRAM
     end
     else
