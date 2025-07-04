@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+`include "CommonDefinitions.vh"
+
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Implements FFT and IFFT with 512 or 1024 coefficients (256 or 512 complex points).
@@ -28,8 +30,8 @@ module fft#(
     input logic mode,  // 0 = FFT, 1 = IFFT
     input logic start, // Start pulse
 
-    output logic [$clog2(N)-2:0] bram1_addr_a,
-    output logic [$clog2(N)-2:0] bram1_addr_b,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b,
     output logic [127:0] bram1_din_a,
     output logic [127:0] bram1_din_b,
     input logic [127:0] bram1_dout_a,
@@ -37,8 +39,8 @@ module fft#(
     output logic bram1_we_a,
     output logic bram1_we_b,
 
-    output logic [$clog2(N)-2:0] bram2_addr_a,
-    output logic [$clog2(N)-2:0] bram2_addr_b,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b,
     output logic [127:0] bram2_din_a,
     output logic [127:0] bram2_din_b,
     input logic [127:0] bram2_dout_a,

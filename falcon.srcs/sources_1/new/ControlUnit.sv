@@ -52,7 +52,7 @@ module ControlUnit#(
   logic [`BRAM_DATA_WIDTH-1:0] bram0_din_a, bram0_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a, bram0_dout_b;
   logic bram0_we_a, bram0_we_b;
-  bram_1024x128 bram_1024x128_0 (
+  bram_512x128 bram_512x128_0 (
                   .addra(bram0_addr_a),
                   .clka(clk),
                   .dina(bram0_din_a),
@@ -70,7 +70,7 @@ module ControlUnit#(
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
-  bram_1024x128 bram_1024x128_1 (
+  bram_512x128 bram_512x128_1 (
                   .addra(bram1_addr_a),
                   .clka(clk),
                   .dina(bram1_din_a),
@@ -88,7 +88,7 @@ module ControlUnit#(
   logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  bram_1024x128 bram_1024x128_2 (
+  bram_512x128 bram_512x128_2 (
                   .addra(bram2_addr_a),
                   .clka(clk),
                   .dina(bram2_din_a),
@@ -106,7 +106,7 @@ module ControlUnit#(
   logic [`BRAM_DATA_WIDTH-1:0] bram3_din_a, bram3_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram3_dout_a, bram3_dout_b;
   logic bram3_we_a, bram3_we_b;
-  bram_1024x128 bram_1024x128_3 (
+  bram_512x128 bram_512x128_3 (
                   .addra(bram3_addr_a),
                   .clka(clk),
                   .dina(bram3_din_a),
