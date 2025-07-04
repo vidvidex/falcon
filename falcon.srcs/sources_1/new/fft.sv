@@ -66,6 +66,13 @@ module fft#(
     input logic btf_out_valid
   );
 
+  logic [3:0] u, u_2DP; // Will be at most 8 for N=512 and 9 for N=1024
+  logic [$clog2(N)-1:0] t;
+  logic [$clog2(N):0] m;
+  logic [$clog2(N)-1:0] i1;
+  logic [$clog2(N)-1:0] j1;
+  logic [$clog2(N)-1:0] j, j2;
+
   assign btf_mode = mode;
 
   // scale factor should be 0 always, except on the last stage of INTT, where we should scale (divide) by N-1
@@ -82,12 +89,6 @@ module fft#(
   logic butterfly_input_valid;
   DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_in_valid));
 
-  logic [3:0] u, u_2DP; // Will be at most 8 for N=512 and 9 for N=1024
-  logic [$clog2(N)-1:0] t;
-  logic [$clog2(N):0] m;
-  logic [$clog2(N)-1:0] i1;
-  logic [$clog2(N)-1:0] j1;
-  logic [$clog2(N)-1:0] j, j2;
 
   DelayRegister #(.BITWIDTH(4), .CYCLE_COUNT(2)) u_delay(.clk(clk), .in(u), .out(u_2DP));
 
@@ -100,6 +101,11 @@ module fft#(
   state_t state, next_state;
 
   DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(m + i1), .out(btf_tw_addr));
+
+  // Delay write addresses until butterfly finished operation so we know where to write the values back into BRAM
+  logic [$clog2(N)-1:0] write_addr1, write_addr2;
+  DelayRegister #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
+  DelayRegister #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
 
   // Router between BRAM1 and BRAM2. On odd stages read from BRAM1 and write to BRAM2, on even stages read from BRAM and write to BRAM1 (we start with stage 1)
   always_comb begin
@@ -146,11 +152,6 @@ module fft#(
       {btf_b_in_real, btf_b_in_imag} <= bram2_dout_b;
     end
   end
-
-  // Delay write addresses until butterfly finished operation so we know where to write the values back into BRAM
-  logic [$clog2(N)-1:0] write_addr1, write_addr2;
-  DelayRegister #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
-  DelayRegister #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
 
   always_ff @(posedge clk) begin
     butterfly_input_valid <= state == RUN_FFT && !butterfly_paused;
