@@ -21,7 +21,6 @@ module hash_to_point_tb;
   logic[14:0] expected_polynomial [N];
   logic done;
 
-  // Input will be in BRAM0. Port A for hash_to_point and port B for initialization.
   logic [`BRAM_ADDR_WIDTH-1:0] bram0_addr_a, bram0_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a;
@@ -40,7 +39,6 @@ module hash_to_point_tb;
                  .web(bram0_we_b)
                );
 
-  // Output will be in BRAM1. Port A for hash_to_point and port B for checking the result.
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b;
@@ -70,16 +68,43 @@ module hash_to_point_tb;
                   .input_bram_addr(bram0_addr_a),
                   .input_bram_data(bram0_dout_a),
 
-                  .output_bram_addr(bram1_addr_a),
-                  .output_bram_data(bram1_din_a),
-                  .output_bram_we(bram1_we_a),
+                  .output_bram1_addr(bram1_addr_a),
+                  .output_bram1_data(bram1_din_a),
+                  .output_bram1_we(bram1_we_a),
+
+                  .output_bram2_addr(bram1_addr_b),
+                  .output_bram2_data(bram1_dout_b),
 
                   .done(done)
                 );
 
+  logic bram_output_valid, bram_output_valid_i;
+  int index, index_i, index_ii;
+
+  always_ff @(posedge clk) begin
+    bram_output_valid_i <= bram_output_valid;
+    index_i <= index;
+    index_ii <= index_i;
+  end
+
   logic signed [14:0] coefficient1, coefficient2;
-  assign coefficient1 = bram1_dout_b[14:0];
-  assign coefficient2 = bram1_dout_b[78:64];
+  assign coefficient1 = bram1_dout_b[78:64];
+  assign coefficient2 = bram1_dout_b[14:0];
+
+  // Check if result is correct
+  always_ff @(posedge clk) begin
+    if(bram_output_valid_i === 1) begin
+      if(coefficient1 != expected_polynomial[index_ii])
+        $fatal(1, "Test failed at index %d. Expected %d, got %d", index_ii, expected_polynomial[index_ii], coefficient1);
+      if(coefficient2 != expected_polynomial[index_ii + N/2])
+        $fatal(1, "Test failed at index %d. Expected %d, got %d", index_ii + N/2, expected_polynomial[index_ii + N/2], coefficient2);
+    end
+
+    if(index_ii == N/2 - 1) begin
+      $display("All tests for hash_to_point passed!");
+      $finish;
+    end
+  end
 
   always #5 clk = ~clk;
 
@@ -108,20 +133,13 @@ module hash_to_point_tb;
 
     while(done !== 1'b1)
       #10;
+    #100;
 
-    for (int i = 1; i <= N/2; i++) begin
-      bram1_addr_b = i;
+    for (index = 0; index < N/2; index++) begin
+      bram1_addr_b = index;
+      bram_output_valid <= 1;
       #10;
-      if (i > 1 && coefficient1 !== expected_polynomial[2*(i-1)]) begin // i>1 and -1 used to account for BRAM read latency
-        $fatal(1, "Test failed at index %d. Expected %d, got %d", 2*(i-1), expected_polynomial[2*(i-1)], coefficient1);
-      end
-      if (i > 1 && coefficient2 !== expected_polynomial[2*(i-1)+1]) begin
-        $fatal(1, "Test failed at index %d. Expected %d, got %d", 2*(i-1)+1, expected_polynomial[2*(i-1)+1], coefficient2);
-      end
     end
-
-    $display("All tests for hash_to_point passed!");
-    $finish;
 
   end
 endmodule

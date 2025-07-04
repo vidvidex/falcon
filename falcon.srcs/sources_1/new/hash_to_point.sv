@@ -15,7 +15,21 @@
 // Module will read "message_len_bytes" from the first location of input BRAM.
 // Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address 1. Currently it only reads bottom 64 bits of each memory location
 //
-// The resulting polynomial coefficients will be written to output BRAM two coefficients per memory location(first one: bottom 64 bits, seconds one: top 64 bits), starting at address 0.
+// The resulting polynomial coefficients is written to output BRAM in the following way, which is tailored to be used as input for the FFT module
+//
+//      64 bit (15 used)    64 bit (15 used)
+//     <-----------------> <----------------->
+//    |-------------------|-------------------|
+//    | coefficient 0     | coefficient N/2   |
+//    | coefficient 1     | coefficient N/2+1 |
+//    | coefficient 2     | coefficient N/2+2 |
+//    | ...               | ...               |
+//    | coefficient N/2-1 | coefficient N-1   |
+//    |-------------------|-------------------|
+//
+// Because we only write half of a memory cell at a time, but we don't want to override the other half,
+// we first read the memory location and then only override the half that we need to write to.
+// This is what input_bram2 signals are used for.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -26,12 +40,15 @@ module hash_to_point#(
     input logic rst_n,
     input logic start,
 
-    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr, //! Address for input BRAM.
-    input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data, //! Data that is read from input_bram[input_bram_addr]
+    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr, //! Used to read input for the hash_to_point module
+    input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data,
 
-    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram_addr, //! Address for output BRAM
-    output logic [`BRAM_DATA_WIDTH-1:0] output_bram_data, //! Data that is written to output_bram[output_bram_addr]
-    output logic output_bram_we, //! Write enable for output BRAM
+    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram1_addr, //! Address for output BRAM
+    output logic [`BRAM_DATA_WIDTH-1:0] output_bram1_data, //! Data that is written to output_bram[output_bram1_addr]
+    output logic output_bram1_we, //! Write enable for output BRAM
+
+    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
+    input logic [`BRAM_DATA_WIDTH-1:0] output_bram2_data,
 
     output logic done //! Are we done hashing the message to a polynomial?
   );
@@ -51,11 +68,22 @@ module hash_to_point#(
   logic [15:0] data_out;
   logic data_out_valid, data_out_valid_i;
   logic shake256_reset; // Reset signal for shake256 module, active high
-  logic [$clog2(N):0] coefficient_index_i, coefficient_index_tmp;
+  logic [$clog2(N):0] coefficient_index;
   logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
   logic [15:0] bytes_processed;
   logic [1:0] read_message_length_counter; // Counter for how many cycles we've been in the READ_MESSAGE_LENGTH state
   logic data_in_valid, data_in_valid_i;
+
+  logic second_half, second_half_delayed; // 1 = we've processed the first half of coefficients
+  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(3)) second_half_delay(.clk(clk), .in(second_half), .out(second_half_delayed));
+
+  logic signed [14:0] coefficient, coefficient_delayed;
+  DelayRegister #(.BITWIDTH(15), .CYCLE_COUNT(2)) coefficient_delay(.clk(clk), .in(coefficient), .out(coefficient_delayed));
+
+  logic output_we;
+  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(2)) output_we_delay(.clk(clk), .in(output_we), .out(output_bram1_we));
+
+  DelayRegister #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
@@ -127,7 +155,7 @@ module hash_to_point#(
           next_state = WAIT_FOR_SQUEEZE_END;
       end
       WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low) or to output all coefficients.
-        if(coefficient_index_i == N) // If we have all coefficients we can go to FINISH
+        if(coefficient_index == N-1) // If we have all coefficients we can go to FINISH
           next_state = FINISH;
         else if (!data_out_valid)  // Go to WAIT_FOR_SQUEEZE and wait for more data
           next_state = WAIT_FOR_SQUEEZE;
@@ -184,6 +212,7 @@ module hash_to_point#(
     if (rst_n == 1'b0) begin
       read_message_length_counter <= 0;
       message_len_bytes <= 0;
+      output_we <= 0;
     end
     else begin
       if(state == READ_MESSAGE_LENGTH)
@@ -194,7 +223,6 @@ module hash_to_point#(
     end
 
     data_in <= data_in_valid ? input_bram_data : 64'b0;
-
     data_in_valid_i <= data_in_valid;
   end
 
@@ -213,31 +241,36 @@ module hash_to_point#(
     data_out_valid_i <= data_out_valid;
   end
 
+  always_comb begin
+    // First half of coefficients goes to the high part of the memory cell, second half goes to the low part
+    if(second_half_delayed)
+      output_bram1_data = {output_bram2_data[127:64], 49'b0, coefficient_delayed};
+    else
+      output_bram1_data = {49'b0, coefficient_delayed, 64'b0};
+  end
+
   // State 2 of converting hash output to coefficient: Check if the coefficient is less than k*q and compute the modulo 12289
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
-      coefficient_index_i <= 0;
+      coefficient <= 0;
+      coefficient_index <= 0;
+      second_half <= 0;
     end
     else if (data_out_valid_i == 1'b1 && t < k_times_q && done != 1) begin
 
-      coefficient_index_tmp = coefficient_index_i++;
+      coefficient <= mod_12289(t);
 
-      // Write even coefficients (0, 2, 4, ...) to the bottom 64 bits and odd coefficients to the top 64 bits of the output BRAM
-      if(coefficient_index_tmp[0] == 1'b0)
-        output_bram_data[63:0] <= {49'b0, mod_12289(t)};
-      else
-        output_bram_data[127:64] <= {49'b0, mod_12289(t)};
+      if(coefficient_index == N/2 - 1)
+        second_half <= 1;
 
-      output_bram_addr <= coefficient_index_tmp >> 1; // We store two coefficients per memory location, so we divide the index by 2
-      output_bram_we <= coefficient_index_tmp[0]; // Write to output BRAM when we wrote an odd coefficient (we have both coefficients)
+      output_bram2_addr <= coefficient_index++ % (N/2); // Write to the first half of the memory cell, then to the second half
+      output_we <= 1;
     end
     else
-      output_bram_we <= 1'b0;
+      output_we <= 1'b0;
   end
 
 endmodule
-
-
 
 // module hash_to_point#(
 //     parameter int N

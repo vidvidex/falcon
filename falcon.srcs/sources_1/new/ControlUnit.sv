@@ -120,13 +120,12 @@ module ControlUnit#(
                  .web(bram3_we_b)
                );
 
-
   logic htp_start, htp_start_i;
   logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
   logic [`BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
-  logic [`BRAM_ADDR_WIDTH-1:0] htp_output_bram_addr;
-  logic [`BRAM_DATA_WIDTH-1:0] htp_output_bram_data;
-  logic htp_output_bram_we;
+  logic [`BRAM_ADDR_WIDTH-1:0] htp_output_bram1_addr, htp_output_bram2_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] htp_output_bram1_data, htp_output_bram2_data;
+  logic htp_output_bram1_we;
   logic htp_done;
   hash_to_point #(
                   .N(N)
@@ -139,9 +138,12 @@ module ControlUnit#(
                   .input_bram_addr(htp_input_bram_addr),
                   .input_bram_data(htp_input_bram_data),
 
-                  .output_bram_addr(htp_output_bram_addr),
-                  .output_bram_data(htp_output_bram_data),
-                  .output_bram_we(htp_output_bram_we),
+                  .output_bram1_addr(htp_output_bram1_addr),
+                  .output_bram1_data(htp_output_bram1_data),
+                  .output_bram1_we(htp_output_bram1_we),
+
+                  .output_bram2_addr(htp_output_bram2_addr),
+                  .output_bram2_data(htp_output_bram2_data),
 
                   .done(htp_done)
                 );
@@ -255,27 +257,39 @@ module ControlUnit#(
           end
         endcase
 
-        // Connect output BRAM
+        // Connect output BRAMs
         case (task_bank2)
           2'b00: begin
-            bram0_addr_a = htp_output_bram_addr;
-            bram0_din_a = htp_output_bram_data;
-            bram0_we_a = htp_output_bram_we;
+            bram0_addr_a = htp_output_bram1_addr;
+            bram0_din_a = htp_output_bram1_data;
+            bram0_we_a = htp_output_bram1_we;
+
+            bram0_addr_b = htp_output_bram2_addr;
+            htp_output_bram2_data = bram0_dout_b;
           end
           2'b01: begin
-            bram1_addr_a = htp_output_bram_addr;
-            bram1_din_a = htp_output_bram_data;
-            bram1_we_a = htp_output_bram_we;
+            bram1_addr_a = htp_output_bram1_addr;
+            bram1_din_a = htp_output_bram1_data;
+            bram1_we_a = htp_output_bram1_we;
+
+            bram1_addr_b = htp_output_bram2_addr;
+            htp_output_bram2_data = bram1_dout_b;
           end
           2'b10: begin
-            bram2_addr_a = htp_output_bram_addr;
-            bram2_din_a = htp_output_bram_data;
-            bram2_we_a = htp_output_bram_we;
+            bram2_addr_a = htp_output_bram1_addr;
+            bram2_din_a = htp_output_bram1_data;
+            bram2_we_a = htp_output_bram1_we;
+
+            bram2_addr_b = htp_output_bram2_addr;
+            htp_output_bram2_data = bram2_dout_b;
           end
           2'b11: begin
-            bram3_addr_a = htp_output_bram_addr;
-            bram3_din_a = htp_output_bram_data;
-            bram3_we_a = htp_output_bram_we;
+            bram3_addr_a = htp_output_bram1_addr;
+            bram3_din_a = htp_output_bram1_data;
+            bram3_we_a = htp_output_bram1_we;
+
+            bram3_addr_b = htp_output_bram2_addr;
+            htp_output_bram2_data = bram3_dout_b;
           end
         endcase
 
