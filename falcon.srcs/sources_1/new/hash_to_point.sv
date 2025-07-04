@@ -3,18 +3,19 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Hashes arbitrary length message to a polynomial
-//
-// In the specification the function has two parameters: message and salt, which are both hashed into a polynomial
-// Since the specification simply adds first salt and then the message to the shake256 context, we will pass both
-// values in the "message" parameter. First 40 bytes will be the salt, the rest will be the message.
-// Parent module is responsible for first sending the salt and then immediately after the message.
-//
 // THE COMMENTED VERSION IS THE VERSION THAT WORKS WITH VERIFY MODULE. THE UNCOMMENTED VERSION IS THE ONE THAT IS ADJUSTED
 // FOR SIGNING (READS DIRECTLY FROM MEMORY). AT THE END BOTH SIGNING AND VERIFYING SHOULD USE THE SAME IMPLEMENTATION.
 //
-// Module will read "message_len_bytes" from the first location of input BRAM. Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address 1. Currently it only reads bottom 64 bits of each memory location
-// The resulting polynomial coefficients will be written to output BRAM 1 coefficient per memory address.
+// Hashes arbitrary length message to a polynomial
+//
+// In the specification the function has two parameters: message and salt, which are both hashed into a polynomial
+// Since the specification simply adds first salt and then the message to the shake256 context, we will input them
+// to the module as if they are the same thing (we just concatenate them in memory)
+//
+// Module will read "message_len_bytes" from the first location of input BRAM.
+// Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address 1. Currently it only reads bottom 64 bits of each memory location
+//
+// The resulting polynomial coefficients will be written to output BRAM two coefficients per memory location(first one: bottom 64 bits, seconds one: top 64 bits), starting at address 0.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +51,7 @@ module hash_to_point#(
   logic [15:0] data_out;
   logic data_out_valid, data_out_valid_i;
   logic shake256_reset; // Reset signal for shake256 module, active high
-  logic [$clog2(N):0] coefficient_index_i;
+  logic [$clog2(N):0] coefficient_index_i, coefficient_index_tmp;
   logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
   logic [15:0] bytes_processed;
   logic [1:0] read_message_length_counter; // Counter for how many cycles we've been in the READ_MESSAGE_LENGTH state
@@ -218,9 +219,17 @@ module hash_to_point#(
       coefficient_index_i <= 0;
     end
     else if (data_out_valid_i == 1'b1 && t < k_times_q && done != 1) begin
-      output_bram_data <= mod_12289(t);
-      output_bram_addr <= coefficient_index_i++;
-      output_bram_we <= 1'b1; // Write to output BRAM
+
+      coefficient_index_tmp = coefficient_index_i++;
+
+      // Write even coefficients (0, 2, 4, ...) to the bottom 64 bits and odd coefficients to the top 64 bits of the output BRAM
+      if(coefficient_index_tmp[0] == 1'b0)
+        output_bram_data[63:0] <= {49'b0, mod_12289(t)};
+      else
+        output_bram_data[127:64] <= {49'b0, mod_12289(t)};
+
+      output_bram_addr <= coefficient_index_tmp >> 1; // We store two coefficients per memory location, so we divide the index by 2
+      output_bram_we <= coefficient_index_tmp[0]; // Write to output BRAM when we wrote an odd coefficient (we have both coefficients)
     end
     else
       output_bram_we <= 1'b0;

@@ -27,18 +27,18 @@ module hash_to_point_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a;
   logic bram0_we_b;
   bram_512x128 bram_512x128_0 (
-                  .addra(bram0_addr_a),
-                  .clka(clk),
-                  .dina(0),
-                  .douta(bram0_dout_a),
-                  .wea(0),
+                 .addra(bram0_addr_a),
+                 .clka(clk),
+                 .dina(0),
+                 .douta(bram0_dout_a),
+                 .wea(0),
 
-                  .addrb(bram0_addr_b),
-                  .clkb(clk),
-                  .dinb(bram0_din_b),
-                  .doutb(),
-                  .web(bram0_we_b)
-                );
+                 .addrb(bram0_addr_b),
+                 .clkb(clk),
+                 .dinb(bram0_din_b),
+                 .doutb(),
+                 .web(bram0_we_b)
+               );
 
   // Output will be in BRAM1. Port A for hash_to_point and port B for checking the result.
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
@@ -46,18 +46,18 @@ module hash_to_point_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b;
   logic bram1_we_a;
   bram_512x128 bram_512x128_1 (
-                  .addra(bram1_addr_a),
-                  .clka(clk),
-                  .dina(bram1_din_a),
-                  .douta(),
-                  .wea(bram1_we_a),
+                 .addra(bram1_addr_a),
+                 .clka(clk),
+                 .dina(bram1_din_a),
+                 .douta(),
+                 .wea(bram1_we_a),
 
-                  .addrb(bram1_addr_b),
-                  .clkb(clk),
-                  .dinb(0),
-                  .doutb(bram1_dout_b),
-                  .web(0)
-                );
+                 .addrb(bram1_addr_b),
+                 .clkb(clk),
+                 .dinb(0),
+                 .doutb(bram1_dout_b),
+                 .web(0)
+               );
 
   hash_to_point #(
                   .N(N)
@@ -77,7 +77,9 @@ module hash_to_point_tb;
                   .done(done)
                 );
 
-  logic signed [14:0] coefficient;
+  logic signed [14:0] coefficient1, coefficient2;
+  assign coefficient1 = bram1_dout_b[14:0];
+  assign coefficient2 = bram1_dout_b[78:64];
 
   always #5 clk = ~clk;
 
@@ -107,12 +109,14 @@ module hash_to_point_tb;
     while(done !== 1'b1)
       #10;
 
-    for (int i = 1; i <= N; i++) begin
+    for (int i = 1; i <= N/2; i++) begin
       bram1_addr_b = i;
       #10;
-      coefficient = bram1_dout_b[14:0];
-      if (i > 1 && coefficient !== expected_polynomial[i-1]) begin // i>1 and -1 used to account for BRAM read latency
-        $fatal(1, "Test failed at index %d. Expected %d, got %d", i, expected_polynomial[i], coefficient);
+      if (i > 1 && coefficient1 !== expected_polynomial[2*(i-1)]) begin // i>1 and -1 used to account for BRAM read latency
+        $fatal(1, "Test failed at index %d. Expected %d, got %d", 2*(i-1), expected_polynomial[2*(i-1)], coefficient1);
+      end
+      if (i > 1 && coefficient2 !== expected_polynomial[2*(i-1)+1]) begin
+        $fatal(1, "Test failed at index %d. Expected %d, got %d", 2*(i-1)+1, expected_polynomial[2*(i-1)+1], coefficient2);
       end
     end
 
