@@ -26,7 +26,7 @@ module hash_to_point_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a;
   logic bram0_we_b;
-  bram_1024x128 bram_1024x128_0 (
+  bram_512x128 bram_512x128_0 (
                   .addra(bram0_addr_a),
                   .clka(clk),
                   .dina(0),
@@ -45,7 +45,7 @@ module hash_to_point_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b;
   logic bram1_we_a;
-  bram_1024x128 bram_1024x128_1 (
+  bram_512x128 bram_512x128_1 (
                   .addra(bram1_addr_a),
                   .clka(clk),
                   .dina(bram1_din_a),
