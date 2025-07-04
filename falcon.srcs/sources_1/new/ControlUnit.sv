@@ -8,10 +8,10 @@
 // Instruction format:
 // [31:28] opcode
 // [27:26] task BRAM bank 1
-// [25:16] task address 1
-// [15:14] task BRAM bank 2
-// [13:4]  task address 2
-// [3:0]   task parameters
+// [25:17] task address 1
+// [16:15] task BRAM bank 2
+// [14:6]  task address 2
+// [5:0]   task parameters
 //
 // opcodes:
 // 0000 - NOP (No operation)
@@ -46,79 +46,79 @@ module ControlUnit#(
   logic [`BRAM_ADDR_WIDTH-1:0] task_addr1;
   logic [1:0] task_bank2;
   logic [`BRAM_ADDR_WIDTH-1:0] task_addr2;
-  logic [3:0] task_params;
+  logic [5:0] task_params;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram0_addr_a, bram0_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_din_a, bram0_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a, bram0_dout_b;
   logic bram0_we_a, bram0_we_b;
   bram_512x128 bram_512x128_0 (
-                  .addra(bram0_addr_a),
-                  .clka(clk),
-                  .dina(bram0_din_a),
-                  .douta(bram0_dout_a),
-                  .wea(bram0_we_a),
+                 .addra(bram0_addr_a),
+                 .clka(clk),
+                 .dina(bram0_din_a),
+                 .douta(bram0_dout_a),
+                 .wea(bram0_we_a),
 
-                  .addrb(bram0_addr_b),
-                  .clkb(clk),
-                  .dinb(bram0_din_b),
-                  .doutb(bram0_dout_b),
-                  .web(bram0_we_b)
-                );
+                 .addrb(bram0_addr_b),
+                 .clkb(clk),
+                 .dinb(bram0_din_b),
+                 .doutb(bram0_dout_b),
+                 .web(bram0_we_b)
+               );
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
   bram_512x128 bram_512x128_1 (
-                  .addra(bram1_addr_a),
-                  .clka(clk),
-                  .dina(bram1_din_a),
-                  .douta(bram1_dout_a),
-                  .wea(bram1_we_a),
+                 .addra(bram1_addr_a),
+                 .clka(clk),
+                 .dina(bram1_din_a),
+                 .douta(bram1_dout_a),
+                 .wea(bram1_we_a),
 
-                  .addrb(bram1_addr_b),
-                  .clkb(clk),
-                  .dinb(bram1_din_b),
-                  .doutb(bram1_dout_b),
-                  .web(bram1_we_b)
-                );
+                 .addrb(bram1_addr_b),
+                 .clkb(clk),
+                 .dinb(bram1_din_b),
+                 .doutb(bram1_dout_b),
+                 .web(bram1_we_b)
+               );
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a, bram2_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
   bram_512x128 bram_512x128_2 (
-                  .addra(bram2_addr_a),
-                  .clka(clk),
-                  .dina(bram2_din_a),
-                  .douta(bram2_dout_a),
-                  .wea(bram2_we_a),
+                 .addra(bram2_addr_a),
+                 .clka(clk),
+                 .dina(bram2_din_a),
+                 .douta(bram2_dout_a),
+                 .wea(bram2_we_a),
 
-                  .addrb(bram2_addr_b),
-                  .clkb(clk),
-                  .dinb(bram2_din_b),
-                  .doutb(bram2_dout_b),
-                  .web(bram2_we_b)
-                );
+                 .addrb(bram2_addr_b),
+                 .clkb(clk),
+                 .dinb(bram2_din_b),
+                 .doutb(bram2_dout_b),
+                 .web(bram2_we_b)
+               );
 
-  logic [$clog2(N)-2:0] bram3_addr_a, bram3_addr_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram3_addr_a, bram3_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram3_din_a, bram3_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram3_dout_a, bram3_dout_b;
   logic bram3_we_a, bram3_we_b;
   bram_512x128 bram_512x128_3 (
-                  .addra(bram3_addr_a),
-                  .clka(clk),
-                  .dina(bram3_din_a),
-                  .douta(bram3_dout_a),
-                  .wea(bram3_we_a),
+                 .addra(bram3_addr_a),
+                 .clka(clk),
+                 .dina(bram3_din_a),
+                 .douta(bram3_dout_a),
+                 .wea(bram3_we_a),
 
-                  .addrb(bram3_addr_b),
-                  .clkb(clk),
-                  .dinb(bram3_din_b),
-                  .doutb(bram3_dout_b),
-                  .web(bram3_we_b)
-                );
+                 .addrb(bram3_addr_b),
+                 .clkb(clk),
+                 .dinb(bram3_din_b),
+                 .doutb(bram3_dout_b),
+                 .web(bram3_we_b)
+               );
 
 
   logic htp_start, htp_start_i;
@@ -152,10 +152,10 @@ module ControlUnit#(
     // Instruction decoding
     opcode <= instruction[31:28];
     task_bank1 <= instruction[27:26];
-    task_addr1 <= instruction[25:16];
-    task_bank2 <= instruction[15:14];
-    task_addr2 <= instruction[13:4];
-    task_params <= instruction[3:0];
+    task_addr1 <= instruction[25:17];
+    task_bank2 <= instruction[16:15];
+    task_addr2 <= instruction[14:6];
+    task_params <= instruction[5:0];
 
     if (!rst_n) begin
       htp_start <= 1'b0;
@@ -180,9 +180,7 @@ module ControlUnit#(
         end
 
         4'b0001: begin  // Hash to point
-
           htp_start <= 1'b1;
-
         end
 
         4'b0010: begin  // FFT
