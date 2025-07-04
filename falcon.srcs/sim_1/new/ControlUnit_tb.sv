@@ -11,7 +11,6 @@ module ControlUnit_tb;
   (* ram_style = "block" *) logic [63:0] signature_blocks[SIGNATURE_BLOCKS] = '{64'ha0419223bd4a6372, 64'h1a58ccb4e73f1726, 64'h6639462c2cbc86c9, 64'h81588aba090bd137, 64'h7b848999c8bbb33d, 64'h93bb1ca8aa844b09, 64'h3598b2fb5ba24541, 64'h5933ca988644b44c, 64'h91a579213091ade0, 64'ha6f23b9cece4c224, 64'h652fa2675299f88b, 64'h147cec9df0fb914f, 64'h9aa94adaf9cba4db, 64'hbf52c026d4c9eb36, 64'h61e83d9fea72aff1, 64'hdb39f914f2263f74, 64'hd179686e69e490c5, 64'hdb3cef26159c884a, 64'he30b8fd9f571f986, 64'h8bc0fb2a6e615482, 64'h213bc49aa283ed2e, 64'h51fec9a331ab7b11, 64'hdddb4cb81c38177f, 64'h4263f8668cded02e, 64'hf8fcb704559002bd, 64'h75edffaa9697a774, 64'hec3076a4129facf7, 64'h2b9adc0ccb79f3d8, 64'hd9e3c28281a88eda, 64'h50786e95d40bd9c6, 64'h660ebb0dc9c1ba2e, 64'haa16962048a698cd, 64'hf61454095fe116a9, 64'h9599f8b65114d78d, 64'h3fdad68f91239d59, 64'h6499043cb8c3f0e4, 64'h88e847e2a4596d4c, 64'h4762e52bc037304c, 64'h9e28e95d25bbbf1c, 64'h18b8236dcc62f66a, 64'hc51d4bf6c1187c5b, 64'h4b9b65a2d38f0f43, 64'heb9e6f30b78a0bdf, 64'h53ebc0dcff54b308, 64'h233b9c8d9a61acba, 64'hd0165a3ec920ef41, 64'h539aafa91e4e78ab, 64'he6d4e6d5d32ee36f, 64'h43ba75bbba4fbbbe, 64'h7867772b1c3d12cf, 64'h77ac7497936dd2b5, 64'h3b736816c3d06163, 64'h10fc810b28572531, 64'h56d1e17b3d7ecdd7, 64'he0e24cfcf23eccc1, 64'h8e6d7f9018db639f, 64'h6f6bc7491378b6f5, 64'h92ab93ee57218fe5, 64'hd386ca611c772b83, 64'hda7dac6e5a0b8172, 64'hb37706c77dcefb30, 64'h862f374d40d40f51, 64'hb9424d242716e7fd, 64'hd15d05d088b59e15, 64'h6e8f15f9a4e9fcaf, 64'hfc9b3c0b552a12d4, 64'h3311ab8e958de47e, 64'h4e934138aa7c7910, 64'hdedc415068de5eff, 64'ha230de76d328a717, 64'h31de97acbc9a7392, 64'hddc718aee7922902, 64'h53eca64497ba1aae, 64'hc1647658f3205d66, 64'h26f4db4fbb31a55f, 64'hf712ce4b5d578614, 64'h9626ed3400000000, 64'h0000000000000000, 64'h0000000000000000};
   (* ram_style = "block" *) logic [6:0] signature_valid_blocks[SIGNATURE_BLOCKS] = '{64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 8};
 
-
   logic clk, rst_n;
 
   logic [31:0] instruction;
@@ -42,24 +41,30 @@ module ControlUnit_tb;
     #10;
 
     // First NOP instruction to set we for all BRAMs to 0
-    instruction = 32'b0000_00_0000000000_00_0000000000_0000;
+    instruction = 32'b0000_00_000000000_00_000000000_000000;
     #10;
 
     // Load message len, message and salt into BRAM0
     for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
-      instruction = {4'b1001, 2'b00, i[9:0], 2'b00, 10'b0000000000, 4'b0000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=/
+      instruction = {4'b1001, 2'b00, i[8:0], 2'b00, 9'b000000000, 6'b000000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=/
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
       #10;
     end
-    instruction = 32'b0000_00_0000000000_00_0000000000_0000; // Stop writing to BRAM0
+    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM0
     #10;
 
     // Run hash to point
-    instruction = 32'b0001_00_0000000000_01_0000000000_0000; // Hash to point; addr1=bram0,0; addr2=bram1,0; args=0
+    instruction = 32'b0001_00_000000000_01_000000000_000000; // Hash to point; addr1=bram0,0; addr2=bram1,0; args=0
     while (instruction_done !== 1'b1)
-      #10; // Wait for instruction to complete
+      #10;
+    #10;
 
-    instruction = 32'b0000_00_0000000000_00_0000000000_0000;
+    // Run FFT on output of hash to point
+    instruction = 32'b0010_01_000000000_10_000000000_000000;  // FFT; bank1=1; addr1=0; bank2=2; addr2=0; args=mode:fft
+    while (instruction_done !== 1'b1)
+      #10;
+    #10;
+
   end
 
 endmodule
