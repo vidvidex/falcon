@@ -59,6 +59,7 @@ module hash_to_point#(
             ABSORB,
             WAIT_FOR_SQUEEZE,
             WAIT_FOR_SQUEEZE_END,
+            WAIT_FOR_BRAM_WRITE,
             FINISH
           } state_t;
   state_t state, next_state;
@@ -75,15 +76,15 @@ module hash_to_point#(
   logic data_in_valid, data_in_valid_i;
 
   logic second_half, second_half_delayed; // 1 = we've processed the first half of coefficients
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(3)) second_half_delay(.clk(clk), .in(second_half), .out(second_half_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) second_half_delay(.clk(clk), .in(second_half), .out(second_half_delayed));
 
   logic signed [14:0] coefficient, coefficient_delayed;
-  DelayRegister #(.BITWIDTH(15), .CYCLE_COUNT(2)) coefficient_delay(.clk(clk), .in(coefficient), .out(coefficient_delayed));
+  delay_register #(.BITWIDTH(15), .CYCLE_COUNT(2)) coefficient_delay(.clk(clk), .in(coefficient), .out(coefficient_delayed));
 
   logic output_we;
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(2)) output_we_delay(.clk(clk), .in(output_we), .out(output_bram1_we));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) output_we_delay(.clk(clk), .in(output_we), .out(output_bram1_we));
 
-  DelayRegister #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
@@ -155,10 +156,13 @@ module hash_to_point#(
           next_state = WAIT_FOR_SQUEEZE_END;
       end
       WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low) or to output all coefficients.
-        if(coefficient_index == N-1) // If we have all coefficients we can go to FINISH
-          next_state = FINISH;
+        if(coefficient_index == N-1) // If we have all coefficients we can go to WAIT_FOR_BRAM_WRITE
+          next_state = WAIT_FOR_BRAM_WRITE;
         else if (!data_out_valid)  // Go to WAIT_FOR_SQUEEZE and wait for more data
           next_state = WAIT_FOR_SQUEEZE;
+      end
+      WAIT_FOR_BRAM_WRITE: begin
+        next_state = FINISH;
       end
       FINISH: begin  // Wait forever
         next_state = FINISH;
@@ -195,6 +199,10 @@ module hash_to_point#(
       WAIT_FOR_SQUEEZE_END: begin
         data_in_valid = 0;
         shake256_reset = 0;
+      end
+      WAIT_FOR_BRAM_WRITE: begin
+        data_in_valid = 0;
+        shake256_reset = 1;
       end
       FINISH: begin
         data_in_valid = 0;

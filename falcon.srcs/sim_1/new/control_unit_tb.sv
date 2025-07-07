@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
 
-module ControlUnit_tb;
+module control_unit_tb;
 
   parameter int N = 512;
   parameter int MESSAGE_BLOCKS = 8;
@@ -19,9 +19,9 @@ module ControlUnit_tb;
 
   always #5 clk = ~clk;
 
-  ControlUnit #(
+  control_unit #(
                 .N(N)
-              ) ControlUnit (
+              ) control_unit (
                 .clk(clk),
                 .rst_n(rst_n),
                 .instruction(instruction),
@@ -50,20 +50,36 @@ module ControlUnit_tb;
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
       #10;
     end
-    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM0
+    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM
     #10;
 
     // Run hash to point
-    instruction = 32'b0001_00_000000000_01_000000000_000000; // Hash to point; addr1=bram0,0; addr2=bram1,0; args=0
+    instruction = 32'b0001_00_000000000_01_000000000_000000; // Hash to point; bank1=0; addr1=/; bank2=1; addr2=/; args=/
+    while (instruction_done !== 1'b1)
+      #10;
+    #40; // Wait for pipeline to finish
+
+    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM
+    #10;
+
+    // Convert point to double
+    for(int i = 0; i < N/2; i++) begin
+      instruction = {4'b1010, 2'b01, i[8:0], 2'b01, i[8:0], 6'b000000}; // int to double; bank1=1; addr1=i; bank2=1; addr2=i; args=/
+      #10;
+    end
+    #40; // Wait for pipeline to finish
+
+    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM
+    #10;
+
+    // Run FFT on output of hash to point
+    instruction = 32'b0010_01_000000000_10_000000000_000000;  // FFT; bank1=1; addr1=/; bank2=2; addr2=/; args=mode:fft
+    #10;
     while (instruction_done !== 1'b1)
       #10;
     #10;
 
-    // Run FFT on output of hash to point
-    instruction = 32'b0010_01_000000000_10_000000000_000000;  // FFT; bank1=1; addr1=0; bank2=2; addr2=0; args=mode:fft
-    while (instruction_done !== 1'b1)
-      #10;
-    #10;
+    instruction = 32'b0000_00_000000000_00_000000000_000000;
 
   end
 

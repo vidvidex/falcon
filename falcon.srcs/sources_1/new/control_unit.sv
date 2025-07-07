@@ -16,7 +16,7 @@
 // opcodes:
 // 0000 - NOP (No operation)
 // 0001 - Hash to point
-// 0010 - FFT
+// 0010 - FFT/IFFT
 // 0011 - FP arithmetic
 // 0100 - FFT split
 // 0101 - FFT merge
@@ -24,18 +24,21 @@
 // 0111 - Compress
 // 1000 - BRAM read
 // 1001 - BRAM write
+// 1010 - int to double
+//
+// After receiving done for an instruction, a NOP instruction should be issued for 1 cycle to ensure all BRAM write enable signals are set to 0.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ControlUnit#(
+module control_unit#(
     parameter int N
   )(
     input logic clk,
     input logic rst_n,
 
     input logic [31:0] instruction,
-    output logic instruction_done,
+    output logic instruction_done,  // When this is high the next instruction can be issued. Does not necessarily mean that the instruction has really been executed all the way (for example some simpler pipelines, such as int_to_double.).
 
     input logic [`BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
     output logic [`BRAM_DATA_WIDTH-1:0] bram_dout // Data read from BRAM
@@ -148,6 +151,99 @@ module ControlUnit#(
                   .done(htp_done)
                 );
 
+  logic [`BRAM_DATA_WIDTH-1:0] int_to_double_data_in, int_to_double_data_out;
+  logic int_to_double_valid_in, int_to_double_valid_in_delayed, int_to_double_valid_out;
+  int_to_double int_to_double (
+                .clk(clk),
+                .data_in(int_to_double_data_in),
+                .valid_in(int_to_double_valid_in_delayed),
+                .data_out(int_to_double_data_out),
+                .valid_out(int_to_double_valid_out)
+              );
+  logic [`BRAM_ADDR_WIDTH-1:0] int_to_double_write_addr;  // Where to write the output of int_to_double
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(3)) int_to_double_write_addr_delay(.clk(clk), .in(task_addr2), .out(int_to_double_write_addr));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
+
+  logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
+  logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
+  logic btf_mode;
+  logic signed [4:0] btf_scale_factor;
+  logic [9:0] btf_tw_addr;
+  logic btf_in_valid, btf_out_valid;
+  fft_butterfly fft_butterfly(
+                 .clk(clk),
+                 .mode(btf_mode),
+                 .in_valid(btf_in_valid),
+
+                 .a_in_real(btf_a_in_real),
+                 .a_in_imag(btf_a_in_imag),
+                 .b_in_real(btf_b_in_real),
+                 .b_in_imag(btf_b_in_imag),
+
+                 .tw_addr(btf_tw_addr),
+
+                 .scale_factor(btf_scale_factor),
+
+                 .a_out_real(btf_a_out_real),
+                 .a_out_imag(btf_a_out_imag),
+                 .b_out_real(btf_b_out_real),
+                 .b_out_imag(btf_b_out_imag),
+
+                 .out_valid(btf_out_valid)
+               );
+
+  logic fft_mode, fft_start, fft_start_i, fft_done;
+  logic [`BRAM_ADDR_WIDTH-1:0] fft_bram1_addr_a, fft_bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_din_a, fft_bram1_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_dout_a, fft_bram1_dout_b;
+  logic fft_bram1_we_a, fft_bram1_we_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] fft_bram2_addr_a, fft_bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_din_a, fft_bram2_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_dout_a, fft_bram2_dout_b;
+  logic fft_bram2_we_a, fft_bram2_we_b;
+  fft #(
+        .N(N)
+      )fft(
+        .clk(clk),
+        .rst(!rst_n),
+        .mode(fft_mode),
+        .start(fft_start && !fft_start_i),
+
+        .bram1_addr_a(fft_bram1_addr_a),
+        .bram1_din_a(fft_bram1_din_a),
+        .bram1_dout_a(fft_bram1_dout_a),
+        .bram1_we_a(fft_bram1_we_a),
+        .bram1_addr_b(fft_bram1_addr_b),
+        .bram1_din_b(fft_bram1_din_b),
+        .bram1_dout_b(fft_bram1_dout_b),
+        .bram1_we_b(fft_bram1_we_b),
+
+        .bram2_addr_a(fft_bram2_addr_a),
+        .bram2_din_a(fft_bram2_din_a),
+        .bram2_dout_a(fft_bram2_dout_a),
+        .bram2_we_a(fft_bram2_we_a),
+        .bram2_addr_b(fft_bram2_addr_b),
+        .bram2_din_b(fft_bram2_din_b),
+        .bram2_dout_b(fft_bram2_dout_b),
+        .bram2_we_b(fft_bram2_we_b),
+
+        .done(fft_done),
+
+        .btf_mode(btf_mode),
+        .btf_in_valid(btf_in_valid),
+        .btf_a_in_real(btf_a_in_real),
+        .btf_a_in_imag(btf_a_in_imag),
+        .btf_b_in_real(btf_b_in_real),
+        .btf_b_in_imag(btf_b_in_imag),
+        .btf_scale_factor(btf_scale_factor),
+        .btf_tw_addr(btf_tw_addr),
+        .btf_a_out_real(btf_a_out_real),
+        .btf_a_out_imag(btf_a_out_imag),
+        .btf_b_out_real(btf_b_out_real),
+        .btf_b_out_imag(btf_b_out_imag),
+        .btf_out_valid(btf_out_valid)
+      );
+
   // Task execution based on opcode
   always_ff @(posedge clk) begin
 
@@ -162,10 +258,14 @@ module ControlUnit#(
     if (!rst_n) begin
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
+
+      fft_start <= 1'b0;
+      fft_start_i <= 1'b0;
     end
     else begin
 
       htp_start_i <= htp_start;
+      fft_start_i <= fft_start;
 
       case (opcode)
         4'b0000: begin // NOP
@@ -186,7 +286,8 @@ module ControlUnit#(
         end
 
         4'b0010: begin  // FFT
-
+          fft_mode <= task_params[5]; // Set FFT mode based on task parameters
+          fft_start <= 1'b1;
         end
 
         4'b0011: begin  // FP arithmetic
@@ -214,6 +315,10 @@ module ControlUnit#(
         end
 
         4'b1001: begin  // BRAM write
+
+        end
+
+        4'b1010: begin  // int to double
 
         end
 
@@ -296,8 +401,95 @@ module ControlUnit#(
         instruction_done = htp_done;
       end
 
-      4'b0010: begin  // FFT
+      4'b0010: begin  // FFT/IFFT
 
+        case (task_bank1)
+          2'b00: begin
+            bram0_addr_a = fft_bram1_addr_a;
+            bram0_din_a = fft_bram1_din_a;
+            bram0_we_a = fft_bram1_we_a;
+            bram0_addr_b = fft_bram1_addr_b;
+            bram0_din_b = fft_bram1_din_b;
+            bram0_we_b = fft_bram1_we_b;
+            fft_bram1_dout_a = bram0_dout_a;
+            fft_bram1_dout_b = bram0_dout_b;
+          end
+          2'b01: begin
+            bram1_addr_a = fft_bram1_addr_a;
+            bram1_din_a = fft_bram1_din_a;
+            bram1_we_a = fft_bram1_we_a;
+            bram1_addr_b = fft_bram1_addr_b;
+            bram1_din_b = fft_bram1_din_b;
+            bram1_we_b = fft_bram1_we_b;
+            fft_bram1_dout_a = bram1_dout_a;
+            fft_bram1_dout_b = bram1_dout_b;
+          end
+          2'b10: begin
+            bram2_addr_a = fft_bram1_addr_a;
+            bram2_din_a = fft_bram1_din_a;
+            bram2_we_a = fft_bram1_we_a;
+            bram2_addr_b = fft_bram1_addr_b;
+            bram2_din_b = fft_bram1_din_b;
+            bram2_we_b = fft_bram1_we_b;
+            fft_bram1_dout_a = bram2_dout_a;
+            fft_bram1_dout_b = bram2_dout_b;
+          end
+          2'b11: begin
+            bram3_addr_a = fft_bram1_addr_a;
+            bram3_din_a = fft_bram1_din_a;
+            bram3_we_a = fft_bram1_we_a;
+            bram3_addr_b = fft_bram1_addr_b;
+            bram3_din_b = fft_bram1_din_b;
+            bram3_we_b = fft_bram1_we_b;
+            fft_bram1_dout_a = bram3_dout_a;
+            fft_bram1_dout_b = bram3_dout_b;
+          end
+        endcase
+
+        case (task_bank2)
+          2'b00: begin
+            bram0_addr_a = fft_bram2_addr_a;
+            bram0_din_a = fft_bram2_din_a;
+            bram0_we_a = fft_bram2_we_a;
+            bram0_addr_b = fft_bram2_addr_b;
+            bram0_din_b = fft_bram2_din_b;
+            bram0_we_b = fft_bram2_we_b;
+            fft_bram2_dout_a = bram0_dout_a;
+            fft_bram2_dout_b = bram0_dout_b;
+          end
+          2'b01: begin
+            bram1_addr_a = fft_bram2_addr_a;
+            bram1_din_a = fft_bram2_din_a;
+            bram1_we_a = fft_bram2_we_a;
+            bram1_addr_b = fft_bram2_addr_b;
+            bram1_din_b = fft_bram2_din_b;
+            bram1_we_b = fft_bram2_we_b;
+            fft_bram2_dout_a = bram1_dout_a;
+            fft_bram2_dout_b = bram1_dout_b;
+          end
+          2'b10: begin
+            bram2_addr_a = fft_bram2_addr_a;
+            bram2_din_a = fft_bram2_din_a;
+            bram2_we_a = fft_bram2_we_a;
+            bram2_addr_b = fft_bram2_addr_b;
+            bram2_din_b = fft_bram2_din_b;
+            bram2_we_b = fft_bram2_we_b;
+            fft_bram2_dout_a = bram2_dout_a;
+            fft_bram2_dout_b = bram2_dout_b;
+          end
+          2'b11: begin
+            bram3_addr_a = fft_bram2_addr_a;
+            bram3_din_a = fft_bram2_din_a;
+            bram3_we_a = fft_bram2_we_a;
+            bram3_addr_b = fft_bram2_addr_b;
+            bram3_din_b = fft_bram2_din_b;
+            bram3_we_b = fft_bram2_we_b;
+            fft_bram2_dout_a = bram3_dout_a;
+            fft_bram2_dout_b = bram3_dout_b;
+          end
+        endcase
+
+        instruction_done = fft_done;
       end
 
       4'b0011: begin  // FP arithmetic
@@ -369,6 +561,58 @@ module ControlUnit#(
           end
         endcase
 
+        instruction_done = 1'b1;
+      end
+
+      4'b1010: begin  // int to double
+
+        // Select input BRAM
+        case (task_bank1)
+          2'b00: begin
+            bram0_addr_a = task_addr1;
+            int_to_double_data_in = bram0_dout_a;
+          end
+          2'b01: begin
+            bram1_addr_a = task_addr1;
+            int_to_double_data_in = bram1_dout_a;
+          end
+          2'b10: begin
+            bram2_addr_a = task_addr1;
+            int_to_double_data_in = bram2_dout_a;
+          end
+          2'b11: begin
+            bram3_addr_a = task_addr1;
+            int_to_double_data_in = bram3_dout_a;
+          end
+        endcase
+
+        // Write output to BRAM
+        if(int_to_double_valid_out) begin
+          case (task_bank2)
+            2'b00: begin
+              bram0_addr_b = int_to_double_write_addr;
+              bram0_din_b = int_to_double_data_out;
+              bram0_we_b = 1'b1;
+            end
+            2'b01: begin
+              bram1_addr_b = int_to_double_write_addr;
+              bram1_din_b = int_to_double_data_out;
+              bram1_we_b = 1'b1;
+            end
+            2'b10: begin
+              bram2_addr_b = int_to_double_write_addr;
+              bram2_din_b = int_to_double_data_out;
+              bram2_we_b = 1'b1;
+            end
+            2'b11: begin
+              bram3_addr_b = int_to_double_write_addr;
+              bram3_din_b = int_to_double_data_out;
+              bram3_we_b = 1'b1;
+            end
+          endcase
+        end
+
+        int_to_double_valid_in = 1'b1;
         instruction_done = 1'b1;
       end
 

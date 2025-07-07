@@ -2,7 +2,7 @@
 `include "CommonDefinitions.vh"
 
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module DelayRegister #(
+module delay_register #(
     BITWIDTH    = 8,
     CYCLE_COUNT = 1
   )

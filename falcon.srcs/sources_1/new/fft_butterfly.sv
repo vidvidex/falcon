@@ -8,12 +8,12 @@
 // (https://github.com/flokrieger/Aloha-HE; https://ieeexplore.ieee.org/document/10546608)
 // and were adapted for Falcon. Most notable changes:
 // - added support for fully pipelined operation
-// - twiddle factor ROM is part of the FFTButterfly module
+// - twiddle factor ROM is part of the fft_butterfly module
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module FFTButterfly(
+module fft_butterfly(
     input clk,
     input in_valid, // Are inputs valid
     input mode, // 0  = FFT; 1 = IFFT
@@ -42,8 +42,8 @@ module FFTButterfly(
   // For FFT we have to delay a_in_real and a_in_imag before it enters the add stage (pipelining doesn't work without it)
   logic [63:0] a_real, a_imag;
   logic [63:0] a_in_real_15D, a_in_imag_15D;
-  DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_real_delay(.clk(clk), .in(a_in_real), .out(a_in_real_15D));
-  DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_imag_delay(.clk(clk), .in(a_in_imag), .out(a_in_imag_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_real_delay(.clk(clk), .in(a_in_real), .out(a_in_real_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_imag_delay(.clk(clk), .in(a_in_imag), .out(a_in_imag_15D));
 
   assign a_real = mode ?  a_in_real: a_in_real_15D;
   assign a_imag = mode ? a_in_imag : a_in_imag_15D;
@@ -51,8 +51,8 @@ module FFTButterfly(
   // For IFFT we have to delay a_p_b_real and a_p_b_imag before outputting the final result (pipelining doesn't work without it)
   logic [63:0] a_p_b_real, a_p_b_imag;
   logic [63:0] a_p_b_real_15D, a_p_b_imag_15D;
-  DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_real_delay(.clk(clk), .in(a_p_b_real), .out(a_p_b_real_15D));
-  DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_imag_delay(.clk(clk), .in(a_p_b_imag), .out(a_p_b_imag_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_real_delay(.clk(clk), .in(a_p_b_real), .out(a_p_b_real_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_imag_delay(.clk(clk), .in(a_p_b_imag), .out(a_p_b_imag_15D));
 
   assign a_out_real = mode ? a_p_b_real_15D : a_p_b_real;
   assign a_out_imag = mode ? a_p_b_imag_15D : a_p_b_imag;
@@ -61,7 +61,7 @@ module FFTButterfly(
   assign b_real = mode ? b_in_real : mul_out_real_1DP;
   assign b_imag = mode ?  b_in_imag : mul_out_imag_1DP;
 
-  FFTButterflyAddStage add_stage(
+  fft_butterfly_add_stage add_stage(
                          .clk(clk),
                          .in_valid(in_valid),
 
@@ -81,7 +81,7 @@ module FFTButterfly(
 
   // For IFFT we need to delay the twiddle factor address
   logic [9:0] tw_addr_delayed;
-  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(7)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(tw_addr_delayed));
+  delay_register #(.BITWIDTH(10), .CYCLE_COUNT(7)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(tw_addr_delayed));
 
   logic [63:0] tw_real, tw_imag;
   fft_twiddle_factor_rom fft_twiddle_factor_rom (
@@ -124,8 +124,8 @@ module FFTButterfly(
   assign b_out_imag_0DP = mode ? mul_out_imag : a_m_b_imag;
 
   logic [63:0] b_out_real_1DP, b_out_imag_1DP;
-  DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+0)) b_out_real_delay(.clk(clk), .in(b_out_real_0DP), .out(b_out_real_1DP));
-  DelayRegister #(.BITWIDTH(64), .CYCLE_COUNT(1+0)) b_out_imag_delay(.clk(clk), .in(b_out_imag_0DP), .out(b_out_imag_1DP));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+0)) b_out_real_delay(.clk(clk), .in(b_out_real_0DP), .out(b_out_real_1DP));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+0)) b_out_imag_delay(.clk(clk), .in(b_out_imag_0DP), .out(b_out_imag_1DP));
   assign b_out_real = mode ? b_out_real_1DP : b_out_real_0DP;
   assign b_out_imag = mode ? b_out_imag_1DP : b_out_imag_0DP;
 
