@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Trivium64 cryptographically-secure PRNG based on the software

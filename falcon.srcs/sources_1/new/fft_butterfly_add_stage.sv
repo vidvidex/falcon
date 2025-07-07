@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 
 // performs the addition and subtraction step in the FFT butterfly
 //                            |
@@ -35,7 +35,7 @@ module fft_butterfly_add_stage(
   logic [`EXPONENT_BITS-1:0] exponent_b_real_2DP;
   logic [`SIGNIFICANT_BITS:0] significant_b_real_2DP;
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_real_2DP;
-  FLPAdderDenormalization denormalize_real_part (
+  flp_adder_denormalization denormalize_real_part (
                             .clk(clk),
                             .in_valid(in_valid),
                             .a(a_real),
@@ -51,7 +51,7 @@ module fft_butterfly_add_stage(
                             .switched_operands_2DP(switched_operands_real_2DP)
                           );
 
-  FLPAdderSigAddNormalize add_and_normalize_real(
+  flp_adder_sig_add_normalize add_and_normalize_real(
                             .clk(clk),
                             .sign_result_2DP(sign_result_real_2DP),
                             .data_valid_2DP(data_valid_real_2DP),
@@ -65,7 +65,7 @@ module fft_butterfly_add_stage(
                             .result(a_p_b_real),
                             .out_valid(out_valid)
                           );
-  FLPAdderSigAddNormalize sub_and_normalize_real(
+  flp_adder_sig_add_normalize sub_and_normalize_real(
                             .clk(clk),
                             .sign_result_2DP(switched_operands_real_2DP ? sign_result_real_2DP : ~sign_result_real_2DP),
                             .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
@@ -88,7 +88,7 @@ module fft_butterfly_add_stage(
   logic [`EXPONENT_BITS-1:0] exponent_b_imag_2DP;
   logic [`SIGNIFICANT_BITS:0] significant_b_imag_2DP;
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_imag_2DP;
-  FLPAdderDenormalization denormalize_imag_part (
+  flp_adder_denormalization denormalize_imag_part (
                             .clk(clk),
                             .a(a_imag),
                             .b(b_imag),
@@ -105,7 +105,7 @@ module fft_butterfly_add_stage(
                             .data_valid_2DP()
                           );
 
-  FLPAdderSigAddNormalize add_and_normalize_imag(
+  flp_adder_sig_add_normalize add_and_normalize_imag(
                             .clk(clk),
                             .sign_result_2DP(sign_result_imag_2DP),
                             .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
@@ -121,7 +121,7 @@ module fft_butterfly_add_stage(
                             .data_valid_2DP(),
                             .out_valid()
                           );
-  FLPAdderSigAddNormalize sub_and_normalize_imag(
+  flp_adder_sig_add_normalize sub_and_normalize_imag(
                             .clk(clk),
                             .sign_result_2DP(switched_operands_imag_2DP ? sign_result_imag_2DP : ~sign_result_imag_2DP),
                             .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),

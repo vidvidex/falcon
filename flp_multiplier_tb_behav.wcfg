@@ -3,9 +3,9 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="FLPMultiplier_tb_behav.wdb" id="1">
+      <db_ref path="flp_multiplier_tb_behav.wdb" id="1">
          <top_modules>
-            <top_module name="FLPMultiplier_tb" />
+            <top_module name="flp_multiplier_tb" />
             <top_module name="glbl" />
          </top_modules>
       </db_ref>
@@ -20,19 +20,19 @@
       <ValueColumnWidth column_width="156"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
-   <wvobject type="logic" fp_name="/FLPMultiplier_tb/clk">
+   <wvobject type="logic" fp_name="/flp_multiplier_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/FLPMultiplier_tb/in_valid">
+   <wvobject type="logic" fp_name="/flp_multiplier_tb/in_valid">
       <obj_property name="ElementShortName">in_valid</obj_property>
       <obj_property name="ObjectShortName">in_valid</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/FLPMultiplier_tb/out_valid">
+   <wvobject type="logic" fp_name="/flp_multiplier_tb/out_valid">
       <obj_property name="ElementShortName">out_valid</obj_property>
       <obj_property name="ObjectShortName">out_valid</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/FLPMultiplier_tb/a">
+   <wvobject type="array" fp_name="/flp_multiplier_tb/a">
       <obj_property name="ElementShortName">a[63:0]</obj_property>
       <obj_property name="ObjectShortName">a[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -40,7 +40,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/FLPMultiplier_tb/b">
+   <wvobject type="array" fp_name="/flp_multiplier_tb/b">
       <obj_property name="ElementShortName">b[63:0]</obj_property>
       <obj_property name="ObjectShortName">b[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -48,12 +48,12 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/FLPMultiplier_tb/scale_factor">
+   <wvobject type="array" fp_name="/flp_multiplier_tb/scale_factor">
       <obj_property name="ElementShortName">scale_factor[4:0]</obj_property>
       <obj_property name="ObjectShortName">scale_factor[4:0]</obj_property>
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/FLPMultiplier_tb/result">
+   <wvobject type="array" fp_name="/flp_multiplier_tb/result">
       <obj_property name="ElementShortName">result[63:0]</obj_property>
       <obj_property name="ObjectShortName">result[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>

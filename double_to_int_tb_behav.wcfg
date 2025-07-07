@@ -3,9 +3,9 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="DoubleToInt_tb_behav.wdb" id="1">
+      <db_ref path="double_to_int_tb_behav.wdb" id="1">
          <top_modules>
-            <top_module name="DoubleToInt_tb" />
+            <top_module name="double_to_int_tb" />
             <top_module name="glbl" />
          </top_modules>
       </db_ref>
@@ -20,11 +20,11 @@
       <ValueColumnWidth column_width="152"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
-   <wvobject type="logic" fp_name="/DoubleToInt_tb/clk">
+   <wvobject type="logic" fp_name="/double_to_int_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/DoubleToInt_tb/double_in">
+   <wvobject type="array" fp_name="/double_to_int_tb/double_in">
       <obj_property name="ElementShortName">double_in[63:0]</obj_property>
       <obj_property name="ObjectShortName">double_in[63:0]</obj_property>
       <obj_property name="Radix">REALRADIX</obj_property>
@@ -32,7 +32,7 @@
       <obj_property name="radix_fractionWidth">53</obj_property>
       <obj_property name="radix_otherWidth">11</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/DoubleToInt_tb/int_out">
+   <wvobject type="array" fp_name="/double_to_int_tb/int_out">
       <obj_property name="ElementShortName">int_out[31:0]</obj_property>
       <obj_property name="ObjectShortName">int_out[31:0]</obj_property>
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>

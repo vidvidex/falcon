@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 
 // performs the second half of FlP addition containing significant addition and renormalization
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module FLPAdderSigAddNormalize(
+module flp_adder_sig_add_normalize(
     input logic clk,
     input logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP,
     input logic [`EXPONENT_BITS-1:0] exponent_b_2DP,
@@ -59,7 +59,7 @@ module FLPAdderSigAddNormalize(
   assign carry_bit = significants_added_3DP[`SIGNIFICANT_BITS+1];
 
   logic [$clog2(`SIGNIFICANT_BITS+1)-1:0] leading_zeros;
-  LeadingZeroCount #(.BITWIDTH(`SIGNIFICANT_BITS+1)) leading_zero_cnt(.in(significants_added_3DP[`SIGNIFICANT_BITS:0]),
+  leading_zero_count #(.BITWIDTH(`SIGNIFICANT_BITS+1)) leading_zero_cnt(.in(significants_added_3DP[`SIGNIFICANT_BITS:0]),
                    .out(leading_zeros),
                    .input_is_zero(significant_is_zero));
 

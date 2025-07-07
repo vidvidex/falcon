@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 
-module ComplexMultiplier_tb;
+module complex_multiplier_tb;
 
   logic clk;
   logic in_valid, out_valid;
@@ -12,7 +12,7 @@ module ComplexMultiplier_tb;
 
   always #5 clk = ~clk;
 
-  ComplexMultiplier ComplexMultiplier(
+  complex_multiplier complex_multiplier(
                       .clk(clk),
                       .in_valid(in_valid),
                       .a_real(a_real),
