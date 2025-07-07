@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
 
-module FFTButterflyAddStage_tb;
+module fft_butterfly_add_stage_tb;
 
   logic clk;
   logic in_valid, out_valid;
@@ -18,7 +18,7 @@ module FFTButterflyAddStage_tb;
 
   always #5 clk = ~clk;
 
-  FFTButterflyAddStage FFTButterflyAddStage(
+  fft_butterfly_add_stage fft_butterfly_add_stage(
                  .clk(clk),
                  .in_valid(in_valid),
 

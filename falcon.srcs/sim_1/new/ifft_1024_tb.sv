@@ -51,7 +51,7 @@ module ifft_1024_tb;
   logic signed [4:0] btf_scale_factor;
   logic [9:0] btf_tw_addr;
   logic btf_in_valid, btf_out_valid;
-  FFTButterfly FFTButterfly(
+  fft_butterfly fft_butterfly(
                  .clk(clk),
                  .mode(btf_mode),
                  .in_valid(btf_in_valid),

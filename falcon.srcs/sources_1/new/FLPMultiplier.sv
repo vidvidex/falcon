@@ -52,14 +52,14 @@ module FLPMultiplier(
   logic [`EXPONENT_BITS:0] exponent_sum_1DP;
   logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted_3DP;
 
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) data_valid_delay(.clk(clk), .in(in_valid), .out(data_valid_1DP));
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) sign_result_delay(.clk(clk), .in(sign_result), .out(sign_result_1DP));
-  DelayRegister #(.BITWIDTH(`EXPONENT_BITS+1), .CYCLE_COUNT(1+2)) exponent_sum_delay(.clk(clk), .in(exponent_sum), .out(exponent_sum_1DP));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) data_valid_delay(.clk(clk), .in(in_valid), .out(data_valid_1DP));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) sign_result_delay(.clk(clk), .in(sign_result), .out(sign_result_1DP));
+  delay_register #(.BITWIDTH(`EXPONENT_BITS+1), .CYCLE_COUNT(1+2)) exponent_sum_delay(.clk(clk), .in(exponent_sum), .out(exponent_sum_1DP));
 
   logic [`EXPONENT_BITS+1:0] exponent_uncorrected;
   assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - 11'd1023;
 
-  DelayRegister #(.BITWIDTH(`SIGNIFICANT_BITS+2), .CYCLE_COUNT(1+4)) multiplied_significants_shifted_delay(.clk(clk), .in(multiplied_significants_shifted), .out(multiplied_significants_shifted_3DP));
+  delay_register #(.BITWIDTH(`SIGNIFICANT_BITS+2), .CYCLE_COUNT(1+4)) multiplied_significants_shifted_delay(.clk(clk), .in(multiplied_significants_shifted), .out(multiplied_significants_shifted_3DP));
 
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_2DP, data_valid_2DP;

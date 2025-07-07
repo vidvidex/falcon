@@ -10,7 +10,7 @@
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module FFTButterflyAddStage(
+module fft_butterfly_add_stage(
     input clk,
     input in_valid,
     input [63:0] a_real,

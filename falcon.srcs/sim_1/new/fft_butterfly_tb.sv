@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CommonDefinitions.vh"
 
-module FFTButterfly_tb;
+module fft_butterfly_tb;
 
   logic clk;
   logic in_valid, out_valid, mode;
@@ -21,7 +21,7 @@ module FFTButterfly_tb;
 
   always #5 clk = ~clk;
 
-  FFTButterfly FFTButterfly(
+  fft_butterfly fft_butterfly(
                  .clk(clk),
                  .in_valid(in_valid),
                  .mode(mode),
@@ -90,7 +90,7 @@ module FFTButterfly_tb;
     // Wait for out_valid from FFT before starting IFFT
     while(out_valid !== 1'b1)
       #10;
-    #50;  // Wait for FFT results to be outputted (FFTButterfly does not like changing the mode during processing)
+    #50;  // Wait for FFT results to be outputted (fft_butterfly does not like changing the mode during processing)
 
     in_valid = 1;
     scale_factor = -1;

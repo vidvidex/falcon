@@ -80,7 +80,7 @@ module merge_fft#(
   assign btf_scale_factor = 0;
 
   logic [$clog2(N/4)-1:0] u, u_delayed; // Counter over the input. Will be at most N/4. We need the delayed version to know where to write the butterfly output
-  DelayRegister #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(27)) u_delay(.clk(clk), .in(u), .out(u_delayed));
+  delay_register #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(27)) u_delay(.clk(clk), .in(u), .out(u_delayed));
 
   typedef enum logic [2:0] {
             IDLE,
@@ -92,10 +92,10 @@ module merge_fft#(
   state_t state, next_state;
 
   logic butterfly_input_valid;
-  DelayRegister #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_in_valid));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_in_valid));
 
   logic [9:0] tw_addr;
-  DelayRegister #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(btf_tw_addr));
+  delay_register #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(btf_tw_addr));
 
   // Reading inputs from BRAM 1
   always @(posedge clk) begin
