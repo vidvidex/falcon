@@ -2,7 +2,7 @@
 
 // Implements conversion from double to an int.
 // Before conversion the double is rounded to the nearest integer.
-module DoubleToInt (
+module double_to_int (
     input  logic clk,
     input  logic [63:0] double_in,
     output logic signed [14:0] int_out

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module LeadingZeroCount #(
+module leading_zero_count #(
     parameter BITWIDTH = 24
   )
   (

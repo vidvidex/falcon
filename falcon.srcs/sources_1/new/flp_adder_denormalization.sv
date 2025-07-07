@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 
 // performs the first half of FlP addition operand switch and denormalization
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module FLPAdderDenormalization #(DO_SUBSTRACTION = 0) (
+module flp_adder_denormalization #(DO_SUBSTRACTION = 0) (
     input clk,
     input in_valid,
     input [63:0] a,

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 
-module FLPAdder_tb;
+module flp_adder_tb;
 
   logic clk;
   logic in_valid, out_valid;
@@ -11,9 +11,9 @@ module FLPAdder_tb;
 
   always #5 clk = ~clk;
 
-  FLPAdder #(
+  flp_adder #(
              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-           ) FLPAdder(
+           ) flp_adder(
              .clk(clk),
              .in_valid(in_valid),
              .a(a),

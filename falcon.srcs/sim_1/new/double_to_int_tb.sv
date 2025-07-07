@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module DoubleToInt_tb;
+module double_to_int_tb;
 
   logic clk;
 
@@ -9,7 +9,7 @@ module DoubleToInt_tb;
 
   always #5 clk = ~clk;
 
-  DoubleToInt DoubleToInt (
+  double_to_int double_to_int (
                 .clk(clk),
                 .double_in(double_in),
                 .int_out(int_out)

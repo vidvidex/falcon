@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "CommonDefinitions.vh"
+`include "common_definitions.vh"
 //////////////////////////////////////////////////////////////////////////////////
 //
 // FFT butterfly unit for both FFT and IFFT
@@ -104,7 +104,7 @@ module fft_butterfly(
     add_done_2DP <= add_done_1DP;
   end
 
-  ComplexMultiplier tw_factor_mult(
+  complex_multiplier tw_factor_mult(
                       .clk(clk),
                       .in_valid(add_done_2DP),
                       .a_real(a_m_b_real_1DP),
