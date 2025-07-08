@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-module control_unit_tb;
+module control_unit_sign_tb;
 
   parameter int N = 512;
   parameter int MESSAGE_BLOCKS = 8;
