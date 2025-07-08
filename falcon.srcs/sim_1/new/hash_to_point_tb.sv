@@ -11,8 +11,8 @@
 module hash_to_point_tb;
 
   parameter int N = 512;
-  parameter int MESSAGE_BLOCKS = 8;
-  logic [63:0] message_blocks[MESSAGE_BLOCKS] = '{12+40, 64'h837e8bcfb23c5981, 64'h41d5b10176855b9a, 64'h92208190cdfbc47f, 64'h92e859a168bea29f, 64'ha335ead74efe6969, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
+  parameter int MESSAGE_BLOCKS = 1+7;
+  logic [63:0] message_blocks[MESSAGE_BLOCKS] = '{40+12, 64'h837e8bcfb23c5981, 64'h41d5b10176855b9a, 64'h92208190cdfbc47f, 64'h92e859a168bea29f, 64'ha335ead74efe6969, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
 
   logic clk;
   logic rst_n;
