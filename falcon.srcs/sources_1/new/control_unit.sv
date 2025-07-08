@@ -7,11 +7,11 @@
 //
 // Instruction format:
 // [31:28] opcode
-// [27:26] task BRAM bank 1
-// [25:17] task address 1
-// [16:15] task BRAM bank 2
-// [14:6]  task address 2
-// [5:0]   task parameters
+// [27:25] task BRAM bank 1
+// [24:16] task address 1
+// [15:13] task BRAM bank 2
+// [12:4]  task address 2
+// [3:0]   task parameters
 //
 // opcodes:
 // 0000 - NOP (No operation)
@@ -47,11 +47,11 @@ module control_unit#(
   parameter int BRAM_BANK_COUNT = 4; // Number of BRAM banks
 
   logic [3:0] opcode, opcode_registered;
-  logic [1:0] task_bank1;
+  logic [2:0] task_bank1;
   logic [`BRAM_ADDR_WIDTH-1:0] task_addr1;
-  logic [1:0] task_bank2;
+  logic [2:0] task_bank2;
   logic [`BRAM_ADDR_WIDTH-1:0] task_addr2;
-  logic [5:0] task_params;
+  logic [3:0] task_params;
 
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
@@ -209,11 +209,11 @@ module control_unit#(
 
     // Instruction decoding
     opcode <= instruction[31:28];
-    task_bank1 <= instruction[27:26];
-    task_addr1 <= instruction[25:17];
-    task_bank2 <= instruction[16:15];
-    task_addr2 <= instruction[14:6];
-    task_params <= instruction[5:0];
+    task_bank1 <= instruction[27:25];
+    task_addr1 <= instruction[24:16];
+    task_bank2 <= instruction[15:13];
+    task_addr2 <= instruction[12:4];
+    task_params <= instruction[3:0];
 
     if (!rst_n) begin
       htp_start <= 1'b0;
@@ -244,7 +244,7 @@ module control_unit#(
         end
 
         4'b0010: begin  // FFT
-          fft_mode <= task_params[5]; // Set FFT mode based on task parameters
+          fft_mode <= task_params[3]; // Set FFT mode based on task parameters
           fft_start <= 1'b1;
         end
 
@@ -299,7 +299,6 @@ module control_unit#(
       end
 
       4'b0001: begin  // Hash to point
-
         bram_addr_a[task_bank1] = htp_input_bram_addr;
         htp_input_bram_data = bram_dout_a[task_bank1];
 
@@ -314,7 +313,6 @@ module control_unit#(
       end
 
       4'b0010: begin  // FFT/IFFT
-
         bram_addr_a[task_bank1] = fft_bram1_addr_a;
         bram_din_a[task_bank1] = fft_bram1_din_a;
         bram_we_a[task_bank1] = fft_bram1_we_a;
@@ -378,7 +376,6 @@ module control_unit#(
       4'b1010: begin  // int to double
         bram_addr_a[task_bank1] = task_addr1;
         int_to_double_data_in = bram_dout_a[task_bank1];
-
 
         // Write output to BRAM
         if(int_to_double_valid_out) begin
