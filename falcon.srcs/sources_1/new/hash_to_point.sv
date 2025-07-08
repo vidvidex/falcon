@@ -15,7 +15,7 @@
 // Module will read "message_len_bytes" from the first location of input BRAM.
 // Following that it will read message_len_bytes bytes of the message and salt from memory, starting at address 1. Currently it only reads bottom 64 bits of each memory location
 //
-// The resulting polynomial coefficients is written to output BRAM in the following way, which is tailored to be used as input for the FFT module
+// The resulting polynomial coefficients are written to output BRAM in the following way, which is tailored to be used as input for the FFT module
 //
 //      64 bit (15 used)    64 bit (15 used)
 //     <-----------------> <----------------->

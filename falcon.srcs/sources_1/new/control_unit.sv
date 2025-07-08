@@ -36,17 +36,17 @@ module control_unit#(
   parameter int BRAM_BANK_COUNT = 4; // Number of BRAM banks
 
   typedef enum logic [3:0] {
-            NOP          = 4'b0000,
-            HASH_TO_POINT= 4'b0001,
-            FFT_IFFT     = 4'b0010,
+            NOP          = 4'b0000, // No operation, sets WE for all BRAMs to 0
+            HASH_TO_POINT= 4'b0001, // Input is task_bram1. First BRAM cell contains length of salt and message combined in bytes. Output is task_bram2. src and dest cannot be the same because we need 3 channels (1 for input and 2 for output)
+            FFT_IFFT     = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
             FP_ARITH     = 4'b0011,
             FFT_SPLIT    = 4'b0100,
             FFT_MERGE    = 4'b0101,
             CHECK_NORM   = 4'b0110,
-            COMPRESS     = 4'b0111,
-            BRAM_READ    = 4'b1000,
-            BRAM_WRITE   = 4'b1001,
-            INT_TO_DOUBLE= 4'b1010
+            DECOMPRESS   = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[3:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
+            BRAM_READ    = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
+            BRAM_WRITE   = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
+            INT_TO_DOUBLE= 4'b1010  // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
           } opcode_t;
 
   opcode_t opcode;
@@ -259,7 +259,7 @@ module control_unit#(
 
         end
 
-        COMPRESS: begin
+        DECOMPRESS: begin
 
         end
 
@@ -349,7 +349,7 @@ module control_unit#(
 
       end
 
-      COMPRESS: begin
+      DECOMPRESS: begin
 
       end
 
