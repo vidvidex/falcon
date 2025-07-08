@@ -13,18 +13,7 @@
 // [12:4]  task address 2
 // [3:0]   task parameters
 //
-// opcodes:
-// 0000 - NOP (No operation)
-// 0001 - Hash to point
-// 0010 - FFT/IFFT
-// 0011 - FP arithmetic
-// 0100 - FFT split
-// 0101 - FFT merge
-// 0110 - Check norm
-// 0111 - Compress
-// 1000 - BRAM read
-// 1001 - BRAM write
-// 1010 - int to double
+// See definition of enum opcode_t for available opcodes.
 //
 // After receiving done for an instruction, a NOP instruction should be issued for 1 cycle to ensure all BRAM write enable signals are set to 0.
 //
@@ -46,13 +35,26 @@ module control_unit#(
 
   parameter int BRAM_BANK_COUNT = 4; // Number of BRAM banks
 
-  logic [3:0] opcode, opcode_registered;
+  typedef enum logic [3:0] {
+            NOP          = 4'b0000,
+            HASH_TO_POINT= 4'b0001,
+            FFT_IFFT     = 4'b0010,
+            FP_ARITH     = 4'b0011,
+            FFT_SPLIT    = 4'b0100,
+            FFT_MERGE    = 4'b0101,
+            CHECK_NORM   = 4'b0110,
+            COMPRESS     = 4'b0111,
+            BRAM_READ    = 4'b1000,
+            BRAM_WRITE   = 4'b1001,
+            INT_TO_DOUBLE= 4'b1010
+          } opcode_t;
+
+  opcode_t opcode;
   logic [2:0] task_bank1;
   logic [`BRAM_ADDR_WIDTH-1:0] task_addr1;
   logic [2:0] task_bank2;
   logic [`BRAM_ADDR_WIDTH-1:0] task_addr2;
   logic [3:0] task_params;
-
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a [BRAM_BANK_COUNT];
@@ -208,7 +210,7 @@ module control_unit#(
   always_ff @(posedge clk) begin
 
     // Instruction decoding
-    opcode <= instruction[31:28];
+    opcode <= opcode_t'(instruction[31:28]);
     task_bank1 <= instruction[27:25];
     task_addr1 <= instruction[24:16];
     task_bank2 <= instruction[15:13];
@@ -228,55 +230,48 @@ module control_unit#(
       fft_start_i <= fft_start;
 
       case (opcode)
-        4'b0000: begin // NOP
-          // No operation, do nothing except stop writing to BRAMs
+        NOP: begin
 
-          htp_start <= 1'b0;
-
-          for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
-            bram_we_a[i] <= 1'b0;
-            bram_we_b[i] <= 1'b0;
-          end
         end
 
-        4'b0001: begin  // Hash to point
+        HASH_TO_POINT: begin
           htp_start <= 1'b1;
         end
 
-        4'b0010: begin  // FFT
+        FFT_IFFT: begin
           fft_mode <= task_params[3]; // Set FFT mode based on task parameters
           fft_start <= 1'b1;
         end
 
-        4'b0011: begin  // FP arithmetic
+        FP_ARITH: begin
 
         end
 
-        4'b0100: begin  // fft_split
+        FFT_SPLIT: begin
 
         end
 
-        4'b0101: begin  // fft_merge
+        FFT_MERGE: begin
 
         end
 
-        4'b0110: begin  // Check norm
+        CHECK_NORM: begin
 
         end
 
-        4'b0111: begin  // Compress
+        COMPRESS: begin
 
         end
 
-        4'b1000: begin  // BRAM read
+        BRAM_READ: begin
 
         end
 
-        4'b1001: begin  // BRAM write
+        BRAM_WRITE: begin
 
         end
 
-        4'b1010: begin  // int to double
+        INT_TO_DOUBLE: begin
 
         end
 
@@ -294,11 +289,15 @@ module control_unit#(
     instruction_done = 1'b0; // Default to not done
 
     case (opcode)
-      4'b0000: begin // NOP
-
+      NOP: begin
+        // No operation, do nothing except stop writing to BRAMs
+        for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
+          bram_we_a[i] = 1'b0;
+          bram_we_b[i] = 1'b0;
+        end
       end
 
-      4'b0001: begin  // Hash to point
+      HASH_TO_POINT: begin
         bram_addr_a[task_bank1] = htp_input_bram_addr;
         htp_input_bram_data = bram_dout_a[task_bank1];
 
@@ -312,7 +311,7 @@ module control_unit#(
         instruction_done = htp_done;
       end
 
-      4'b0010: begin  // FFT/IFFT
+      FFT_IFFT: begin
         bram_addr_a[task_bank1] = fft_bram1_addr_a;
         bram_din_a[task_bank1] = fft_bram1_din_a;
         bram_we_a[task_bank1] = fft_bram1_we_a;
@@ -334,27 +333,27 @@ module control_unit#(
         instruction_done = fft_done;
       end
 
-      4'b0011: begin  // FP arithmetic
+      FP_ARITH: begin
 
       end
 
-      4'b0100: begin  // fft_split
+      FFT_SPLIT: begin
 
       end
 
-      4'b0101: begin  // fft_merge
+      FFT_MERGE: begin
 
       end
 
-      4'b0110: begin  // Check norm
+      CHECK_NORM: begin
 
       end
 
-      4'b0111: begin  // Compress
+      COMPRESS: begin
 
       end
 
-      4'b1000: begin  // BRAM read
+      BRAM_READ: begin
         // Reads from BRAM "task_bank1" at address "task_addr1". Output is "bram_dout".
 
         bram_addr_a[task_bank1] = task_addr1;
@@ -363,7 +362,7 @@ module control_unit#(
         instruction_done = 1'b1; // We set done to 1 immediately even though the read will take a few cycles. This is because the data will definitely be available then, so we can issue the next instruction.
       end
 
-      4'b1001: begin  // BRAM write
+      BRAM_WRITE: begin
         // Writes to BRAM "task_bank1" at address "task_addr1". Input is "bram_din".
 
         bram_addr_a[task_bank1] = task_addr1;
@@ -373,7 +372,7 @@ module control_unit#(
         instruction_done = 1'b1;
       end
 
-      4'b1010: begin  // int to double
+      INT_TO_DOUBLE: begin
         bram_addr_a[task_bank1] = task_addr1;
         int_to_double_data_in = bram_dout_a[task_bank1];
 
