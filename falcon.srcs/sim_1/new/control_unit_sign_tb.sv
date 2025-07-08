@@ -41,45 +41,45 @@ module control_unit_sign_tb;
     #10;
 
     // First NOP instruction to set we for all BRAMs to 0
-    instruction = 32'b0000_00_000000000_00_000000000_000000;
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Load message len, message and salt into BRAM0
     for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
-      instruction = {4'b1001, 2'b00, i[8:0], 2'b00, 9'b000000000, 6'b000000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=/
+      instruction = {4'b1001, 3'b000, i[8:0], 3'b000, 9'b000000000, 4'b0000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=/
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
       #10;
     end
-    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM
+    instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
     #10;
 
     // Run hash to point
-    instruction = 32'b0001_00_000000000_01_000000000_000000; // Hash to point; bank1=0; addr1=/; bank2=1; addr2=/; args=/
+    instruction = 32'b0001_000_000000000_001_000000000_0000; // Hash to point; bank1=0; addr1=/; bank2=1; addr2=/; args=/
     while (instruction_done !== 1'b1)
       #10;
     #40; // Wait for pipeline to finish
 
-    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM
+    instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
     #10;
 
     // Convert point to double
     for(int i = 0; i < N/2; i++) begin
-      instruction = {4'b1010, 2'b01, i[8:0], 2'b01, i[8:0], 6'b000000}; // int to double; bank1=1; addr1=i; bank2=1; addr2=i; args=/
+      instruction = {4'b1010, 3'b001, i[8:0], 3'b001, i[8:0], 4'b0000}; // int to double; bank1=1; addr1=i; bank2=1; addr2=i; args=/
       #10;
     end
     #40; // Wait for pipeline to finish
 
-    instruction = 32'b0000_00_000000000_00_000000000_000000; // Stop writing to BRAM
+    instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
     #10;
 
     // Run FFT on output of hash to point
-    instruction = 32'b0010_01_000000000_10_000000000_000000;  // FFT; bank1=1; addr1=/; bank2=2; addr2=/; args=mode:fft
+    instruction = 32'b0010_001_000000000_010_000000000_0000;  // FFT; bank1=1; addr1=/; bank2=2; addr2=/; args=mode:fft
     #10;
     while (instruction_done !== 1'b1)
       #10;
     #10;
 
-    instruction = 32'b0000_00_000000000_00_000000000_000000;
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
 
   end
 
