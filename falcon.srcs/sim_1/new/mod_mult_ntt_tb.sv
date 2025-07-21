@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module mod_mult_ntt_negative_tb;
+module mod_mult_ntt_tb;
 
   logic clk;
   logic rst_n;
@@ -19,7 +19,7 @@ module mod_mult_ntt_negative_tb;
   logic run_test;
   int i = 0;
 
-  mod_mult_ntt_negative #(
+  mod_mult_ntt #(
                           .N(8)
                         )uut (
                           .clk(clk),
@@ -89,7 +89,7 @@ module mod_mult_ntt_negative_tb;
 
     run_test = 0;
 
-    $display("All tests for mod_mult_ntt_negative passed!");
+    $display("All tests for mod_mult_ntt passed!");
     $finish;
   end
 

@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
+
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Implements both NTT and inverse NTT for negative-wrapped convolution.
@@ -15,16 +17,13 @@
 // The module is based on the reference C implementation via a modified Python version to allow for easier implementing
 // See also scripts/ntt_from_reference_C.py and scripts/ntt_from_reference_C_for_FPGA.py
 //
-// Note that the coefficients in the output of this module are in a different order than the coefficients in the Python implementation of Falcon.
-// I have no idea why but the final polynomial multiplication still works fine so I think it "cancels out" when running INTT.
-//
 // This module uses Montgomery reduction to optimize calculation of a*b mod q. Should you not want to use it you have to compute different twiddle factors (with R=1).
 // They are computed with scripts/NTT_negative_compute_twiddle_factors.py (supports both with and without Montgomery reduction)
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ntt_negative#(
+module ntt#(
     parameter int N
   )(
     input logic clk,
@@ -64,7 +63,6 @@ module ntt_negative#(
 
   logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM (bank1/bank2/output_bram). It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
 
-
   // Signals for BRAM banks
   logic [$clog2(N)-1:0] bram1_addr_a, bram1_addr_b, bram2_addr_a, bram2_addr_b;
   logic signed [14:0] bram1_data_in_a, bram1_data_in_b, bram2_data_in_a, bram2_data_in_b;
@@ -102,7 +100,7 @@ module ntt_negative#(
           } state_t;
   state_t state, next_state;
 
-  ntt_negative_twiddle_rom #(
+  ntt_twiddle_rom #(
                              .N(N)
                            ) twiddle_rom_ntt (
                              .clk(clk),
@@ -145,7 +143,7 @@ module ntt_negative#(
          .data_out_b(bram2_data_out_b)
        );
 
-  mod_mult_ntt_negative #(
+  mod_mult_ntt #(
                           .N(N)
                         )mod_mult(
                           .clk(clk),
