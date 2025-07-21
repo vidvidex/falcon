@@ -373,7 +373,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/ntt_twiddle_rom.sv">
+      <File Path="$PSRCDIR/sources_1/new/ntt_twiddle_factor_rom.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
