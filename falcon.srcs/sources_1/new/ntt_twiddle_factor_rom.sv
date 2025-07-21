@@ -8,7 +8,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ntt_twiddle_rom#(
+module ntt_twiddle_factor_rom#(
     parameter int N
   )(
     input logic clk,

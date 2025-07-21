@@ -100,7 +100,7 @@ module ntt#(
           } state_t;
   state_t state, next_state;
 
-  ntt_twiddle_rom #(
+  ntt_twiddle_factor_rom #(
                              .N(N)
                            ) twiddle_rom_ntt (
                              .clk(clk),
