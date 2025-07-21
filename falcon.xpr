@@ -60,20 +60,20 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynq-z2"/>
-    <Option Name="WTXSimLaunchSim" Val="9719"/>
+    <Option Name="WTXSimLaunchSim" Val="9878"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="25"/>
-    <Option Name="WTModelSimExportSim" Val="25"/>
-    <Option Name="WTQuestaExportSim" Val="25"/>
+    <Option Name="WTXSimExportSim" Val="26"/>
+    <Option Name="WTModelSimExportSim" Val="26"/>
+    <Option Name="WTQuestaExportSim" Val="26"/>
     <Option Name="WTIesExportSim" Val="0"/>
-    <Option Name="WTVcsExportSim" Val="25"/>
-    <Option Name="WTRivieraExportSim" Val="25"/>
-    <Option Name="WTActivehdlExportSim" Val="25"/>
+    <Option Name="WTVcsExportSim" Val="26"/>
+    <Option Name="WTRivieraExportSim" Val="26"/>
+    <Option Name="WTActivehdlExportSim" Val="26"/>
     <Option Name="GenerateIPUpgradeLog" Val="TRUE"/>
     <Option Name="XSimRadix" Val="hex"/>
     <Option Name="XSimTimeUnit" Val="ns"/>
@@ -99,6 +99,20 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/new/complex_multiplier.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/decompress.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/decompress_coefficient.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -310,22 +324,6 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/new/compress_coefficient.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/decompress.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/decompress_coefficient.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -567,6 +565,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sim_1/new/decompress_tb.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sim_1/new/control_unit_sign_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -600,14 +606,6 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sim_1/new/decompress_coefficient_tb.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sim_1/new/decompress_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -847,7 +845,6 @@
       </File>
       <File Path="$PPRDIR/decompress_tb_behav.wcfg">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
@@ -1236,22 +1233,20 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_512x128_preinit_for_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_512x128_preinit_for_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_512x128_preinit_for_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/bram_512x128_preinit_for_tb_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_synth_1">
+    <Run Id="bram_512x128_preinit_for_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_512x128_preinit_for_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_512x128_preinit_for_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_256x128_preinit_for_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128_preinit_for_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128_preinit_for_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/bram_256x128_preinit_for_tb_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_synth_1">
+    <Run Id="bram_256x128_preinit_for_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128_preinit_for_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128_preinit_for_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
@@ -1266,82 +1261,74 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_mult_s_synth_1" Type="Ft3:Synth" SrcSet="fp_mult_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_mult_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_mult_s_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_mult_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_mult_s_synth_1">
+    <Run Id="fp_mult_s_synth_1" Type="Ft3:Synth" SrcSet="fp_mult_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_mult_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_mult_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_mult_s_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_flt2i_int32_s_synth_1" Type="Ft3:Synth" SrcSet="fp_flt2i_int32_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_flt2i_int32_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_flt2i_int32_s_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_flt2i_int32_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_flt2i_int32_s_synth_1">
+    <Run Id="fp_flt2i_int32_s_synth_1" Type="Ft3:Synth" SrcSet="fp_flt2i_int32_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_flt2i_int32_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_flt2i_int32_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_flt2i_int32_s_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_i2flt_int32_s_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int32_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int32_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_i2flt_int32_s_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_s_synth_1">
+    <Run Id="fp_i2flt_int32_s_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int32_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int32_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_s_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_flt2i_int64_s_synth_1" Type="Ft3:Synth" SrcSet="fp_flt2i_int64_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_flt2i_int64_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_flt2i_int64_s_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_flt2i_int64_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_flt2i_int64_s_synth_1">
+    <Run Id="fp_flt2i_int64_s_synth_1" Type="Ft3:Synth" SrcSet="fp_flt2i_int64_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_flt2i_int64_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_flt2i_int64_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_flt2i_int64_s_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_i2flt_int64_s_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int64_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int64_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_i2flt_int64_s_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int64_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int64_s_synth_1">
+    <Run Id="fp_i2flt_int64_s_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int64_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int64_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int64_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int64_s_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_sub_s_synth_1" Type="Ft3:Synth" SrcSet="fp_sub_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_sub_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_sub_s_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_sub_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_sub_s_synth_1">
+    <Run Id="fp_sub_s_synth_1" Type="Ft3:Synth" SrcSet="fp_sub_s" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_sub_s" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_sub_s_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_sub_s_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="fp_i2flt_int32_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int32" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int32" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/fp_i2flt_int32_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_synth_1">
+    <Run Id="fp_i2flt_int32_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int32" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int32" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_256x128_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/bram_256x128_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_synth_1">
+    <Run Id="bram_256x128_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
