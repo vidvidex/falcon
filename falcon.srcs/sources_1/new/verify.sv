@@ -284,7 +284,7 @@ module verify#(
   logic [$clog2(N-1)-1:0] ntt_input_addr1, ntt_input_addr2, ntt_output_addr1, ntt_output_addr2;
   logic signed [14:0] ntt_input_data1, ntt_input_data2, ntt_output_data1, ntt_output_data2;
   logic ntt_output_we1, ntt_output_we2;
-  ntt_negative #(
+  ntt #(
                  .N(N)
                )ntt(
                  .clk(clk),

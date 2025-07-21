@@ -3,14 +3,14 @@
 //
 // Implements pipelined multiplication a*b mod 12289.
 //
-// The module is tailored specifically for use in the ntt_negative module. For this reason we also have many other parameters, which we just pass through the pipeline
+// The module is tailored specifically for use in the ntt module. For this reason we also have many other parameters, which we just pass through the pipeline
 // and output as they are. These parameters are for example index1, index2 and valid. They will be used when processing the result of multiplication in the parent module.
 // Should you want to use this module for something else you can safely remove these parameters and just keep the basic multiplication functionality.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mod_mult_ntt_negative #(
+module mod_mult_ntt #(
     parameter int N
   )(
     input logic clk,

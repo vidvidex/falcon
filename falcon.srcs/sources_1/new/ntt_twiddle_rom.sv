@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Read only memory used to store pre-computed twiddle factors for ntt_negative.
+// Read only memory used to store pre-computed twiddle factors for ntt.
 //
 // The twiddle factors were computed using the scripts/NTT_negative_compute_twiddle_factors.py script
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ntt_negative_twiddle_rom#(
+module ntt_twiddle_rom#(
     parameter int N
   )(
     input logic clk,

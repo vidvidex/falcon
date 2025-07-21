@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynq-z2"/>
-    <Option Name="WTXSimLaunchSim" Val="9878"/>
+    <Option Name="WTXSimLaunchSim" Val="9879"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -349,7 +349,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/mod_mult_ntt_negative.sv">
+      <File Path="$PSRCDIR/sources_1/new/mod_mult_ntt.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -365,7 +365,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/ntt_negative.sv">
+      <File Path="$PSRCDIR/sources_1/new/ntt.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -373,7 +373,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/ntt_negative_twiddle_rom.sv">
+      <File Path="$PSRCDIR/sources_1/new/ntt_twiddle_rom.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -542,8 +542,16 @@
     </FileSet>
     <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1" RelGenDir="$PGENDIR/sim_1">
       <Filter Type="Srcs"/>
+      <File Path="$PSRCDIR/sim_1/new/ntt_512_tb.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sim_1/new/control_unit_verify_tb.sv">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -693,7 +701,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/mod_mult_ntt_negative_tb.sv">
+      <File Path="$PSRCDIR/sim_1/new/mod_mult_ntt_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -709,15 +717,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/ntt_negative_512_tb.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sim_1/new/ntt_negative_8_tb.sv">
+      <File Path="$PSRCDIR/sim_1/new/ntt_8_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -801,24 +801,24 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/ntt_negative_8_tb_behav.wcfg">
+      <File Path="$PPRDIR/ntt_8_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/ntt_negative_512_tb_behav.wcfg">
+      <File Path="$PPRDIR/ntt_512_tb_behav.wcfg">
         <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
       <File Path="$PPRDIR/decompress_tb_behav.wcfg">
         <FileInfo>
+          <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/mod_mult_ntt_negative_tb_behav.wcfg">
+      <File Path="$PPRDIR/mod_mult_ntt_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -963,7 +963,7 @@
       </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
-        <Option Name="TopModule" Val="control_unit_verify_tb"/>
+        <Option Name="TopModule" Val="ntt_512_tb"/>
         <Option Name="TopLib" Val="xil_defaultlib"/>
         <Option Name="TransportPathDelay" Val="0"/>
         <Option Name="TransportIntDelay" Val="0"/>
@@ -975,14 +975,14 @@
         <Option Name="SrcSet" Val="sources_1"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/shake256_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/hash_to_point_tb_behav.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_negative_8_tb_behav.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_negative_512_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_8_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/ntt_512_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_tbwcfg.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_coefficient_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/decompress_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/top_tb_behav.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_ntt_negative_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_ntt_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/mod_mult_verify_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/verify_compute_squared_norm_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/sub_normalize_squared_norm_tb_behav.wcfg"/>

@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module ntt_negative_8_tb;
+module ntt_8_tb;
 
   parameter int N = 8;
 
@@ -20,7 +20,7 @@ module ntt_negative_8_tb;
   logic input_bram_we_a;
   logic signed [14:0] output_bram_data_out_a;
 
-  ntt_negative #(
+  ntt #(
                  .N(N)
                )uut(
                  .clk(clk),
@@ -179,7 +179,7 @@ module ntt_negative_8_tb;
 
     verify_output_bram(4, {2598,1143,7769,7404,5910,11731,1017,10360});
 
-    $display("All tests for ntt_negative_8 passed!");
+    $display("All tests for ntt_8 passed!");
     $finish;
   end
 
