@@ -33,7 +33,7 @@ module control_unit#(
     output logic [`BRAM_DATA_WIDTH-1:0] bram_dout // Data read from BRAM
   );
 
-  parameter int BRAM_BANK_COUNT = 4; // Number of BRAM banks
+  parameter int BRAM_BANK_COUNT = 8; // Number of BRAM banks
 
   typedef enum logic [3:0] {
             NOP          = 4'b0000, // No operation, sets WE for all BRAMs to 0
@@ -43,7 +43,7 @@ module control_unit#(
             FFT_SPLIT    = 4'b0100,
             FFT_MERGE    = 4'b0101,
             CHECK_NORM   = 4'b0110,
-            DECOMPRESS   = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[3:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
+            DECOMPRESS   = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[2:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
             BRAM_READ    = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
             BRAM_WRITE   = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
             INT_TO_DOUBLE= 4'b1010  // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
@@ -206,6 +206,37 @@ module control_unit#(
         .btf_out_valid(btf_out_valid)
       );
 
+  logic decompress_start, decompress_start_i;
+  logic [`BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] decompress_input_bram_data;
+  logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram1_data;
+  logic decompress_output_bram1_we;
+  logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram2_data;
+  logic decompress_signature_error, decompress_done;
+  decompress #(
+               .N(N)
+             )
+             decompress (
+               .clk(clk),
+               .rst_n(rst_n),
+               .start(decompress_start && !decompress_start_i),
+
+               .input_bram_addr(decompress_input_bram_addr),
+               .input_bram_data(decompress_input_bram_data),
+
+               .output_bram1_addr(decompress_output_bram1_addr),
+               .output_bram1_data(decompress_output_bram1_data),
+               .output_bram1_we(decompress_output_bram1_we),
+
+               .output_bram2_addr(decompress_output_bram2_addr),
+               .output_bram2_data(decompress_output_bram2_data),
+
+               .signature_error(decompress_signature_error),
+               .done(decompress_done)
+             );
+
   // Task execution based on opcode
   always_ff @(posedge clk) begin
 
@@ -223,11 +254,15 @@ module control_unit#(
 
       fft_start <= 1'b0;
       fft_start_i <= 1'b0;
+
+      decompress_start <= 1'b0;
+      decompress_start_i <= 1'b0;
     end
     else begin
 
       htp_start_i <= htp_start;
       fft_start_i <= fft_start;
+      decompress_start_i <= decompress_start;
 
       case (opcode)
         NOP: begin
@@ -260,7 +295,7 @@ module control_unit#(
         end
 
         DECOMPRESS: begin
-
+          decompress_start <= 1'b1;
         end
 
         BRAM_READ: begin
@@ -350,7 +385,21 @@ module control_unit#(
       end
 
       DECOMPRESS: begin
+        bram_addr_a[task_bank1] = decompress_input_bram_addr;
+        decompress_input_bram_data = bram_dout_a[task_bank1];
 
+        // We output to both task_bank2 and task_params[2:0]
+        bram_addr_a[task_bank2] = decompress_output_bram1_addr;
+        bram_din_a[task_bank2] = decompress_output_bram1_data;
+        bram_we_a[task_bank2] = decompress_output_bram1_we;
+        bram_addr_a[task_params[2:0]] = decompress_output_bram1_addr;
+        bram_din_a[task_params[2:0]] = decompress_output_bram1_data;
+        bram_we_a[task_params[2:0]] = decompress_output_bram1_we;
+
+        bram_addr_b[task_bank2] = decompress_output_bram2_addr;
+        decompress_output_bram2_data = bram_dout_b[task_bank2];
+
+        instruction_done = decompress_done;
       end
 
       BRAM_READ: begin
