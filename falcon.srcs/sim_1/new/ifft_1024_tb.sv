@@ -13,7 +13,7 @@ module ifft_1024_tb;
   logic [127:0] bram1_din_a, bram1_din_b;
   logic [127:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
-  bram_512x128_preinit_for_tb bram_512x128_preinit_for_tb_1 (
+  bram_512x128_preinit_for_fft_tb bram_512x128_preinit_for_fft_tb_1 (
                                  .addra(bram1_addr_a),
                                  .clka(clk),
                                  .dina(bram1_din_a),
@@ -31,7 +31,7 @@ module ifft_1024_tb;
   logic [127:0] bram2_din_a, bram2_din_b;
   logic [127:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  bram_512x128_preinit_for_tb bram_512x128_preinit_for_tb_2 (
+  bram_512x128_preinit_for_fft_tb bram_512x128_preinit_for_fft_tb_2 (
                                  .addra(bram2_addr_a),
                                  .clka(clk),
                                  .dina(bram2_din_a),

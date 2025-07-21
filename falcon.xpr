@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynq-z2"/>
-    <Option Name="WTXSimLaunchSim" Val="9880"/>
+    <Option Name="WTXSimLaunchSim" Val="9883"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -1004,8 +1004,8 @@
         <Option Name="TopAutoSet" Val="TRUE"/>
       </Config>
     </FileSet>
-    <FileSet Name="bram_512x128_preinit_for_tb" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_512x128_preinit_for_tb" RelGenDir="$PGENDIR/bram_512x128_preinit_for_tb">
-      <File Path="$PSRCDIR/sources_1/ip/bram_512x128_preinit_for_tb/bram_512x128_preinit_for_tb.xci">
+    <FileSet Name="bram_512x128_preinit_for_fft_tb" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_512x128_preinit_for_fft_tb" RelGenDir="$PGENDIR/bram_512x128_preinit_for_fft_tb">
+      <File Path="$PSRCDIR/sources_1/ip/bram_512x128_preinit_for_fft_tb/bram_512x128_preinit_for_fft_tb.xci">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1014,12 +1014,12 @@
         </FileInfo>
       </File>
       <Config>
-        <Option Name="TopModule" Val="bram_512x128_preinit_for_tb"/>
+        <Option Name="TopModule" Val="bram_512x128_preinit_for_fft_tb"/>
         <Option Name="UseBlackboxStub" Val="1"/>
       </Config>
     </FileSet>
-    <FileSet Name="bram_256x128_preinit_for_tb" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_256x128_preinit_for_tb" RelGenDir="$PGENDIR/bram_256x128_preinit_for_tb">
-      <File Path="$PSRCDIR/sources_1/ip/bram_256x128_preinit_for_tb/bram_256x128_preinit_for_tb.xci">
+    <FileSet Name="bram_256x128_preinit_for_fft_tb" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_256x128_preinit_for_fft_tb" RelGenDir="$PGENDIR/bram_256x128_preinit_for_fft_tb">
+      <File Path="$PSRCDIR/sources_1/ip/bram_256x128_preinit_for_fft_tb/bram_256x128_preinit_for_fft_tb.xci">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -1028,7 +1028,7 @@
         </FileInfo>
       </File>
       <Config>
-        <Option Name="TopModule" Val="bram_256x128_preinit_for_tb"/>
+        <Option Name="TopModule" Val="bram_256x128_preinit_for_fft_tb"/>
         <Option Name="UseBlackboxStub" Val="1"/>
       </Config>
     </FileSet>
@@ -1189,7 +1189,7 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_512x128_preinit_for_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_512x128_preinit_for_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_512x128_preinit_for_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_synth_1">
+    <Run Id="bram_512x128_preinit_for_fft_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_512x128_preinit_for_fft_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_512x128_preinit_for_fft_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_fft_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_fft_tb_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
@@ -1198,7 +1198,7 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_256x128_preinit_for_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128_preinit_for_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128_preinit_for_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_synth_1">
+    <Run Id="bram_256x128_preinit_for_fft_tb_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128_preinit_for_fft_tb" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128_preinit_for_fft_tb" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_fft_tb_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_fft_tb_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
@@ -1306,7 +1306,7 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_512x128_preinit_for_tb_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_512x128_preinit_for_tb" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="bram_512x128_preinit_for_tb_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_tb_impl_1">
+    <Run Id="bram_512x128_preinit_for_fft_tb_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_512x128_preinit_for_fft_tb" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="bram_512x128_preinit_for_fft_tb_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_fft_tb_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_512x128_preinit_for_fft_tb_impl_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
         <Step Id="init_design"/>
@@ -1323,7 +1323,7 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
-    <Run Id="bram_256x128_preinit_for_tb_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128_preinit_for_tb" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="bram_256x128_preinit_for_tb_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_tb_impl_1">
+    <Run Id="bram_256x128_preinit_for_fft_tb_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128_preinit_for_fft_tb" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="bram_256x128_preinit_for_fft_tb_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_fft_tb_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_preinit_for_fft_tb_impl_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
         <Step Id="init_design"/>
