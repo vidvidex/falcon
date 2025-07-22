@@ -13,9 +13,9 @@ module decompress_tb;
 
   logic start, done;
 
-  logic [`BRAM_ADDR_WIDTH-1:0] bram0_addr_a, bram0_addr_b;
-  logic [`BRAM_DATA_WIDTH-1:0] bram0_din_b;
-  logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] bram0_addr_a, bram0_addr_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] bram0_din_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] bram0_dout_a;
   logic bram0_we_b;
   bram_512x128 bram_512x128_0 (
                  .addra(bram0_addr_a),
@@ -31,9 +31,9 @@ module decompress_tb;
                  .web(bram0_we_b)
                );
 
-  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
-  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a;
-  logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] bram1_din_a;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] bram1_dout_b;
   logic bram1_we_a;
   bram_512x128 bram_512x128_1 (
                  .addra(bram1_addr_a),

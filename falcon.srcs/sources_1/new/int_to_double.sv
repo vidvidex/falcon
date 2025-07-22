@@ -31,10 +31,10 @@ module int_to_double
   (
     input logic clk,
 
-    input logic [`BRAM_DATA_WIDTH-1:0] data_in,
+    input logic [`FFT_BRAM_DATA_WIDTH-1:0] data_in,
     input logic valid_in,
 
-    output logic [`BRAM_DATA_WIDTH-1:0] data_out,
+    output logic [`FFT_BRAM_DATA_WIDTH-1:0] data_out,
     output logic valid_out
   );
 
