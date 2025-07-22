@@ -6,10 +6,10 @@
 // Implements both NTT and inverse NTT for negative-wrapped convolution.
 // Because we are never going to use both at the same time, we can save resources by reusing the same module.
 //
-// The module accepts the input polynomial in a BRAM and writes the output polynomial to a BRAM.
-// Additionally it uses 2 BRAM banks for intermediate storage of the polynomial while performing the NTT.
-// The reason for two banks is that we have 2 port BRAMs, so we can read/write two coefficients at the same time,
-// but we need to read 2 AND write 2 coefficients at the same time, so we use separate BRAM banks.
+// The module reads the input polynomial from a 512x128 BRAM
+// and then uses 2 internal BRAMs to store intermediate results and also the final result.
+// The reason for this is that we have a bunch of 512x128 BRAMs available, since we need them for signing,
+// but they are much more annoying to write back into, because each memory line stores 2 coefficients.
 //
 // Forward NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
 // Inverse NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
@@ -32,15 +32,15 @@ module ntt#(
     input logic mode, // 0: NTT, 1: Inverse NTT
     input logic start, //! Data in input BRAM is valid, NTT can start
 
-    output logic [$clog2(N)-1:0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
-    output logic [$clog2(N)-1:0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
-    input logic signed [14:0] input_bram_data1, //! Data that is read from input_bram[input_bram_addr1]
-    input logic signed [14:0] input_bram_data2, //! Data that is read from input_bram[input_bram_addr2]
+    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
+    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
+    input logic signed [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data1, //! Data that is read from input_bram[input_bram_addr1]
+    input logic signed [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data2, //! Data that is read from input_bram[input_bram_addr2]
 
-    output logic [$clog2(N)-1:0] output_bram_addr1, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
-    output logic [$clog2(N)-1:0] output_bram_addr2, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
-    output logic signed [14:0] output_bram_data1, //! Data that is written to output_bram[output_bram_addr1]
-    output logic signed [14:0] output_bram_data2, //! Data that is written to output_bram[output_bram_addr2]
+    output logic [`NTT_BRAM_ADDR_WIDTH-1:0] output_bram_addr1, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
+    output logic [`NTT_BRAM_ADDR_WIDTH-1:0] output_bram_addr2, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
+    output logic signed [`NTT_BRAM_DATA_WIDTH-1:0] output_bram_data1, //! Data that is written to output_bram[output_bram_addr1]
+    output logic signed [`NTT_BRAM_DATA_WIDTH-1:0] output_bram_data2, //! Data that is written to output_bram[output_bram_addr2]
     output logic output_bram_we1, //! Write enable for output BRAM
     output logic output_bram_we2, //! Write enable for output BRAM
 
@@ -53,20 +53,26 @@ module ntt#(
   logic [$clog2(N)-1:0] i; // Index for butterfly unit
   logic signed [$clog2(N)-1:0] group;
 
-  logic [14:0] twiddle_factor, twiddle_factor_i;
+  logic [14:0] twiddle_factor, twiddle_factor_delayed;
+  delay_register #(.BITWIDTH(15), .CYCLE_COUNT(2)) twiddle_factor_delay(.clk(clk), .in(twiddle_factor), .out(twiddle_factor_delayed));
   logic [9:0] twiddle_address;
 
-  logic signed [14:0] mod_mult_a, mod_mult_b, mod_mult_result;  // Parameters and result for mod_mult module
-  logic [$clog2(N):0] mod_mult_index1_in, mod_mult_index1_in_i, mod_mult_index2_in, mod_mult_index2_in_i, mod_mult_index1_out, mod_mult_index2_out; // Input and output indeces from mod_mult module
-  logic mod_mult_valid_in, mod_mult_valid_in_i, mod_mult_valid_out, mod_mult_last; // Valid, last signals for mod_mult module
-  logic signed [14:0] mod_mult_passthrough_in, mod_mult_passthrough_out; // Passthrough signals for mod_mult module
+  logic signed [14:0] mod_mult_a, mod_mult_b, mod_mult_passthrough_in;
+  logic [$clog2(N):0] mod_mult_index1_in, mod_mult_index1_in_delayed, mod_mult_index2_in, mod_mult_index2_in_delayed;
+  logic mod_mult_valid_in, mod_mult_valid_in_delayed;
+  logic signed [14:0] mod_mult_result, mod_mult_passthrough_out;
+  logic [$clog2(N):0] mod_mult_index1_out, mod_mult_index2_out;
+  logic mod_mult_valid_out, mod_mult_last;
 
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
+  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(2)) mod_mult_index1_in_delay(.clk(clk), .in(mod_mult_index1_in), .out(mod_mult_index1_in_delayed));
+  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(2)) mod_mult_index2_in_delay(.clk(clk), .in(mod_mult_index2_in), .out(mod_mult_index2_in_delayed));
   logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM (bank1/bank2/output_bram). It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
 
   // Signals for BRAM banks
-  logic [$clog2(N)-1:0] bram1_addr_a, bram1_addr_b, bram2_addr_a, bram2_addr_b;
-  logic signed [14:0] bram1_data_in_a, bram1_data_in_b, bram2_data_in_a, bram2_data_in_b;
-  logic signed [14:0] bram1_data_out_a, bram1_data_out_b, bram2_data_out_a, bram2_data_out_b;
+  logic [`NTT_BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b, bram2_addr_a, bram2_addr_b;
+  logic signed [`NTT_BRAM_DATA_WIDTH-1:0] bram1_data_in_a, bram1_data_in_b, bram2_data_in_a, bram2_data_in_b;
+  logic signed [`NTT_BRAM_DATA_WIDTH-1:0] bram1_data_out_a, bram1_data_out_b, bram2_data_out_a, bram2_data_out_b;
   logic bram1_we_a, bram1_we_b, bram2_we_a, bram2_we_b;
 
   // "logical" signals that get assigned to different BRAM banks depending on the stage
@@ -82,6 +88,9 @@ module ntt#(
   logic scale_we1_in, scale_we2_in, scale_we1_1, scale_we2_1, scale_we1_out, scale_we2_out;
   logic signed [14:0] scale_temp1, scale_temp2;
 
+  logic input_bram1_read_part, input_bram2_read_part; // 0 = read from top half of the BRAM, 1 = read from bottom half
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) input_bram1_read_part_delay(.clk(clk), .in(read_addr1 >= N/2), .out(input_bram1_read_part));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) input_bram2_read_part_delay(.clk(clk), .in(read_addr2 >= N/2), .out(input_bram2_read_part));
 
   // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024
   // R = pow(2, 16, 12289) (constant for Montgomery multiplication), if not using Montgomery reduction R=1
@@ -101,66 +110,62 @@ module ntt#(
   state_t state, next_state;
 
   ntt_twiddle_factor_rom #(
-                             .N(N)
-                           ) twiddle_rom_ntt (
-                             .clk(clk),
-                             .mode(mode),
-                             .addr(twiddle_address),
-                             .data(twiddle_factor)
-                           );
+                           .N(N)
+                         ) twiddle_rom_ntt (
+                           .clk(clk),
+                           .mode(mode),
+                           .addr(twiddle_address),
+                           .data(twiddle_factor)
+                         );
 
   assign twiddle_address = mode == 1'b0 ? stage + group:  (stage >> 1) + group;
 
-  bram #(
-         .RAM_DEPTH(N)
-       ) bram_bank1 (
-         .clk(clk),
+  bram_1024x15 bram_bank1 (
+                 .clka(clk),
+                 .addra(bram1_addr_a),
+                 .dina(bram1_data_in_a),
+                 .wea(bram1_we_a),
+                 .douta(bram1_data_out_a),
 
-         .addr_a(bram1_addr_a),
-         .data_in_a(bram1_data_in_a),
-         .we_a(bram1_we_a),
-         .data_out_a(bram1_data_out_a),
+                 .clkb(clk),
+                 .addrb(bram1_addr_b),
+                 .dinb(bram1_data_in_b),
+                 .web(bram1_we_b),
+                 .doutb(bram1_data_out_b)
+               );
 
-         .addr_b(bram1_addr_b),
-         .data_in_b(bram1_data_in_b),
-         .we_b(bram1_we_b),
-         .data_out_b(bram1_data_out_b)
-       );
+  bram_1024x15 bram_bank2 (
+                 .clka(clk),
+                 .addra(bram2_addr_a),
+                 .dina(bram2_data_in_a),
+                 .wea(bram2_we_a),
+                 .douta(bram2_data_out_a),
 
-  bram #(
-         .RAM_DEPTH(N)
-       ) bram_bank2 (
-         .clk(clk),
-
-         .addr_a(bram2_addr_a),
-         .data_in_a(bram2_data_in_a),
-         .we_a(bram2_we_a),
-         .data_out_a(bram2_data_out_a),
-
-         .addr_b(bram2_addr_b),
-         .data_in_b(bram2_data_in_b),
-         .we_b(bram2_we_b),
-         .data_out_b(bram2_data_out_b)
-       );
+                 .clkb(clk),
+                 .addrb(bram2_addr_b),
+                 .dinb(bram2_data_in_b),
+                 .web(bram2_we_b),
+                 .doutb(bram2_data_out_b)
+               );
 
   mod_mult_ntt #(
-                          .N(N)
-                        )mod_mult(
-                          .clk(clk),
-                          .rst_n(rst_n),
-                          .a(mod_mult_a),
-                          .b(mod_mult_b),
-                          .valid_in(mod_mult_valid_in_i),
-                          .index1_in(mod_mult_index1_in_i),
-                          .index2_in(mod_mult_index2_in_i),
-                          .passthrough_in(mod_mult_passthrough_in),
-                          .result(mod_mult_result),
-                          .valid_out(mod_mult_valid_out),
-                          .last(mod_mult_last),
-                          .index1_out(mod_mult_index1_out),
-                          .index2_out(mod_mult_index2_out),
-                          .passthrough_out(mod_mult_passthrough_out)
-                        );
+                 .N(N)
+               )mod_mult(
+                 .clk(clk),
+                 .rst_n(rst_n),
+                 .a(mod_mult_a),
+                 .b(mod_mult_b),
+                 .valid_in(mod_mult_valid_in_delayed),
+                 .index1_in(mod_mult_index1_in_delayed),
+                 .index2_in(mod_mult_index2_in_delayed),
+                 .passthrough_in(mod_mult_passthrough_in),
+                 .result(mod_mult_result),
+                 .valid_out(mod_mult_valid_out),
+                 .last(mod_mult_last),
+                 .index1_out(mod_mult_index1_out),
+                 .index2_out(mod_mult_index2_out),
+                 .passthrough_out(mod_mult_passthrough_out)
+               );
 
   // Modulo 12289 addition
   function [14:0] mod_add(input logic signed [14:0] a, b);
@@ -299,11 +304,11 @@ module ntt#(
     scale_we2_in = 0;
 
     if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
-      input_bram_addr1 = read_addr1;
-      read_data1 = input_bram_data1;
+      input_bram_addr1 = read_addr1 % (N/2);
+      read_data1 = input_bram1_read_part ? input_bram_data1[14:0] : input_bram_data1[64+14:64];
 
-      input_bram_addr2 = read_addr2;
-      read_data2 = input_bram_data2;
+      input_bram_addr2 = read_addr2 % (N/2);
+      read_data2 = input_bram2_read_part ? input_bram_data2[14:0] : input_bram_data2[64+14:64];
     end
     else begin // Read from bank1/bank2 when stage_counter > 0
       if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank2
@@ -381,23 +386,11 @@ module ntt#(
       state <= next_state;
   end
 
-  // BRAM has delay of 1 cycle so we have to delay other signals
-  // We can also use this block to delay bram_write_complete, so we know when to change the state
   always_ff @(posedge clk) begin
-    if(rst_n == 1'b0) begin
-      mod_mult_valid_in_i <= 0;
-      mod_mult_index1_in_i <= 0;
-      mod_mult_index2_in_i <= 0;
+    if(rst_n == 1'b0) 
       bram_write_complete <= 0;
-      twiddle_factor_i <= 0;
-    end
-    else begin
-      mod_mult_valid_in_i <= mod_mult_valid_in;
-      mod_mult_index1_in_i <= mod_mult_index1_in;
-      mod_mult_index2_in_i <= mod_mult_index2_in;
+    else 
       bram_write_complete <= mod_mult_last;
-      twiddle_factor_i <= twiddle_factor;
-    end
   end
 
   // Assign mod_mult parameters
@@ -411,7 +404,7 @@ module ntt#(
     end
     else if(state == NTT || state == NTT_WAIT_FOR_MULTIPLY) begin
       mod_mult_a = mode == 1'b0 ? read_data2 : mod_sub(read_data1, read_data2);
-      mod_mult_b = twiddle_factor_i;
+      mod_mult_b = twiddle_factor_delayed;
       mod_mult_passthrough_in = mode == 1'b0 ? read_data1 : mod_add(read_data1, read_data2);
     end
     else begin
@@ -424,6 +417,8 @@ module ntt#(
   always_ff @(posedge clk) begin
 
     if (rst_n == 1'b0) begin
+      read_addr1 <= 0;
+      read_addr2 <= 0;
       mod_mult_valid_in <= 0;
       mod_mult_index1_in <= 0;
       mod_mult_index2_in <= 0;
