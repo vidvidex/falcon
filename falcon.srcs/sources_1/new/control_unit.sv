@@ -29,11 +29,12 @@ module control_unit#(
     input logic [31:0] instruction,
     output logic instruction_done,  // When this is high the next instruction can be issued. Does not necessarily mean that the instruction has really been executed all the way (for example some simpler pipelines, such as int_to_double.).
 
-    input logic [`BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
-    output logic [`BRAM_DATA_WIDTH-1:0] bram_dout // Data read from BRAM
+    input logic [`FFT_BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
+    output logic [`FFT_BRAM_DATA_WIDTH-1:0] bram_dout // Data read from BRAM
   );
 
-  parameter int BRAM_BANK_COUNT = 8; // Number of BRAM banks
+  parameter int FFT_BRAM_BANK_COUNT = 6; // Number of 512x128 BRAM banks
+  parameter int NTT_BRAM_BANK_COUNT = 2; // Number of 1024x15 BRAM banks
 
   typedef enum logic [3:0] {
             NOP          = 4'b0000, // No operation, sets WE for all BRAMs to 0
@@ -51,45 +52,70 @@ module control_unit#(
 
   opcode_t opcode;
   logic [2:0] task_bank1;
-  logic [`BRAM_ADDR_WIDTH-1:0] task_addr1;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] task_addr1;
   logic [2:0] task_bank2;
-  logic [`BRAM_ADDR_WIDTH-1:0] task_addr2;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] task_addr2;
   logic [3:0] task_params;
 
-  logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
-  logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a [BRAM_BANK_COUNT];
-  logic [`BRAM_DATA_WIDTH-1:0] bram_din_a [BRAM_BANK_COUNT];
-  logic bram_we_a [BRAM_BANK_COUNT];
-
-  logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_b [BRAM_BANK_COUNT];
-  logic [`BRAM_DATA_WIDTH-1:0] bram_din_b [BRAM_BANK_COUNT];
-  logic [`BRAM_DATA_WIDTH-1:0] bram_dout_b [BRAM_BANK_COUNT];
-  logic bram_we_b [BRAM_BANK_COUNT];
-
-  genvar i;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram_addr_a [FFT_BRAM_BANK_COUNT];
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_dout_a [FFT_BRAM_BANK_COUNT];
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_din_a [FFT_BRAM_BANK_COUNT];
+  logic fft_bram_we_a [FFT_BRAM_BANK_COUNT];
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram_addr_b [FFT_BRAM_BANK_COUNT];
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_din_b [FFT_BRAM_BANK_COUNT];
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_dout_b [FFT_BRAM_BANK_COUNT];
+  logic bram_we_b [FFT_BRAM_BANK_COUNT];
+  genvar i_fft;
   generate
-    for (i = 0; i < BRAM_BANK_COUNT; i++) begin : bram_bank
+    for (i_fft = 0; i_fft < FFT_BRAM_BANK_COUNT; i_fft++) begin : fft_bram_bank
       bram_512x128 bram_512x128_inst (
-                     .addra(bram_addr_a[i]),
+                     .addra(fft_bram_addr_a[i_fft]),
                      .clka(clk),
-                     .dina(bram_din_a[i]),
-                     .douta(bram_dout_a[i]),
-                     .wea(bram_we_a[i]),
+                     .dina(fft_bram_din_a[i_fft]),
+                     .douta(fft_bram_dout_a[i_fft]),
+                     .wea(fft_bram_we_a[i_fft]),
 
-                     .addrb(bram_addr_b[i]),
+                     .addrb(fft_bram_addr_b[i_fft]),
                      .clkb(clk),
-                     .dinb(bram_din_b[i]),
-                     .doutb(bram_dout_b[i]),
-                     .web(bram_we_b[i])
+                     .dinb(fft_bram_din_b[i_fft]),
+                     .doutb(fft_bram_dout_b[i_fft]),
+                     .web(bram_we_b[i_fft])
+                   );
+    end
+  endgenerate
+
+  logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_bram_addr_a [NTT_BRAM_BANK_COUNT];
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_bram_dout_a [NTT_BRAM_BANK_COUNT];
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_bram_din_a [NTT_BRAM_BANK_COUNT];
+  logic ntt_bram_we_a [NTT_BRAM_BANK_COUNT];
+  logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_bram_addr_b [NTT_BRAM_BANK_COUNT];
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_bram_din_b [NTT_BRAM_BANK_COUNT];
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_bram_dout_b [NTT_BRAM_BANK_COUNT];
+  logic bram_we_b [NTT_BRAM_BANK_COUNT];
+  genvar i_ntt;
+  generate
+    for (i_ntt = 0; i_ntt < NTT_BRAM_BANK_COUNT; i_ntt++) begin : ntt_bram_bank
+      bram_1024x15 bram_1024x15_inst (
+                     .addra(ntt_bram_addr_a[i_ntt]),
+                     .clka(clk),
+                     .dina(ntt_bram_din_a[i_ntt]),
+                     .douta(ntt_bram_dout_a[i_ntt]),
+                     .wea(ntt_bram_we_a[i_ntt]),
+
+                     .addrb(ntt_bram_addr_b[i_ntt]),
+                     .clkb(clk),
+                     .dinb(ntt_bram_din_b[i_ntt]),
+                     .doutb(ntt_bram_dout_b[i_ntt]),
+                     .web(bram_we_b[i_ntt])
                    );
     end
   endgenerate
 
   logic htp_start, htp_start_i;
-  logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
-  logic [`BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
-  logic [`BRAM_ADDR_WIDTH-1:0] htp_output_bram1_addr, htp_output_bram2_addr;
-  logic [`BRAM_DATA_WIDTH-1:0] htp_output_bram1_data, htp_output_bram2_data;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] htp_output_bram1_addr, htp_output_bram2_addr;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] htp_output_bram1_data, htp_output_bram2_data;
   logic htp_output_bram1_we;
   logic htp_done;
   hash_to_point #(
@@ -113,7 +139,7 @@ module control_unit#(
                   .done(htp_done)
                 );
 
-  logic [`BRAM_DATA_WIDTH-1:0] int_to_double_data_in, int_to_double_data_out;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] int_to_double_data_in, int_to_double_data_out;
   logic int_to_double_valid_in, int_to_double_valid_in_delayed, int_to_double_valid_out;
   int_to_double int_to_double (
                   .clk(clk),
@@ -122,8 +148,8 @@ module control_unit#(
                   .data_out(int_to_double_data_out),
                   .valid_out(int_to_double_valid_out)
                 );
-  logic [`BRAM_ADDR_WIDTH-1:0] int_to_double_write_addr;  // Where to write the output of int_to_double
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(3)) int_to_double_write_addr_delay(.clk(clk), .in(task_addr2), .out(int_to_double_write_addr));
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] int_to_double_write_addr;  // Where to write the output of int_to_double
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(3)) int_to_double_write_addr_delay(.clk(clk), .in(task_addr2), .out(int_to_double_write_addr));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
 
   logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
@@ -155,13 +181,13 @@ module control_unit#(
                 );
 
   logic fft_mode, fft_start, fft_start_i, fft_done;
-  logic [`BRAM_ADDR_WIDTH-1:0] fft_bram1_addr_a, fft_bram1_addr_b;
-  logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_din_a, fft_bram1_din_b;
-  logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_dout_a, fft_bram1_dout_b;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram1_addr_a, fft_bram1_addr_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram1_din_a, fft_bram1_din_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram1_dout_a, fft_bram1_dout_b;
   logic fft_bram1_we_a, fft_bram1_we_b;
-  logic [`BRAM_ADDR_WIDTH-1:0] fft_bram2_addr_a, fft_bram2_addr_b;
-  logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_din_a, fft_bram2_din_b;
-  logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_dout_a, fft_bram2_dout_b;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram2_addr_a, fft_bram2_addr_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram2_din_a, fft_bram2_din_b;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram2_dout_a, fft_bram2_dout_b;
   logic fft_bram2_we_a, fft_bram2_we_b;
   fft #(
         .N(N)
@@ -207,13 +233,13 @@ module control_unit#(
       );
 
   logic decompress_start, decompress_start_i;
-  logic [`BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
-  logic [`BRAM_DATA_WIDTH-1:0] decompress_input_bram_data;
-  logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
-  logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram1_data;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] decompress_input_bram_data;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] decompress_output_bram1_data;
   logic decompress_output_bram1_we;
-  logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
-  logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram2_data;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] decompress_output_bram2_data;
   logic decompress_signature_error, decompress_done;
   decompress #(
                .N(N)
@@ -326,44 +352,44 @@ module control_unit#(
     case (opcode)
       NOP: begin
         // No operation, do nothing except stop writing to BRAMs
-        for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
-          bram_we_a[i] = 1'b0;
+        for(int i = 0; i < FFT_BRAM_BANK_COUNT; i++) begin
+          fft_bram_we_a[i] = 1'b0;
           bram_we_b[i] = 1'b0;
         end
       end
 
       HASH_TO_POINT: begin
-        bram_addr_a[task_bank1] = htp_input_bram_addr;
-        htp_input_bram_data = bram_dout_a[task_bank1];
+        fft_bram_addr_a[task_bank1] = htp_input_bram_addr;
+        htp_input_bram_data = fft_bram_dout_a[task_bank1];
 
-        bram_addr_a[task_bank2] = htp_output_bram1_addr;
-        bram_din_a[task_bank2] = htp_output_bram1_data;
-        bram_we_a[task_bank2] = htp_output_bram1_we;
+        fft_bram_addr_a[task_bank2] = htp_output_bram1_addr;
+        fft_bram_din_a[task_bank2] = htp_output_bram1_data;
+        fft_bram_we_a[task_bank2] = htp_output_bram1_we;
 
-        bram_addr_b[task_bank2] = htp_output_bram2_addr;
-        htp_output_bram2_data = bram_dout_b[task_bank2];
+        fft_bram_addr_b[task_bank2] = htp_output_bram2_addr;
+        htp_output_bram2_data = fft_bram_dout_b[task_bank2];
 
         instruction_done = htp_done;
       end
 
       FFT_IFFT: begin
-        bram_addr_a[task_bank1] = fft_bram1_addr_a;
-        bram_din_a[task_bank1] = fft_bram1_din_a;
-        bram_we_a[task_bank1] = fft_bram1_we_a;
-        bram_addr_b[task_bank1] = fft_bram1_addr_b;
-        bram_din_b[task_bank1] = fft_bram1_din_b;
+        fft_bram_addr_a[task_bank1] = fft_bram1_addr_a;
+        fft_bram_din_a[task_bank1] = fft_bram1_din_a;
+        fft_bram_we_a[task_bank1] = fft_bram1_we_a;
+        fft_bram_addr_b[task_bank1] = fft_bram1_addr_b;
+        fft_bram_din_b[task_bank1] = fft_bram1_din_b;
         bram_we_b[task_bank1] = fft_bram1_we_b;
-        fft_bram1_dout_a = bram_dout_a[task_bank1];
-        fft_bram1_dout_b = bram_dout_b[task_bank1];
+        fft_bram1_dout_a = fft_bram_dout_a[task_bank1];
+        fft_bram1_dout_b = fft_bram_dout_b[task_bank1];
 
-        bram_addr_a[task_bank2] = fft_bram2_addr_a;
-        bram_din_a[task_bank2] = fft_bram2_din_a;
-        bram_we_a[task_bank2] = fft_bram2_we_a;
-        bram_addr_b[task_bank2] = fft_bram2_addr_b;
-        bram_din_b[task_bank2] = fft_bram2_din_b;
+        fft_bram_addr_a[task_bank2] = fft_bram2_addr_a;
+        fft_bram_din_a[task_bank2] = fft_bram2_din_a;
+        fft_bram_we_a[task_bank2] = fft_bram2_we_a;
+        fft_bram_addr_b[task_bank2] = fft_bram2_addr_b;
+        fft_bram_din_b[task_bank2] = fft_bram2_din_b;
         bram_we_b[task_bank2] = fft_bram2_we_b;
-        fft_bram2_dout_a = bram_dout_a[task_bank2];
-        fft_bram2_dout_b = bram_dout_b[task_bank2];
+        fft_bram2_dout_a = fft_bram_dout_a[task_bank2];
+        fft_bram2_dout_b = fft_bram_dout_b[task_bank2];
 
         instruction_done = fft_done;
       end
@@ -385,19 +411,19 @@ module control_unit#(
       end
 
       DECOMPRESS: begin
-        bram_addr_a[task_bank1] = decompress_input_bram_addr;
-        decompress_input_bram_data = bram_dout_a[task_bank1];
+        fft_bram_addr_a[task_bank1] = decompress_input_bram_addr;
+        decompress_input_bram_data = fft_bram_dout_a[task_bank1];
 
         // We output to both task_bank2 and task_params[2:0]
-        bram_addr_a[task_bank2] = decompress_output_bram1_addr;
-        bram_din_a[task_bank2] = decompress_output_bram1_data;
-        bram_we_a[task_bank2] = decompress_output_bram1_we;
-        bram_addr_a[task_params[2:0]] = decompress_output_bram1_addr;
-        bram_din_a[task_params[2:0]] = decompress_output_bram1_data;
-        bram_we_a[task_params[2:0]] = decompress_output_bram1_we;
+        fft_bram_addr_a[task_bank2] = decompress_output_bram1_addr;
+        fft_bram_din_a[task_bank2] = decompress_output_bram1_data;
+        fft_bram_we_a[task_bank2] = decompress_output_bram1_we;
+        fft_bram_addr_a[task_params[2:0]] = decompress_output_bram1_addr;
+        fft_bram_din_a[task_params[2:0]] = decompress_output_bram1_data;
+        fft_bram_we_a[task_params[2:0]] = decompress_output_bram1_we;
 
-        bram_addr_b[task_bank2] = decompress_output_bram2_addr;
-        decompress_output_bram2_data = bram_dout_b[task_bank2];
+        fft_bram_addr_b[task_bank2] = decompress_output_bram2_addr;
+        decompress_output_bram2_data = fft_bram_dout_b[task_bank2];
 
         instruction_done = decompress_done;
       end
@@ -405,8 +431,8 @@ module control_unit#(
       BRAM_READ: begin
         // Reads from BRAM "task_bank1" at address "task_addr1". Output is "bram_dout".
 
-        bram_addr_a[task_bank1] = task_addr1;
-        bram_dout = bram_dout_a[task_bank1];
+        fft_bram_addr_a[task_bank1] = task_addr1;
+        bram_dout = fft_bram_dout_a[task_bank1];
 
         instruction_done = 1'b1; // We set done to 1 immediately even though the read will take a few cycles. This is because the data will definitely be available then, so we can issue the next instruction.
       end
@@ -414,21 +440,21 @@ module control_unit#(
       BRAM_WRITE: begin
         // Writes to BRAM "task_bank1" at address "task_addr1". Input is "bram_din".
 
-        bram_addr_a[task_bank1] = task_addr1;
-        bram_din_a[task_bank1] = bram_din;
-        bram_we_a[task_bank1] = 1'b1;
+        fft_bram_addr_a[task_bank1] = task_addr1;
+        fft_bram_din_a[task_bank1] = bram_din;
+        fft_bram_we_a[task_bank1] = 1'b1;
 
         instruction_done = 1'b1;
       end
 
       INT_TO_DOUBLE: begin
-        bram_addr_a[task_bank1] = task_addr1;
-        int_to_double_data_in = bram_dout_a[task_bank1];
+        fft_bram_addr_a[task_bank1] = task_addr1;
+        int_to_double_data_in = fft_bram_dout_a[task_bank1];
 
         // Write output to BRAM
         if(int_to_double_valid_out) begin
-          bram_addr_b[task_bank2] = int_to_double_write_addr;
-          bram_din_b[task_bank2] = int_to_double_data_out;
+          fft_bram_addr_b[task_bank2] = int_to_double_write_addr;
+          fft_bram_din_b[task_bank2] = int_to_double_data_out;
           bram_we_b[task_bank2] = 1'b1;
         end
 

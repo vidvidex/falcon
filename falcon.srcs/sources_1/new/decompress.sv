@@ -33,15 +33,15 @@ module decompress #(
 
     input logic start,
 
-    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr,
-    input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data,
+    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr,
+    input logic [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data,
 
-    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram1_addr,
-    output logic [`BRAM_DATA_WIDTH-1:0] output_bram1_data,
+    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram1_addr,
+    output logic [`FFT_BRAM_DATA_WIDTH-1:0] output_bram1_data,
     output logic output_bram1_we,
 
-    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
-    input logic [`BRAM_DATA_WIDTH-1:0] output_bram2_data,
+    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
+    input logic [`FFT_BRAM_DATA_WIDTH-1:0] output_bram2_data,
 
     output logic signature_error,    //! Was an error detected in the signature
     output logic done //! Decompression done, parent should also check if signature_error is set
@@ -80,7 +80,7 @@ module decompress #(
   logic output_we;
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) output_we_delay(.clk(clk), .in(output_we), .out(output_bram1_we));
 
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
 
   logic [2*128-1:0] buffer, buffer_tmp; // Buffer of compressed signature bits
   logic [8:0] buffer_valid_bits;  // How many bits in the buffer are valid (counting from the left)
