@@ -37,17 +37,18 @@ module control_unit#(
   parameter int NTT_BRAM_BANK_COUNT = 2; // Number of 1024x15 BRAM banks
 
   typedef enum logic [3:0] {
-            NOP          = 4'b0000, // No operation, sets WE for all BRAMs to 0
-            HASH_TO_POINT= 4'b0001, // Input is task_bram1. First BRAM cell contains length of salt and message combined in bytes. Output is task_bram2. src and dest cannot be the same because we need 3 channels (1 for input and 2 for output)
-            FFT_IFFT     = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
-            FP_ARITH     = 4'b0011,
-            FFT_SPLIT    = 4'b0100,
-            FFT_MERGE    = 4'b0101,
-            CHECK_NORM   = 4'b0110,
-            DECOMPRESS   = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[2:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
-            BRAM_READ    = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
-            BRAM_WRITE   = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
-            INT_TO_DOUBLE= 4'b1010  // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
+            NOP           = 4'b0000, // No operation, sets WE for all BRAMs to 0
+            HASH_TO_POINT = 4'b0001, // Input is task_bram1. First BRAM cell contains length of salt and message combined in bytes. Output is task_bram2. src and dest cannot be the same because we need 3 channels (1 for input and 2 for output)
+            FFT_IFFT      = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
+            FP_ARITH      = 4'b0011,
+            FFT_SPLIT     = 4'b0100,
+            FFT_MERGE     = 4'b0101,
+            CHECK_NORM    = 4'b0110,
+            DECOMPRESS    = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[2:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
+            BRAM_READ     = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
+            BRAM_WRITE    = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
+            INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
+            NTT_INTT      = 4'b1011  // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
           } opcode_t;
 
   opcode_t opcode;
@@ -263,6 +264,44 @@ module control_unit#(
                .done(decompress_done)
              );
 
+
+  logic ntt_start, ntt_start_i;
+  logic ntt_mode;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr1;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] ntt_input_bram_data1;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr2;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] ntt_input_bram_data2;
+  logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr1;
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_output_bram_data1;
+  logic ntt_output_bram_we1;
+  logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr2;
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_output_bram_data2;
+  logic ntt_output_bram_we2;
+  logic ntt_done;
+  ntt #(
+        .N(N)
+      )ntt(
+        .clk(clk),
+        .rst_n(rst_n),
+        .start(ntt_start && !ntt_start_i),
+        .mode(ntt_mode),
+
+        .input_bram_addr1(ntt_input_bram_addr1),
+        .input_bram_data1(ntt_input_bram_data1),
+        .input_bram_addr2(ntt_input_bram_addr2),
+        .input_bram_data2(ntt_input_bram_data2),
+
+        .output_bram_addr1(ntt_output_bram_addr1),
+        .output_bram_data1(ntt_output_bram_data1),
+        .output_bram_we1(ntt_output_bram_we1),
+        .output_bram_addr2(ntt_output_bram_addr2),
+        .output_bram_data2(ntt_output_bram_data2),
+        .output_bram_we2(ntt_output_bram_we2),
+
+        .done(ntt_done)
+      );
+
+
   // Task execution based on opcode
   always_ff @(posedge clk) begin
 
@@ -283,16 +322,23 @@ module control_unit#(
 
       decompress_start <= 1'b0;
       decompress_start_i <= 1'b0;
+
+      ntt_start <= 1'b0;
+      ntt_start_i <= 1'b0;
     end
     else begin
 
       htp_start_i <= htp_start;
       fft_start_i <= fft_start;
       decompress_start_i <= decompress_start;
+      ntt_start_i <= ntt_start;
 
       case (opcode)
         NOP: begin
-
+          htp_start <= 1'b0;
+          fft_start <= 1'b0;
+          decompress_start <= 1'b0;
+          ntt_start <= 1'b0;
         end
 
         HASH_TO_POINT: begin
@@ -334,6 +380,11 @@ module control_unit#(
 
         INT_TO_DOUBLE: begin
 
+        end
+
+        NTT_INTT: begin
+          ntt_mode <= task_params[3]; // Set NTT mode based on task parameters
+          ntt_start <= 1'b1;
         end
 
         default: begin
@@ -460,6 +511,22 @@ module control_unit#(
 
         int_to_double_valid_in = 1'b1;
         instruction_done = 1'b1;
+      end
+
+      NTT_INTT: begin
+        fft_bram_addr_a[task_bank1] = ntt_input_bram_addr1;
+        ntt_input_bram_data1 = fft_bram_dout_a[task_bank1];
+        fft_bram_addr_b[task_bank1] = ntt_input_bram_addr2;
+        ntt_input_bram_data2 = fft_bram_dout_b[task_bank1];
+
+        ntt_bram_addr_a[task_bank2] = ntt_output_bram_addr1;
+        ntt_bram_din_a[task_bank2] = ntt_output_bram_data1;
+        ntt_bram_we_a[task_bank2] = ntt_output_bram_we1;
+        ntt_bram_addr_b[task_bank2] = ntt_output_bram_addr2;
+        ntt_bram_din_b[task_bank2] = ntt_output_bram_data2;
+        ntt_bram_we_b[task_bank2] = ntt_output_bram_we2;
+
+        instruction_done = ntt_done;
       end
 
       default: begin

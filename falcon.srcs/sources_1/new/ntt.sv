@@ -54,7 +54,7 @@ module ntt#(
   logic signed [$clog2(N)-1:0] group;
 
   logic [14:0] twiddle_factor, twiddle_factor_delayed;
-  delay_register #(.BITWIDTH(15), .CYCLE_COUNT(2)) twiddle_factor_delay(.clk(clk), .in(twiddle_factor), .out(twiddle_factor_delayed));
+  delay_register #(.BITWIDTH(15), .CYCLE_COUNT(3)) twiddle_factor_delay(.clk(clk), .in(twiddle_factor), .out(twiddle_factor_delayed));
   logic [9:0] twiddle_address;
 
   logic signed [14:0] mod_mult_a, mod_mult_b, mod_mult_passthrough_in;
@@ -64,9 +64,9 @@ module ntt#(
   logic [$clog2(N):0] mod_mult_index1_out, mod_mult_index2_out;
   logic mod_mult_valid_out, mod_mult_last;
 
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
-  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(2)) mod_mult_index1_in_delay(.clk(clk), .in(mod_mult_index1_in), .out(mod_mult_index1_in_delayed));
-  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(2)) mod_mult_index2_in_delay(.clk(clk), .in(mod_mult_index2_in), .out(mod_mult_index2_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
+  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mod_mult_index1_in_delay(.clk(clk), .in(mod_mult_index1_in), .out(mod_mult_index1_in_delayed));
+  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mod_mult_index2_in_delay(.clk(clk), .in(mod_mult_index2_in), .out(mod_mult_index2_in_delayed));
   logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM (bank1/bank2/output_bram). It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
 
   // Signals for BRAM banks
@@ -293,9 +293,6 @@ module ntt#(
     bram2_data_in_b = 0;
     bram2_we_b = 0;
 
-    read_data1 = 0;
-    read_data2 = 0;
-
     scale_data1_in = 0;
     scale_data2_in = 0;
     scale_addr1_in = 0;
@@ -305,23 +302,16 @@ module ntt#(
 
     if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
       input_bram_addr1 = read_addr1 % (N/2);
-      read_data1 = input_bram1_read_part ? input_bram_data1[14:0] : input_bram_data1[64+14:64];
-
       input_bram_addr2 = read_addr2 % (N/2);
-      read_data2 = input_bram2_read_part ? input_bram_data2[14:0] : input_bram_data2[64+14:64];
     end
     else begin // Read from bank1/bank2 when stage_counter > 0
       if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank2
         bram2_addr_a = read_addr1;
-        read_data1 = bram2_data_out_a;
         bram2_addr_b = read_addr2;
-        read_data2 = bram2_data_out_b;
       end
       else begin       // When stage_counter is odd we read from bank1
         bram1_addr_a = read_addr1;
-        read_data1 = bram1_data_out_a;
         bram1_addr_b = read_addr2;
-        read_data2 = bram1_data_out_b;
       end
     end
 
@@ -374,6 +364,23 @@ module ntt#(
         bram2_addr_b = write_addr2;
         bram2_data_in_b = write_data2;
         bram2_we_b = write_enable2;
+      end
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
+      read_data1 <= input_bram1_read_part ? input_bram_data1[14:0] : input_bram_data1[64+14:64];
+      read_data2 <= input_bram2_read_part ? input_bram_data2[14:0] : input_bram_data2[64+14:64];
+    end
+    else begin // Read from bank1/bank2 when stage_counter > 0
+      if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank2
+        read_data1 <= bram2_data_out_a;
+        read_data2 <= bram2_data_out_b;
+      end
+      else begin       // When stage_counter is odd we read from bank1
+        read_data1 <= bram1_data_out_a;
+        read_data2 <= bram1_data_out_b;
       end
     end
   end
