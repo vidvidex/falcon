@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="26,568.234 ns"></ZoomStartTime>
-      <ZoomEndTime time="26,878.835 ns"></ZoomEndTime>
-      <Cursor1Time time="26,620.000 ns"></Cursor1Time>
+      <ZoomStartTime time="709.441 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,058.112 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="254"></NameColumnWidth>
-      <ValueColumnWidth column_width="90"></ValueColumnWidth>
+      <ValueColumnWidth column_width="86"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
@@ -108,435 +108,443 @@
          <obj_property name="ElementShortName">task_params[3:0]</obj_property>
          <obj_property name="ObjectShortName">task_params[3:0]</obj_property>
       </wvobject>
-      <wvobject type="group" fp_name="group452">
-         <obj_property name="label">bram0</obj_property>
+      <wvobject type="group" fp_name="group534">
+         <obj_property name="label">fft_bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[0]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][8:0]</obj_property>
             <obj_property name="ObjectShortName">[0][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_a[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[0]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][127:0]</obj_property>
             <obj_property name="ObjectShortName">[0][127:0]</obj_property>
             <obj_property name="label">din_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[0]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][127:0]</obj_property>
             <obj_property name="ObjectShortName">[0][127:0]</obj_property>
             <obj_property name="label">dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[0]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0]</obj_property>
             <obj_property name="ObjectShortName">[0]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[0]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_b[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][8:0]</obj_property>
             <obj_property name="ObjectShortName">[0][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[0]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_b[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][127:0]</obj_property>
             <obj_property name="ObjectShortName">[0][127:0]</obj_property>
             <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[0]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_b[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][127:0]</obj_property>
             <obj_property name="ObjectShortName">[0][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[0]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_b[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0]</obj_property>
             <obj_property name="ObjectShortName">[0]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group461">
-         <obj_property name="label">bram1</obj_property>
+      <wvobject type="group" fp_name="group543">
+         <obj_property name="label">fft_bram1</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[1]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][8:0]</obj_property>
             <obj_property name="ObjectShortName">[1][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_a[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[1]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_a[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][127:0]</obj_property>
             <obj_property name="ObjectShortName">[1][127:0]</obj_property>
             <obj_property name="label">din_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[1]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_a[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][127:0]</obj_property>
             <obj_property name="ObjectShortName">[1][127:0]</obj_property>
             <obj_property name="label">dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[1]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_a[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1]</obj_property>
             <obj_property name="ObjectShortName">[1]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[1]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_b[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][8:0]</obj_property>
             <obj_property name="ObjectShortName">[1][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[1]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_b[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][127:0]</obj_property>
             <obj_property name="ObjectShortName">[1][127:0]</obj_property>
             <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[1]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_b[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][127:0]</obj_property>
             <obj_property name="ObjectShortName">[1][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[1]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_b[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1]</obj_property>
             <obj_property name="ObjectShortName">[1]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group470">
-         <obj_property name="label">bram2</obj_property>
+      <wvobject type="group" fp_name="group552">
+         <obj_property name="label">fft_bram2</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[2]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][8:0]</obj_property>
             <obj_property name="ObjectShortName">[2][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_a[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[2]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_a[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][127:0]</obj_property>
             <obj_property name="ObjectShortName">[2][127:0]</obj_property>
             <obj_property name="label">din_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[2]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_a[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][127:0]</obj_property>
             <obj_property name="ObjectShortName">[2][127:0]</obj_property>
             <obj_property name="label">dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[2]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_a[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2]</obj_property>
             <obj_property name="ObjectShortName">[2]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[2]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_b[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][8:0]</obj_property>
             <obj_property name="ObjectShortName">[2][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[2]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_b[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][127:0]</obj_property>
             <obj_property name="ObjectShortName">[2][127:0]</obj_property>
             <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[2]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_b[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][127:0]</obj_property>
             <obj_property name="ObjectShortName">[2][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[2]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_b[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2]</obj_property>
             <obj_property name="ObjectShortName">[2]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group479">
-         <obj_property name="label">bram3</obj_property>
+      <wvobject type="group" fp_name="group561">
+         <obj_property name="label">fft_bram3</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[3]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][8:0]</obj_property>
             <obj_property name="ObjectShortName">[3][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_a[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[3]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][127:0]</obj_property>
             <obj_property name="ObjectShortName">[3][127:0]</obj_property>
             <obj_property name="label">din_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[3]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][127:0]</obj_property>
             <obj_property name="ObjectShortName">[3][127:0]</obj_property>
             <obj_property name="label">dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[3]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3]</obj_property>
             <obj_property name="ObjectShortName">[3]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[3]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_b[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][8:0]</obj_property>
             <obj_property name="ObjectShortName">[3][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[3]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_b[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][127:0]</obj_property>
             <obj_property name="ObjectShortName">[3][127:0]</obj_property>
             <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[3]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_b[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][127:0]</obj_property>
             <obj_property name="ObjectShortName">[3][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[3]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_b[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3]</obj_property>
             <obj_property name="ObjectShortName">[3]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group488">
-         <obj_property name="label">bram4</obj_property>
+      <wvobject type="group" fp_name="group570">
+         <obj_property name="label">fft_bram4</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[4]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][8:0]</obj_property>
             <obj_property name="ObjectShortName">[4][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_a[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[4]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_a[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][127:0]</obj_property>
             <obj_property name="ObjectShortName">[4][127:0]</obj_property>
             <obj_property name="label">din_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[4]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_a[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][127:0]</obj_property>
             <obj_property name="ObjectShortName">[4][127:0]</obj_property>
             <obj_property name="label">dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[4]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_a[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4]</obj_property>
             <obj_property name="ObjectShortName">[4]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[4]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_b[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][8:0]</obj_property>
             <obj_property name="ObjectShortName">[4][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[4]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_b[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][127:0]</obj_property>
             <obj_property name="ObjectShortName">[4][127:0]</obj_property>
             <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[4]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_b[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][127:0]</obj_property>
             <obj_property name="ObjectShortName">[4][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[4]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_b[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4]</obj_property>
             <obj_property name="ObjectShortName">[4]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group497">
-         <obj_property name="label">bram5</obj_property>
+      <wvobject type="group" fp_name="group579">
+         <obj_property name="label">fft_bram5</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[5]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][8:0]</obj_property>
             <obj_property name="ObjectShortName">[5][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_a[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[5]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_a[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][127:0]</obj_property>
             <obj_property name="ObjectShortName">[5][127:0]</obj_property>
             <obj_property name="label">din_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[5]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_a[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][127:0]</obj_property>
             <obj_property name="ObjectShortName">[5][127:0]</obj_property>
             <obj_property name="label">dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[5]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_a[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5]</obj_property>
             <obj_property name="ObjectShortName">[5]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[5]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_b[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][8:0]</obj_property>
             <obj_property name="ObjectShortName">[5][8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[8:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[5]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_din_b[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][127:0]</obj_property>
             <obj_property name="ObjectShortName">[5][127:0]</obj_property>
             <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[5]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_dout_b[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][127:0]</obj_property>
             <obj_property name="ObjectShortName">[5][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[5]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/fft_bram_we_b[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5]</obj_property>
             <obj_property name="ObjectShortName">[5]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group506">
-         <obj_property name="label">bram6</obj_property>
+      <wvobject type="group" fp_name="group588">
+         <obj_property name="label">ntt_bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[6]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6][8:0]</obj_property>
-            <obj_property name="ObjectShortName">[6][8:0]</obj_property>
+            <obj_property name="ElementShortName">[0][9:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][9:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            <obj_property name="label">addr_a[8:0]</obj_property>
+            <obj_property name="label">addr_a[9:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[6]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_din_a[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[6][127:0]</obj_property>
-            <obj_property name="label">din_a[127:0]</obj_property>
+            <obj_property name="ElementShortName">[0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">din_a[14:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[6]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_dout_a[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[6][127:0]</obj_property>
-            <obj_property name="label">dout_a[127:0]</obj_property>
+            <obj_property name="ElementShortName">[0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">dout_a[14:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[6]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_we_a[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6]</obj_property>
-            <obj_property name="ObjectShortName">[6]</obj_property>
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">[0]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[6]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_addr_b[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6][8:0]</obj_property>
-            <obj_property name="ObjectShortName">[6][8:0]</obj_property>
+            <obj_property name="ElementShortName">[0][9:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][9:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            <obj_property name="label">addr_b[8:0]</obj_property>
+            <obj_property name="label">addr_b[9:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[6]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_din_b[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[6][127:0]</obj_property>
-            <obj_property name="label">din_b[127:0]</obj_property>
+            <obj_property name="ElementShortName">[0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">din_b[14:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[6]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_dout_b[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[6][127:0]</obj_property>
-            <obj_property name="label">dout_b[127:0]</obj_property>
+            <obj_property name="ElementShortName">[0][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">dout_b[14:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[6]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_we_b[0]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[6]</obj_property>
-            <obj_property name="ObjectShortName">[6]</obj_property>
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">[0]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group515">
-         <obj_property name="label">bram7</obj_property>
+      <wvobject type="group" fp_name="group597">
+         <obj_property name="label">ntt_bram1</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_a[7]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_addr_a[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7][8:0]</obj_property>
-            <obj_property name="ObjectShortName">[7][8:0]</obj_property>
+            <obj_property name="ElementShortName">[1][9:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][9:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            <obj_property name="label">addr_a[8:0]</obj_property>
+            <obj_property name="label">addr_a[9:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_a[7]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_din_a[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[7][127:0]</obj_property>
-            <obj_property name="label">din_a[127:0]</obj_property>
+            <obj_property name="ElementShortName">[1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">din_a[14:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_a[7]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_dout_a[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[7][127:0]</obj_property>
-            <obj_property name="label">dout_a[127:0]</obj_property>
+            <obj_property name="ElementShortName">[1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">dout_a[14:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_a[7]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_we_a[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7]</obj_property>
-            <obj_property name="ObjectShortName">[7]</obj_property>
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">[1]</obj_property>
             <obj_property name="label">we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_addr_b[7]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_addr_b[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7][8:0]</obj_property>
-            <obj_property name="ObjectShortName">[7][8:0]</obj_property>
+            <obj_property name="ElementShortName">[1][9:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][9:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            <obj_property name="label">addr_b[8:0]</obj_property>
+            <obj_property name="label">addr_b[9:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din_b[7]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_din_b[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[7][127:0]</obj_property>
-            <obj_property name="label">din_b[127:0]</obj_property>
+            <obj_property name="ElementShortName">[1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">din_b[14:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_dout_b[7]">
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_dout_b[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[7][127:0]</obj_property>
-            <obj_property name="label">dout_b[127:0]</obj_property>
+            <obj_property name="ElementShortName">[1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="label">dout_b[14:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/bram_we_b[7]">
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_we_b[1]">
             <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[7]</obj_property>
-            <obj_property name="ObjectShortName">[7]</obj_property>
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">[1]</obj_property>
             <obj_property name="label">we_b</obj_property>
          </wvobject>
       </wvobject>

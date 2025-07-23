@@ -64,7 +64,7 @@ module control_unit#(
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram_addr_b [FFT_BRAM_BANK_COUNT];
   logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_din_b [FFT_BRAM_BANK_COUNT];
   logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_dout_b [FFT_BRAM_BANK_COUNT];
-  logic bram_we_b [FFT_BRAM_BANK_COUNT];
+  logic fft_bram_we_b [FFT_BRAM_BANK_COUNT];
   genvar i_fft;
   generate
     for (i_fft = 0; i_fft < FFT_BRAM_BANK_COUNT; i_fft++) begin : fft_bram_bank
@@ -79,7 +79,7 @@ module control_unit#(
                      .clkb(clk),
                      .dinb(fft_bram_din_b[i_fft]),
                      .doutb(fft_bram_dout_b[i_fft]),
-                     .web(bram_we_b[i_fft])
+                     .web(fft_bram_we_b[i_fft])
                    );
     end
   endgenerate
@@ -91,7 +91,7 @@ module control_unit#(
   logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_bram_addr_b [NTT_BRAM_BANK_COUNT];
   logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_bram_din_b [NTT_BRAM_BANK_COUNT];
   logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_bram_dout_b [NTT_BRAM_BANK_COUNT];
-  logic bram_we_b [NTT_BRAM_BANK_COUNT];
+  logic ntt_bram_we_b [NTT_BRAM_BANK_COUNT];
   genvar i_ntt;
   generate
     for (i_ntt = 0; i_ntt < NTT_BRAM_BANK_COUNT; i_ntt++) begin : ntt_bram_bank
@@ -106,7 +106,7 @@ module control_unit#(
                      .clkb(clk),
                      .dinb(ntt_bram_din_b[i_ntt]),
                      .doutb(ntt_bram_dout_b[i_ntt]),
-                     .web(bram_we_b[i_ntt])
+                     .web(ntt_bram_we_b[i_ntt])
                    );
     end
   endgenerate
@@ -354,7 +354,7 @@ module control_unit#(
         // No operation, do nothing except stop writing to BRAMs
         for(int i = 0; i < FFT_BRAM_BANK_COUNT; i++) begin
           fft_bram_we_a[i] = 1'b0;
-          bram_we_b[i] = 1'b0;
+          fft_bram_we_b[i] = 1'b0;
         end
       end
 
@@ -378,7 +378,7 @@ module control_unit#(
         fft_bram_we_a[task_bank1] = fft_bram1_we_a;
         fft_bram_addr_b[task_bank1] = fft_bram1_addr_b;
         fft_bram_din_b[task_bank1] = fft_bram1_din_b;
-        bram_we_b[task_bank1] = fft_bram1_we_b;
+        fft_bram_we_b[task_bank1] = fft_bram1_we_b;
         fft_bram1_dout_a = fft_bram_dout_a[task_bank1];
         fft_bram1_dout_b = fft_bram_dout_b[task_bank1];
 
@@ -387,7 +387,7 @@ module control_unit#(
         fft_bram_we_a[task_bank2] = fft_bram2_we_a;
         fft_bram_addr_b[task_bank2] = fft_bram2_addr_b;
         fft_bram_din_b[task_bank2] = fft_bram2_din_b;
-        bram_we_b[task_bank2] = fft_bram2_we_b;
+        fft_bram_we_b[task_bank2] = fft_bram2_we_b;
         fft_bram2_dout_a = fft_bram_dout_a[task_bank2];
         fft_bram2_dout_b = fft_bram_dout_b[task_bank2];
 
@@ -455,7 +455,7 @@ module control_unit#(
         if(int_to_double_valid_out) begin
           fft_bram_addr_b[task_bank2] = int_to_double_write_addr;
           fft_bram_din_b[task_bank2] = int_to_double_data_out;
-          bram_we_b[task_bank2] = 1'b1;
+          fft_bram_we_b[task_bank2] = 1'b1;
         end
 
         int_to_double_valid_in = 1'b1;
