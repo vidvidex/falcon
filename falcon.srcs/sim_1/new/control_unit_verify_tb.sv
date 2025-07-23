@@ -47,7 +47,7 @@ module control_unit_verify_tb;
 
     // Load message len, salt and message into BRAM0
     for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
-      instruction = {4'b1001, 3'b000, i[8:0], 3'b000, 9'b000000000, 4'b0000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=/
+      instruction = {4'b1000, 3'b000, i[8:0], 3'b000, 9'b000000000, 4'b1000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=write
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
       #10;
     end
@@ -56,7 +56,7 @@ module control_unit_verify_tb;
 
     // Load public key into BRAM1
     for (int i = 0; i < N/2; i++) begin
-      instruction = {4'b1001, 3'b001, i[8:0], 3'b000, 9'b000000001, 4'b0000}; // BRAM write; bank1=1; addr1=i; bank2=/; addr2=/; args=/
+      instruction = {4'b1000, 3'b001, i[8:0], 3'b000, 9'b000000001, 4'b1000}; // BRAM write; bank1=1; addr1=i; bank2=/; addr2=/; args=write
       bram_din = {49'b0, public_key[2*i], 49'b0, public_key[2*i+1]};
       #10;
     end
@@ -65,7 +65,7 @@ module control_unit_verify_tb;
 
     // Load signature into BRAM2
     for (int i = 0; i < SIGNATURE_BLOCKS; i++) begin
-      instruction = {4'b1001, 3'b010, i[8:0], 3'b000, 9'b000000001, 4'b0000}; // BRAM write; bank1=2; addr1=i; bank2=/; addr2=/; args=/
+      instruction = {4'b1000, 3'b010, i[8:0], 3'b000, 9'b000000001, 4'b1000}; // BRAM write; bank1=2; addr1=i; bank2=/; addr2=/; args=write
       bram_din = {signature_blocks[2*i], signature_blocks[2*i+1]};
       #10;
     end

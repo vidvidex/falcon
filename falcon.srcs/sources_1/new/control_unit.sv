@@ -40,17 +40,19 @@ module control_unit#(
             NOP           = 4'b0000, // No operation, sets WE for all BRAMs to 0
             HASH_TO_POINT = 4'b0001, // Input is task_bram1. First BRAM cell contains length of salt and message combined in bytes. Output is task_bram2. src and dest cannot be the same because we need 3 channels (1 for input and 2 for output)
             FFT_IFFT      = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
-            FP_ARITH      = 4'b0011,
-            FFT_SPLIT     = 4'b0100,
-            FFT_MERGE     = 4'b0101,
-            CHECK_NORM    = 4'b0110,
+            AVAILABLE0    = 4'b0011,
+            AVAILABLE1    = 4'b0100,
+            AVAILABLE2    = 4'b0101,
+            AVAILABLE3    = 4'b0110,
             DECOMPRESS    = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[2:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
-            BRAM_READ     = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
-            BRAM_WRITE    = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
+            BRAM_RW       = 4'b1000, // if task_params[3] = 0: bram_dout = task_bank1[task_addr1]; if task_params[3] = 1: task_bank2[task_addr2] = bram_din;
+            AVAILABLE4    = 4'b1001,
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
             NTT_INTT      = 4'b1011, // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
             MOD_MULT_Q    = 4'b1100, // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address task_addr1 and task_addr2 and writes the output to task_addr1
-            SUB_NORM_SQ   = 4'b1101  // Reads from BRAMs task_bank1[task_addr1] (data from hash_to_point), task_bank2[task_addr2], task_bank2[task_addr2+N/2] (data from INTT) and task_params[2:0][task_addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
+            SUB_NORM_SQ   = 4'b1101,  // Reads from BRAMs task_bank1[task_addr1] (data from hash_to_point), task_bank2[task_addr2], task_bank2[task_addr2+N/2] (data from INTT) and task_params[2:0][task_addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
+            AVAILABLE5    = 4'b1110,
+            AVAILABLE6    = 4'b1111
           } opcode_t;
 
   opcode_t opcode;
@@ -394,31 +396,11 @@ module control_unit#(
           fft_start <= 1'b1;
         end
 
-        FP_ARITH: begin
-
-        end
-
-        FFT_SPLIT: begin
-
-        end
-
-        FFT_MERGE: begin
-
-        end
-
-        CHECK_NORM: begin
-
-        end
-
         DECOMPRESS: begin
           decompress_start <= 1'b1;
         end
 
-        BRAM_READ: begin
-
-        end
-
-        BRAM_WRITE: begin
+        BRAM_RW: begin
 
         end
 
@@ -513,22 +495,6 @@ module control_unit#(
         instruction_done = fft_done;
       end
 
-      FP_ARITH: begin
-
-      end
-
-      FFT_SPLIT: begin
-
-      end
-
-      FFT_MERGE: begin
-
-      end
-
-      CHECK_NORM: begin
-
-      end
-
       DECOMPRESS: begin
         fft_bram_addr_a[task_bank1] = decompress_input_bram_addr;
         decompress_input_bram_data = fft_bram_dout_a[task_bank1];
@@ -547,22 +513,18 @@ module control_unit#(
         instruction_done = decompress_done;
       end
 
-      BRAM_READ: begin
-        // Reads from BRAM "task_bank1" at address "task_addr1". Output is "bram_dout".
-
-        fft_bram_addr_a[task_bank1] = task_addr1;
-        bram_dout = fft_bram_dout_a[task_bank1];
-
-        instruction_done = 1'b1; // We set done to 1 immediately even though the read will take a few cycles. This is because the data will definitely be available then, so we can issue the next instruction.
-      end
-
-      BRAM_WRITE: begin
-        // Writes to BRAM "task_bank1" at address "task_addr1". Input is "bram_din".
-
-        fft_bram_addr_a[task_bank1] = task_addr1;
-        fft_bram_din_a[task_bank1] = bram_din;
-        fft_bram_we_a[task_bank1] = 1'b1;
-
+      BRAM_RW: begin
+        if(task_params[3]) begin
+          // Writes to BRAM "task_bank1" at address "task_addr1". Input is "bram_din".
+          fft_bram_addr_a[task_bank1] = task_addr1;
+          fft_bram_din_a[task_bank1] = bram_din;
+          fft_bram_we_a[task_bank1] = 1'b1;
+        end
+        else begin
+          // Reads from BRAM "task_bank1" at address "task_addr1". Output is "bram_dout".
+          fft_bram_addr_a[task_bank1] = task_addr1;
+          bram_dout = fft_bram_dout_a[task_bank1];
+        end
         instruction_done = 1'b1;
       end
 

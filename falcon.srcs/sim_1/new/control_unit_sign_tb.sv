@@ -20,15 +20,15 @@ module control_unit_sign_tb;
   always #5 clk = ~clk;
 
   control_unit #(
-                .N(N)
-              ) control_unit (
-                .clk(clk),
-                .rst_n(rst_n),
-                .instruction(instruction),
-                .instruction_done(instruction_done),
-                .bram_din(bram_din),
-                .bram_dout(bram_dout)
-              );
+                 .N(N)
+               ) control_unit (
+                 .clk(clk),
+                 .rst_n(rst_n),
+                 .instruction(instruction),
+                 .instruction_done(instruction_done),
+                 .bram_din(bram_din),
+                 .bram_dout(bram_dout)
+               );
 
   initial begin
 
@@ -46,7 +46,7 @@ module control_unit_sign_tb;
 
     // Load message len, message and salt into BRAM0
     for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
-      instruction = {4'b1001, 3'b000, i[8:0], 3'b000, 9'b000000000, 4'b0000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=/
+      instruction = {4'b1000, 3'b000, i[8:0], 3'b000, 9'b000000000, 4'b1000}; // BRAM write; bank1=0; addr1=0; bank2=/; addr2=/; args=write
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
       #10;
     end
@@ -59,7 +59,7 @@ module control_unit_sign_tb;
       #10;
     #40; // Wait for pipeline to finish
 
-    instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Convert point to double
@@ -69,7 +69,7 @@ module control_unit_sign_tb;
     end
     #40; // Wait for pipeline to finish
 
-    instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Run FFT on output of hash to point
