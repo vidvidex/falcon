@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module mod_mult_verify_tb;
+module mod_mult_tb;
 
   logic clk;
   logic rst_n;
@@ -14,15 +14,12 @@ module mod_mult_verify_tb;
   logic signed [14:0] b_arr [8] = '{2, 2, 2, 2, 2, 2, 2598, 1143};
   logic signed [14:0] expected_results [8] = '{2, 4, 6, 8, 12251, 12253, 3903, 2467};
 
-  logic [3:0] index_in, index_out;
-
   logic valid_in, valid_out;
-  logic last;
 
   logic run_test;
   int send_i = 0, receive_i = 0;    // Counters for sending data to module and receiving from module
 
-  mod_mult_verify #(
+  mod_mult #(
                     .N(8),
                     .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
                   )uut (
@@ -30,12 +27,9 @@ module mod_mult_verify_tb;
                     .rst_n(rst_n),
                     .a(a),
                     .b(b),
-                    .index_in(index_in),
                     .valid_in(valid_in),
                     .result(result),
-                    .valid_out(valid_out),
-                    .index_out(index_out),
-                    .last(last)
+                    .valid_out(valid_out)
                   );
 
   always #5 clk = ~clk;
@@ -48,7 +42,6 @@ module mod_mult_verify_tb;
         b[i] <= b_arr[send_i + i];
       end
       valid_in <= 1;
-      index_in <= send_i;
       send_i <= send_i + 2;
     end
     else begin
@@ -77,13 +70,6 @@ module mod_mult_verify_tb;
             $fatal(1, "Test failed: Result is not correct. Expected %d, got %d", expected_results[receive_i + i], result[i]);
         end
 
-        if (receive_i != index_out)
-          $fatal(1, "Test failed: index_out is not correct. Expected %d, got %d", receive_i, index_out);
-
-        if(receive_i == 6)
-          if(last != 1)
-            $fatal(1, "Test failed: Expected last to be high");
-
         receive_i <= receive_i + 2;
       end
       #10;
@@ -91,7 +77,7 @@ module mod_mult_verify_tb;
 
     run_test = 0;
 
-    $display("All tests for mod_mult_verify passed!");
+    $display("All tests for mod_mult passed!");
     $finish;
   end
 

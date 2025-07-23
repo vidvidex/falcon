@@ -8,14 +8,10 @@
 // To speed up calculating a*b mod 12289 for many number this module supports parallel processing of PARALLEL_OPS_COUNT operands at the same time.
 // Total number of operands that will be processed needs to be divisible by PARALLEL_OPS_COUNT (if N = 8, then PARALLEL_OPS_COUNT can be 1, 2, 4 or 8)
 //
-// The module is tailored specifically for use in the verify module. For this reason we also have a parameter "index" that we just pass through the pipeline,
-// but it makes using this module easier.
-// Should you want to use this module for something else you can safely remove these parameters and just keep the basic multiplication functionality.
-//
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mod_mult_verify #(
+module mod_mult #(
     parameter int N,
     parameter int PARALLEL_OPS_COUNT  //! How many operations to do in parallel (how many a_i * b_i % 12289 operations we do at the same time)
   )(
@@ -23,13 +19,10 @@ module mod_mult_verify #(
     input logic rst_n,
     input logic signed [14:0] a[PARALLEL_OPS_COUNT],  //! First parameters
     input logic signed [14:0] b[PARALLEL_OPS_COUNT],  //! Second parameters
-    input logic valid_in,  //! Are current inputs to the module valid. This is used mainly to generate the "last" signal, signifying the end of data output
-    input logic [$clog2(N):0] index_in,  //! Index of first a and b parameters (first element of "a"/"b") ,passed through the pipeline
+    input logic valid_in,  //! Are current inputs to the module valid
 
     output logic signed [14:0] result[PARALLEL_OPS_COUNT], //! Results of a*b mod 12289
-    output logic valid_out, //! Are the output from the module valid
-    output logic last, //! Is this the last result that we're outputting
-    output logic [$clog2(N):0] index_out
+    output logic valid_out //! Are the output from the module valid
   );
   logic signed [29:0] a_times_b[PARALLEL_OPS_COUNT];
   logic signed [14:0] a_times_b_1[PARALLEL_OPS_COUNT], a_times_b_2[PARALLEL_OPS_COUNT], a_times_b_3[PARALLEL_OPS_COUNT];  // We only need lower 15 bits for this part
@@ -37,7 +30,6 @@ module mod_mult_verify #(
   logic signed [14:0] shifted[PARALLEL_OPS_COUNT];
   logic signed [14:0] times_12289[PARALLEL_OPS_COUNT];
   logic signed [14:0] result_i[PARALLEL_OPS_COUNT];
-  logic [$clog2(N):0] index1, index2, index3, index4, index5;
   logic valid1, valid2, valid3, valid4, valid5;
 
   // Stage 1: Multiply a * b
@@ -46,13 +38,11 @@ module mod_mult_verify #(
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         a_times_b[i] <= 0;
       valid1 <= 0;
-      index1 <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         a_times_b[i] <= a[i] * b[i];
       valid1 <= valid_in;
-      index1 <= index_in;
     end
   end
 
@@ -67,7 +57,6 @@ module mod_mult_verify #(
         a_times_b_1[i] <= 0;
       end
       valid2 <= 0;
-      index2 <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
@@ -75,7 +64,6 @@ module mod_mult_verify #(
         a_times_b_1[i] <= a_times_b[i][14:0]; // Take lower 15 bits of a_times_b
       end
       valid2 <= valid1;
-      index2 <= index1;
     end
   end
 
@@ -87,14 +75,12 @@ module mod_mult_verify #(
         a_times_b_2[i] <= 0;
       end
       valid3 <= 0;
-      index3 <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         shifted[i] <= a_times_b_times_21843[i] >> 28;
       a_times_b_2 <= a_times_b_1;
       valid3 <= valid2;
-      index3 <= index2;
     end
   end
 
@@ -104,14 +90,12 @@ module mod_mult_verify #(
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         times_12289[i] <= 0;
       valid4 <= 0;
-      index4 <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         times_12289[i] <= (((shifted[i] << 3) + (shifted[i] << 2)) << 10) + shifted[i]; // Efficient multiplication by 12289
       a_times_b_3 <= a_times_b_2;
       valid4 <= valid3;
-      index4 <= index3;
     end
   end
 
@@ -121,7 +105,6 @@ module mod_mult_verify #(
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         result_i[i] <= 0;
       valid5 <= 0;
-      index5 <= 0;
     end
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
@@ -131,13 +114,10 @@ module mod_mult_verify #(
           result_i[i] = a_times_b_3[i] - times_12289[i];
       end
       valid5 <= valid4;
-      index5 <= index4;
     end
   end
 
   assign result = result_i;
   assign valid_out = valid5;
-  assign last = valid5 == 1'b1 && valid4 == 1'b0;
-  assign index_out = index5;
 
 endmodule

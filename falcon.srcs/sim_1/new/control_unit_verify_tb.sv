@@ -89,21 +89,38 @@ module control_unit_verify_tb;
     #10;
 
     // Run NTT(public key)
-    instruction = 32'b1011_001_000000000_110_000000000_0000; // NTT; bank1=1; addr1=/; bank2=6; addr2=/; args=mode:ntt
+    instruction = 32'b1011_001_000000000_000_000000000_0000; // NTT; bank1=1; addr1=/; bank2=0(ntt, not fft bank); addr2=/; args=mode:ntt
     while (instruction_done !== 1'b1)
       #10;
     #10;
 
     instruction = 32'b0000_000_000000000_000_000000000_0000; 
     #10;
-    
+
     // Run NTT(decompressed signature)
-    instruction = 32'b1011_101_000000000_111_000000000_0000; // NTT; bank1=5; addr1=/; bank2=7; addr2=/; args=mode:ntt
+    instruction = 32'b1011_101_000000000_001_000000000_0000; // NTT; bank1=5; addr1=/; bank2=1(ntt, not fft bank); addr2=/; args=mode:ntt
     while (instruction_done !== 1'b1)
       #10;
     #10;
 
     instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    #10;
+
+    // Compute public_key * decompressed signature % 12289(in NTT domain) by running mod_mult
+    for (int i = 0; i < N/2; i++) begin
+      logic [8:0] tmp = i + N/2;
+      instruction = {4'b1100, 3'b000, i[8:0], 3'b000, tmp, 4'b0000}; // mod_mult; bank1=/; addr1=i; bank2=0; addr2=i+N/2;args=/
+      #10;
+    end
+    #70;
+
+    instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    #10;
+
+    // Run INTT on the product
+    instruction = 32'b1011_000_000000000_000_000000000_1000; // NTT; bank1=0; addr1=/; bank2=0(ntt, not fft bank); addr2=/; args=mode:intt
+    while (instruction_done !== 1'b1)
+      #10;
     #10;
 
     instruction = 32'b0000_000_000000000_000_000000000_0000;
