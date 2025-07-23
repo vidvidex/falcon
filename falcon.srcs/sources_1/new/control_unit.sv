@@ -40,19 +40,19 @@ module control_unit#(
             NOP           = 4'b0000, // No operation, sets WE for all BRAMs to 0
             HASH_TO_POINT = 4'b0001, // Input is task_bram1. First BRAM cell contains length of salt and message combined in bytes. Output is task_bram2. src and dest cannot be the same because we need 3 channels (1 for input and 2 for output)
             FFT_IFFT      = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
-            AVAILABLE0    = 4'b0011,
+            HTP_DECMP_NTT = 4'b0011, // Runs hash_to_point, decompress and NTT all at once with hardcoded BRAMs
             AVAILABLE1    = 4'b0100,
             AVAILABLE2    = 4'b0101,
             AVAILABLE3    = 4'b0110,
-            DECOMPRESS    = 4'b0111, // Input is task_bank1. First BRAM cell contains the length of signature in bits. The remaining BRAM cells contain the compressed signature. Output is task_bank2 and also task_params[2:0] (output is written to two banks at the same time, because we destroy one of them with NTT later)
+            AVAILABLE4    = 4'b0111,
             BRAM_RW       = 4'b1000, // if task_params[3] = 0: bram_dout = task_bank1[task_addr1]; if task_params[3] = 1: task_bank2[task_addr2] = bram_din;
-            AVAILABLE4    = 4'b1001,
+            AVAILABLE5    = 4'b1001,
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
             NTT_INTT      = 4'b1011, // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
             MOD_MULT_Q    = 4'b1100, // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address task_addr1 and task_addr2 and writes the output to task_addr1
             SUB_NORM_SQ   = 4'b1101,  // Reads from BRAMs task_bank1[task_addr1] (data from hash_to_point), task_bank2[task_addr2], task_bank2[task_addr2+N/2] (data from INTT) and task_params[2:0][task_addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
-            AVAILABLE5    = 4'b1110,
-            AVAILABLE6    = 4'b1111
+            AVAILABLE6    = 4'b1110,
+            AVAILABLE7    = 4'b1111
           } opcode_t;
 
   opcode_t opcode;
@@ -61,6 +61,8 @@ module control_unit#(
   logic [2:0] task_bank2;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] task_addr2;
   logic [3:0] task_params;
+
+  logic [2:0] htp_decmp_ntt_done; // Each bit corresponds to hash_to_point, decompress and ntt respectively. If a bit is 1, the corresponding task is done.
 
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram_addr_a [FFT_BRAM_BANK_COUNT];
   logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_dout_a [FFT_BRAM_BANK_COUNT];
@@ -371,6 +373,8 @@ module control_unit#(
 
       ntt_start <= 1'b0;
       ntt_start_i <= 1'b0;
+
+      htp_decmp_ntt_done <= 3'b000; // Reset done flags for hash_to_point, decompress and ntt
     end
     else begin
 
@@ -396,8 +400,18 @@ module control_unit#(
           fft_start <= 1'b1;
         end
 
-        DECOMPRESS: begin
+        HTP_DECMP_NTT: begin
+          htp_start <= 1'b1;
           decompress_start <= 1'b1;
+          ntt_mode <= 1'b0;
+          ntt_start <= 1'b1;
+
+          if(htp_done == 1'b1)
+            htp_decmp_ntt_done[0] <= 1'b1; // Set hash_to_point done flag
+          if(decompress_done == 1'b1)
+            htp_decmp_ntt_done[1] <= 1'b1; // Set decompress done flag
+          if(ntt_done == 1'b1)
+            htp_decmp_ntt_done[2] <= 1'b1; // Set ntt done flag
         end
 
         BRAM_RW: begin
@@ -495,22 +509,43 @@ module control_unit#(
         instruction_done = fft_done;
       end
 
-      DECOMPRESS: begin
-        fft_bram_addr_a[task_bank1] = decompress_input_bram_addr;
-        decompress_input_bram_data = fft_bram_dout_a[task_bank1];
+      HTP_DECMP_NTT: begin
+        // hash_to_point: input is BRAM0, output is BRAM3
+        fft_bram_addr_a[0] = htp_input_bram_addr;
+        htp_input_bram_data = fft_bram_dout_a[0];
 
-        // We output to both task_bank2 and task_params[2:0]
-        fft_bram_addr_a[task_bank2] = decompress_output_bram1_addr;
-        fft_bram_din_a[task_bank2] = decompress_output_bram1_data;
-        fft_bram_we_a[task_bank2] = decompress_output_bram1_we;
-        fft_bram_addr_a[task_params[2:0]] = decompress_output_bram1_addr;
-        fft_bram_din_a[task_params[2:0]] = decompress_output_bram1_data;
-        fft_bram_we_a[task_params[2:0]] = decompress_output_bram1_we;
+        fft_bram_addr_a[3] = htp_output_bram1_addr;
+        fft_bram_din_a[3] = htp_output_bram1_data;
+        fft_bram_we_a[3] = htp_output_bram1_we;
 
-        fft_bram_addr_b[task_bank2] = decompress_output_bram2_addr;
-        decompress_output_bram2_data = fft_bram_dout_b[task_bank2];
+        fft_bram_addr_b[3] = htp_output_bram2_addr;
+        htp_output_bram2_data = fft_bram_dout_b[3];
 
-        instruction_done = decompress_done;
+        // decompress: input is BRAM2, output is BRAM5
+        fft_bram_addr_a[2] = decompress_input_bram_addr;
+        decompress_input_bram_data = fft_bram_dout_a[2];
+
+        fft_bram_addr_a[5] = decompress_output_bram1_addr;
+        fft_bram_din_a[5] = decompress_output_bram1_data;
+        fft_bram_we_a[5] = decompress_output_bram1_we;
+
+        fft_bram_addr_b[5] = decompress_output_bram2_addr;
+        decompress_output_bram2_data = fft_bram_dout_b[5];
+
+        // NTT: input is BRAM1, output is BRAM6 (ntt bram 0)
+        fft_bram_addr_a[1] = ntt_input_bram_addr1;
+        ntt_input_bram_data1 = fft_bram_dout_a[1];
+        fft_bram_addr_b[1] = ntt_input_bram_addr2;
+        ntt_input_bram_data2 = fft_bram_dout_b[1];
+
+        ntt_bram_addr_a[0] = ntt_output_bram_addr1;
+        ntt_bram_din_a[0] = ntt_output_bram_data1;
+        ntt_bram_we_a[0] = ntt_output_bram_we1;
+        ntt_bram_addr_b[0] = ntt_output_bram_addr2;
+        ntt_bram_din_b[0] = ntt_output_bram_data2;
+        ntt_bram_we_b[0] = ntt_output_bram_we2;
+
+        instruction_done = htp_decmp_ntt_done == 3'b111; // All tasks are done
       end
 
       BRAM_RW: begin

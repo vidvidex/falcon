@@ -72,27 +72,11 @@ module control_unit_verify_tb;
     instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
     #10;
 
-    // Run decompress
-    instruction = 32'b0111_010_000000000_101_000000000_0110; // Decompress; bank1=2; addr1=/; bank2=5; addr2=/; args=destination_bank2=6
+    // Run hash_to_point, decompress and NTT at the same time with hardcoded parameters
+    instruction = 32'b0011_000_000000000_000_000000000_0000; // HTP, decompress, NTT; bank1=/; addr1=/; bank2=/; addr2=/; args=/
     while (instruction_done !== 1'b1)
       #10;
-    instruction = 32'b0000_000_000000000_000_000000000_0000;
-    #10;
-
-    // Run hash to point
-    instruction = 32'b0001_000_000000000_011_000000000_0000; // Hash to point; bank1=0; addr1=/; bank2=3; addr2=/; args=/
-    while (instruction_done !== 1'b1)
-      #10;
-    #40; // Wait for pipeline to finish
-
-    instruction = 32'b0000_000_000000000_000_000000000_0000;
-    #10;
-
-    // Run NTT(public key)
-    instruction = 32'b1011_001_000000000_000_000000000_0000; // NTT; bank1=1; addr1=/; bank2=0(ntt, not fft bank); addr2=/; args=mode:ntt
-    while (instruction_done !== 1'b1)
-      #10;
-    #10;
+    #40;
 
     instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
