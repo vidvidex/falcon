@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="709.441 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,058.112 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="53,890.817 ns"></ZoomStartTime>
+      <ZoomEndTime time="54,245.921 ns"></ZoomEndTime>
+      <Cursor1Time time="53,970.100 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="254"></NameColumnWidth>
-      <ValueColumnWidth column_width="86"></ValueColumnWidth>
+      <ValueColumnWidth column_width="74"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="2" />
+   <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group175">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -810,6 +810,477 @@
             <obj_property name="ElementShortName">fft_bram2_we_b</obj_property>
             <obj_property name="ObjectShortName">fft_bram2_we_b</obj_property>
          </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group764">
+         <obj_property name="label">ntt</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_start">
+            <obj_property name="ElementShortName">ntt_start</obj_property>
+            <obj_property name="ObjectShortName">ntt_start</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_start_i">
+            <obj_property name="ElementShortName">ntt_start_i</obj_property>
+            <obj_property name="ObjectShortName">ntt_start_i</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_mode">
+            <obj_property name="ElementShortName">ntt_mode</obj_property>
+            <obj_property name="ObjectShortName">ntt_mode</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_addr1">
+            <obj_property name="ElementShortName">ntt_input_bram_addr1[8:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_input_bram_addr1[8:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_data1">
+            <obj_property name="ElementShortName">ntt_input_bram_data1[127:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_input_bram_data1[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_addr2">
+            <obj_property name="ElementShortName">ntt_input_bram_addr2[8:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_input_bram_addr2[8:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_data2">
+            <obj_property name="ElementShortName">ntt_input_bram_data2[127:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_input_bram_data2[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_addr1">
+            <obj_property name="ElementShortName">ntt_output_bram_addr1[9:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_output_bram_addr1[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_data1">
+            <obj_property name="ElementShortName">ntt_output_bram_data1[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_output_bram_data1[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_we1">
+            <obj_property name="ElementShortName">ntt_output_bram_we1</obj_property>
+            <obj_property name="ObjectShortName">ntt_output_bram_we1</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_addr2">
+            <obj_property name="ElementShortName">ntt_output_bram_addr2[9:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_output_bram_addr2[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_data2">
+            <obj_property name="ElementShortName">ntt_output_bram_data2[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_output_bram_data2[14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_we2">
+            <obj_property name="ElementShortName">ntt_output_bram_we2</obj_property>
+            <obj_property name="ObjectShortName">ntt_output_bram_we2</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_done">
+            <obj_property name="ElementShortName">ntt_done</obj_property>
+            <obj_property name="ObjectShortName">ntt_done</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group2709">
+      <obj_property name="label">New Group 164</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/mode">
+         <obj_property name="ElementShortName">mode</obj_property>
+         <obj_property name="ObjectShortName">mode</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/input_bram_addr1">
+         <obj_property name="ElementShortName">input_bram_addr1[8:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_addr1[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/input_bram_addr2">
+         <obj_property name="ElementShortName">input_bram_addr2[8:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_addr2[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/input_bram_data1">
+         <obj_property name="ElementShortName">input_bram_data1[127:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data1[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/input_bram_data2">
+         <obj_property name="ElementShortName">input_bram_data2[127:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data2[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/output_bram_addr1">
+         <obj_property name="ElementShortName">output_bram_addr1[9:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_addr1[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/output_bram_addr2">
+         <obj_property name="ElementShortName">output_bram_addr2[9:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_addr2[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/output_bram_data1">
+         <obj_property name="ElementShortName">output_bram_data1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_data1[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/output_bram_data2">
+         <obj_property name="ElementShortName">output_bram_data2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram_data2[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/output_bram_we1">
+         <obj_property name="ElementShortName">output_bram_we1</obj_property>
+         <obj_property name="ObjectShortName">output_bram_we1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/output_bram_we2">
+         <obj_property name="ElementShortName">output_bram_we2</obj_property>
+         <obj_property name="ObjectShortName">output_bram_we2</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/stage_counter">
+         <obj_property name="ElementShortName">stage_counter[8:0]</obj_property>
+         <obj_property name="ObjectShortName">stage_counter[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/stage">
+         <obj_property name="ElementShortName">stage[9:0]</obj_property>
+         <obj_property name="ObjectShortName">stage[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/counter">
+         <obj_property name="ElementShortName">counter[9:0]</obj_property>
+         <obj_property name="ObjectShortName">counter[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/counter_max">
+         <obj_property name="ElementShortName">counter_max[9:0]</obj_property>
+         <obj_property name="ObjectShortName">counter_max[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/stride">
+         <obj_property name="ElementShortName">stride[8:0]</obj_property>
+         <obj_property name="ObjectShortName">stride[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/butterfly">
+         <obj_property name="ElementShortName">butterfly[8:0]</obj_property>
+         <obj_property name="ObjectShortName">butterfly[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/i">
+         <obj_property name="ElementShortName">i[8:0]</obj_property>
+         <obj_property name="ObjectShortName">i[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/group">
+         <obj_property name="ElementShortName">group[8:0]</obj_property>
+         <obj_property name="ObjectShortName">group[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/twiddle_factor">
+         <obj_property name="ElementShortName">twiddle_factor[14:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_factor[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/twiddle_factor_delayed">
+         <obj_property name="ElementShortName">twiddle_factor_delayed[14:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_factor_delayed[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/twiddle_address">
+         <obj_property name="ElementShortName">twiddle_address[9:0]</obj_property>
+         <obj_property name="ObjectShortName">twiddle_address[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_a">
+         <obj_property name="ElementShortName">mod_mult_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_a[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_b">
+         <obj_property name="ElementShortName">mod_mult_b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_b[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_passthrough_in">
+         <obj_property name="ElementShortName">mod_mult_passthrough_in[14:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_passthrough_in[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_index1_in">
+         <obj_property name="ElementShortName">mod_mult_index1_in[9:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_index1_in[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_index1_in_delayed">
+         <obj_property name="ElementShortName">mod_mult_index1_in_delayed[9:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_index1_in_delayed[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_index2_in">
+         <obj_property name="ElementShortName">mod_mult_index2_in[9:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_index2_in[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_index2_in_delayed">
+         <obj_property name="ElementShortName">mod_mult_index2_in_delayed[9:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_index2_in_delayed[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_valid_in">
+         <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_valid_in_delayed">
+         <obj_property name="ElementShortName">mod_mult_valid_in_delayed</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_valid_in_delayed</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_result">
+         <obj_property name="ElementShortName">mod_mult_result[14:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_result[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_passthrough_out">
+         <obj_property name="ElementShortName">mod_mult_passthrough_out[14:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_passthrough_out[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_index1_out">
+         <obj_property name="ElementShortName">mod_mult_index1_out[9:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_index1_out[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_index2_out">
+         <obj_property name="ElementShortName">mod_mult_index2_out[9:0]</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_index2_out[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_valid_out">
+         <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/mod_mult_last">
+         <obj_property name="ElementShortName">mod_mult_last</obj_property>
+         <obj_property name="ObjectShortName">mod_mult_last</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/bram_write_complete">
+         <obj_property name="ElementShortName">bram_write_complete</obj_property>
+         <obj_property name="ObjectShortName">bram_write_complete</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_addr_a">
+         <obj_property name="ElementShortName">bram1_addr_a[9:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_addr_b">
+         <obj_property name="ElementShortName">bram1_addr_b[9:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_addr_a">
+         <obj_property name="ElementShortName">bram2_addr_a[9:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_addr_b">
+         <obj_property name="ElementShortName">bram2_addr_b[9:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_data_in_a">
+         <obj_property name="ElementShortName">bram1_data_in_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_data_in_a[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_data_in_b">
+         <obj_property name="ElementShortName">bram1_data_in_b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_data_in_b[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_data_in_a">
+         <obj_property name="ElementShortName">bram2_data_in_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_data_in_a[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_data_in_b">
+         <obj_property name="ElementShortName">bram2_data_in_b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_data_in_b[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_data_out_a">
+         <obj_property name="ElementShortName">bram1_data_out_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_data_out_a[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_data_out_b">
+         <obj_property name="ElementShortName">bram1_data_out_b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_data_out_b[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_data_out_a">
+         <obj_property name="ElementShortName">bram2_data_out_a[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_data_out_a[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_data_out_b">
+         <obj_property name="ElementShortName">bram2_data_out_b[14:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_data_out_b[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_we_a">
+         <obj_property name="ElementShortName">bram1_we_a</obj_property>
+         <obj_property name="ObjectShortName">bram1_we_a</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/bram1_we_b">
+         <obj_property name="ElementShortName">bram1_we_b</obj_property>
+         <obj_property name="ObjectShortName">bram1_we_b</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_we_a">
+         <obj_property name="ElementShortName">bram2_we_a</obj_property>
+         <obj_property name="ObjectShortName">bram2_we_a</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/bram2_we_b">
+         <obj_property name="ElementShortName">bram2_we_b</obj_property>
+         <obj_property name="ObjectShortName">bram2_we_b</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/read_addr1">
+         <obj_property name="ElementShortName">read_addr1[8:0]</obj_property>
+         <obj_property name="ObjectShortName">read_addr1[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/read_addr2">
+         <obj_property name="ElementShortName">read_addr2[8:0]</obj_property>
+         <obj_property name="ObjectShortName">read_addr2[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/write_addr1">
+         <obj_property name="ElementShortName">write_addr1[8:0]</obj_property>
+         <obj_property name="ObjectShortName">write_addr1[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/write_addr2">
+         <obj_property name="ElementShortName">write_addr2[8:0]</obj_property>
+         <obj_property name="ObjectShortName">write_addr2[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/read_data1">
+         <obj_property name="ElementShortName">read_data1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">read_data1[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/read_data2">
+         <obj_property name="ElementShortName">read_data2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">read_data2[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/write_data1">
+         <obj_property name="ElementShortName">write_data1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">write_data1[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/write_data2">
+         <obj_property name="ElementShortName">write_data2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">write_data2[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/write_enable1">
+         <obj_property name="ElementShortName">write_enable1</obj_property>
+         <obj_property name="ObjectShortName">write_enable1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/write_enable2">
+         <obj_property name="ElementShortName">write_enable2</obj_property>
+         <obj_property name="ObjectShortName">write_enable2</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_data1_in">
+         <obj_property name="ElementShortName">scale_data1_in[14:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_data1_in[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_data2_in">
+         <obj_property name="ElementShortName">scale_data2_in[14:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_data2_in[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_mod_mult1">
+         <obj_property name="ElementShortName">scale_mod_mult1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_mod_mult1[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_mod_mult2">
+         <obj_property name="ElementShortName">scale_mod_mult2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_mod_mult2[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_a_times_b1">
+         <obj_property name="ElementShortName">scale_a_times_b1[28:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_a_times_b1[28:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_a_times_b2">
+         <obj_property name="ElementShortName">scale_a_times_b2[28:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_a_times_b2[28:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_addr1_in">
+         <obj_property name="ElementShortName">scale_addr1_in[8:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_addr1_in[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_addr2_in">
+         <obj_property name="ElementShortName">scale_addr2_in[8:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_addr2_in[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_addr1_1">
+         <obj_property name="ElementShortName">scale_addr1_1[8:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_addr1_1[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_addr2_1">
+         <obj_property name="ElementShortName">scale_addr2_1[8:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_addr2_1[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_addr1_out">
+         <obj_property name="ElementShortName">scale_addr1_out[8:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_addr1_out[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_addr2_out">
+         <obj_property name="ElementShortName">scale_addr2_out[8:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_addr2_out[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_we1_in">
+         <obj_property name="ElementShortName">scale_we1_in</obj_property>
+         <obj_property name="ObjectShortName">scale_we1_in</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_we2_in">
+         <obj_property name="ElementShortName">scale_we2_in</obj_property>
+         <obj_property name="ObjectShortName">scale_we2_in</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_we1_1">
+         <obj_property name="ElementShortName">scale_we1_1</obj_property>
+         <obj_property name="ObjectShortName">scale_we1_1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_we2_1">
+         <obj_property name="ElementShortName">scale_we2_1</obj_property>
+         <obj_property name="ObjectShortName">scale_we2_1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_we1_out">
+         <obj_property name="ElementShortName">scale_we1_out</obj_property>
+         <obj_property name="ObjectShortName">scale_we1_out</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_we2_out">
+         <obj_property name="ElementShortName">scale_we2_out</obj_property>
+         <obj_property name="ObjectShortName">scale_we2_out</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_temp1">
+         <obj_property name="ElementShortName">scale_temp1[14:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_temp1[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/scale_temp2">
+         <obj_property name="ElementShortName">scale_temp2[14:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_temp2[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/input_bram1_read_part">
+         <obj_property name="ElementShortName">input_bram1_read_part</obj_property>
+         <obj_property name="ObjectShortName">input_bram1_read_part</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt/input_bram2_read_part">
+         <obj_property name="ElementShortName">input_bram2_read_part</obj_property>
+         <obj_property name="ObjectShortName">input_bram2_read_part</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/intt_scale_factor">
+         <obj_property name="ElementShortName">intt_scale_factor[31:0]</obj_property>
+         <obj_property name="ObjectShortName">intt_scale_factor[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/state">
+         <obj_property name="ElementShortName">state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/next_state">
+         <obj_property name="ElementShortName">next_state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

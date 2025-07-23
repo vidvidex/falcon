@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="365.782 ns"></ZoomEndTime>
-      <Cursor1Time time="60.000 ns"></Cursor1Time>
+      <ZoomStartTime time="23,470.500 ns"></ZoomStartTime>
+      <ZoomEndTime time="23,745.901 ns"></ZoomEndTime>
+      <Cursor1Time time="23,700.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="232"></NameColumnWidth>
+      <NameColumnWidth column_width="228"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
@@ -216,11 +216,6 @@
          <obj_property name="ObjectShortName">twiddle_address[9:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/twiddle_factor_i">
-         <obj_property name="ElementShortName">twiddle_factor_i[14:0]</obj_property>
-         <obj_property name="ObjectShortName">twiddle_factor_i[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="group" fp_name="group207">
          <obj_property name="label">mod_mult</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -240,6 +235,30 @@
             <obj_property name="ObjectShortName">mod_mult_passthrough_in[14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult_index1_in">
+            <obj_property name="ElementShortName">mod_mult_index1_in[9:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index1_in[9:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult_index1_in_delayed">
+            <obj_property name="ElementShortName">mod_mult_index1_in_delayed[9:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index1_in_delayed[9:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult_index2_in">
+            <obj_property name="ElementShortName">mod_mult_index2_in[9:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index2_in[9:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult_index2_in_delayed">
+            <obj_property name="ElementShortName">mod_mult_index2_in_delayed[9:0]</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_index2_in_delayed[9:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult_valid_in">
+            <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult_valid_in_delayed">
+            <obj_property name="ElementShortName">mod_mult_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">mod_mult_valid_in_delayed</obj_property>
+         </wvobject>
          <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult_result">
             <obj_property name="ElementShortName">mod_mult_result[14:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_result[14:0]</obj_property>
@@ -258,7 +277,6 @@
          <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult_index2_out">
             <obj_property name="ElementShortName">mod_mult_index2_out[9:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_index2_out[9:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult_valid_out">
             <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
@@ -272,7 +290,6 @@
       <wvobject type="group" fp_name="group204">
          <obj_property name="label">input_bram</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/ntt_512_tb/uut/input_bram_addr1">
             <obj_property name="ElementShortName">input_bram_addr1[8:0]</obj_property>
             <obj_property name="ObjectShortName">input_bram_addr1[8:0]</obj_property>
@@ -295,7 +312,6 @@
       <wvobject type="group" fp_name="group208">
          <obj_property name="label">bram_bank1</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_addr_a">
             <obj_property name="ElementShortName">bram1_addr_a[9:0]</obj_property>
             <obj_property name="ObjectShortName">bram1_addr_a[9:0]</obj_property>
@@ -380,7 +396,6 @@
       <wvobject type="group" fp_name="group211">
          <obj_property name="label">bram read/write</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/ntt_512_tb/uut/read_addr1">
             <obj_property name="ElementShortName">read_addr1[8:0]</obj_property>
             <obj_property name="ObjectShortName">read_addr1[8:0]</obj_property>
@@ -482,6 +497,7 @@
    <wvobject type="group" fp_name="group283">
       <obj_property name="label">mod_mult</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -489,6 +505,10 @@
       <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/a">
          <obj_property name="ElementShortName">a[14:0]</obj_property>
@@ -498,15 +518,6 @@
       <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/b">
          <obj_property name="ElementShortName">b[14:0]</obj_property>
          <obj_property name="ObjectShortName">b[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/valid_in">
-         <obj_property name="ElementShortName">valid_in</obj_property>
-         <obj_property name="ObjectShortName">valid_in</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/passthrough_in">
-         <obj_property name="ElementShortName">passthrough_in[14:0]</obj_property>
-         <obj_property name="ObjectShortName">passthrough_in[14:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/index1_in">
@@ -519,9 +530,19 @@
          <obj_property name="ObjectShortName">index2_in[9:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/last">
-         <obj_property name="ElementShortName">last</obj_property>
-         <obj_property name="ObjectShortName">last</obj_property>
+      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/passthrough_in">
+         <obj_property name="ElementShortName">passthrough_in[14:0]</obj_property>
+         <obj_property name="ObjectShortName">passthrough_in[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/result">
+         <obj_property name="ElementShortName">result[14:0]</obj_property>
+         <obj_property name="ObjectShortName">result[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/index1_out">
          <obj_property name="ElementShortName">index1_out[9:0]</obj_property>
@@ -531,45 +552,14 @@
          <obj_property name="ElementShortName">index2_out[9:0]</obj_property>
          <obj_property name="ObjectShortName">index2_out[9:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/a_times_b">
-         <obj_property name="ElementShortName">a_times_b[29:0]</obj_property>
-         <obj_property name="ObjectShortName">a_times_b[29:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/result">
-         <obj_property name="ElementShortName">result[14:0]</obj_property>
-         <obj_property name="ObjectShortName">result[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/valid1">
-         <obj_property name="ElementShortName">valid1</obj_property>
-         <obj_property name="ObjectShortName">valid1</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/valid_out">
-         <obj_property name="ElementShortName">valid_out</obj_property>
-         <obj_property name="ObjectShortName">valid_out</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/index1_1">
-         <obj_property name="ElementShortName">index1_1[9:0]</obj_property>
-         <obj_property name="ObjectShortName">index1_1[9:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/index2_1">
-         <obj_property name="ElementShortName">index2_1[9:0]</obj_property>
-         <obj_property name="ObjectShortName">index2_1[9:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/passthrough_1">
-         <obj_property name="ElementShortName">passthrough_1[14:0]</obj_property>
-         <obj_property name="ObjectShortName">passthrough_1[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/passthrough_out">
          <obj_property name="ElementShortName">passthrough_out[14:0]</obj_property>
          <obj_property name="ObjectShortName">passthrough_out[14:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/ntt_512_tb/uut/mod_mult/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      <wvobject type="logic" fp_name="/ntt_512_tb/uut/mod_mult/last">
+         <obj_property name="ElementShortName">last</obj_property>
+         <obj_property name="ObjectShortName">last</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
