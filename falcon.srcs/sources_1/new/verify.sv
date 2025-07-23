@@ -307,7 +307,7 @@ module verify#(
                  .done(ntt_done)
                );
 
-  mod_mult_verify #(
+  mod_mult #(
                     .N(N),
                     .PARALLEL_OPS_COUNT(MULT_MOD_Q_OPS_PER_CYCLE)
                   )mod_mult (

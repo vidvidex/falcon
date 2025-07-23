@@ -48,7 +48,8 @@ module control_unit#(
             BRAM_READ     = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
             BRAM_WRITE    = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
-            NTT_INTT      = 4'b1011  // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
+            NTT_INTT      = 4'b1011,  // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
+            MOD_MULT_Q    = 4'b1100  // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address task_addr1 and task_addr2 and writes the output to task_addr1
           } opcode_t;
 
   opcode_t opcode;
@@ -301,6 +302,27 @@ module control_unit#(
         .done(ntt_done)
       );
 
+  parameter int MOD_MULT_PARALLEL_OPS_COUNT = 2;
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
+  logic mod_mult_valid_in, mod_mult_valid_in_delayed;
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
+  logic mod_mult_valid_out;
+  mod_mult #(
+             .N(N),
+             .PARALLEL_OPS_COUNT(MOD_MULT_PARALLEL_OPS_COUNT)
+           )mod_mult (
+             .clk(clk),
+             .rst_n(rst_n),
+             .a(mod_mult_a),
+             .b(mod_mult_b),
+             .valid_in(mod_mult_valid_in_delayed),
+             .result(mod_mult_result),
+             .valid_out(mod_mult_valid_out)
+           );
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr;  // Where to write the output of mod_mult
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(task_addr1), .out(mod_mult_write_addr));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
+
 
   // Task execution based on opcode
   always_ff @(posedge clk) begin
@@ -387,6 +409,10 @@ module control_unit#(
           ntt_start <= 1'b1;
         end
 
+        MOD_MULT_Q: begin
+
+        end
+
         default: begin
 
         end
@@ -399,6 +425,8 @@ module control_unit#(
   always_comb begin
 
     instruction_done = 1'b0; // Default to not done
+    int_to_double_valid_in = 1'b0;
+    mod_mult_valid_in = 1'b0;
 
     case (opcode)
       NOP: begin
@@ -406,6 +434,10 @@ module control_unit#(
         for(int i = 0; i < FFT_BRAM_BANK_COUNT; i++) begin
           fft_bram_we_a[i] = 1'b0;
           fft_bram_we_b[i] = 1'b0;
+        end
+        for(int i = 0; i < NTT_BRAM_BANK_COUNT; i++) begin
+          ntt_bram_we_a[i] = 1'b0;
+          ntt_bram_we_b[i] = 1'b0;
         end
       end
 
@@ -527,6 +559,28 @@ module control_unit#(
         ntt_bram_we_b[task_bank2] = ntt_output_bram_we2;
 
         instruction_done = ntt_done;
+      end
+
+      MOD_MULT_Q: begin
+        // From each input BRAM we read at address "task_addr1" and "task_addr2"
+        ntt_bram_addr_a[0] = task_addr1;
+        ntt_bram_addr_b[0] = task_addr2;
+        ntt_bram_addr_a[1] = task_addr1;
+        ntt_bram_addr_b[1] = task_addr2;
+
+        mod_mult_a[0] = ntt_bram_dout_a[0];
+        mod_mult_a[1] = ntt_bram_dout_b[0];
+        mod_mult_b[0] = ntt_bram_dout_a[1];
+        mod_mult_b[1] = ntt_bram_dout_b[1];
+
+        mod_mult_valid_in = 1'b1;
+        instruction_done = 1'b1;
+
+        if(mod_mult_valid_out) begin
+          fft_bram_addr_a[task_bank2] = mod_mult_write_addr;
+          fft_bram_din_a[task_bank2] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
+          fft_bram_we_a[task_bank2] = 1'b1;
+        end
       end
 
       default: begin
