@@ -60,7 +60,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynq-z2"/>
-    <Option Name="WTXSimLaunchSim" Val="10321"/>
+    <Option Name="WTXSimLaunchSim" Val="10322"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -480,14 +480,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/verify_top_8.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/coefficients/fft_twiddle_factors.mem">
         <FileInfo SFType="MIF">
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -504,16 +496,6 @@
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/include/float_pkg.sv">
-        <FileInfo SFType="VHeader">
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../FalconSign/include/float_pkg.sv"/>
-          <Attr Name="ImportTime" Val="1749634238"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-          <Attr Name="IsVisible" Val="1"/>
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/ip/bram_512x128_preinit_for_ntt_tb/bram_512x128_preinit_for_ntt_tb.xci">
@@ -796,14 +778,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/verify_top_8_tb.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/hash_to_point_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
@@ -842,16 +816,11 @@
       </File>
       <File Path="$PPRDIR/sub_normalize_squared_norm_tb_behav.wcfg">
         <FileInfo>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PPRDIR/decompress_coefficient_tb_behav.wcfg">
-        <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/verify_top_8_tb_behav.wcfg">
+      <File Path="$PPRDIR/decompress_coefficient_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1173,20 +1142,6 @@
         <Option Name="UseBlackboxStub" Val="1"/>
       </Config>
     </FileSet>
-    <FileSet Name="bram_256x128" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_256x128" RelGenDir="$PGENDIR/bram_256x128">
-      <File Path="$PSRCDIR/sources_1/ip/bram_256x128/bram_256x128.xci">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <Config>
-        <Option Name="TopModule" Val="bram_256x128"/>
-        <Option Name="UseBlackboxStub" Val="1"/>
-      </Config>
-    </FileSet>
     <FileSet Name="bram_1024x15" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_1024x15" RelGenDir="$PGENDIR/bram_1024x15">
       <File Path="$PSRCDIR/sources_1/ip/bram_1024x15/bram_1024x15.xci">
         <FileInfo>
@@ -1315,15 +1270,6 @@
       <RQSFiles/>
     </Run>
     <Run Id="fp_i2flt_int32_synth_1" Type="Ft3:Synth" SrcSet="fp_i2flt_int32" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int32" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_synth_1">
-      <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
-        <Step Id="synth_design"/>
-      </Strategy>
-      <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
-      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
-      <RQSFiles/>
-    </Run>
-    <Run Id="bram_256x128_synth_1" Type="Ft3:Synth" SrcSet="bram_256x128" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
@@ -1513,23 +1459,6 @@
       <RQSFiles/>
     </Run>
     <Run Id="fp_i2flt_int32_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="fp_i2flt_int32" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="fp_i2flt_int32_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/fp_i2flt_int32_impl_1">
-      <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
-        <Step Id="init_design"/>
-        <Step Id="opt_design"/>
-        <Step Id="power_opt_design"/>
-        <Step Id="place_design"/>
-        <Step Id="post_place_power_opt_design"/>
-        <Step Id="phys_opt_design"/>
-        <Step Id="route_design"/>
-        <Step Id="post_route_phys_opt_design"/>
-        <Step Id="write_bitstream"/>
-      </Strategy>
-      <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2023"/>
-      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
-      <RQSFiles/>
-    </Run>
-    <Run Id="bram_256x128_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="bram_256x128" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="bram_256x128_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/bram_256x128_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/bram_256x128_impl_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
         <Step Id="init_design"/>
