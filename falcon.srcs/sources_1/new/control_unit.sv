@@ -48,8 +48,9 @@ module control_unit#(
             BRAM_READ     = 4'b1000, // Reads task_bank1 at address task_addr1. Output is bram_dout
             BRAM_WRITE    = 4'b1001, // Writes bram_din to task_bank1 address task_addr1 .
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
-            NTT_INTT      = 4'b1011,  // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
-            MOD_MULT_Q    = 4'b1100  // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address task_addr1 and task_addr2 and writes the output to task_addr1
+            NTT_INTT      = 4'b1011, // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
+            MOD_MULT_Q    = 4'b1100, // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address task_addr1 and task_addr2 and writes the output to task_addr1
+            SUB_NORM_SQ   = 4'b1101  // Reads from BRAMs task_bank1[task_addr1] (data from hash_to_point), task_bank2[task_addr2], task_bank2[task_addr2+N/2] (data from INTT) and task_params[2:0][task_addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
           } opcode_t;
 
   opcode_t opcode;
@@ -323,6 +324,27 @@ module control_unit#(
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(task_addr1), .out(mod_mult_write_addr));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
 
+  parameter int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
+  logic [`NTT_BRAM_DATA_WIDTH-1:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
+  logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
+  logic sub_normalize_squared_norm_last, sub_normalize_squared_norm_last_delayed;
+  logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
+  sub_normalize_squared_norm #(
+                               .N(N),
+                               .PARALLEL_OPS_COUNT(SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT)
+                             )sub_normalize_squared_norm (
+                               .clk(clk),
+                               .rst_n(rst_n),
+                               .a(sub_normalize_squared_norm_a),
+                               .b(sub_normalize_squared_norm_b),
+                               .c(sub_normalize_squared_norm_c),
+                               .valid(sub_normalize_squared_norm_valid_delayed),
+                               .last(sub_normalize_squared_norm_last_delayed),
+                               .accept(sub_normalize_squared_norm_accept),
+                               .reject(sub_normalize_squared_norm_reject)
+                             );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
 
   // Task execution based on opcode
   always_ff @(posedge clk) begin
@@ -413,6 +435,10 @@ module control_unit#(
 
         end
 
+        SUB_NORM_SQ: begin
+
+        end
+
         default: begin
 
         end
@@ -427,6 +453,16 @@ module control_unit#(
     instruction_done = 1'b0; // Default to not done
     int_to_double_valid_in = 1'b0;
     mod_mult_valid_in = 1'b0;
+    sub_normalize_squared_norm_valid = 1'b0;
+    sub_normalize_squared_norm_last = 1'b0;
+
+    // Ensure these signals are not undefined to ensure proper behaviour of the module
+    sub_normalize_squared_norm_a[0] = 0;
+    sub_normalize_squared_norm_a[1] = 0;
+    sub_normalize_squared_norm_b[0] = 0;
+    sub_normalize_squared_norm_b[1] = 0;
+    sub_normalize_squared_norm_c[0] = 0;
+    sub_normalize_squared_norm_c[1] = 0;
 
     case (opcode)
       NOP: begin
@@ -580,6 +616,46 @@ module control_unit#(
           fft_bram_addr_a[task_bank2] = mod_mult_write_addr;
           fft_bram_din_a[task_bank2] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
           fft_bram_we_a[task_bank2] = 1'b1;
+        end
+      end
+
+      SUB_NORM_SQ: begin
+        // Reads the following data from BRAMs:
+        // - data from hash_to_point: task_bram1[task_addr1] - 2 coefficients per memory line
+        // - data from INTT: task_bram2[task_addr2] and task_bram2[task_addr2+N/2] - 1 coefficient per memory line
+        // - data from decompress: task_params[2:0][task_addr1] - 2 coefficients per memory line
+
+        fft_bram_addr_a[task_bank1] = task_addr1; // Data from hash_to_point
+        ntt_bram_addr_a[task_bank2] = task_addr2; // Data from INTT
+        ntt_bram_addr_b[task_bank2] = task_addr2 + N/2; // Data from INTT
+        fft_bram_addr_b[task_params[2:0]] = task_addr1; // Data from decompress
+
+        sub_normalize_squared_norm_a[0] = fft_bram_dout_a[task_bank1][64+14:64];
+        sub_normalize_squared_norm_a[1] = fft_bram_dout_a[task_bank1][14:0];
+        sub_normalize_squared_norm_b[0] = ntt_bram_dout_a[task_bank2];
+        sub_normalize_squared_norm_b[1] = ntt_bram_dout_b[task_bank2];
+        sub_normalize_squared_norm_c[0] = fft_bram_dout_b[task_params[2:0]][64+14:64];
+        sub_normalize_squared_norm_c[1] = fft_bram_dout_b[task_params[2:0]][14:0];
+
+        sub_normalize_squared_norm_valid = 1'b1;
+        sub_normalize_squared_norm_last = task_params[3];
+
+        instruction_done = sub_normalize_squared_norm_accept == 1'b1 || sub_normalize_squared_norm_reject == 1'b1;
+
+
+        // Write result
+        if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
+          fft_bram_addr_a[0] = 0;
+          fft_bram_din_a[0] = 128'b0;
+          fft_bram_we_a[0] = 1'b1;
+        end
+        else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
+          fft_bram_addr_a[0] = 0;
+          fft_bram_din_a[0] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+          fft_bram_we_a[0] = 1'b1;
+        end
+        else begin
+          fft_bram_we_a[0] = 1'b0;
         end
       end
 

@@ -76,7 +76,7 @@ module control_unit_verify_tb;
     instruction = 32'b0111_010_000000000_101_000000000_0110; // Decompress; bank1=2; addr1=/; bank2=5; addr2=/; args=destination_bank2=6
     while (instruction_done !== 1'b1)
       #10;
-    instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Run hash to point
@@ -85,7 +85,7 @@ module control_unit_verify_tb;
       #10;
     #40; // Wait for pipeline to finish
 
-    instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Run NTT(public key)
@@ -94,7 +94,7 @@ module control_unit_verify_tb;
       #10;
     #10;
 
-    instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Run NTT(decompressed signature)
@@ -103,7 +103,7 @@ module control_unit_verify_tb;
       #10;
     #10;
 
-    instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Compute public_key * decompressed signature % 12289(in NTT domain) by running mod_mult
@@ -114,7 +114,7 @@ module control_unit_verify_tb;
     end
     #70;
 
-    instruction = 32'b0000_000_000000000_000_000000000_0000; 
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
     // Run INTT on the product
@@ -124,7 +124,28 @@ module control_unit_verify_tb;
     #10;
 
     instruction = 32'b0000_000_000000000_000_000000000_0000;
+    #10;
 
+    // Run sub_normalize_squared_norm pipeline on the output of INTT
+    for (int i = 0; i < N/2; i++) begin
+      logic last = i == N/2 - 1 ? 1'b1 : 1'b0;
+      instruction = {4'b1101, 3'b011, i[8:0], 3'b000, i[8:0], last, 3'b101}; // sub_normalize_squared_norm; bank1=3; addr1=i; bank2=0 (ntt, not fft bank); addr2=i; args=last,"bank3"=5
+      #10;
+    end
+    #80;
+
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
+    #10;
+
+    // Verify the result by reading BRAM0 at address 0
+    instruction = {4'b1000, 3'b000, 9'b000000000, 3'b000, 9'b000000000, 4'b0000};
+    #20;
+    if(bram_dout == 128'b0)
+      $display("All tests for control_unit_verify passed!");
+    else
+      $fatal(1, "Test failed! BRAM0[0] = %h", bram_dout);
+
+    $finish;
   end
 
 endmodule

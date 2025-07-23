@@ -10,7 +10,7 @@
 
 module sub_normalize_squared_norm#(
     parameter int N,
-    parameter int PARALLEL_OPS_COUNT  //! How many operations to do in parallel
+    parameter int PARALLEL_OPS_COUNT = 2  //! How many operations to do in parallel
   )(
     input logic clk,
     input logic rst_n,
@@ -128,8 +128,11 @@ module sub_normalize_squared_norm#(
       last5 <= 0;
     end
     else begin
+      logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] temp_sum = 0;
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
-        squared_norm <= squared_norm + elementwise_sum[i];
+        temp_sum += elementwise_sum[i];
+      
+      squared_norm <= squared_norm + temp_sum;
       if(squared_norm > bound2)
         over_bound <= 1;
       last5 <= last4;

@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="739.733 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,052.054 ns"></ZoomEndTime>
-      <Cursor1Time time="762.722 ns"></Cursor1Time>
+      <ZoomStartTime time="106,667.517 ns"></ZoomStartTime>
+      <ZoomEndTime time="106,802.418 ns"></ZoomEndTime>
+      <Cursor1Time time="106,681.417 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="254"></NameColumnWidth>
-      <ValueColumnWidth column_width="66"></ValueColumnWidth>
+      <ValueColumnWidth column_width="62"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
@@ -116,6 +116,7 @@
       <wvobject type="group" fp_name="group534">
          <obj_property name="label">fft_bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/fft_bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][8:0]</obj_property>
@@ -440,7 +441,6 @@
       <wvobject type="group" fp_name="group588">
          <obj_property name="label">ntt_bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][9:0]</obj_property>
@@ -886,7 +886,10 @@
       <wvobject type="group" fp_name="group3968">
          <obj_property name="label">mod_mult_q</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/MOD_MULT_PARALLEL_OPS_COUNT">
+            <obj_property name="ElementShortName">MOD_MULT_PARALLEL_OPS_COUNT[31:0]</obj_property>
+            <obj_property name="ObjectShortName">MOD_MULT_PARALLEL_OPS_COUNT[31:0]</obj_property>
+         </wvobject>
          <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/mod_mult_a">
             <obj_property name="ElementShortName">mod_mult_a[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_a[0:1][14:0]</obj_property>
@@ -914,6 +917,78 @@
             <obj_property name="ElementShortName">mod_mult_write_addr[8:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_write_addr[8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group648">
+         <obj_property name="label">sub_normalize_squared_norm</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT">
+            <obj_property name="ElementShortName">SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT[31:0]</obj_property>
+            <obj_property name="ObjectShortName">SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_a">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_a[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_a[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_b">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_b[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_b[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_c">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_c[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_c[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_valid_delayed">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_valid_delayed</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_valid_delayed</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_last_delayed">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_last_delayed</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_last_delayed</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_accept">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_accept</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_accept</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_reject">
+            <obj_property name="ElementShortName">sub_normalize_squared_norm_reject</obj_property>
+            <obj_property name="ObjectShortName">sub_normalize_squared_norm_reject</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>
