@@ -1,6 +1,6 @@
-for {set i 0} {$i < 6} {incr i} {
+for {set i 0} {$i < 10} {incr i} {
   set group_name "fft_bram$i"
-  set tb_name "control_unit_verify_tb"
+  set tb_name "control_unit_sign_tb"
   add_wave_group $group_name
 
   add_wave -into $group_name -name "addr_a[8:0]" -radix unsigned /$tb_name/control_unit/fft_bram_addr_a($i)
@@ -16,7 +16,7 @@ for {set i 0} {$i < 6} {incr i} {
 
 for {set i 0} {$i < 2} {incr i} {
   set group_name "ntt_bram$i"
-  set tb_name "control_unit_verify_tb"
+  set tb_name "control_unit_sign_tb"
   add_wave_group $group_name
 
   add_wave -into $group_name -name "addr_a[9:0]" -radix unsigned /$tb_name/control_unit/ntt_bram_addr_a($i)

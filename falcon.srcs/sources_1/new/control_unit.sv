@@ -15,6 +15,11 @@
 //
 // See definition of enum opcode_t for available opcodes.
 //
+// Only 8 BRAM banks are addressable using the instruction format, but we have more than that.
+// The others can only be accessed by hardcoded instructions.
+// Note also that there are 2 additional 1024x15 BRAM banks (called ntt_bram) that can be accessed by the same indices as the 512x128 BRAM banks,
+// but will be used only with specific instructions (such as NTT_INTT).
+//
 // After receiving done for an instruction, a NOP instruction should be issued for 1 cycle to ensure all BRAM write enable signals are set to 0.
 //
 //////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +38,7 @@ module control_unit#(
     output logic [`FFT_BRAM_DATA_WIDTH-1:0] bram_dout // Data read from BRAM
   );
 
-  parameter int FFT_BRAM_BANK_COUNT = 6; // Number of 512x128 BRAM banks
+  parameter int FFT_BRAM_BANK_COUNT = 10; // Number of 512x128 BRAM banks
   parameter int NTT_BRAM_BANK_COUNT = 2; // Number of 1024x15 BRAM banks
 
   typedef enum logic [3:0] {
@@ -45,7 +50,7 @@ module control_unit#(
             AVAILABLE2    = 4'b0101,
             AVAILABLE3    = 4'b0110,
             AVAILABLE4    = 4'b0111,
-            BRAM_RW       = 4'b1000, // if task_params[3] = 0: bram_dout = task_bank1[task_addr1]; if task_params[3] = 1: task_bank2[task_addr2] = bram_din;
+            BRAM_RW       = 4'b1000, // if task_params[3] = 0: bram_dout = task_bank1[task_addr1]; if task_params[3] = 1: task_bank2[task_addr2] = bram_din; for writing, if task_params[2] == 1 we run the input data through int_to_double before writing it to BRAM
             AVAILABLE5    = 4'b1001,
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
             NTT_INTT      = 4'b1011, // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
@@ -146,17 +151,22 @@ module control_unit#(
                   .done(htp_done)
                 );
 
-  logic [`FFT_BRAM_DATA_WIDTH-1:0] int_to_double_data_in, int_to_double_data_out;
-  logic int_to_double_valid_in, int_to_double_valid_in_delayed, int_to_double_valid_out;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] int_to_double_data_in;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] int_to_double_address_in, int_to_double_address_in_delayed, int_to_double_address_in_override;
+  logic int_to_double_valid_in, int_to_double_valid_in_delayed, int_to_double_valid_in_override;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] int_to_double_data_out;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] int_to_double_address_out;
+  logic int_to_double_valid_out;
   int_to_double int_to_double (
                   .clk(clk),
                   .data_in(int_to_double_data_in),
-                  .valid_in(int_to_double_valid_in_delayed),
+                  .valid_in(int_to_double_valid_in_delayed || int_to_double_valid_in_override),
+                  .address_in(int_to_double_valid_in_override ? int_to_double_address_in_override : int_to_double_address_in_delayed),
                   .data_out(int_to_double_data_out),
-                  .valid_out(int_to_double_valid_out)
+                  .valid_out(int_to_double_valid_out),
+                  .address_out(int_to_double_address_out)
                 );
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] int_to_double_write_addr;  // Where to write the output of int_to_double
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(3)) int_to_double_write_addr_delay(.clk(clk), .in(task_addr2), .out(int_to_double_write_addr));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(1)) int_to_double_address_in_delay(.clk(clk), .in(int_to_double_address_in), .out(int_to_double_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
 
   logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
@@ -448,6 +458,7 @@ module control_unit#(
 
     instruction_done = 1'b0; // Default to not done
     int_to_double_valid_in = 1'b0;
+    int_to_double_valid_in_override = 1'b0;
     mod_mult_valid_in = 1'b0;
     sub_normalize_squared_norm_valid = 1'b0;
     sub_normalize_squared_norm_last = 1'b0;
@@ -549,14 +560,27 @@ module control_unit#(
       end
 
       BRAM_RW: begin
-        if(task_params[3]) begin
-          // Writes to BRAM "task_bank1" at address "task_addr1". Input is "bram_din".
-          fft_bram_addr_a[task_bank1] = task_addr1;
-          fft_bram_din_a[task_bank1] = bram_din;
-          fft_bram_we_a[task_bank1] = 1'b1;
+        if(task_params[3]) begin  // BRAM write
+
+          if(task_params[2]) begin  // Run through int_to_double before writing
+            int_to_double_data_in = bram_din;
+            int_to_double_address_in_override = task_addr1; // Override: signals will not be delayed, since we don't have the delay of reading from BRAM
+            int_to_double_valid_in_override = 1'b1; 
+
+            // Wait for int_to_double to finish
+            if(int_to_double_valid_out) begin
+              fft_bram_addr_a[task_bank1] = int_to_double_address_out;
+              fft_bram_din_a[task_bank1] = int_to_double_data_out;
+              fft_bram_we_a[task_bank1] = 1'b1;
+            end
+          end
+          else begin  // Write directly to BRAM
+            fft_bram_addr_a[task_bank1] = task_addr1;
+            fft_bram_din_a[task_bank1] = bram_din;
+            fft_bram_we_a[task_bank1] = 1'b1;
+          end
         end
-        else begin
-          // Reads from BRAM "task_bank1" at address "task_addr1". Output is "bram_dout".
+        else begin // BRAM read
           fft_bram_addr_a[task_bank1] = task_addr1;
           bram_dout = fft_bram_dout_a[task_bank1];
         end
@@ -565,11 +589,12 @@ module control_unit#(
 
       INT_TO_DOUBLE: begin
         fft_bram_addr_a[task_bank1] = task_addr1;
+        int_to_double_address_in = task_addr1;
         int_to_double_data_in = fft_bram_dout_a[task_bank1];
 
         // Write output to BRAM
         if(int_to_double_valid_out) begin
-          fft_bram_addr_b[task_bank2] = int_to_double_write_addr;
+          fft_bram_addr_b[task_bank2] = int_to_double_address_out;
           fft_bram_din_b[task_bank2] = int_to_double_data_out;
           fft_bram_we_b[task_bank2] = 1'b1;
         end
