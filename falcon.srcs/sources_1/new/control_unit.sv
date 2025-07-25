@@ -45,7 +45,7 @@ module control_unit#(
             NOP           = 4'b0000, // No operation, sets WE for all BRAMs to 0
             HASH_TO_POINT = 4'b0001, // Input is task_bram1. First BRAM cell contains length of salt and message combined in bytes. Output is task_bram2. src and dest cannot be the same because we need 3 channels (1 for input and 2 for output)
             FFT_IFFT      = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
-            HTP_DECMP_NTT = 4'b0011, // Runs hash_to_point, decompress and NTT all at once with hardcoded BRAMs
+            COMBINED      = 4'b0011, // Runs multiple modules in parallel with hardcoded BRAM inputs and outputs. task_params[3:0] is the index of which set of modules to run. See definition of combined_instruction_t for available sets.
             AVAILABLE1    = 4'b0100,
             AVAILABLE2    = 4'b0101,
             AVAILABLE3    = 4'b0110,
@@ -55,19 +55,23 @@ module control_unit#(
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
             NTT_INTT      = 4'b1011, // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
             MOD_MULT_Q    = 4'b1100, // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address task_addr1 and task_addr2 and writes the output to task_addr1
-            SUB_NORM_SQ   = 4'b1101,  // Reads from BRAMs task_bank1[task_addr1] (data from hash_to_point), task_bank2[task_addr2], task_bank2[task_addr2+N/2] (data from INTT) and task_params[2:0][task_addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
+            SUB_NORM_SQ   = 4'b1101, // Reads from BRAMs task_bank1[task_addr1] (data from hash_to_point), task_bank2[task_addr2], task_bank2[task_addr2+N/2] (data from INTT) and task_params[2:0][task_addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
             AVAILABLE6    = 4'b1110,
             AVAILABLE7    = 4'b1111
           } opcode_t;
 
+  typedef enum logic [3:0] {
+            HTP_DECMP_NTT = 4'b0000, // hash_to_point, decompress, ntt. Used in verify. NTT takes the longest, so we use it's done signal to know when everything is done
+            SIGN_STEP_1   = 4'b0001  // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
+          } combined_instruction_t;
+
   opcode_t opcode;
+  combined_instruction_t combined_instruction;
   logic [2:0] task_bank1;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] task_addr1;
   logic [2:0] task_bank2;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] task_addr2;
   logic [3:0] task_params;
-
-  logic [2:0] htp_decmp_ntt_done; // Each bit corresponds to hash_to_point, decompress and ntt respectively. If a bit is 1, the corresponding task is done.
 
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram_addr_a [FFT_BRAM_BANK_COUNT];
   logic [`FFT_BRAM_DATA_WIDTH-1:0] fft_bram_dout_a [FFT_BRAM_BANK_COUNT];
@@ -360,11 +364,34 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
 
+  parameter int FLP_NEGATE_PARALLEL_OPS_COUNT = 2;
+  logic [63:0] flp_negate_double_in [FLP_NEGATE_PARALLEL_OPS_COUNT];
+  logic flp_negate_valid_in, flp_negate_valid_in_delayed;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_negate_address_in, flp_negate_address_in_delayed;
+  logic [63:0] flp_negate_double_out [FLP_NEGATE_PARALLEL_OPS_COUNT];
+  logic flp_negate_valid_out;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_negate_address_out;
+  flp_negate #(
+               .N(N),
+               .PARALLEL_OPS_COUNT(FLP_NEGATE_PARALLEL_OPS_COUNT)
+             )flp_negate (
+               .clk(clk),
+               .double_in(flp_negate_double_in),
+               .valid_in(flp_negate_valid_in_delayed),
+               .address_in(flp_negate_address_in_delayed),
+               .double_out(flp_negate_double_out),
+               .valid_out(flp_negate_valid_out),
+               .address_out(flp_negate_address_out)
+             );
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(1)) flp_negate_address_in_delay(.clk(clk), .in(flp_negate_address_in), .out(flp_negate_address_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) flp_negate_valid_in_delay(.clk(clk), .in(flp_negate_valid_in), .out(flp_negate_valid_in_delayed));
+
   // Task execution based on opcode
   always_ff @(posedge clk) begin
 
     // Instruction decoding
     opcode <= opcode_t'(instruction[31:28]);
+    combined_instruction <= combined_instruction_t'(instruction[3:0]);
     task_bank1 <= instruction[27:25];
     task_addr1 <= instruction[24:16];
     task_bank2 <= instruction[15:13];
@@ -383,8 +410,6 @@ module control_unit#(
 
       ntt_start <= 1'b0;
       ntt_start_i <= 1'b0;
-
-      htp_decmp_ntt_done <= 3'b000; // Reset done flags for hash_to_point, decompress and ntt
     end
     else begin
 
@@ -410,18 +435,25 @@ module control_unit#(
           fft_start <= 1'b1;
         end
 
-        HTP_DECMP_NTT: begin
-          htp_start <= 1'b1;
-          decompress_start <= 1'b1;
-          ntt_mode <= 1'b0;
-          ntt_start <= 1'b1;
+        COMBINED: begin
 
-          if(htp_done == 1'b1)
-            htp_decmp_ntt_done[0] <= 1'b1; // Set hash_to_point done flag
-          if(decompress_done == 1'b1)
-            htp_decmp_ntt_done[1] <= 1'b1; // Set decompress done flag
-          if(ntt_done == 1'b1)
-            htp_decmp_ntt_done[2] <= 1'b1; // Set ntt done flag
+          case (combined_instruction)
+            HTP_DECMP_NTT: begin
+              htp_start <= 1'b1;
+              decompress_start <= 1'b1;
+              ntt_mode <= 1'b0;
+              ntt_start <= 1'b1;
+            end
+
+            SIGN_STEP_1: begin
+              fft_start <= 1'b1;
+              fft_mode <= 1'b0;
+              htp_start <= 1'b1;
+            end
+
+            default: begin
+            end
+          endcase
         end
 
         BRAM_RW: begin
@@ -520,43 +552,98 @@ module control_unit#(
         instruction_done = fft_done;
       end
 
-      HTP_DECMP_NTT: begin
-        // hash_to_point: input is BRAM0, output is BRAM3
-        fft_bram_addr_a[0] = htp_input_bram_addr;
-        htp_input_bram_data = fft_bram_dout_a[0];
+      COMBINED: begin
+        case (combined_instruction)
+          HTP_DECMP_NTT: begin
+            // hash_to_point: input is BRAM0, output is BRAM3
+            fft_bram_addr_a[0] = htp_input_bram_addr;
+            htp_input_bram_data = fft_bram_dout_a[0];
 
-        fft_bram_addr_a[3] = htp_output_bram1_addr;
-        fft_bram_din_a[3] = htp_output_bram1_data;
-        fft_bram_we_a[3] = htp_output_bram1_we;
+            fft_bram_addr_a[3] = htp_output_bram1_addr;
+            fft_bram_din_a[3] = htp_output_bram1_data;
+            fft_bram_we_a[3] = htp_output_bram1_we;
 
-        fft_bram_addr_b[3] = htp_output_bram2_addr;
-        htp_output_bram2_data = fft_bram_dout_b[3];
+            fft_bram_addr_b[3] = htp_output_bram2_addr;
+            htp_output_bram2_data = fft_bram_dout_b[3];
 
-        // decompress: input is BRAM2, output is BRAM5
-        fft_bram_addr_a[2] = decompress_input_bram_addr;
-        decompress_input_bram_data = fft_bram_dout_a[2];
+            // decompress: input is BRAM2, output is BRAM5
+            fft_bram_addr_a[2] = decompress_input_bram_addr;
+            decompress_input_bram_data = fft_bram_dout_a[2];
 
-        fft_bram_addr_a[5] = decompress_output_bram1_addr;
-        fft_bram_din_a[5] = decompress_output_bram1_data;
-        fft_bram_we_a[5] = decompress_output_bram1_we;
+            fft_bram_addr_a[5] = decompress_output_bram1_addr;
+            fft_bram_din_a[5] = decompress_output_bram1_data;
+            fft_bram_we_a[5] = decompress_output_bram1_we;
 
-        fft_bram_addr_b[5] = decompress_output_bram2_addr;
-        decompress_output_bram2_data = fft_bram_dout_b[5];
+            fft_bram_addr_b[5] = decompress_output_bram2_addr;
+            decompress_output_bram2_data = fft_bram_dout_b[5];
 
-        // NTT: input is BRAM1, output is BRAM6 (ntt bram 0)
-        fft_bram_addr_a[1] = ntt_input_bram_addr1;
-        ntt_input_bram_data1 = fft_bram_dout_a[1];
-        fft_bram_addr_b[1] = ntt_input_bram_addr2;
-        ntt_input_bram_data2 = fft_bram_dout_b[1];
+            // NTT: input is BRAM1, output is BRAM6 (ntt bram 0)
+            fft_bram_addr_a[1] = ntt_input_bram_addr1;
+            ntt_input_bram_data1 = fft_bram_dout_a[1];
+            fft_bram_addr_b[1] = ntt_input_bram_addr2;
+            ntt_input_bram_data2 = fft_bram_dout_b[1];
 
-        ntt_bram_addr_a[0] = ntt_output_bram_addr1;
-        ntt_bram_din_a[0] = ntt_output_bram_data1;
-        ntt_bram_we_a[0] = ntt_output_bram_we1;
-        ntt_bram_addr_b[0] = ntt_output_bram_addr2;
-        ntt_bram_din_b[0] = ntt_output_bram_data2;
-        ntt_bram_we_b[0] = ntt_output_bram_we2;
+            ntt_bram_addr_a[0] = ntt_output_bram_addr1;
+            ntt_bram_din_a[0] = ntt_output_bram_data1;
+            ntt_bram_we_a[0] = ntt_output_bram_we1;
+            ntt_bram_addr_b[0] = ntt_output_bram_addr2;
+            ntt_bram_din_b[0] = ntt_output_bram_data2;
+            ntt_bram_we_b[0] = ntt_output_bram_we2;
 
-        instruction_done = htp_decmp_ntt_done == 3'b111; // All tasks are done
+            instruction_done = ntt_done;  // NTT takes the longest
+          end
+
+          SIGN_STEP_1: begin
+            // FFT: input is BRAM0, also uses BRAM4
+            fft_bram_addr_a[0] = fft_bram1_addr_a;
+            fft_bram_din_a[0] = fft_bram1_din_a;
+            fft_bram_we_a[0] = fft_bram1_we_a;
+            fft_bram_addr_b[0] = fft_bram1_addr_b;
+            fft_bram_din_b[0] = fft_bram1_din_b;
+            fft_bram_we_b[0] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[0];
+            fft_bram1_dout_b = fft_bram_dout_b[0];
+
+            fft_bram_addr_a[4] = fft_bram2_addr_a;
+            fft_bram_din_a[4] = fft_bram2_din_a;
+            fft_bram_we_a[4] = fft_bram2_we_a;
+            fft_bram_addr_b[4] = fft_bram2_addr_b;
+            fft_bram_din_b[4] = fft_bram2_din_b;
+            fft_bram_we_b[4] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[4];
+            fft_bram2_dout_b = fft_bram_dout_b[4];
+
+            // hash_to_point: input is BRAM6, output is BRAM7
+            fft_bram_addr_a[6] = htp_input_bram_addr;
+            htp_input_bram_data = fft_bram_dout_a[6];
+
+            fft_bram_addr_a[7] = htp_output_bram1_addr;
+            fft_bram_din_a[7] = htp_output_bram1_data;
+            fft_bram_we_a[7] = htp_output_bram1_we;
+
+            fft_bram_addr_b[7] = htp_output_bram2_addr;
+            htp_output_bram2_data = fft_bram_dout_b[7];
+
+            // negate
+            fft_bram_addr_a[1] = task_addr1;
+            flp_negate_double_in[0] = fft_bram_dout_a[1][127:64];
+            flp_negate_double_in[1] = fft_bram_dout_a[1][63:0];
+            flp_negate_valid_in = 1'b1;
+            flp_negate_address_in = task_addr1;
+
+            // Write output to BRAM
+            if(flp_negate_valid_out) begin
+              fft_bram_addr_b[1] = flp_negate_address_out;
+              fft_bram_din_b[1] = {flp_negate_double_out[0], flp_negate_double_out[1]};
+              fft_bram_we_b[1] = 1'b1;
+            end
+
+            instruction_done = fft_done;  // FFT takes the longest
+          end
+
+          default: begin
+          end
+        endcase
       end
 
       BRAM_RW: begin
@@ -565,7 +652,7 @@ module control_unit#(
           if(task_params[2]) begin  // Run through int_to_double before writing
             int_to_double_data_in = bram_din;
             int_to_double_address_in_override = task_addr1; // Override: signals will not be delayed, since we don't have the delay of reading from BRAM
-            int_to_double_valid_in_override = 1'b1; 
+            int_to_double_valid_in_override = 1'b1;
 
             // Wait for int_to_double to finish
             if(int_to_double_valid_out) begin

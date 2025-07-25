@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="371.638 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="10,332.500 ns"></ZoomStartTime>
+      <ZoomEndTime time="10,605.501 ns"></ZoomEndTime>
+      <Cursor1Time time="10,455.300 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="248"></NameColumnWidth>
+      <NameColumnWidth column_width="240"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -116,7 +116,6 @@
       <wvobject type="group" fp_name="group487">
          <obj_property name="label">fft_bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][8:0]</obj_property>
@@ -171,6 +170,7 @@
       <wvobject type="group" fp_name="group496">
          <obj_property name="label">fft_bram1</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram_addr_a[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][8:0]</obj_property>
@@ -820,7 +820,6 @@
       <wvobject type="group" fp_name="group654">
          <obj_property name="label">int_to_double</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/int_to_double_data_in">
             <obj_property name="ElementShortName">int_to_double_data_in[127:0]</obj_property>
             <obj_property name="ObjectShortName">int_to_double_data_in[127:0]</obj_property>
@@ -943,10 +942,12 @@
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram1_addr_a">
             <obj_property name="ElementShortName">fft_bram1_addr_a[8:0]</obj_property>
             <obj_property name="ObjectShortName">fft_bram1_addr_a[8:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram1_addr_b">
             <obj_property name="ElementShortName">fft_bram1_addr_b[8:0]</obj_property>
             <obj_property name="ObjectShortName">fft_bram1_addr_b[8:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram1_din_a">
             <obj_property name="ElementShortName">fft_bram1_din_a[127:0]</obj_property>
@@ -1003,6 +1004,83 @@
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fft_bram2_we_b">
             <obj_property name="ElementShortName">fft_bram2_we_b</obj_property>
             <obj_property name="ObjectShortName">fft_bram2_we_b</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group1237">
+         <obj_property name="label">flp_negate</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/FLP_NEGATE_PARALLEL_OPS_COUNT">
+            <obj_property name="ElementShortName">FLP_NEGATE_PARALLEL_OPS_COUNT[31:0]</obj_property>
+            <obj_property name="ObjectShortName">FLP_NEGATE_PARALLEL_OPS_COUNT[31:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_double_in">
+            <obj_property name="ElementShortName">flp_negate_double_in[0:1][63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_double_in[0:1][63:0]</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_double_in[0]">
+               <obj_property name="ElementShortName">[0][63:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_double_in[1]">
+               <obj_property name="ElementShortName">[1][63:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_negate_valid_in_delayed">
+            <obj_property name="ElementShortName">flp_negate_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_valid_in_delayed</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_address_in_delayed">
+            <obj_property name="ElementShortName">flp_negate_address_in_delayed[8:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_address_in_delayed[8:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_double_out">
+            <obj_property name="ElementShortName">flp_negate_double_out[0:1][63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_double_out[0:1][63:0]</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_double_out[0]">
+               <obj_property name="ElementShortName">[0][63:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_double_out[1]">
+               <obj_property name="ElementShortName">[1][63:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_negate_valid_out">
+            <obj_property name="ElementShortName">flp_negate_valid_out</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_negate_address_out">
+            <obj_property name="ElementShortName">flp_negate_address_out[8:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_address_out[8:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>
