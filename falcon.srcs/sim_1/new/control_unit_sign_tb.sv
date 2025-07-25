@@ -120,6 +120,16 @@ module control_unit_sign_tb;
     instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
+    // Run second set of instructions (SIGN_STEP_2)
+    for (int i = 0; i < N/2; i++) begin
+      instruction = {4'b0011, 3'b000, i[8:0], 3'b000, i[8:0], 4'b0010}; // COMBINED; bank1=/; addr1=i; bank2=/; addr2=i; args=SIGN_STEP_2
+      #10;
+    end
+    while (instruction_done !== 1'b1)
+      #10;
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
+    #10;
+
 
 
 

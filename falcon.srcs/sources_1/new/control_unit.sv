@@ -50,7 +50,7 @@ module control_unit#(
             AVAILABLE2    = 4'b0101,
             AVAILABLE3    = 4'b0110,
             AVAILABLE4    = 4'b0111,
-            BRAM_RW       = 4'b1000, // if task_params[3] = 0: bram_dout = task_bank1[task_addr1]; if task_params[3] = 1: task_bank2[task_addr2] = bram_din; for writing, if task_params[2] == 1 we run the input data through int_to_double before writing it to BRAM
+            BRAM_RW       = 4'b1000, // If task_params[3] = 0: bram_dout = task_bank1[task_addr1]; if task_params[3] = 1: task_bank2[task_addr2] = bram_din; for writing, if task_params[2] == 1 we run the input data through int_to_double before writing it to BRAM
             AVAILABLE5    = 4'b1001,
             INT_TO_DOUBLE = 4'b1010, // Input is task_bank1 at address task_addr1. Output is task_bank2 at address task_addr2
             NTT_INTT      = 4'b1011, // Input is task_bank1, which should be 0-5, output is task_bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
@@ -62,7 +62,8 @@ module control_unit#(
 
   typedef enum logic [3:0] {
             HTP_DECMP_NTT = 4'b0000, // hash_to_point, decompress, ntt. Used in verify. NTT takes the longest, so we use it's done signal to know when everything is done
-            SIGN_STEP_1   = 4'b0001  // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
+            SIGN_STEP_1   = 4'b0001, // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
+            SIGN_STEP_2   = 4'b0010  // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -372,7 +373,6 @@ module control_unit#(
   logic flp_negate_valid_out;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_negate_address_out;
   flp_negate #(
-               .N(N),
                .PARALLEL_OPS_COUNT(FLP_NEGATE_PARALLEL_OPS_COUNT)
              )flp_negate (
                .clk(clk),
@@ -385,6 +385,25 @@ module control_unit#(
              );
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(1)) flp_negate_address_in_delay(.clk(clk), .in(flp_negate_address_in), .out(flp_negate_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) flp_negate_valid_in_delay(.clk(clk), .in(flp_negate_valid_in), .out(flp_negate_valid_in_delayed));
+
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] muladjoint_data_a_in, muladjoint_data_b_in;
+  logic muladjoint_valid_in, muladjoint_valid_in_delayed;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] muladjoint_address_in, muladjoint_address_in_delayed;
+  logic [`FFT_BRAM_DATA_WIDTH-1:0] muladjoint_data_out;
+  logic muladjoint_valid_out;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] muladjoint_address_out;
+  muladjoint muladjoint (
+               .clk(clk),
+               .a_in(muladjoint_data_a_in),
+               .b_in(muladjoint_data_b_in),
+               .valid_in(muladjoint_valid_in_delayed),
+               .address_in(muladjoint_address_in_delayed),
+               .data_out(muladjoint_data_out),
+               .valid_out(muladjoint_valid_out),
+               .address_out(muladjoint_address_out)
+             );
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) muladjoint_address_in_delay(.clk(clk), .in(muladjoint_address_in), .out(muladjoint_address_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) muladjoint_valid_in_delay(.clk(clk), .in(muladjoint_valid_in), .out(muladjoint_valid_in_delayed));
 
   // Task execution based on opcode
   always_ff @(posedge clk) begin
@@ -451,6 +470,11 @@ module control_unit#(
               htp_start <= 1'b1;
             end
 
+            SIGN_STEP_2: begin
+              fft_start <= 1'b1;
+              fft_mode <= 1'b0;
+            end
+
             default: begin
             end
           endcase
@@ -494,6 +518,8 @@ module control_unit#(
     mod_mult_valid_in = 1'b0;
     sub_normalize_squared_norm_valid = 1'b0;
     sub_normalize_squared_norm_last = 1'b0;
+    flp_negate_valid_in = 1'b0;
+    muladjoint_valid_in = 1'b0;
 
     // Ensure these signals are not undefined to ensure proper behaviour of the module
     sub_normalize_squared_norm_a[0] = 0;
@@ -630,12 +656,68 @@ module control_unit#(
             flp_negate_double_in[1] = fft_bram_dout_a[1][63:0];
             flp_negate_valid_in = 1'b1;
             flp_negate_address_in = task_addr1;
-
-            // Write output to BRAM
             if(flp_negate_valid_out) begin
               fft_bram_addr_b[1] = flp_negate_address_out;
               fft_bram_din_b[1] = {flp_negate_double_out[0], flp_negate_double_out[1]};
               fft_bram_we_b[1] = 1'b1;
+            end
+
+            instruction_done = fft_done;  // FFT takes the longest
+          end
+
+          SIGN_STEP_2: begin
+            // FFT: input is BRAM1, also uses BRAM5
+            fft_bram_addr_a[1] = fft_bram1_addr_a;
+            fft_bram_din_a[1] = fft_bram1_din_a;
+            fft_bram_we_a[1] = fft_bram1_we_a;
+            fft_bram_addr_b[1] = fft_bram1_addr_b;
+            fft_bram_din_b[1] = fft_bram1_din_b;
+            fft_bram_we_b[1] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[1];
+            fft_bram1_dout_b = fft_bram_dout_b[1];
+
+            fft_bram_addr_a[5] = fft_bram2_addr_a;
+            fft_bram_din_a[5] = fft_bram2_din_a;
+            fft_bram_we_a[5] = fft_bram2_we_a;
+            fft_bram_addr_b[5] = fft_bram2_addr_b;
+            fft_bram_din_b[5] = fft_bram2_din_b;
+            fft_bram_we_b[5] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[5];
+            fft_bram2_dout_b = fft_bram_dout_b[5];
+
+            // negate on BRAM3
+            fft_bram_addr_a[3] = task_addr1;
+            flp_negate_double_in[0] = fft_bram_dout_a[3][127:64];
+            flp_negate_double_in[1] = fft_bram_dout_a[3][63:0];
+            flp_negate_valid_in = 1'b1;
+            flp_negate_address_in = task_addr1;
+            if(flp_negate_valid_out) begin
+              fft_bram_addr_b[3] = flp_negate_address_out;
+              fft_bram_din_b[3] = {flp_negate_double_out[0], flp_negate_double_out[1]};
+              fft_bram_we_b[3] = 1'b1;
+            end
+
+            // int_to_double on BRAM7
+            fft_bram_addr_a[7] = task_addr1;
+            int_to_double_data_in = fft_bram_dout_a[7];
+            int_to_double_address_in = task_addr1;
+            int_to_double_valid_in = 1'b1;
+            if(int_to_double_valid_out) begin
+              fft_bram_addr_b[7] = int_to_double_address_out;
+              fft_bram_din_b[7] = int_to_double_data_out;
+              fft_bram_we_b[7] = 1'b1;
+            end
+
+            // self muladjoint on BRAM0, output is BRAM4
+            fft_bram_addr_a[0] = task_addr1;
+            muladjoint_data_a_in = fft_bram_dout_a[0];
+            muladjoint_data_b_in = fft_bram_dout_a[0];
+            muladjoint_valid_in = 1'b1;
+            muladjoint_address_in = task_addr1;
+            if(muladjoint_valid_out) begin
+              fft_bram_addr_b[4] = muladjoint_address_out;
+              fft_bram_din_b[4] = muladjoint_data_out;
+              fft_bram_we_b[4] = 1'b1;
             end
 
             instruction_done = fft_done;  // FFT takes the longest
