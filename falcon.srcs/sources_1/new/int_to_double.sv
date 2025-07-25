@@ -21,7 +21,7 @@
 //    |   double 1        |   double 2        |
 //    |-------------------|-------------------|
 //
-// Signals valid_in and valid_out are used to make it easier for the parent module to write the result back to BRAM
+// Signals valid_in, valid_out, address_in, address_out are used to make it easier for the parent module to write the result back to BRAM
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -33,9 +33,11 @@ module int_to_double
 
     input logic [`FFT_BRAM_DATA_WIDTH-1:0] data_in,
     input logic valid_in,
+    input logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_in,
 
     output logic [`FFT_BRAM_DATA_WIDTH-1:0] data_out,
-    output logic valid_out
+    output logic valid_out,
+    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_out
   );
 
   logic signed [14:0] input_int1, input_int2;
@@ -47,8 +49,6 @@ module int_to_double
   logic [5:0] shift1, shift2;
   logic [3:0] i1, i2;
   logic [63:0] output_double1, output_double2;
-
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) valid_delay(.clk(clk), .in(valid_in), .out(valid_out));
 
   // Convert first integer to double
   always_comb begin
@@ -121,5 +121,7 @@ module int_to_double
   // Register the output
   always_ff @(posedge clk) begin
     data_out <= {output_double1, output_double2};
+    address_out <= address_in;
+    valid_out <= valid_in;
   end
 endmodule
