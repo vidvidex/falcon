@@ -101,21 +101,33 @@ module control_unit_sign_tb;
     instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
     #10;
 
-    // // Load message len, message and salt into BRAM6
-    // for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
-    //   instruction = {4'b1000, 3'b110, i[8:0], 3'b000, 9'b000000000, 4'b1000}; // BRAM write; bank1=6; addr1=i; bank2=/; addr2=/; args=write
-    //   bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
-    //   #10;
-    // end
-    // instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
-    // #10;
+    // Load message len, message and salt into BRAM6
+    for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
+      instruction = {4'b1000, 3'b110, i[8:0], 3'b000, 9'b000000000, 4'b1000}; // BRAM write; bank1=6; addr1=i; bank2=/; addr2=/; args=write
+      bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
+      #10;
+    end
+    instruction = 32'b0000_000_000000000_000_000000000_0000; // Stop writing to BRAM
+    #10;
+
+    // Run first set of instructions (SIGN_STEP_1)
+    for (int i = 0; i < N/2; i++) begin
+      instruction = {4'b0011, 3'b000, i[8:0], 3'b000, i[8:0], 4'b0001}; // COMBINED; bank1=/; addr1=i; bank2=/; addr2=i; args=SIGN_STEP_1
+      #10;
+    end
+    while (instruction_done !== 1'b1)
+      #10;
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
+    #10;
+
+
+
 
     // // Run hash to point
     // instruction = 32'b0001_110_000000000_111_000000000_0000; // Hash to point; bank1=6; addr1=/; bank2=7; addr2=/; args=/
     // while (instruction_done !== 1'b1)
     //   #10;
     // #40; // Wait for pipeline to finish
-
     // instruction = 32'b0000_000_000000000_000_000000000_0000;
     // #10;
 
