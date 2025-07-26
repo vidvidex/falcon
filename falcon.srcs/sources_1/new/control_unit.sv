@@ -66,7 +66,8 @@ module control_unit#(
             SIGN_STEP_2   = 4'b0010, // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
             SIGN_STEP_3   = 4'b0011, // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
             SIGN_STEP_4   = 4'b0100, // Step 4 of sign: copy, FFT, add. task_addr1 and task_addr2 are source and destination addresses for copy and add
-            SIGN_STEP_5   = 4'b0101  // Step 5 of sign: mul, mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
+            SIGN_STEP_5   = 4'b0101, // Step 5 of sign: mul, mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
+            SIGN_STEP_6   = 4'b0110  // Step 6 of sign: mul and mulselfadj. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -553,6 +554,10 @@ module control_unit#(
               fft_mode <= 1'b0;
             end
 
+            SIGN_STEP_6: begin
+
+            end
+
             default: begin
             end
           endcase
@@ -934,6 +939,38 @@ module control_unit#(
             end
 
             instruction_done = fft_done;  // FFT takes the longest
+          end
+
+          SIGN_STEP_6: begin
+            
+            // self muladjoint on BRAM2, output is BRAM8
+            fft_bram_addr_a[2] = task_addr1;
+            muladjoint_data_a_in = fft_bram_dout_a[2];
+            muladjoint_data_b_in = fft_bram_dout_a[2];
+            muladjoint_valid_in = 1'b1;
+            muladjoint_address_in = task_addr1;
+            if(muladjoint_valid_out) begin
+              fft_bram_addr_b[8] = muladjoint_address_out;
+              fft_bram_din_b[8] = muladjoint_data_out;
+              fft_bram_we_b[8] = 1'b1;
+            end
+
+            // mul BRAM 3 and BRAM 7, result is written to BRAM 7
+            fft_bram_addr_a[3] = task_addr1;
+            fft_bram_addr_a[7] = task_addr1;
+            mul_a_real = fft_bram_dout_a[3][127:64];
+            mul_a_imag = fft_bram_dout_a[3][63:0];
+            mul_b_real = fft_bram_dout_a[7][127:64];
+            mul_b_imag = fft_bram_dout_a[7][63:0];
+            mul_valid_in = 1'b1;
+            mul_address_in = task_addr1;
+            if(mul_valid_out) begin
+              fft_bram_addr_b[7] = mul_address_out;
+              fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
+              fft_bram_we_b[7] = 1'b1;
+            end
+
+            instruction_done = 1'b1;
           end
 
           default: begin
