@@ -63,7 +63,8 @@ module control_unit#(
   typedef enum logic [3:0] {
             HTP_DECMP_NTT = 4'b0000, // hash_to_point, decompress, ntt. Used in verify. NTT takes the longest, so we use it's done signal to know when everything is done
             SIGN_STEP_1   = 4'b0001, // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
-            SIGN_STEP_2   = 4'b0010  // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
+            SIGN_STEP_2   = 4'b0010, // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
+            SIGN_STEP_3   = 4'b0011  // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -475,6 +476,11 @@ module control_unit#(
               fft_mode <= 1'b0;
             end
 
+            SIGN_STEP_3: begin
+              fft_start <= 1'b1;
+              fft_mode <= 1'b0;
+            end
+
             default: begin
             end
           endcase
@@ -718,6 +724,41 @@ module control_unit#(
               fft_bram_addr_b[4] = muladjoint_address_out;
               fft_bram_din_b[4] = muladjoint_data_out;
               fft_bram_we_b[4] = 1'b1;
+            end
+
+            instruction_done = fft_done;  // FFT takes the longest
+          end
+
+          SIGN_STEP_3: begin
+            // FFT: input is BRAM2, also uses BRAM8
+            fft_bram_addr_a[2] = fft_bram1_addr_a;
+            fft_bram_din_a[2] = fft_bram1_din_a;
+            fft_bram_we_a[2] = fft_bram1_we_a;
+            fft_bram_addr_b[2] = fft_bram1_addr_b;
+            fft_bram_din_b[2] = fft_bram1_din_b;
+            fft_bram_we_b[2] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[2];
+            fft_bram1_dout_b = fft_bram_dout_b[2];
+
+            fft_bram_addr_a[8] = fft_bram2_addr_a;
+            fft_bram_din_a[8] = fft_bram2_din_a;
+            fft_bram_we_a[8] = fft_bram2_we_a;
+            fft_bram_addr_b[8] = fft_bram2_addr_b;
+            fft_bram_din_b[8] = fft_bram2_din_b;
+            fft_bram_we_b[8] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[8];
+            fft_bram2_dout_b = fft_bram_dout_b[8];
+
+            // self muladjoint on BRAM1, output is BRAM5
+            fft_bram_addr_a[1] = task_addr1;
+            muladjoint_data_a_in = fft_bram_dout_a[1];
+            muladjoint_data_b_in = fft_bram_dout_a[1];
+            muladjoint_valid_in = 1'b1;
+            muladjoint_address_in = task_addr1;
+            if(muladjoint_valid_out) begin
+              fft_bram_addr_b[5] = muladjoint_address_out;
+              fft_bram_din_b[5] = muladjoint_data_out;
+              fft_bram_we_b[5] = 1'b1;
             end
 
             instruction_done = fft_done;  // FFT takes the longest
