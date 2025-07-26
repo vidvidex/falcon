@@ -65,8 +65,8 @@ module control_unit#(
             SIGN_STEP_1   = 4'b0001, // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
             SIGN_STEP_2   = 4'b0010, // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
             SIGN_STEP_3   = 4'b0011, // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
-            SIGN_STEP_4   = 4'b0100, // Step 4 of sign: mulselfadj, FFT, add. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and add
-            SIGN_STEP_5   = 4'b0101  // Step 5 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
+            SIGN_STEP_4   = 4'b0100, // Step 4 of sign: copy, FFT, add. task_addr1 and task_addr2 are source and destination addresses for copy and add
+            SIGN_STEP_5   = 4'b0101  // Step 5 of sign: mul, mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -440,6 +440,33 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder1_in_valid_delay(.clk(clk), .in(flp_adder_in_valid), .out(flp_adder_in_valid_delayed));
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_adder1_address_in_delay(.clk(clk), .in(flp_adder_address_in), .out(flp_adder_address_out));
 
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_in;
+  logic copy_valid_in;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_out;
+  logic copy_valid_out;
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) copy_address_in_delay(.clk(clk), .in(copy_address_in), .out(copy_address_out));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
+
+  logic [63:0] mul_a_real, mul_a_imag, mul_b_real, mul_b_imag;
+  logic mul_valid_in, mul_valid_in_delayed;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_address_in;
+  logic [63:0] mul_result_real, mul_result_imag;
+  logic mul_valid_out;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_address_out;
+  complex_multiplier complex_multiplier(
+                      .clk(clk),
+                      .in_valid(mul_valid_in_delayed),
+                      .a_real(mul_a_real),
+                      .a_imag(mul_a_imag),
+                      .b_real(mul_b_real),
+                      .b_imag(mul_b_imag),
+                      .scale_factor(5'b0),
+                      .a_x_b_real(mul_result_real),
+                      .a_x_b_imag(mul_result_imag),
+                      .out_valid(mul_valid_out)
+                    );
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) mul_address_in_delay(.clk(clk), .in(mul_address_in), .out(mul_address_out));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_valid_in_delay(.clk(clk), .in(mul_valid_in), .out(mul_valid_in_delayed));
 
   // Task execution based on opcode
   always_ff @(posedge clk) begin
@@ -776,24 +803,24 @@ module control_unit#(
           end
 
           SIGN_STEP_3: begin
-            // FFT: input is BRAM2, also uses BRAM8
-            fft_bram_addr_a[2] = fft_bram1_addr_a;
-            fft_bram_din_a[2] = fft_bram1_din_a;
-            fft_bram_we_a[2] = fft_bram1_we_a;
-            fft_bram_addr_b[2] = fft_bram1_addr_b;
-            fft_bram_din_b[2] = fft_bram1_din_b;
-            fft_bram_we_b[2] = fft_bram1_we_b;
-            fft_bram1_dout_a = fft_bram_dout_a[2];
-            fft_bram1_dout_b = fft_bram_dout_b[2];
+            // FFT: input is BRAM7, also uses BRAM6
+            fft_bram_addr_a[7] = fft_bram1_addr_a;
+            fft_bram_din_a[7] = fft_bram1_din_a;
+            fft_bram_we_a[7] = fft_bram1_we_a;
+            fft_bram_addr_b[7] = fft_bram1_addr_b;
+            fft_bram_din_b[7] = fft_bram1_din_b;
+            fft_bram_we_b[7] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[7];
+            fft_bram1_dout_b = fft_bram_dout_b[7];
 
-            fft_bram_addr_a[8] = fft_bram2_addr_a;
-            fft_bram_din_a[8] = fft_bram2_din_a;
-            fft_bram_we_a[8] = fft_bram2_we_a;
-            fft_bram_addr_b[8] = fft_bram2_addr_b;
-            fft_bram_din_b[8] = fft_bram2_din_b;
-            fft_bram_we_b[8] = fft_bram2_we_b;
-            fft_bram2_dout_a = fft_bram_dout_a[8];
-            fft_bram2_dout_b = fft_bram_dout_b[8];
+            fft_bram_addr_a[6] = fft_bram2_addr_a;
+            fft_bram_din_a[6] = fft_bram2_din_a;
+            fft_bram_we_a[6] = fft_bram2_we_a;
+            fft_bram_addr_b[6] = fft_bram2_addr_b;
+            fft_bram_din_b[6] = fft_bram2_din_b;
+            fft_bram_we_b[6] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[6];
+            fft_bram2_dout_b = fft_bram_dout_b[6];
 
             // self muladjoint on BRAM1, output is BRAM5
             fft_bram_addr_a[1] = task_addr1;
@@ -846,16 +873,14 @@ module control_unit#(
               fft_bram_we_b[4] = 1'b1;
             end
 
-            // self muladjoint on BRAM2, output is BRAM8
-            fft_bram_addr_a[2] = task_addr1;
-            muladjoint_data_a_in = fft_bram_dout_a[2];
-            muladjoint_data_b_in = fft_bram_dout_a[2];
-            muladjoint_valid_in = 1'b1;
-            muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[8] = muladjoint_address_out;
-              fft_bram_din_b[8] = muladjoint_data_out;
-              fft_bram_we_b[8] = 1'b1;
+            // copy BRAM 7 to BRAM 6
+            fft_bram_addr_a[7] = task_addr1;
+            copy_address_in = task_addr1;
+            copy_valid_in = 1'b1;
+            if (copy_valid_out) begin
+              fft_bram_addr_a[6] = copy_address_out;
+              fft_bram_din_a[6] = fft_bram_dout_a[7];
+              fft_bram_we_a[6] = 1'b1;
             end
 
             instruction_done = fft_done;  // FFT takes the longest
@@ -891,6 +916,21 @@ module control_unit#(
               fft_bram_addr_b[9] = muladjoint_address_out;
               fft_bram_din_b[9] = muladjoint_data_out;
               fft_bram_we_b[9] = 1'b1;
+            end
+
+            // mul BRAM 1 and BRAM 6, result is written to BRAM 6
+            fft_bram_addr_a[1] = task_addr1;
+            fft_bram_addr_a[6] = task_addr1;
+            mul_a_real = fft_bram_dout_a[1][127:64];
+            mul_a_imag = fft_bram_dout_a[1][63:0];
+            mul_b_real = fft_bram_dout_a[6][127:64];
+            mul_b_imag = fft_bram_dout_a[6][63:0];
+            mul_valid_in = 1'b1;
+            mul_address_in = task_addr1;
+            if(mul_valid_out) begin
+              fft_bram_addr_b[6] = mul_address_out;
+              fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
+              fft_bram_we_b[6] = 1'b1;
             end
 
             instruction_done = fft_done;  // FFT takes the longest
