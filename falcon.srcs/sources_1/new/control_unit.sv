@@ -67,7 +67,8 @@ module control_unit#(
             SIGN_STEP_3   = 4'b0011, // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
             SIGN_STEP_4   = 4'b0100, // Step 4 of sign: copy, FFT, add. task_addr1 and task_addr2 are source and destination addresses for copy and add
             SIGN_STEP_5   = 4'b0101, // Step 5 of sign: mul, mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
-            SIGN_STEP_6   = 4'b0110  // Step 6 of sign: mul and mulselfadj. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
+            SIGN_STEP_6   = 4'b0110, // Step 6 of sign: mul and mulselfadj. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
+            SIGN_STEP_7   = 4'b0111  // Step 7 of sign: add, muladj, mul const. task_addr1 and task_addr2 are source and destination addresses for add, muladj and mul const
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -558,6 +559,10 @@ module control_unit#(
 
             end
 
+            SIGN_STEP_7: begin
+
+            end
+
             default: begin
             end
           endcase
@@ -871,7 +876,6 @@ module control_unit#(
             flp_adder2_b = fft_bram_dout_a[5][63:0];
             flp_adder_in_valid = 1'b1;
             flp_adder_address_in = task_addr1;
-
             if(flp_adder_out_valid) begin
               fft_bram_addr_b[4] = flp_adder_address_out;
               fft_bram_din_b[4] = {flp_adder1_result, flp_adder2_result};
@@ -962,6 +966,53 @@ module control_unit#(
             mul_a_imag = fft_bram_dout_a[3][63:0];
             mul_b_real = fft_bram_dout_a[7][127:64];
             mul_b_imag = fft_bram_dout_a[7][63:0];
+            mul_valid_in = 1'b1;
+            mul_address_in = task_addr1;
+            if(mul_valid_out) begin
+              fft_bram_addr_b[7] = mul_address_out;
+              fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
+              fft_bram_we_b[7] = 1'b1;
+            end
+
+            instruction_done = 1'b1;
+          end
+
+          SIGN_STEP_7: begin
+            
+            // muladjoint on BRAM1 and BRAM3, output is BRAM9
+            fft_bram_addr_a[1] = task_addr1;
+            fft_bram_addr_a[3] = task_addr1;
+            muladjoint_data_a_in = fft_bram_dout_a[1];
+            muladjoint_data_b_in = fft_bram_dout_a[3];
+            muladjoint_valid_in = 1'b1;
+            muladjoint_address_in = task_addr1;
+            if(muladjoint_valid_out) begin
+              fft_bram_addr_b[9] = muladjoint_address_out;
+              fft_bram_din_b[9] = muladjoint_data_out;
+              fft_bram_we_b[9] = 1'b1;
+            end
+
+            // add BRAM 8 and BRAM 9, result is written to BRAM 8
+            fft_bram_addr_a[8] = task_addr1;
+            fft_bram_addr_a[9] = task_addr1;
+            flp_adder1_a = fft_bram_dout_a[8][127:64];
+            flp_adder1_b = fft_bram_dout_a[9][127:64];
+            flp_adder2_a = fft_bram_dout_a[8][63:0];
+            flp_adder2_b = fft_bram_dout_a[9][63:0];
+            flp_adder_in_valid = 1'b1;
+            flp_adder_address_in = task_addr1;
+            if(flp_adder_out_valid) begin
+              fft_bram_addr_b[8] = flp_adder_address_out;
+              fft_bram_din_b[8] = {flp_adder1_result, flp_adder2_result};
+              fft_bram_we_b[8] = 1'b1;
+            end
+
+            // mul BRAM 7 with constant inv(q), result is written to BRAM 7
+            fft_bram_addr_a[7] = task_addr1;
+            mul_a_real = fft_bram_dout_a[3][127:64];
+            mul_a_imag = fft_bram_dout_a[3][63:0];
+            mul_b_real = $realtobits(1.0 / 12289.0);
+            mul_b_imag = $realtobits(1.0 / 12289.0);
             mul_valid_in = 1'b1;
             mul_address_in = task_addr1;
             if(mul_valid_out) begin
