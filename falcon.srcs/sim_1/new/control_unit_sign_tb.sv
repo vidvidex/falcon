@@ -140,33 +140,15 @@ module control_unit_sign_tb;
     instruction = 32'b0000_000_000000000_000_000000000_0000;
     #10;
 
-
-
-
-    // // Run hash to point
-    // instruction = 32'b0001_110_000000000_111_000000000_0000; // Hash to point; bank1=6; addr1=/; bank2=7; addr2=/; args=/
-    // while (instruction_done !== 1'b1)
-    //   #10;
-    // #40; // Wait for pipeline to finish
-    // instruction = 32'b0000_000_000000000_000_000000000_0000;
-    // #10;
-
-    // // Convert point to double
-    // for(int i = 0; i < N/2; i++) begin
-    //   instruction = {4'b1010, 3'b111, i[8:0], 3'b111, i[8:0], 4'b0000}; // int to double; bank1=7; addr1=i; bank2=7; addr2=i; args=/
-    //   #10;
-    // end
-    // #40; // Wait for pipeline to finish
-
-    // instruction = 32'b0000_000_000000000_000_000000000_0000;
-    // #10;
-
-    // // Run FFT on output of hash to point
-    // instruction = 32'b0010_111_000000000_010_000000000_0000;  // FFT; bank1=7; addr1=/; bank2=6; addr2=/; args=mode:fft
-    // #10;
-    // while (instruction_done !== 1'b1)
-    //   #10;
-    // #10;
+    // Run fourth set of instructions (SIGN_STEP_4)
+    for (int i = 0; i < N/2; i++) begin
+      instruction = {4'b0011, 3'b000, i[8:0], 3'b000, i[8:0], 4'b0100}; // COMBINED; bank1=/; addr1=i; bank2=/; addr2=i; args=SIGN_STEP_4
+      #10;
+    end
+    while (instruction_done !== 1'b1)
+      #10;
+    instruction = 32'b0000_000_000000000_000_000000000_0000;
+    #10;
 
     instruction = 32'b0000_000_000000000_000_000000000_0000;
 

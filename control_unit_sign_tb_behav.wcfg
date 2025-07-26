@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="21,454.367 ns"></ZoomStartTime>
-      <ZoomEndTime time="21,728.168 ns"></ZoomEndTime>
-      <Cursor1Time time="21,500.000 ns"></Cursor1Time>
+      <ZoomStartTime time="27,916.586 ns"></ZoomStartTime>
+      <ZoomEndTime time="28,237.071 ns"></ZoomEndTime>
+      <Cursor1Time time="27,970.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="236"></NameColumnWidth>
+      <NameColumnWidth column_width="232"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -120,7 +120,6 @@
       <wvobject type="group" fp_name="group487">
          <obj_property name="label">fft_bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][8:0]</obj_property>
@@ -1082,6 +1081,79 @@
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/muladjoint_address_out">
             <obj_property name="ElementShortName">muladjoint_address_out[8:0]</obj_property>
             <obj_property name="ObjectShortName">muladjoint_address_out[8:0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group204">
+         <obj_property name="label">flp_add</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder_address_in">
+            <obj_property name="ElementShortName">flp_adder_address_in[8:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_address_in[8:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_in_valid">
+            <obj_property name="ElementShortName">flp_adder_in_valid</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_in_valid</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_in_valid_delayed">
+            <obj_property name="ElementShortName">flp_adder_in_valid_delayed</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_in_valid_delayed</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder1_a">
+            <obj_property name="ElementShortName">flp_adder1_a[63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder1_a[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder1_b">
+            <obj_property name="ElementShortName">flp_adder1_b[63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder1_b[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder2_a">
+            <obj_property name="ElementShortName">flp_adder2_a[63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder2_a[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder2_b">
+            <obj_property name="ElementShortName">flp_adder2_b[63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder2_b[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder1_result">
+            <obj_property name="ElementShortName">flp_adder1_result[63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder1_result[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder2_result">
+            <obj_property name="ElementShortName">flp_adder2_result[63:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder2_result[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder_address_out">
+            <obj_property name="ElementShortName">flp_adder_address_out[8:0]</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_address_out[8:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_out_valid">
+            <obj_property name="ElementShortName">flp_adder_out_valid</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_out_valid</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>

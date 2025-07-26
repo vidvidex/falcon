@@ -64,7 +64,8 @@ module control_unit#(
             HTP_DECMP_NTT = 4'b0000, // hash_to_point, decompress, ntt. Used in verify. NTT takes the longest, so we use it's done signal to know when everything is done
             SIGN_STEP_1   = 4'b0001, // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
             SIGN_STEP_2   = 4'b0010, // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
-            SIGN_STEP_3   = 4'b0011  // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
+            SIGN_STEP_3   = 4'b0011, // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
+            SIGN_STEP_4   = 4'b0100  // Step 4 of sign: mulselfadj, FFT, add. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and add
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -406,6 +407,39 @@ module control_unit#(
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) muladjoint_address_in_delay(.clk(clk), .in(muladjoint_address_in), .out(muladjoint_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) muladjoint_valid_in_delay(.clk(clk), .in(muladjoint_valid_in), .out(muladjoint_valid_in_delayed));
 
+  // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_in;
+  logic flp_adder_in_valid, flp_adder_in_valid_delayed;
+  logic [63:0] flp_adder1_a, flp_adder1_b;
+  logic [63:0] flp_adder2_a, flp_adder2_b;
+  logic [63:0] flp_adder1_result;
+  logic [63:0] flp_adder2_result;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_out;
+  logic flp_adder_out_valid;
+  flp_adder #(
+              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
+            ) flp_adder1(
+              .clk(clk),
+              .in_valid(flp_adder_in_valid_delayed),
+              .a(flp_adder1_a),
+              .b(flp_adder1_b),
+              .result(flp_adder1_result),
+              .out_valid(flp_adder_out_valid)
+            );
+  flp_adder #(
+              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
+            ) flp_adder2(
+              .clk(clk),
+              .in_valid(flp_adder_in_valid_delayed),
+              .a(flp_adder2_a),
+              .b(flp_adder2_b),
+              .result(flp_adder2_result),
+              .out_valid()
+            );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder1_in_valid_delay(.clk(clk), .in(flp_adder_in_valid), .out(flp_adder_in_valid_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_adder1_address_in_delay(.clk(clk), .in(flp_adder_address_in), .out(flp_adder_address_out));
+
+
   // Task execution based on opcode
   always_ff @(posedge clk) begin
 
@@ -481,6 +515,11 @@ module control_unit#(
               fft_mode <= 1'b0;
             end
 
+            SIGN_STEP_4: begin
+              fft_start <= 1'b1;
+              fft_mode <= 1'b0;
+            end
+
             default: begin
             end
           endcase
@@ -526,6 +565,7 @@ module control_unit#(
     sub_normalize_squared_norm_last = 1'b0;
     flp_negate_valid_in = 1'b0;
     muladjoint_valid_in = 1'b0;
+    flp_adder_in_valid = 1'b0;
 
     // Ensure these signals are not undefined to ensure proper behaviour of the module
     sub_normalize_squared_norm_a[0] = 0;
@@ -759,6 +799,57 @@ module control_unit#(
               fft_bram_addr_b[5] = muladjoint_address_out;
               fft_bram_din_b[5] = muladjoint_data_out;
               fft_bram_we_b[5] = 1'b1;
+            end
+
+            instruction_done = fft_done;  // FFT takes the longest
+          end
+
+          SIGN_STEP_4: begin
+            // FFT: input is BRAM3, also uses BRAM9
+            fft_bram_addr_a[3] = fft_bram1_addr_a;
+            fft_bram_din_a[3] = fft_bram1_din_a;
+            fft_bram_we_a[3] = fft_bram1_we_a;
+            fft_bram_addr_b[3] = fft_bram1_addr_b;
+            fft_bram_din_b[3] = fft_bram1_din_b;
+            fft_bram_we_b[3] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[3];
+            fft_bram1_dout_b = fft_bram_dout_b[3];
+
+            fft_bram_addr_a[9] = fft_bram2_addr_a;
+            fft_bram_din_a[9] = fft_bram2_din_a;
+            fft_bram_we_a[9] = fft_bram2_we_a;
+            fft_bram_addr_b[9] = fft_bram2_addr_b;
+            fft_bram_din_b[9] = fft_bram2_din_b;
+            fft_bram_we_b[9] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[9];
+            fft_bram2_dout_b = fft_bram_dout_b[9];
+
+            // add BRAM4 and BRAM 5, output is BRAM4
+            fft_bram_addr_a[4] = task_addr1;
+            fft_bram_addr_a[5] = task_addr1;
+            flp_adder1_a = fft_bram_dout_a[4][127:64];
+            flp_adder1_b = fft_bram_dout_a[5][127:64];
+            flp_adder2_a = fft_bram_dout_a[4][63:0];
+            flp_adder2_b = fft_bram_dout_a[5][63:0];
+            flp_adder_in_valid = 1'b1;
+            flp_adder_address_in = task_addr1;
+
+            if(flp_adder_out_valid) begin
+              fft_bram_addr_b[4] = flp_adder_address_out;
+              fft_bram_din_b[4] = {flp_adder1_result, flp_adder2_result};
+              fft_bram_we_b[4] = 1'b1;
+            end
+
+            // self muladjoint on BRAM2, output is BRAM8
+            fft_bram_addr_a[2] = task_addr1;
+            muladjoint_data_a_in = fft_bram_dout_a[2];
+            muladjoint_data_b_in = fft_bram_dout_a[2];
+            muladjoint_valid_in = 1'b1;
+            muladjoint_address_in = task_addr1;
+            if(muladjoint_valid_out) begin
+              fft_bram_addr_b[8] = muladjoint_address_out;
+              fft_bram_din_b[8] = muladjoint_data_out;
+              fft_bram_we_b[8] = 1'b1;
             end
 
             instruction_done = fft_done;  // FFT takes the longest
