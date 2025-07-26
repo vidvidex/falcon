@@ -65,7 +65,8 @@ module control_unit#(
             SIGN_STEP_1   = 4'b0001, // Step 1 of sign: FFT, negate and hash_to_point. task_addr1 and task_addr2 are source and destination addresses for negate
             SIGN_STEP_2   = 4'b0010, // Step 2 of sign: mulselfadj, FFT, negate and int_to_double. task_addr1 and task_addr2 are source and destination addresses for negate, int_to_double and mulselfadj
             SIGN_STEP_3   = 4'b0011, // Step 3 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
-            SIGN_STEP_4   = 4'b0100  // Step 4 of sign: mulselfadj, FFT, add. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and add
+            SIGN_STEP_4   = 4'b0100, // Step 4 of sign: mulselfadj, FFT, add. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and add
+            SIGN_STEP_5   = 4'b0101  // Step 5 of sign: mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -520,6 +521,11 @@ module control_unit#(
               fft_mode <= 1'b0;
             end
 
+            SIGN_STEP_5: begin
+              fft_start <= 1'b1;
+              fft_mode <= 1'b0;
+            end
+
             default: begin
             end
           endcase
@@ -850,6 +856,41 @@ module control_unit#(
               fft_bram_addr_b[8] = muladjoint_address_out;
               fft_bram_din_b[8] = muladjoint_data_out;
               fft_bram_we_b[8] = 1'b1;
+            end
+
+            instruction_done = fft_done;  // FFT takes the longest
+          end
+
+          SIGN_STEP_5: begin
+            // FFT: input is BRAM7, also uses BRAM6
+            fft_bram_addr_a[7] = fft_bram1_addr_a;
+            fft_bram_din_a[7] = fft_bram1_din_a;
+            fft_bram_we_a[7] = fft_bram1_we_a;
+            fft_bram_addr_b[7] = fft_bram1_addr_b;
+            fft_bram_din_b[7] = fft_bram1_din_b;
+            fft_bram_we_b[7] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[7];
+            fft_bram1_dout_b = fft_bram_dout_b[7];
+
+            fft_bram_addr_a[6] = fft_bram2_addr_a;
+            fft_bram_din_a[6] = fft_bram2_din_a;
+            fft_bram_we_a[6] = fft_bram2_we_a;
+            fft_bram_addr_b[6] = fft_bram2_addr_b;
+            fft_bram_din_b[6] = fft_bram2_din_b;
+            fft_bram_we_b[6] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[6];
+            fft_bram2_dout_b = fft_bram_dout_b[6];
+
+            // self muladjoint on BRAM3, output is BRAM9
+            fft_bram_addr_a[3] = task_addr1;
+            muladjoint_data_a_in = fft_bram_dout_a[3];
+            muladjoint_data_b_in = fft_bram_dout_a[3];
+            muladjoint_valid_in = 1'b1;
+            muladjoint_address_in = task_addr1;
+            if(muladjoint_valid_out) begin
+              fft_bram_addr_b[9] = muladjoint_address_out;
+              fft_bram_din_b[9] = muladjoint_data_out;
+              fft_bram_we_b[9] = 1'b1;
             end
 
             instruction_done = fft_done;  // FFT takes the longest
