@@ -69,7 +69,8 @@ module control_unit#(
             SIGN_STEP_5   = 4'b0101, // Step 5 of sign: mul, mulselfadj and FFT. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
             SIGN_STEP_6   = 4'b0110, // Step 6 of sign: mul and mulselfadj. task_addr1 and task_addr2 are source and destination addresses for mulselfadj and mul
             SIGN_STEP_7   = 4'b0111, // Step 7 of sign: add, muladj, mul const. task_addr1 and task_addr2 are source and destination addresses for add, muladj and mul const
-            SIGN_STEP_8   = 4'b1000  // Step 8 of sign: muladj, mul const. task_addr1 and task_addr2 are source and destination addresses for muladj and mul const
+            SIGN_STEP_8   = 4'b1000, // Step 8 of sign: muladj, mul const. task_addr1 and task_addr2 are source and destination addresses for muladj and mul const
+            SIGN_STEP_9   = 4'b1001  // Step 9 of sign: add. task_addr1 and task_addr2 are source and destination addresses for add
           } combined_instruction_t;
 
   opcode_t opcode;
@@ -457,17 +458,17 @@ module control_unit#(
   logic mul_valid_out;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_address_out;
   complex_multiplier complex_multiplier(
-                      .clk(clk),
-                      .in_valid(mul_valid_in_delayed),
-                      .a_real(mul_a_real),
-                      .a_imag(mul_a_imag),
-                      .b_real(mul_b_real),
-                      .b_imag(mul_b_imag),
-                      .scale_factor(5'b0),
-                      .a_x_b_real(mul_result_real),
-                      .a_x_b_imag(mul_result_imag),
-                      .out_valid(mul_valid_out)
-                    );
+                       .clk(clk),
+                       .in_valid(mul_valid_in_delayed),
+                       .a_real(mul_a_real),
+                       .a_imag(mul_a_imag),
+                       .b_real(mul_b_real),
+                       .b_imag(mul_b_imag),
+                       .scale_factor(5'b0),
+                       .a_x_b_real(mul_result_real),
+                       .a_x_b_imag(mul_result_imag),
+                       .out_valid(mul_valid_out)
+                     );
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) mul_address_in_delay(.clk(clk), .in(mul_address_in), .out(mul_address_out));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_valid_in_delay(.clk(clk), .in(mul_valid_in), .out(mul_valid_in_delayed));
 
@@ -565,6 +566,10 @@ module control_unit#(
             end
 
             SIGN_STEP_8: begin
+
+            end
+            
+            SIGN_STEP_9: begin
 
             end
 
@@ -951,7 +956,7 @@ module control_unit#(
           end
 
           SIGN_STEP_6: begin
-            
+
             // self muladjoint on BRAM2, output is BRAM8
             fft_bram_addr_a[2] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[2];
@@ -983,7 +988,7 @@ module control_unit#(
           end
 
           SIGN_STEP_7: begin
-            
+
             // muladjoint on BRAM1 and BRAM3, output is BRAM9
             fft_bram_addr_a[1] = task_addr1;
             fft_bram_addr_a[3] = task_addr1;
@@ -1030,7 +1035,7 @@ module control_unit#(
           end
 
           SIGN_STEP_8: begin
-            
+
             // muladjoint on BRAM0 and BRAM2, output is BRAM5
             fft_bram_addr_a[0] = task_addr1;
             fft_bram_addr_a[2] = task_addr1;
@@ -1056,6 +1061,26 @@ module control_unit#(
               fft_bram_addr_b[6] = mul_address_out;
               fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
               fft_bram_we_b[6] = 1'b1;
+            end
+
+            instruction_done = 1'b1;
+          end
+
+          SIGN_STEP_9: begin
+
+            // add BRAM 5 and BRAM 9, result is written to BRAM 5
+            fft_bram_addr_a[5] = task_addr1;
+            fft_bram_addr_a[9] = task_addr1;
+            flp_adder1_a = fft_bram_dout_a[5][127:64];
+            flp_adder1_b = fft_bram_dout_a[9][127:64];
+            flp_adder2_a = fft_bram_dout_a[5][63:0];
+            flp_adder2_b = fft_bram_dout_a[9][63:0];
+            flp_adder_in_valid = 1'b1;
+            flp_adder_address_in = task_addr1;
+            if(flp_adder_out_valid) begin
+              fft_bram_addr_b[5] = flp_adder_address_out;
+              fft_bram_din_b[5] = {flp_adder1_result, flp_adder2_result};
+              fft_bram_we_b[5] = 1'b1;
             end
 
             instruction_done = 1'b1;
