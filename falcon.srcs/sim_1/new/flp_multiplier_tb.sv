@@ -4,7 +4,7 @@
 module flp_multiplier_tb;
 
   logic clk;
-  logic in_valid, out_valid;
+  logic valid_in, valid_out;
   logic [63:0] a;
   logic [63:0] b;
   logic [63:0] result;
@@ -14,12 +14,12 @@ module flp_multiplier_tb;
 
   flp_multiplier flp_multiplier(
                   .clk(clk),
-                  .in_valid(in_valid),
+                  .valid_in(valid_in),
                   .a(a),
                   .b(b),
                   .scale_factor(scale_factor),
                   .result(result),
-                  .out_valid(out_valid)
+                  .valid_out(valid_out)
                 );
 
   initial begin
@@ -27,7 +27,7 @@ module flp_multiplier_tb;
     clk = 1;
     scale_factor = 0;
 
-    in_valid = 1;
+    valid_in = 1;
     a = $realtobits(2.0);
     b = $realtobits(-4.5);
     #10;
@@ -44,7 +44,7 @@ module flp_multiplier_tb;
     b = $realtobits(0.0);
     #10;
 
-    in_valid = 0;
+    valid_in = 0;
 
   end
 

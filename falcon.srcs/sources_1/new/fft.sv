@@ -52,7 +52,7 @@ module fft#(
 
     // Signals for external butterfly unit
     output logic btf_mode,
-    output logic btf_in_valid,
+    output logic btf_valid_in,
     output logic [63:0] btf_a_in_real,
     output logic [63:0] btf_a_in_imag,
     output logic [63:0] btf_b_in_real,
@@ -63,7 +63,7 @@ module fft#(
     input logic [63:0] btf_a_out_imag,
     input logic [63:0] btf_b_out_real,
     input logic [63:0] btf_b_out_imag,
-    input logic btf_out_valid
+    input logic btf_valid_out
   );
 
   logic [3:0] u, u_2DP; // Will be at most 8 for N=512 and 9 for N=1024
@@ -87,7 +87,7 @@ module fft#(
 
   // Since read delay from BRAM is a few cycles we need to also delay the valid signal for the butterfly
   logic butterfly_input_valid;
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_in_valid));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_valid_in));
 
 
   delay_register #(.BITWIDTH(4), .CYCLE_COUNT(2)) u_delay(.clk(clk), .in(u), .out(u_2DP));
@@ -121,8 +121,8 @@ module fft#(
       bram2_addr_b = write_addr2;
       bram2_din_a = {btf_a_out_real, btf_a_out_imag};
       bram2_din_b = {btf_b_out_real, btf_b_out_imag};
-      bram2_we_a = btf_out_valid;
-      bram2_we_b = btf_out_valid;
+      bram2_we_a = btf_valid_out;
+      bram2_we_b = btf_valid_out;
     end
     else begin  // Even stage
       // Read from BRAM2
@@ -136,8 +136,8 @@ module fft#(
       bram1_addr_b = write_addr2;
       bram1_din_a = {btf_a_out_real, btf_a_out_imag};
       bram1_din_b = {btf_b_out_real, btf_b_out_imag};
-      bram1_we_a = btf_out_valid;
-      bram1_we_b = btf_out_valid;
+      bram1_we_a = btf_valid_out;
+      bram1_we_b = btf_valid_out;
     end
   end
 
@@ -178,7 +178,7 @@ module fft#(
         if((mode == 1'b0 && j == (N >> 1) - 2 && m == (N >> 1)) || (mode == 1'b1 && j == (N >> 2) - 1 && m == 2))
           next_state = WAIT_FOR_BUTTERFLY;
       WAIT_FOR_BUTTERFLY:
-        if(btf_out_valid == 1'b0)  // Wait for butterfly unit to output all data
+        if(btf_valid_out == 1'b0)  // Wait for butterfly unit to output all data
           next_state = DONE;
       DONE:
         next_state = DONE;

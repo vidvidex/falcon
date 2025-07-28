@@ -24,13 +24,13 @@
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/complex_multiplier_tb/in_valid">
-      <obj_property name="ElementShortName">in_valid</obj_property>
-      <obj_property name="ObjectShortName">in_valid</obj_property>
+   <wvobject type="logic" fp_name="/complex_multiplier_tb/valid_in">
+      <obj_property name="ElementShortName">valid_in</obj_property>
+      <obj_property name="ObjectShortName">valid_in</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/complex_multiplier_tb/out_valid">
-      <obj_property name="ElementShortName">out_valid</obj_property>
-      <obj_property name="ObjectShortName">out_valid</obj_property>
+   <wvobject type="logic" fp_name="/complex_multiplier_tb/valid_out">
+      <obj_property name="ElementShortName">valid_out</obj_property>
+      <obj_property name="ObjectShortName">valid_out</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/complex_multiplier_tb/a_real">
       <obj_property name="ElementShortName">a_real[63:0]</obj_property>
@@ -93,9 +93,9 @@
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/complex_multiplier_tb/complex_multiplier/in_valid">
-         <obj_property name="ElementShortName">in_valid</obj_property>
-         <obj_property name="ObjectShortName">in_valid</obj_property>
+      <wvobject type="logic" fp_name="/complex_multiplier_tb/complex_multiplier/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/complex_multiplier_tb/complex_multiplier/a_real">
          <obj_property name="ElementShortName">a_real[63:0]</obj_property>
@@ -126,9 +126,9 @@
          <obj_property name="ElementShortName">a_x_b_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">a_x_b_imag[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/complex_multiplier_tb/complex_multiplier/out_valid">
-         <obj_property name="ElementShortName">out_valid</obj_property>
-         <obj_property name="ObjectShortName">out_valid</obj_property>
+      <wvobject type="logic" fp_name="/complex_multiplier_tb/complex_multiplier/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/complex_multiplier_tb/complex_multiplier/mult_done">
          <obj_property name="ElementShortName">mult_done</obj_property>

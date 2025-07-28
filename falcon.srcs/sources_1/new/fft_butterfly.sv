@@ -15,7 +15,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module fft_butterfly(
     input clk,
-    input in_valid, // Are inputs valid
+    input valid_in, // Are inputs valid
     input mode, // 0  = FFT; 1 = IFFT
     input [63:0] a_in_real,
     input [63:0] a_in_imag,
@@ -31,7 +31,7 @@ module fft_butterfly(
     output [63:0] b_out_real,
     output [63:0] b_out_imag,
 
-    output out_valid
+    output valid_out
   );
 
   /////////////////////// Add stage //////////////////////
@@ -63,7 +63,7 @@ module fft_butterfly(
 
   fft_butterfly_add_stage add_stage(
                          .clk(clk),
-                         .in_valid(in_valid),
+                         .valid_in(valid_in),
 
                          .a_real(a_real),
                          .a_imag(a_imag),
@@ -76,7 +76,7 @@ module fft_butterfly(
                          .a_m_b_real(a_m_b_real),
                          .a_m_b_imag(a_m_b_imag),
 
-                         .out_valid(add_done)
+                         .valid_out(add_done)
                        );
 
   // For IFFT we need to delay the twiddle factor address
@@ -106,7 +106,7 @@ module fft_butterfly(
 
   complex_multiplier tw_factor_mult(
                       .clk(clk),
-                      .in_valid(add_done_2DP),
+                      .valid_in(add_done_2DP),
                       .a_real(a_m_b_real_1DP),
                       .a_imag(a_m_b_imag_1DP),
                       .b_real(tw_real),
@@ -116,7 +116,7 @@ module fft_butterfly(
                       .a_x_b_real(mul_out_real),
                       .a_x_b_imag(mul_out_imag),
 
-                      .out_valid(out_valid)
+                      .valid_out(valid_out)
                     );
 
   logic [63:0] b_out_real_0DP, b_out_imag_0DP;

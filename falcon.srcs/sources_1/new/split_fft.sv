@@ -62,7 +62,7 @@ module split_fft#(
 
     // Signals for external butterfly unit
     output logic btf_mode,
-    output logic btf_in_valid,
+    output logic btf_valid_in,
     output logic [63:0] btf_a_in_real,
     output logic [63:0] btf_a_in_imag,
     output logic [63:0] btf_b_in_real,
@@ -73,7 +73,7 @@ module split_fft#(
     input logic [63:0] btf_a_out_imag,
     input logic [63:0] btf_b_out_real,
     input logic [63:0] btf_b_out_imag,
-    input logic btf_out_valid
+    input logic btf_valid_out
   );
 
   assign btf_mode = 1'b1; // For split_fft we always need mode = 1 (IFFT)
@@ -92,7 +92,7 @@ module split_fft#(
   state_t state, next_state;
 
   logic butterfly_input_valid;
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_in_valid));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_valid_in));
 
   logic [9:0] tw_addr;
   delay_register #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(btf_tw_addr));
@@ -105,7 +105,7 @@ module split_fft#(
 
   // Writing results to BRAM 2
   always_ff @(posedge clk) begin
-    if (btf_out_valid) begin
+    if (btf_valid_out) begin
       bram2_addr_a <= u_delayed;
       bram2_addr_b <= u_delayed + (size >> 2);
       bram2_din_a <= {btf_a_out_real, btf_a_out_imag};
@@ -137,10 +137,10 @@ module split_fft#(
         if(u == (size >> 2) - 1)
           next_state = WAIT_FOR_BUTTERFLY_START;
       WAIT_FOR_BUTTERFLY_START:
-        if(btf_out_valid == 1'b1)  // Wait for butterfly unit to start outputting data
+        if(btf_valid_out == 1'b1)  // Wait for butterfly unit to start outputting data
           next_state = WAIT_FOR_BUTTERFLY_END;
       WAIT_FOR_BUTTERFLY_END:
-        if(btf_out_valid == 1'b0)  // Wait for butterfly unit to finish outputting all data
+        if(btf_valid_out == 1'b0)  // Wait for butterfly unit to finish outputting all data
           next_state = DONE;
       DONE:
         next_state = IDLE;

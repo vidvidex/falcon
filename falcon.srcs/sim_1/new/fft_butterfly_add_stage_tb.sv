@@ -4,7 +4,7 @@
 module fft_butterfly_add_stage_tb;
 
   logic clk;
-  logic in_valid, out_valid;
+  logic valid_in, valid_out;
   logic [63:0] a_real;
   logic [63:0] a_imag;
   logic [63:0] b_real;
@@ -20,7 +20,7 @@ module fft_butterfly_add_stage_tb;
 
   fft_butterfly_add_stage fft_butterfly_add_stage(
                  .clk(clk),
-                 .in_valid(in_valid),
+                 .valid_in(valid_in),
 
                  .a_real(a_real),
                  .a_imag(a_imag),
@@ -32,35 +32,35 @@ module fft_butterfly_add_stage_tb;
                  .a_m_b_real(a_m_b_real),
                  .a_m_b_imag(a_m_b_imag),
 
-                 .out_valid(out_valid)
+                 .valid_out(valid_out)
                );
 
   initial begin
 
     clk = 1;
 
-    in_valid = 0;
+    valid_in = 0;
     a_real = 0;
     a_imag = 0;
     b_real = 0;
     b_imag = 0;
     #10;
 
-    in_valid = 1;
+    valid_in = 1;
     a_real = $realtobits(1.0);
     a_imag = $realtobits(1.0);
     b_real = $realtobits(2.0);
     b_imag = $realtobits(2.0);
     #10;    
 
-    in_valid = 1;
+    valid_in = 1;
     a_real = $realtobits(5.0);
     a_imag = $realtobits(6.0);
     b_real = $realtobits(7.0);
     b_imag = $realtobits(8.0);
     #10;    
 
-    in_valid = 0;
+    valid_in = 0;
 
   end
 

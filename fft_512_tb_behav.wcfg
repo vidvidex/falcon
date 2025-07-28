@@ -461,9 +461,9 @@
             <obj_property name="ElementShortName">clk</obj_property>
             <obj_property name="ObjectShortName">clk</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/fft_512_tb/fft/fft_butterfly/in_valid">
-            <obj_property name="ElementShortName">in_valid</obj_property>
-            <obj_property name="ObjectShortName">in_valid</obj_property>
+         <wvobject type="logic" fp_name="/fft_512_tb/fft/fft_butterfly/valid_in">
+            <obj_property name="ElementShortName">valid_in</obj_property>
+            <obj_property name="ObjectShortName">valid_in</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/fft_512_tb/fft/fft_butterfly/mode">
             <obj_property name="ElementShortName">mode</obj_property>

@@ -187,11 +187,11 @@ module control_unit#(
   logic btf_mode;
   logic signed [4:0] btf_scale_factor;
   logic [9:0] btf_tw_addr;
-  logic btf_in_valid, btf_out_valid;
+  logic btf_valid_in, btf_valid_out;
   fft_butterfly fft_butterfly(
                   .clk(clk),
                   .mode(btf_mode),
-                  .in_valid(btf_in_valid),
+                  .valid_in(btf_valid_in),
 
                   .a_in_real(btf_a_in_real),
                   .a_in_imag(btf_a_in_imag),
@@ -207,7 +207,7 @@ module control_unit#(
                   .b_out_real(btf_b_out_real),
                   .b_out_imag(btf_b_out_imag),
 
-                  .out_valid(btf_out_valid)
+                  .valid_out(btf_valid_out)
                 );
 
   logic fft_mode, fft_start, fft_start_i, fft_done;
@@ -248,7 +248,7 @@ module control_unit#(
         .done(fft_done),
 
         .btf_mode(btf_mode),
-        .btf_in_valid(btf_in_valid),
+        .btf_valid_in(btf_valid_in),
         .btf_a_in_real(btf_a_in_real),
         .btf_a_in_imag(btf_a_in_imag),
         .btf_b_in_real(btf_b_in_real),
@@ -259,7 +259,7 @@ module control_unit#(
         .btf_a_out_imag(btf_a_out_imag),
         .btf_b_out_real(btf_b_out_real),
         .btf_b_out_imag(btf_b_out_imag),
-        .btf_out_valid(btf_out_valid)
+        .btf_valid_out(btf_valid_out)
       );
 
   logic decompress_start, decompress_start_i;
@@ -417,35 +417,35 @@ module control_unit#(
 
   // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_in;
-  logic flp_adder_in_valid, flp_adder_in_valid_delayed;
+  logic flp_adder_valid_in, flp_adder_valid_in_delayed;
   logic [63:0] flp_adder1_a, flp_adder1_b;
   logic [63:0] flp_adder2_a, flp_adder2_b;
   logic [63:0] flp_adder1_result;
   logic [63:0] flp_adder2_result;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_out;
-  logic flp_adder_out_valid;
+  logic flp_adder_valid_out;
   logic flp_adder_done;
   flp_adder #(
               .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
             ) flp_adder1(
               .clk(clk),
-              .in_valid(flp_adder_in_valid_delayed),
+              .valid_in(flp_adder_valid_in_delayed),
               .a(flp_adder1_a),
               .b(flp_adder1_b),
               .result(flp_adder1_result),
-              .out_valid(flp_adder_out_valid)
+              .valid_out(flp_adder_valid_out)
             );
   flp_adder #(
               .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
             ) flp_adder2(
               .clk(clk),
-              .in_valid(flp_adder_in_valid_delayed),
+              .valid_in(flp_adder_valid_in_delayed),
               .a(flp_adder2_a),
               .b(flp_adder2_b),
               .result(flp_adder2_result),
-              .out_valid()
+              .valid_out()
             );
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder_in_valid_delay(.clk(clk), .in(flp_adder_in_valid), .out(flp_adder_in_valid_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder_valid_in_delay(.clk(clk), .in(flp_adder_valid_in), .out(flp_adder_valid_in_delayed));
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_adder1_address_in_delay(.clk(clk), .in(flp_adder_address_in), .out(flp_adder_address_out));
 
   // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
@@ -460,21 +460,21 @@ module control_unit#(
   logic flp_mul_done;
   flp_multiplier flp_multiplier1(
               .clk(clk),
-              .in_valid(flp_mul_valid_in_delayed),
+              .valid_in(flp_mul_valid_in_delayed),
               .a(flp_mul1_a),
               .b(flp_mul1_b),
               .scale_factor(5'b0),
               .result(flp_mul1_result),
-              .out_valid(flp_mul_valid_out)
+              .valid_out(flp_mul_valid_out)
             );
   flp_multiplier flp_multiplier2(
               .clk(clk),
-              .in_valid(flp_mul_valid_in_delayed),
+              .valid_in(flp_mul_valid_in_delayed),
               .a(flp_mul2_a),
               .b(flp_mul2_b),
               .scale_factor(5'b0),
               .result(flp_mul2_result),
-              .out_valid()
+              .valid_out()
             );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_mul_valid_in_delay(.clk(clk), .in(flp_mul_valid_in), .out(flp_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_mul1_address_in_delay(.clk(clk), .in(flp_mul_address_in), .out(flp_mul_address_out));
@@ -496,7 +496,7 @@ module control_unit#(
   logic mul_done;
   complex_multiplier complex_multiplier(
                        .clk(clk),
-                       .in_valid(mul_valid_in_delayed),
+                       .valid_in(mul_valid_in_delayed),
                        .a_real(mul_a_real),
                        .a_imag(mul_a_imag),
                        .b_real(mul_b_real),
@@ -504,7 +504,7 @@ module control_unit#(
                        .scale_factor(5'b0),
                        .a_x_b_real(mul_result_real),
                        .a_x_b_imag(mul_result_imag),
-                       .out_valid(mul_valid_out)
+                       .valid_out(mul_valid_out)
                      );
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) mul_address_in_delay(.clk(clk), .in(mul_address_in), .out(mul_address_out));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_valid_in_delay(.clk(clk), .in(mul_valid_in), .out(mul_valid_in_delayed));
@@ -697,7 +697,7 @@ module control_unit#(
     sub_normalize_squared_norm_last = 1'b0;
     flp_negate_valid_in = 1'b0;
     muladjoint_valid_in = 1'b0;
-    flp_adder_in_valid = 1'b0;
+    flp_adder_valid_in = 1'b0;
     flp_mul_valid_in = 1'b0;
     copy_valid_in = 1'b0;
     mul_valid_in = 1'b0;
@@ -956,11 +956,11 @@ module control_unit#(
             flp_adder1_b = fft_bram_dout_a[5][127:64];
             flp_adder2_a = fft_bram_dout_a[4][63:0];
             flp_adder2_b = fft_bram_dout_a[5][63:0];
-            flp_adder_in_valid = !flp_adder_done;
+            flp_adder_valid_in = !flp_adder_done;
             flp_adder_address_in = task_addr1;
             fft_bram_addr_b[4] = flp_adder_address_out;
             fft_bram_din_b[4] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[4] = flp_adder_out_valid;
+            fft_bram_we_b[4] = flp_adder_valid_out;
 
             // copy BRAM 7 to BRAM 6
             fft_bram_addr_a[7] = task_addr1;
@@ -1067,11 +1067,11 @@ module control_unit#(
             flp_adder1_b = fft_bram_dout_a[9][127:64];
             flp_adder2_a = fft_bram_dout_a[8][63:0];
             flp_adder2_b = fft_bram_dout_a[9][63:0];
-            flp_adder_in_valid = !flp_adder_done;
+            flp_adder_valid_in = !flp_adder_done;
             flp_adder_address_in = task_addr1;
             fft_bram_addr_b[8] = flp_adder_address_out;
             fft_bram_din_b[8] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[8] = flp_adder_out_valid;
+            fft_bram_we_b[8] = flp_adder_valid_out;
 
             // flp_mul BRAM 7 with constant inv(q), result is written to BRAM 7
             fft_bram_addr_a[7] = task_addr1;
@@ -1125,13 +1125,13 @@ module control_unit#(
             flp_adder1_b = fft_bram_dout_a[9][127:64];
             flp_adder2_a = fft_bram_dout_a[5][63:0];
             flp_adder2_b = fft_bram_dout_a[9][63:0];
-            flp_adder_in_valid = !flp_adder_done;
+            flp_adder_valid_in = !flp_adder_done;
             flp_adder_address_in = task_addr1;
             fft_bram_addr_b[5] = flp_adder_address_out;
             fft_bram_din_b[5] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[5] = flp_adder_out_valid;
+            fft_bram_we_b[5] = flp_adder_valid_out;
 
-            instruction_done = flp_adder_done == 1'b1 && flp_adder_out_valid == 1'b0;  // flp_adder takes the longest
+            instruction_done = flp_adder_done == 1'b1 && flp_adder_valid_out == 1'b0;  // flp_adder takes the longest
           end
 
           default: begin

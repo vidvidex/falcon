@@ -64,13 +64,13 @@ module hash_to_point#(
   logic [15:0] message_len_bytes;
   logic [63:0] data_in;
   logic [15:0] data_out;
-  logic data_out_valid, data_out_valid_i;
+  logic valid_out, valid_out_i;
   logic shake256_reset; // Reset signal for shake256 module, active high
   logic [$clog2(N):0] coefficient_index;
   logic [15:0] t; // 16 bits of hash that we are currently processing into a coefficient of a polynomial
   logic [15:0] bytes_processed;
   logic [1:0] read_message_length_counter; // Counter for how many cycles we've been in the READ_MESSAGE_LENGTH state
-  logic data_in_valid, data_in_valid_i;
+  logic valid_in, valid_in_i;
 
   logic second_half, second_half_delayed; // 1 = we've processed the first half of coefficients
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) second_half_delay(.clk(clk), .in(second_half), .out(second_half_delayed));
@@ -91,9 +91,9 @@ module hash_to_point#(
              .rst(shake256_reset),
              .input_len_bytes(message_len_bytes),
              .data_in(data_in),
-             .data_in_valid(data_in_valid_i),
+             .valid_in(valid_in_i),
              .data_out(data_out),
-             .data_out_valid(data_out_valid)
+             .valid_out(valid_out)
            );
 
   // Compute a % 12289 for a up to 5*12289 = 61445
@@ -149,13 +149,13 @@ module hash_to_point#(
           next_state = WAIT_FOR_SQUEEZE;
       end
       WAIT_FOR_SQUEEZE: begin  // Wait for the shake256 to start outputting the hash
-        if (data_out_valid)
+        if (valid_out)
           next_state = WAIT_FOR_SQUEEZE_END;
       end
       WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low) or to output all coefficients.
         if(coefficient_index == N-1) // If we have all coefficients we can go to WAIT_FOR_BRAM_WRITE
           next_state = WAIT_FOR_BRAM_WRITE;
-        else if (!data_out_valid)  // Go to WAIT_FOR_SQUEEZE and wait for more data
+        else if (!valid_out)  // Go to WAIT_FOR_SQUEEZE and wait for more data
           next_state = WAIT_FOR_SQUEEZE;
       end
       WAIT_FOR_BRAM_WRITE: begin
@@ -173,11 +173,11 @@ module hash_to_point#(
   always_comb begin
     case(state)
       IDLE: begin
-        data_in_valid = 0;
+        valid_in = 0;
         shake256_reset = 1;
       end
       READ_MESSAGE_LENGTH: begin
-        data_in_valid = 0;
+        valid_in = 0;
 
         // For the first few cycles we hold reset high, but for the last cycle we set it low so that the shake256 module is ready to accept data
         if (read_message_length_counter == 2)
@@ -186,27 +186,27 @@ module hash_to_point#(
           shake256_reset = 1;
       end
       ABSORB: begin
-        data_in_valid = 1;
+        valid_in = 1;
         shake256_reset = 0;
       end
       WAIT_FOR_SQUEEZE: begin
-        data_in_valid = 0;
+        valid_in = 0;
         shake256_reset = 0;
       end
       WAIT_FOR_SQUEEZE_END: begin
-        data_in_valid = 0;
+        valid_in = 0;
         shake256_reset = 0;
       end
       WAIT_FOR_BRAM_WRITE: begin
-        data_in_valid = 0;
+        valid_in = 0;
         shake256_reset = 1;
       end
       FINISH: begin
-        data_in_valid = 0;
+        valid_in = 0;
         shake256_reset = 1;
       end
       default: begin
-        data_in_valid = 0;
+        valid_in = 0;
         shake256_reset = 1;
       end
     endcase
@@ -227,8 +227,8 @@ module hash_to_point#(
         message_len_bytes <= input_bram_data[15:0];
     end
 
-    data_in <= data_in_valid ? input_bram_data : 64'b0;
-    data_in_valid_i <= data_in_valid;
+    data_in <= valid_in ? input_bram_data : 64'b0;
+    valid_in_i <= valid_in;
   end
 
   assign done = state == FINISH;
@@ -237,13 +237,13 @@ module hash_to_point#(
   // State 1 of converting hash output to coefficient: Read and swap the bytes of the hash output
   always_ff @(posedge clk) begin
     if (rst_n == 1'b0) begin
-      data_out_valid_i <= 0;
+      valid_out_i <= 0;
     end
-    else if(data_out_valid == 1'b1) begin
+    else if(valid_out == 1'b1) begin
       // The bytes of the returned hash have different endianness than what we need, therefore we read them in opposite order
       t <= {data_out[7:0], data_out[15:8]};
     end
-    data_out_valid_i <= data_out_valid;
+    valid_out_i <= valid_out;
   end
 
   always_comb begin
@@ -261,7 +261,7 @@ module hash_to_point#(
       coefficient_index <= 0;
       second_half <= 0;
     end
-    else if (data_out_valid_i == 1'b1 && t < k_times_q && done != 1) begin
+    else if (valid_out_i == 1'b1 && t < k_times_q && done != 1) begin
 
       coefficient <= mod_12289(t);
 

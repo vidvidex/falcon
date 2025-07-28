@@ -284,13 +284,13 @@
          <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
          <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/split_fft_tb/btf_in_valid">
-         <obj_property name="ElementShortName">btf_in_valid</obj_property>
-         <obj_property name="ObjectShortName">btf_in_valid</obj_property>
+      <wvobject type="logic" fp_name="/split_fft_tb/btf_valid_in">
+         <obj_property name="ElementShortName">btf_valid_in</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_in</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/split_fft_tb/btf_out_valid">
-         <obj_property name="ElementShortName">btf_out_valid</obj_property>
-         <obj_property name="ObjectShortName">btf_out_valid</obj_property>
+      <wvobject type="logic" fp_name="/split_fft_tb/btf_valid_out">
+         <obj_property name="ElementShortName">btf_valid_out</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_out</obj_property>
       </wvobject>
       <wvobject type="other" fp_name="/split_fft_tb/a_real_double">
          <obj_property name="ElementShortName">a_real_double</obj_property>
@@ -377,9 +377,9 @@
          <obj_property name="ElementShortName">btf_mode</obj_property>
          <obj_property name="ObjectShortName">btf_mode</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/split_fft_tb/split_fft/btf_in_valid">
-         <obj_property name="ElementShortName">btf_in_valid</obj_property>
-         <obj_property name="ObjectShortName">btf_in_valid</obj_property>
+      <wvobject type="logic" fp_name="/split_fft_tb/split_fft/btf_valid_in">
+         <obj_property name="ElementShortName">btf_valid_in</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_in</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/split_fft/btf_a_in_real">
          <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
@@ -455,9 +455,9 @@
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/split_fft_tb/split_fft/btf_out_valid">
-         <obj_property name="ElementShortName">btf_out_valid</obj_property>
-         <obj_property name="ObjectShortName">btf_out_valid</obj_property>
+      <wvobject type="logic" fp_name="/split_fft_tb/split_fft/btf_valid_out">
+         <obj_property name="ElementShortName">btf_valid_out</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_out</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/split_fft/u">
          <obj_property name="ElementShortName">u[7:0]</obj_property>

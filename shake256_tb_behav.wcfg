@@ -44,9 +44,9 @@
          <obj_property name="ElementShortName">data_in[63:0]</obj_property>
          <obj_property name="ObjectShortName">data_in[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/data_in_valid">
-         <obj_property name="ElementShortName">data_in_valid</obj_property>
-         <obj_property name="ObjectShortName">data_in_valid</obj_property>
+      <wvobject type="logic" fp_name="/shake256_tb/uut/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/shake256_tb/uut/ready_out">
          <obj_property name="ElementShortName">ready_out</obj_property>
@@ -60,9 +60,9 @@
          <obj_property name="ElementShortName">data_out[63:0]</obj_property>
          <obj_property name="ObjectShortName">data_out[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/shake256_tb/uut/data_out_valid">
-         <obj_property name="ElementShortName">data_out_valid</obj_property>
-         <obj_property name="ObjectShortName">data_out_valid</obj_property>
+      <wvobject type="logic" fp_name="/shake256_tb/uut/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/shake256_tb/uut/absorb_done">
          <obj_property name="ElementShortName">absorb_done</obj_property>

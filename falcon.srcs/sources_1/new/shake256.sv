@@ -15,10 +15,10 @@ module shake256(
 
     input logic [15:0] input_len_bytes, //! Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic [63:0] data_in,
-    input logic data_in_valid,
+    input logic valid_in,
 
     output logic[15:0] data_out,  //! 16-bit PRNG word output from Keccak state
-    output logic data_out_valid //! This signal is used to write Keccak-squeeze output
+    output logic valid_out //! This signal is used to write Keccak-squeeze output
   );
 
   logic absorb_done; //! Becomes 1 after the entire input message is absorbed.
@@ -55,7 +55,7 @@ module shake256(
                     .rst(rst_absorb),
                     .inputlen_InBytes(input_len_bytes),
                     .data_in(data_in),
-                    .data_in_valid(data_in_valid),
+                    .valid_in(valid_in),
                     .data_in_padded(data_in_padded),
                     .data_in_padded_valid(data_in_padded_valid),
                     .call_keccak_f1600(call_keccak_f1600_absorb),
@@ -92,7 +92,7 @@ module shake256(
                      .keccak_round_complete(keccak_round_complete),
                      .we_output_buffer(we_output_buffer),
                      .shift_output_buffer(shift_output_buffer),
-                     .data_out_valid(data_out_valid),
+                     .valid_out(valid_out),
                      .done(squeeze_done)
                    );
 

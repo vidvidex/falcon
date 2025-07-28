@@ -911,13 +911,13 @@
             <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
             <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_in_valid">
-            <obj_property name="ElementShortName">btf_in_valid</obj_property>
-            <obj_property name="ObjectShortName">btf_in_valid</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_valid_in">
+            <obj_property name="ElementShortName">btf_valid_in</obj_property>
+            <obj_property name="ObjectShortName">btf_valid_in</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_out_valid">
-            <obj_property name="ElementShortName">btf_out_valid</obj_property>
-            <obj_property name="ObjectShortName">btf_out_valid</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_valid_out">
+            <obj_property name="ElementShortName">btf_valid_out</obj_property>
+            <obj_property name="ObjectShortName">btf_valid_out</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group3991">
@@ -1095,13 +1095,13 @@
             <obj_property name="ElementShortName">flp_adder_address_in[8:0]</obj_property>
             <obj_property name="ObjectShortName">flp_adder_address_in[8:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_in_valid">
-            <obj_property name="ElementShortName">flp_adder_in_valid</obj_property>
-            <obj_property name="ObjectShortName">flp_adder_in_valid</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_valid_in">
+            <obj_property name="ElementShortName">flp_adder_valid_in</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_valid_in</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_in_valid_delayed">
-            <obj_property name="ElementShortName">flp_adder_in_valid_delayed</obj_property>
-            <obj_property name="ObjectShortName">flp_adder_in_valid_delayed</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_valid_in_delayed">
+            <obj_property name="ElementShortName">flp_adder_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_valid_in_delayed</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/flp_adder1_a">
             <obj_property name="ElementShortName">flp_adder1_a[63:0]</obj_property>
@@ -1155,9 +1155,9 @@
             <obj_property name="ElementShortName">flp_adder_address_out[8:0]</obj_property>
             <obj_property name="ObjectShortName">flp_adder_address_out[8:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_out_valid">
-            <obj_property name="ElementShortName">flp_adder_out_valid</obj_property>
-            <obj_property name="ObjectShortName">flp_adder_out_valid</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_valid_out">
+            <obj_property name="ElementShortName">flp_adder_valid_out</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_valid_out</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_done">
             <obj_property name="ElementShortName">flp_adder_done</obj_property>
