@@ -939,24 +939,24 @@ module control_unit#(
           end
 
           SIGN_STEP_5: begin
-            // FFT: input is BRAM7, also uses BRAM6
-            fft_bram_addr_a[7] = fft_bram1_addr_a;
-            fft_bram_din_a[7] = fft_bram1_din_a;
-            fft_bram_we_a[7] = fft_bram1_we_a;
-            fft_bram_addr_b[7] = fft_bram1_addr_b;
-            fft_bram_din_b[7] = fft_bram1_din_b;
-            fft_bram_we_b[7] = fft_bram1_we_b;
-            fft_bram1_dout_a = fft_bram_dout_a[7];
-            fft_bram1_dout_b = fft_bram_dout_b[7];
+            // FFT: input is BRAM2, also uses BRAM8
+            fft_bram_addr_a[2] = fft_bram1_addr_a;
+            fft_bram_din_a[2] = fft_bram1_din_a;
+            fft_bram_we_a[2] = fft_bram1_we_a;
+            fft_bram_addr_b[2] = fft_bram1_addr_b;
+            fft_bram_din_b[2] = fft_bram1_din_b;
+            fft_bram_we_b[2] = fft_bram1_we_b;
+            fft_bram1_dout_a = fft_bram_dout_a[2];
+            fft_bram1_dout_b = fft_bram_dout_b[2];
 
-            fft_bram_addr_a[6] = fft_bram2_addr_a;
-            fft_bram_din_a[6] = fft_bram2_din_a;
-            fft_bram_we_a[6] = fft_bram2_we_a;
-            fft_bram_addr_b[6] = fft_bram2_addr_b;
-            fft_bram_din_b[6] = fft_bram2_din_b;
-            fft_bram_we_b[6] = fft_bram2_we_b;
-            fft_bram2_dout_a = fft_bram_dout_a[6];
-            fft_bram2_dout_b = fft_bram_dout_b[6];
+            fft_bram_addr_a[8] = fft_bram2_addr_a;
+            fft_bram_din_a[8] = fft_bram2_din_a;
+            fft_bram_we_a[8] = fft_bram2_we_a;
+            fft_bram_addr_b[8] = fft_bram2_addr_b;
+            fft_bram_din_b[8] = fft_bram2_din_b;
+            fft_bram_we_b[8] = fft_bram2_we_b;
+            fft_bram2_dout_a = fft_bram_dout_a[8];
+            fft_bram2_dout_b = fft_bram_dout_b[8];
 
             // self muladjoint on BRAM3, output is BRAM9
             fft_bram_addr_a[3] = task_addr1;
