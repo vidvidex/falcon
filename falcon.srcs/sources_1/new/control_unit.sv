@@ -1009,7 +1009,7 @@ module control_unit#(
             fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
             fft_bram_we_b[7] = mul_valid_out;
 
-            instruction_done = 1'b1;
+            instruction_done = mul_done == 1'b1 && mul_valid_out == 1'b0;  // mul takes the longest
           end
 
           SIGN_STEP_7: begin
@@ -1050,7 +1050,7 @@ module control_unit#(
             fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
             fft_bram_we_b[7] = mul_valid_out;
 
-            instruction_done = 1'b1;
+            instruction_done = mul_done == 1'b1 && mul_valid_out == 1'b0;  // mul takes the longest
           end
 
           SIGN_STEP_8: begin
@@ -1078,7 +1078,7 @@ module control_unit#(
             fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
             fft_bram_we_b[6] = mul_valid_out;
 
-            instruction_done = 1'b1;
+            instruction_done = mul_done == 1'b1 && mul_valid_out == 1'b0;  // mul takes the longest
           end
 
           SIGN_STEP_9: begin
@@ -1094,9 +1094,9 @@ module control_unit#(
             flp_adder_address_in = task_addr1;
             fft_bram_addr_b[5] = flp_adder_address_out;
             fft_bram_din_b[5] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[5] =flp_adder_out_valid;
+            fft_bram_we_b[5] = flp_adder_out_valid;
 
-            instruction_done = 1'b1;
+            instruction_done = flp_adder_done == 1'b1 && flp_adder_out_valid == 1'b0;  // flp_adder takes the longest
           end
 
           default: begin
