@@ -445,8 +445,39 @@ module control_unit#(
               .result(flp_adder2_result),
               .out_valid()
             );
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder1_in_valid_delay(.clk(clk), .in(flp_adder_in_valid), .out(flp_adder_in_valid_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder_in_valid_delay(.clk(clk), .in(flp_adder_in_valid), .out(flp_adder_in_valid_delayed));
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_adder1_address_in_delay(.clk(clk), .in(flp_adder_address_in), .out(flp_adder_address_out));
+
+  // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_mul_address_in;
+  logic flp_mul_valid_in, flp_mul_valid_in_delayed;
+  logic [63:0] flp_mul1_a, flp_mul1_b;
+  logic [63:0] flp_mul2_a, flp_mul2_b;
+  logic [63:0] flp_mul1_result;
+  logic [63:0] flp_mul2_result;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_mul_address_out;
+  logic flp_mul_valid_out;
+  logic flp_mul_done;
+  flp_multiplier flp_multiplier1(
+              .clk(clk),
+              .in_valid(flp_mul_valid_in_delayed),
+              .a(flp_mul1_a),
+              .b(flp_mul1_b),
+              .scale_factor(5'b0),
+              .result(flp_mul1_result),
+              .out_valid(flp_mul_valid_out)
+            );
+  flp_multiplier flp_multiplier2(
+              .clk(clk),
+              .in_valid(flp_mul_valid_in_delayed),
+              .a(flp_mul2_a),
+              .b(flp_mul2_b),
+              .scale_factor(5'b0),
+              .result(flp_mul2_result),
+              .out_valid()
+            );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_mul_valid_in_delay(.clk(clk), .in(flp_mul_valid_in), .out(flp_mul_valid_in_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_mul1_address_in_delay(.clk(clk), .in(flp_mul_address_in), .out(flp_mul_address_out));
 
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_in;
   logic copy_valid_in;
@@ -519,6 +550,7 @@ module control_unit#(
           flp_negate_done <= 1'b0;
           muladjoint_done <= 1'b0;
           flp_adder_done <= 1'b0;
+          flp_mul_done <= 1'b0;
           copy_done <= 1'b0;
           mul_done <= 1'b0;
           int_to_double_done <= 1'b0;
@@ -604,15 +636,15 @@ module control_unit#(
                 muladjoint_done <= 1'b1;
               if(flp_adder_address_in == N/2-1)
                 flp_adder_done <= 1'b1;
-              if(mul_address_in == N/2-1)
-                mul_done <= 1'b1;
+              if(flp_mul_address_in == N/2-1)
+                flp_mul_done <= 1'b1;
             end
 
             SIGN_STEP_8: begin
               if(muladjoint_address_in == N/2-1)
                 muladjoint_done <= 1'b1;
-              if(mul_address_in == N/2-1)
-                mul_done <= 1'b1;
+              if(flp_mul_address_in == N/2-1)
+                flp_mul_done <= 1'b1;
             end
 
             SIGN_STEP_9: begin
@@ -666,6 +698,9 @@ module control_unit#(
     flp_negate_valid_in = 1'b0;
     muladjoint_valid_in = 1'b0;
     flp_adder_in_valid = 1'b0;
+    flp_mul_valid_in = 1'b0;
+    copy_valid_in = 1'b0;
+    mul_valid_in = 1'b0;
 
     // Ensure these signals are not undefined to ensure proper behaviour of the module
     sub_normalize_squared_norm_a[0] = 0;
@@ -1038,19 +1073,19 @@ module control_unit#(
             fft_bram_din_b[8] = {flp_adder1_result, flp_adder2_result};
             fft_bram_we_b[8] = flp_adder_out_valid;
 
-            // mul BRAM 7 with constant inv(q), result is written to BRAM 7
+            // flp_mul BRAM 7 with constant inv(q), result is written to BRAM 7
             fft_bram_addr_a[7] = task_addr1;
-            mul_a_real = fft_bram_dout_a[3][127:64];
-            mul_a_imag = fft_bram_dout_a[3][63:0];
-            mul_b_real = $realtobits(1.0 / 12289.0);
-            mul_b_imag = $realtobits(1.0 / 12289.0);
-            mul_valid_in = !mul_done;
-            mul_address_in = task_addr1;
-            fft_bram_addr_b[7] = mul_address_out;
-            fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
-            fft_bram_we_b[7] = mul_valid_out;
+            flp_mul1_a = fft_bram_dout_a[7][127:64];
+            flp_mul1_b = $realtobits(1.0 / 12289.0);
+            flp_mul2_a = fft_bram_dout_a[7][63:0];
+            flp_mul2_b = $realtobits(1.0 / 12289.0);
+            flp_mul_valid_in = !flp_mul_done;
+            flp_mul_address_in = task_addr1;
+            fft_bram_addr_b[7] = flp_mul_address_out;
+            fft_bram_din_b[7] = {flp_mul1_result, flp_mul2_result};
+            fft_bram_we_b[7] = flp_mul_valid_out;
 
-            instruction_done = mul_done == 1'b1 && mul_valid_out == 1'b0;  // mul takes the longest
+            instruction_done = flp_mul_done == 1'b1 && flp_mul_valid_out == 1'b0;  // flp_mul takes the longest
           end
 
           SIGN_STEP_8: begin
@@ -1066,19 +1101,19 @@ module control_unit#(
             fft_bram_din_b[5] = muladjoint_data_out;
             fft_bram_we_b[5] = muladjoint_valid_out;
 
-            // mul BRAM 6 with constant inv(q), result is written to BRAM 6
+            // flp_mul BRAM 6 with constant inv(q), result is written to BRAM 6
             fft_bram_addr_a[6] = task_addr1;
-            mul_a_real = fft_bram_dout_a[3][127:64];
-            mul_a_imag = fft_bram_dout_a[3][63:0];
-            mul_b_real = $realtobits(-1.0 / 12289.0);
-            mul_b_imag = $realtobits(-1.0 / 12289.0);
-            mul_valid_in = !mul_done;
-            mul_address_in = task_addr1;
-            fft_bram_addr_b[6] = mul_address_out;
-            fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
-            fft_bram_we_b[6] = mul_valid_out;
+            flp_mul1_a = fft_bram_dout_a[6][127:64];
+            flp_mul1_b = $realtobits(-1.0 / 12289.0);
+            flp_mul2_a = fft_bram_dout_a[6][63:0];
+            flp_mul2_b = $realtobits(-1.0 / 12289.0);
+            flp_mul_valid_in = !flp_mul_done;
+            flp_mul_address_in = task_addr1;
+            fft_bram_addr_b[6] = flp_mul_address_out;
+            fft_bram_din_b[6] = {flp_mul1_result, flp_mul2_result};
+            fft_bram_we_b[6] = flp_mul_valid_out;
 
-            instruction_done = mul_done == 1'b1 && mul_valid_out == 1'b0;  // mul takes the longest
+            instruction_done = flp_mul_done == 1'b1 && flp_mul_valid_out == 1'b0;  // flp_mul takes the longest
           end
 
           SIGN_STEP_9: begin
