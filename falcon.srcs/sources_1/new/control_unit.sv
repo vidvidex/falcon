@@ -169,6 +169,7 @@ module control_unit#(
   logic [`FFT_BRAM_DATA_WIDTH-1:0] int_to_double_data_out;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] int_to_double_address_out;
   logic int_to_double_valid_out;
+  logic int_to_double_done;
   int_to_double int_to_double (
                   .clk(clk),
                   .data_in(int_to_double_data_in),
@@ -379,6 +380,7 @@ module control_unit#(
   logic [63:0] flp_negate_double_out [FLP_NEGATE_PARALLEL_OPS_COUNT];
   logic flp_negate_valid_out;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_negate_address_out;
+  logic flp_negate_done;
   flp_negate #(
                .PARALLEL_OPS_COUNT(FLP_NEGATE_PARALLEL_OPS_COUNT)
              )flp_negate (
@@ -399,6 +401,7 @@ module control_unit#(
   logic [`FFT_BRAM_DATA_WIDTH-1:0] muladjoint_data_out;
   logic muladjoint_valid_out;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] muladjoint_address_out;
+  logic muladjoint_done;
   muladjoint muladjoint (
                .clk(clk),
                .a_in(muladjoint_data_a_in),
@@ -421,6 +424,7 @@ module control_unit#(
   logic [63:0] flp_adder2_result;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_out;
   logic flp_adder_out_valid;
+  logic flp_adder_done;
   flp_adder #(
               .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
             ) flp_adder1(
@@ -448,6 +452,7 @@ module control_unit#(
   logic copy_valid_in;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_out;
   logic copy_valid_out;
+  logic copy_done;
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) copy_address_in_delay(.clk(clk), .in(copy_address_in), .out(copy_address_out));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
 
@@ -457,6 +462,7 @@ module control_unit#(
   logic [63:0] mul_result_real, mul_result_imag;
   logic mul_valid_out;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_address_out;
+  logic mul_done;
   complex_multiplier complex_multiplier(
                        .clk(clk),
                        .in_valid(mul_valid_in_delayed),
@@ -510,6 +516,12 @@ module control_unit#(
           fft_start <= 1'b0;
           decompress_start <= 1'b0;
           ntt_start <= 1'b0;
+          flp_negate_done <= 1'b0;
+          muladjoint_done <= 1'b0;
+          flp_adder_done <= 1'b0;
+          copy_done <= 1'b0;
+          mul_done <= 1'b0;
+          int_to_double_done <= 1'b0;
         end
 
         HASH_TO_POINT: begin
@@ -535,42 +547,77 @@ module control_unit#(
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
               htp_start <= 1'b1;
+
+              if(flp_negate_address_in == N/2-1)
+                flp_negate_done <= 1'b1;
             end
 
             SIGN_STEP_2: begin
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
+
+              if(flp_negate_address_in == N/2-1)
+                flp_negate_done <= 1'b1;
+              if(muladjoint_address_in == N/2-1)
+                muladjoint_done <= 1'b1;
+              if(int_to_double_address_in == N/2-1)
+                int_to_double_done <= 1'b1;
             end
 
             SIGN_STEP_3: begin
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
+
+              if(muladjoint_address_in == N/2-1)
+                muladjoint_done <= 1'b1;
             end
 
             SIGN_STEP_4: begin
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
+
+              if(flp_adder_address_in == N/2-1)
+                flp_adder_done <= 1'b1;
+              if(copy_address_in == N/2-1)
+                copy_done <= 1'b1;
             end
 
             SIGN_STEP_5: begin
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
+
+              if(muladjoint_address_in == N/2-1)
+                muladjoint_done <= 1'b1;
+              if(mul_address_in == N/2-1)
+                mul_done <= 1'b1;
             end
 
             SIGN_STEP_6: begin
-
+              if(muladjoint_address_in == N/2-1)
+                muladjoint_done <= 1'b1;
+              if(mul_address_in == N/2-1)
+                mul_done <= 1'b1;
             end
 
             SIGN_STEP_7: begin
-
+              if(muladjoint_address_in == N/2-1)
+                muladjoint_done <= 1'b1;
+              if(flp_adder_address_in == N/2-1)
+                flp_adder_done <= 1'b1;
+              if(mul_address_in == N/2-1)
+                mul_done <= 1'b1;
             end
 
             SIGN_STEP_8: begin
-
+              if(muladjoint_address_in == N/2-1)
+                muladjoint_done <= 1'b1;
+              if(mul_address_in == N/2-1)
+                mul_done <= 1'b1;
             end
-            
-            SIGN_STEP_9: begin
 
+            SIGN_STEP_9: begin
+              if(flp_adder_address_in == N/2-1)
+                flp_adder_done <= 1'b1;
             end
 
             default: begin
@@ -753,13 +800,11 @@ module control_unit#(
             fft_bram_addr_a[1] = task_addr1;
             flp_negate_double_in[0] = fft_bram_dout_a[1][127:64];
             flp_negate_double_in[1] = fft_bram_dout_a[1][63:0];
-            flp_negate_valid_in = 1'b1;
+            flp_negate_valid_in = !flp_negate_done;
             flp_negate_address_in = task_addr1;
-            if(flp_negate_valid_out) begin
-              fft_bram_addr_b[1] = flp_negate_address_out;
-              fft_bram_din_b[1] = {flp_negate_double_out[0], flp_negate_double_out[1]};
-              fft_bram_we_b[1] = 1'b1;
-            end
+            fft_bram_addr_b[1] = flp_negate_address_out;
+            fft_bram_din_b[1] = {flp_negate_double_out[0], flp_negate_double_out[1]};
+            fft_bram_we_b[1] = flp_negate_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -788,36 +833,30 @@ module control_unit#(
             fft_bram_addr_a[3] = task_addr1;
             flp_negate_double_in[0] = fft_bram_dout_a[3][127:64];
             flp_negate_double_in[1] = fft_bram_dout_a[3][63:0];
-            flp_negate_valid_in = 1'b1;
+            flp_negate_valid_in = !flp_negate_done;
             flp_negate_address_in = task_addr1;
-            if(flp_negate_valid_out) begin
-              fft_bram_addr_b[3] = flp_negate_address_out;
-              fft_bram_din_b[3] = {flp_negate_double_out[0], flp_negate_double_out[1]};
-              fft_bram_we_b[3] = 1'b1;
-            end
+            fft_bram_addr_b[3] = flp_negate_address_out;
+            fft_bram_din_b[3] = {flp_negate_double_out[0], flp_negate_double_out[1]};
+            fft_bram_we_b[3] = flp_negate_valid_out;
 
             // int_to_double on BRAM7
             fft_bram_addr_a[7] = task_addr1;
             int_to_double_data_in = fft_bram_dout_a[7];
             int_to_double_address_in = task_addr1;
-            int_to_double_valid_in = 1'b1;
-            if(int_to_double_valid_out) begin
-              fft_bram_addr_b[7] = int_to_double_address_out;
-              fft_bram_din_b[7] = int_to_double_data_out;
-              fft_bram_we_b[7] = 1'b1;
-            end
+            int_to_double_valid_in = !int_to_double_done;
+            fft_bram_addr_b[7] = int_to_double_address_out;
+            fft_bram_din_b[7] = int_to_double_data_out;
+            fft_bram_we_b[7] = int_to_double_valid_out;
 
             // self muladjoint on BRAM0, output is BRAM4
             fft_bram_addr_a[0] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[0];
             muladjoint_data_b_in = fft_bram_dout_a[0];
-            muladjoint_valid_in = 1'b1;
+            muladjoint_valid_in = !muladjoint_done;
             muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[4] = muladjoint_address_out;
-              fft_bram_din_b[4] = muladjoint_data_out;
-              fft_bram_we_b[4] = 1'b1;
-            end
+            fft_bram_addr_b[4] = muladjoint_address_out;
+            fft_bram_din_b[4] = muladjoint_data_out;
+            fft_bram_we_b[4] = muladjoint_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -846,13 +885,11 @@ module control_unit#(
             fft_bram_addr_a[1] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[1];
             muladjoint_data_b_in = fft_bram_dout_a[1];
-            muladjoint_valid_in = 1'b1;
+            muladjoint_valid_in = !muladjoint_done;
             muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[5] = muladjoint_address_out;
-              fft_bram_din_b[5] = muladjoint_data_out;
-              fft_bram_we_b[5] = 1'b1;
-            end
+            fft_bram_addr_b[5] = muladjoint_address_out;
+            fft_bram_din_b[5] = muladjoint_data_out;
+            fft_bram_we_b[5] = muladjoint_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -884,23 +921,19 @@ module control_unit#(
             flp_adder1_b = fft_bram_dout_a[5][127:64];
             flp_adder2_a = fft_bram_dout_a[4][63:0];
             flp_adder2_b = fft_bram_dout_a[5][63:0];
-            flp_adder_in_valid = 1'b1;
+            flp_adder_in_valid = !flp_adder_done;
             flp_adder_address_in = task_addr1;
-            if(flp_adder_out_valid) begin
-              fft_bram_addr_b[4] = flp_adder_address_out;
-              fft_bram_din_b[4] = {flp_adder1_result, flp_adder2_result};
-              fft_bram_we_b[4] = 1'b1;
-            end
+            fft_bram_addr_b[4] = flp_adder_address_out;
+            fft_bram_din_b[4] = {flp_adder1_result, flp_adder2_result};
+            fft_bram_we_b[4] = flp_adder_out_valid;
 
             // copy BRAM 7 to BRAM 6
             fft_bram_addr_a[7] = task_addr1;
             copy_address_in = task_addr1;
-            copy_valid_in = 1'b1;
-            if (copy_valid_out) begin
-              fft_bram_addr_a[6] = copy_address_out;
-              fft_bram_din_a[6] = fft_bram_dout_a[7];
-              fft_bram_we_a[6] = 1'b1;
-            end
+            copy_valid_in = !copy_done;
+            fft_bram_addr_a[6] = copy_address_out;
+            fft_bram_din_a[6] = fft_bram_dout_a[7];
+            fft_bram_we_a[6] = copy_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -929,13 +962,11 @@ module control_unit#(
             fft_bram_addr_a[3] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[3];
             muladjoint_data_b_in = fft_bram_dout_a[3];
-            muladjoint_valid_in = 1'b1;
+            muladjoint_valid_in = !muladjoint_done;
             muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[9] = muladjoint_address_out;
-              fft_bram_din_b[9] = muladjoint_data_out;
-              fft_bram_we_b[9] = 1'b1;
-            end
+            fft_bram_addr_b[9] = muladjoint_address_out;
+            fft_bram_din_b[9] = muladjoint_data_out;
+            fft_bram_we_b[9] = muladjoint_valid_out;
 
             // mul BRAM 1 and BRAM 6, result is written to BRAM 6
             fft_bram_addr_a[1] = task_addr1;
@@ -944,13 +975,11 @@ module control_unit#(
             mul_a_imag = fft_bram_dout_a[1][63:0];
             mul_b_real = fft_bram_dout_a[6][127:64];
             mul_b_imag = fft_bram_dout_a[6][63:0];
-            mul_valid_in = 1'b1;
+            mul_valid_in = !mul_done;
             mul_address_in = task_addr1;
-            if(mul_valid_out) begin
-              fft_bram_addr_b[6] = mul_address_out;
-              fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
-              fft_bram_we_b[6] = 1'b1;
-            end
+            fft_bram_addr_b[6] = mul_address_out;
+            fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
+            fft_bram_we_b[6] =mul_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -961,13 +990,11 @@ module control_unit#(
             fft_bram_addr_a[2] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[2];
             muladjoint_data_b_in = fft_bram_dout_a[2];
-            muladjoint_valid_in = 1'b1;
+            muladjoint_valid_in = !muladjoint_done;
             muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[8] = muladjoint_address_out;
-              fft_bram_din_b[8] = muladjoint_data_out;
-              fft_bram_we_b[8] = 1'b1;
-            end
+            fft_bram_addr_b[8] = muladjoint_address_out;
+            fft_bram_din_b[8] = muladjoint_data_out;
+            fft_bram_we_b[8] = muladjoint_valid_out;
 
             // mul BRAM 3 and BRAM 7, result is written to BRAM 7
             fft_bram_addr_a[3] = task_addr1;
@@ -976,13 +1003,11 @@ module control_unit#(
             mul_a_imag = fft_bram_dout_a[3][63:0];
             mul_b_real = fft_bram_dout_a[7][127:64];
             mul_b_imag = fft_bram_dout_a[7][63:0];
-            mul_valid_in = 1'b1;
+            mul_valid_in = !mul_done;
             mul_address_in = task_addr1;
-            if(mul_valid_out) begin
-              fft_bram_addr_b[7] = mul_address_out;
-              fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
-              fft_bram_we_b[7] = 1'b1;
-            end
+            fft_bram_addr_b[7] = mul_address_out;
+            fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
+            fft_bram_we_b[7] = mul_valid_out;
 
             instruction_done = 1'b1;
           end
@@ -994,13 +1019,11 @@ module control_unit#(
             fft_bram_addr_a[3] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[1];
             muladjoint_data_b_in = fft_bram_dout_a[3];
-            muladjoint_valid_in = 1'b1;
+            muladjoint_valid_in = !muladjoint_done;
             muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[9] = muladjoint_address_out;
-              fft_bram_din_b[9] = muladjoint_data_out;
-              fft_bram_we_b[9] = 1'b1;
-            end
+            fft_bram_addr_b[9] = muladjoint_address_out;
+            fft_bram_din_b[9] = muladjoint_data_out;
+            fft_bram_we_b[9] = muladjoint_valid_out;
 
             // add BRAM 8 and BRAM 9, result is written to BRAM 8
             fft_bram_addr_a[8] = task_addr1;
@@ -1009,13 +1032,11 @@ module control_unit#(
             flp_adder1_b = fft_bram_dout_a[9][127:64];
             flp_adder2_a = fft_bram_dout_a[8][63:0];
             flp_adder2_b = fft_bram_dout_a[9][63:0];
-            flp_adder_in_valid = 1'b1;
+            flp_adder_in_valid = !flp_adder_done;
             flp_adder_address_in = task_addr1;
-            if(flp_adder_out_valid) begin
-              fft_bram_addr_b[8] = flp_adder_address_out;
-              fft_bram_din_b[8] = {flp_adder1_result, flp_adder2_result};
-              fft_bram_we_b[8] = 1'b1;
-            end
+            fft_bram_addr_b[8] = flp_adder_address_out;
+            fft_bram_din_b[8] = {flp_adder1_result, flp_adder2_result};
+            fft_bram_we_b[8] = flp_adder_out_valid;
 
             // mul BRAM 7 with constant inv(q), result is written to BRAM 7
             fft_bram_addr_a[7] = task_addr1;
@@ -1023,13 +1044,11 @@ module control_unit#(
             mul_a_imag = fft_bram_dout_a[3][63:0];
             mul_b_real = $realtobits(1.0 / 12289.0);
             mul_b_imag = $realtobits(1.0 / 12289.0);
-            mul_valid_in = 1'b1;
+            mul_valid_in = !mul_done;
             mul_address_in = task_addr1;
-            if(mul_valid_out) begin
-              fft_bram_addr_b[7] = mul_address_out;
-              fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
-              fft_bram_we_b[7] = 1'b1;
-            end
+            fft_bram_addr_b[7] = mul_address_out;
+            fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
+            fft_bram_we_b[7] = mul_valid_out;
 
             instruction_done = 1'b1;
           end
@@ -1041,13 +1060,11 @@ module control_unit#(
             fft_bram_addr_a[2] = task_addr1;
             muladjoint_data_a_in = fft_bram_dout_a[0];
             muladjoint_data_b_in = fft_bram_dout_a[2];
-            muladjoint_valid_in = 1'b1;
+            muladjoint_valid_in = !muladjoint_done;
             muladjoint_address_in = task_addr1;
-            if(muladjoint_valid_out) begin
-              fft_bram_addr_b[5] = muladjoint_address_out;
-              fft_bram_din_b[5] = muladjoint_data_out;
-              fft_bram_we_b[5] = 1'b1;
-            end
+            fft_bram_addr_b[5] = muladjoint_address_out;
+            fft_bram_din_b[5] = muladjoint_data_out;
+            fft_bram_we_b[5] = muladjoint_valid_out;
 
             // mul BRAM 6 with constant inv(q), result is written to BRAM 6
             fft_bram_addr_a[6] = task_addr1;
@@ -1055,13 +1072,11 @@ module control_unit#(
             mul_a_imag = fft_bram_dout_a[3][63:0];
             mul_b_real = $realtobits(-1.0 / 12289.0);
             mul_b_imag = $realtobits(-1.0 / 12289.0);
-            mul_valid_in = 1'b1;
+            mul_valid_in = !mul_done;
             mul_address_in = task_addr1;
-            if(mul_valid_out) begin
-              fft_bram_addr_b[6] = mul_address_out;
-              fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
-              fft_bram_we_b[6] = 1'b1;
-            end
+            fft_bram_addr_b[6] = mul_address_out;
+            fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
+            fft_bram_we_b[6] = mul_valid_out;
 
             instruction_done = 1'b1;
           end
@@ -1075,13 +1090,11 @@ module control_unit#(
             flp_adder1_b = fft_bram_dout_a[9][127:64];
             flp_adder2_a = fft_bram_dout_a[5][63:0];
             flp_adder2_b = fft_bram_dout_a[9][63:0];
-            flp_adder_in_valid = 1'b1;
+            flp_adder_in_valid = !flp_adder_done;
             flp_adder_address_in = task_addr1;
-            if(flp_adder_out_valid) begin
-              fft_bram_addr_b[5] = flp_adder_address_out;
-              fft_bram_din_b[5] = {flp_adder1_result, flp_adder2_result};
-              fft_bram_we_b[5] = 1'b1;
-            end
+            fft_bram_addr_b[5] = flp_adder_address_out;
+            fft_bram_din_b[5] = {flp_adder1_result, flp_adder2_result};
+            fft_bram_we_b[5] =flp_adder_out_valid;
 
             instruction_done = 1'b1;
           end

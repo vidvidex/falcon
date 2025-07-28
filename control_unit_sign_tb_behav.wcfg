@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="30,457.510 ns"></ZoomStartTime>
-      <ZoomEndTime time="30,832.453 ns"></ZoomEndTime>
-      <Cursor1Time time="30,682.421 ns"></Cursor1Time>
+      <ZoomStartTime time="634.635 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,073.074 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="228"></NameColumnWidth>
+      <NameColumnWidth column_width="224"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -866,6 +866,10 @@
             <obj_property name="ElementShortName">int_to_double_valid_out</obj_property>
             <obj_property name="ObjectShortName">int_to_double_valid_out</obj_property>
          </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/int_to_double_done">
+            <obj_property name="ElementShortName">int_to_double_done</obj_property>
+            <obj_property name="ObjectShortName">int_to_double_done</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group3992">
          <obj_property name="label">fft_butterfly</obj_property>
@@ -1050,6 +1054,10 @@
             <obj_property name="ObjectShortName">flp_negate_address_out[8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_negate_done">
+            <obj_property name="ElementShortName">flp_negate_done</obj_property>
+            <obj_property name="ObjectShortName">flp_negate_done</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group1549">
          <obj_property name="label">mul_adjoint</obj_property>
@@ -1081,6 +1089,10 @@
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/muladjoint_address_out">
             <obj_property name="ElementShortName">muladjoint_address_out[8:0]</obj_property>
             <obj_property name="ObjectShortName">muladjoint_address_out[8:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/muladjoint_done">
+            <obj_property name="ElementShortName">muladjoint_done</obj_property>
+            <obj_property name="ObjectShortName">muladjoint_done</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group204">
@@ -1154,6 +1166,10 @@
             <obj_property name="ElementShortName">flp_adder_out_valid</obj_property>
             <obj_property name="ObjectShortName">flp_adder_out_valid</obj_property>
          </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/flp_adder_done">
+            <obj_property name="ElementShortName">flp_adder_done</obj_property>
+            <obj_property name="ObjectShortName">flp_adder_done</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group269">
          <obj_property name="label">copy</obj_property>
@@ -1174,11 +1190,14 @@
             <obj_property name="ElementShortName">copy_valid_out</obj_property>
             <obj_property name="ObjectShortName">copy_valid_out</obj_property>
          </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/copy_done">
+            <obj_property name="ElementShortName">copy_done</obj_property>
+            <obj_property name="ObjectShortName">copy_done</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group268">
          <obj_property name="label">complex_multiplier</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_a_real">
             <obj_property name="ElementShortName">mul_a_real[63:0]</obj_property>
             <obj_property name="ObjectShortName">mul_a_real[63:0]</obj_property>
@@ -1248,6 +1267,10 @@
             <obj_property name="ElementShortName">mul_address_out[8:0]</obj_property>
             <obj_property name="ObjectShortName">mul_address_out[8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/mul_done">
+            <obj_property name="ElementShortName">mul_done</obj_property>
+            <obj_property name="ObjectShortName">mul_done</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>
