@@ -373,27 +373,27 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
 
-  parameter int FLP_NEGATE_PARALLEL_OPS_COUNT = 2;
-  logic [63:0] flp_negate_double_in [FLP_NEGATE_PARALLEL_OPS_COUNT];
-  logic flp_negate_valid_in, flp_negate_valid_in_delayed;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_negate_address_in, flp_negate_address_in_delayed;
-  logic [63:0] flp_negate_double_out [FLP_NEGATE_PARALLEL_OPS_COUNT];
-  logic flp_negate_valid_out;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_negate_address_out;
-  logic flp_negate_done;
-  flp_negate #(
-               .PARALLEL_OPS_COUNT(FLP_NEGATE_PARALLEL_OPS_COUNT)
-             )flp_negate (
+  parameter int fp_NEGATE_PARALLEL_OPS_COUNT = 2;
+  logic [63:0] fp_negate_double_in [fp_NEGATE_PARALLEL_OPS_COUNT];
+  logic fp_negate_valid_in, fp_negate_valid_in_delayed;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_negate_address_in, fp_negate_address_in_delayed;
+  logic [63:0] fp_negate_double_out [fp_NEGATE_PARALLEL_OPS_COUNT];
+  logic fp_negate_valid_out;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_negate_address_out;
+  logic fp_negate_done;
+  fp_negate #(
+               .PARALLEL_OPS_COUNT(fp_NEGATE_PARALLEL_OPS_COUNT)
+             )fp_negate (
                .clk(clk),
-               .double_in(flp_negate_double_in),
-               .valid_in(flp_negate_valid_in_delayed),
-               .address_in(flp_negate_address_in_delayed),
-               .double_out(flp_negate_double_out),
-               .valid_out(flp_negate_valid_out),
-               .address_out(flp_negate_address_out)
+               .double_in(fp_negate_double_in),
+               .valid_in(fp_negate_valid_in_delayed),
+               .address_in(fp_negate_address_in_delayed),
+               .double_out(fp_negate_double_out),
+               .valid_out(fp_negate_valid_out),
+               .address_out(fp_negate_address_out)
              );
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) flp_negate_address_in_delay(.clk(clk), .in(flp_negate_address_in), .out(flp_negate_address_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_negate_valid_in_delay(.clk(clk), .in(flp_negate_valid_in), .out(flp_negate_valid_in_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) fp_negate_address_in_delay(.clk(clk), .in(fp_negate_address_in), .out(fp_negate_address_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_negate_valid_in_delay(.clk(clk), .in(fp_negate_valid_in), .out(fp_negate_valid_in_delayed));
 
   logic [`FFT_BRAM_DATA_WIDTH-1:0] muladjoint_data_a_in, muladjoint_data_b_in;
   logic muladjoint_valid_in, muladjoint_valid_in_delayed;
@@ -416,68 +416,68 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) muladjoint_valid_in_delay(.clk(clk), .in(muladjoint_valid_in), .out(muladjoint_valid_in_delayed));
 
   // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_in;
-  logic flp_adder_valid_in, flp_adder_valid_in_delayed;
-  logic [63:0] flp_adder1_a, flp_adder1_b;
-  logic [63:0] flp_adder2_a, flp_adder2_b;
-  logic [63:0] flp_adder1_result;
-  logic [63:0] flp_adder2_result;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_adder_address_out;
-  logic flp_adder_valid_out;
-  logic flp_adder_done;
-  flp_adder #(
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_adder_address_in;
+  logic fp_adder_valid_in, fp_adder_valid_in_delayed;
+  logic [63:0] fp_adder1_a, fp_adder1_b;
+  logic [63:0] fp_adder2_a, fp_adder2_b;
+  logic [63:0] fp_adder1_result;
+  logic [63:0] fp_adder2_result;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_adder_address_out;
+  logic fp_adder_valid_out;
+  logic fp_adder_done;
+  fp_adder #(
               .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-            ) flp_adder1(
+            ) fp_adder1(
               .clk(clk),
-              .valid_in(flp_adder_valid_in_delayed),
-              .a(flp_adder1_a),
-              .b(flp_adder1_b),
-              .result(flp_adder1_result),
-              .valid_out(flp_adder_valid_out)
+              .valid_in(fp_adder_valid_in_delayed),
+              .a(fp_adder1_a),
+              .b(fp_adder1_b),
+              .result(fp_adder1_result),
+              .valid_out(fp_adder_valid_out)
             );
-  flp_adder #(
+  fp_adder #(
               .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-            ) flp_adder2(
+            ) fp_adder2(
               .clk(clk),
-              .valid_in(flp_adder_valid_in_delayed),
-              .a(flp_adder2_a),
-              .b(flp_adder2_b),
-              .result(flp_adder2_result),
+              .valid_in(fp_adder_valid_in_delayed),
+              .a(fp_adder2_a),
+              .b(fp_adder2_b),
+              .result(fp_adder2_result),
               .valid_out()
             );
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_adder_valid_in_delay(.clk(clk), .in(flp_adder_valid_in), .out(flp_adder_valid_in_delayed));
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_adder1_address_in_delay(.clk(clk), .in(flp_adder_address_in), .out(flp_adder_address_out));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder1_address_in_delay(.clk(clk), .in(fp_adder_address_in), .out(fp_adder_address_out));
 
   // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_mul_address_in;
-  logic flp_mul_valid_in, flp_mul_valid_in_delayed;
-  logic [63:0] flp_mul1_a, flp_mul1_b;
-  logic [63:0] flp_mul2_a, flp_mul2_b;
-  logic [63:0] flp_mul1_result;
-  logic [63:0] flp_mul2_result;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] flp_mul_address_out;
-  logic flp_mul_valid_out;
-  logic flp_mul_done;
-  flp_multiplier flp_multiplier1(
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_mul_address_in;
+  logic fp_mul_valid_in, fp_mul_valid_in_delayed;
+  logic [63:0] fp_mul1_a, fp_mul1_b;
+  logic [63:0] fp_mul2_a, fp_mul2_b;
+  logic [63:0] fp_mul1_result;
+  logic [63:0] fp_mul2_result;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_mul_address_out;
+  logic fp_mul_valid_out;
+  logic fp_mul_done;
+  fp_multiplier fp_multiplier1(
               .clk(clk),
-              .valid_in(flp_mul_valid_in_delayed),
-              .a(flp_mul1_a),
-              .b(flp_mul1_b),
+              .valid_in(fp_mul_valid_in_delayed),
+              .a(fp_mul1_a),
+              .b(fp_mul1_b),
               .scale_factor(5'b0),
-              .result(flp_mul1_result),
-              .valid_out(flp_mul_valid_out)
+              .result(fp_mul1_result),
+              .valid_out(fp_mul_valid_out)
             );
-  flp_multiplier flp_multiplier2(
+  fp_multiplier fp_multiplier2(
               .clk(clk),
-              .valid_in(flp_mul_valid_in_delayed),
-              .a(flp_mul2_a),
-              .b(flp_mul2_b),
+              .valid_in(fp_mul_valid_in_delayed),
+              .a(fp_mul2_a),
+              .b(fp_mul2_b),
               .scale_factor(5'b0),
-              .result(flp_mul2_result),
+              .result(fp_mul2_result),
               .valid_out()
             );
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_mul_valid_in_delay(.clk(clk), .in(flp_mul_valid_in), .out(flp_mul_valid_in_delayed));
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) flp_mul1_address_in_delay(.clk(clk), .in(flp_mul_address_in), .out(flp_mul_address_out));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_mul1_address_in_delay(.clk(clk), .in(fp_mul_address_in), .out(fp_mul_address_out));
 
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_in;
   logic copy_valid_in;
@@ -547,10 +547,10 @@ module control_unit#(
           fft_start <= 1'b0;
           decompress_start <= 1'b0;
           ntt_start <= 1'b0;
-          flp_negate_done <= 1'b0;
+          fp_negate_done <= 1'b0;
           muladjoint_done <= 1'b0;
-          flp_adder_done <= 1'b0;
-          flp_mul_done <= 1'b0;
+          fp_adder_done <= 1'b0;
+          fp_mul_done <= 1'b0;
           copy_done <= 1'b0;
           mul_done <= 1'b0;
           int_to_double_done <= 1'b0;
@@ -580,16 +580,16 @@ module control_unit#(
               fft_mode <= 1'b0;
               htp_start <= 1'b1;
 
-              if(flp_negate_address_in == N/2-1)
-                flp_negate_done <= 1'b1;
+              if(fp_negate_address_in == N/2-1)
+                fp_negate_done <= 1'b1;
             end
 
             SIGN_STEP_2: begin
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
 
-              if(flp_negate_address_in == N/2-1)
-                flp_negate_done <= 1'b1;
+              if(fp_negate_address_in == N/2-1)
+                fp_negate_done <= 1'b1;
               if(muladjoint_address_in == N/2-1)
                 muladjoint_done <= 1'b1;
               if(int_to_double_address_in == N/2-1)
@@ -608,8 +608,8 @@ module control_unit#(
               fft_start <= 1'b1;
               fft_mode <= 1'b0;
 
-              if(flp_adder_address_in == N/2-1)
-                flp_adder_done <= 1'b1;
+              if(fp_adder_address_in == N/2-1)
+                fp_adder_done <= 1'b1;
               if(copy_address_in == N/2-1)
                 copy_done <= 1'b1;
             end
@@ -634,22 +634,22 @@ module control_unit#(
             SIGN_STEP_7: begin
               if(muladjoint_address_in == N/2-1)
                 muladjoint_done <= 1'b1;
-              if(flp_adder_address_in == N/2-1)
-                flp_adder_done <= 1'b1;
-              if(flp_mul_address_in == N/2-1)
-                flp_mul_done <= 1'b1;
+              if(fp_adder_address_in == N/2-1)
+                fp_adder_done <= 1'b1;
+              if(fp_mul_address_in == N/2-1)
+                fp_mul_done <= 1'b1;
             end
 
             SIGN_STEP_8: begin
               if(muladjoint_address_in == N/2-1)
                 muladjoint_done <= 1'b1;
-              if(flp_mul_address_in == N/2-1)
-                flp_mul_done <= 1'b1;
+              if(fp_mul_address_in == N/2-1)
+                fp_mul_done <= 1'b1;
             end
 
             SIGN_STEP_9: begin
-              if(flp_adder_address_in == N/2-1)
-                flp_adder_done <= 1'b1;
+              if(fp_adder_address_in == N/2-1)
+                fp_adder_done <= 1'b1;
             end
 
             default: begin
@@ -695,10 +695,10 @@ module control_unit#(
     mod_mult_valid_in = 1'b0;
     sub_normalize_squared_norm_valid = 1'b0;
     sub_normalize_squared_norm_last = 1'b0;
-    flp_negate_valid_in = 1'b0;
+    fp_negate_valid_in = 1'b0;
     muladjoint_valid_in = 1'b0;
-    flp_adder_valid_in = 1'b0;
-    flp_mul_valid_in = 1'b0;
+    fp_adder_valid_in = 1'b0;
+    fp_mul_valid_in = 1'b0;
     copy_valid_in = 1'b0;
     mul_valid_in = 1'b0;
 
@@ -833,13 +833,13 @@ module control_unit#(
 
             // negate
             fft_bram_addr_a[1] = task_addr1;
-            flp_negate_double_in[0] = fft_bram_dout_a[1][127:64];
-            flp_negate_double_in[1] = fft_bram_dout_a[1][63:0];
-            flp_negate_valid_in = !flp_negate_done;
-            flp_negate_address_in = task_addr1;
-            fft_bram_addr_b[1] = flp_negate_address_out;
-            fft_bram_din_b[1] = {flp_negate_double_out[0], flp_negate_double_out[1]};
-            fft_bram_we_b[1] = flp_negate_valid_out;
+            fp_negate_double_in[0] = fft_bram_dout_a[1][127:64];
+            fp_negate_double_in[1] = fft_bram_dout_a[1][63:0];
+            fp_negate_valid_in = !fp_negate_done;
+            fp_negate_address_in = task_addr1;
+            fft_bram_addr_b[1] = fp_negate_address_out;
+            fft_bram_din_b[1] = {fp_negate_double_out[0], fp_negate_double_out[1]};
+            fft_bram_we_b[1] = fp_negate_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -866,13 +866,13 @@ module control_unit#(
 
             // negate on BRAM3
             fft_bram_addr_a[3] = task_addr1;
-            flp_negate_double_in[0] = fft_bram_dout_a[3][127:64];
-            flp_negate_double_in[1] = fft_bram_dout_a[3][63:0];
-            flp_negate_valid_in = !flp_negate_done;
-            flp_negate_address_in = task_addr1;
-            fft_bram_addr_b[3] = flp_negate_address_out;
-            fft_bram_din_b[3] = {flp_negate_double_out[0], flp_negate_double_out[1]};
-            fft_bram_we_b[3] = flp_negate_valid_out;
+            fp_negate_double_in[0] = fft_bram_dout_a[3][127:64];
+            fp_negate_double_in[1] = fft_bram_dout_a[3][63:0];
+            fp_negate_valid_in = !fp_negate_done;
+            fp_negate_address_in = task_addr1;
+            fft_bram_addr_b[3] = fp_negate_address_out;
+            fft_bram_din_b[3] = {fp_negate_double_out[0], fp_negate_double_out[1]};
+            fft_bram_we_b[3] = fp_negate_valid_out;
 
             // int_to_double on BRAM7
             fft_bram_addr_a[7] = task_addr1;
@@ -952,15 +952,15 @@ module control_unit#(
             // add BRAM4 and BRAM 5, output is BRAM4
             fft_bram_addr_a[4] = task_addr1;
             fft_bram_addr_a[5] = task_addr1;
-            flp_adder1_a = fft_bram_dout_a[4][127:64];
-            flp_adder1_b = fft_bram_dout_a[5][127:64];
-            flp_adder2_a = fft_bram_dout_a[4][63:0];
-            flp_adder2_b = fft_bram_dout_a[5][63:0];
-            flp_adder_valid_in = !flp_adder_done;
-            flp_adder_address_in = task_addr1;
-            fft_bram_addr_b[4] = flp_adder_address_out;
-            fft_bram_din_b[4] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[4] = flp_adder_valid_out;
+            fp_adder1_a = fft_bram_dout_a[4][127:64];
+            fp_adder1_b = fft_bram_dout_a[5][127:64];
+            fp_adder2_a = fft_bram_dout_a[4][63:0];
+            fp_adder2_b = fft_bram_dout_a[5][63:0];
+            fp_adder_valid_in = !fp_adder_done;
+            fp_adder_address_in = task_addr1;
+            fft_bram_addr_b[4] = fp_adder_address_out;
+            fft_bram_din_b[4] = {fp_adder1_result, fp_adder2_result};
+            fft_bram_we_b[4] = fp_adder_valid_out;
 
             // copy BRAM 7 to BRAM 6
             fft_bram_addr_a[7] = task_addr1;
@@ -1063,29 +1063,29 @@ module control_unit#(
             // add BRAM 8 and BRAM 9, result is written to BRAM 8
             fft_bram_addr_a[8] = task_addr1;
             fft_bram_addr_a[9] = task_addr1;
-            flp_adder1_a = fft_bram_dout_a[8][127:64];
-            flp_adder1_b = fft_bram_dout_a[9][127:64];
-            flp_adder2_a = fft_bram_dout_a[8][63:0];
-            flp_adder2_b = fft_bram_dout_a[9][63:0];
-            flp_adder_valid_in = !flp_adder_done;
-            flp_adder_address_in = task_addr1;
-            fft_bram_addr_b[8] = flp_adder_address_out;
-            fft_bram_din_b[8] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[8] = flp_adder_valid_out;
+            fp_adder1_a = fft_bram_dout_a[8][127:64];
+            fp_adder1_b = fft_bram_dout_a[9][127:64];
+            fp_adder2_a = fft_bram_dout_a[8][63:0];
+            fp_adder2_b = fft_bram_dout_a[9][63:0];
+            fp_adder_valid_in = !fp_adder_done;
+            fp_adder_address_in = task_addr1;
+            fft_bram_addr_b[8] = fp_adder_address_out;
+            fft_bram_din_b[8] = {fp_adder1_result, fp_adder2_result};
+            fft_bram_we_b[8] = fp_adder_valid_out;
 
-            // flp_mul BRAM 7 with constant inv(q), result is written to BRAM 7
+            // fp_mul BRAM 7 with constant inv(q), result is written to BRAM 7
             fft_bram_addr_a[7] = task_addr1;
-            flp_mul1_a = fft_bram_dout_a[7][127:64];
-            flp_mul1_b = $realtobits(1.0 / 12289.0);
-            flp_mul2_a = fft_bram_dout_a[7][63:0];
-            flp_mul2_b = $realtobits(1.0 / 12289.0);
-            flp_mul_valid_in = !flp_mul_done;
-            flp_mul_address_in = task_addr1;
-            fft_bram_addr_b[7] = flp_mul_address_out;
-            fft_bram_din_b[7] = {flp_mul1_result, flp_mul2_result};
-            fft_bram_we_b[7] = flp_mul_valid_out;
+            fp_mul1_a = fft_bram_dout_a[7][127:64];
+            fp_mul1_b = $realtobits(1.0 / 12289.0);
+            fp_mul2_a = fft_bram_dout_a[7][63:0];
+            fp_mul2_b = $realtobits(1.0 / 12289.0);
+            fp_mul_valid_in = !fp_mul_done;
+            fp_mul_address_in = task_addr1;
+            fft_bram_addr_b[7] = fp_mul_address_out;
+            fft_bram_din_b[7] = {fp_mul1_result, fp_mul2_result};
+            fft_bram_we_b[7] = fp_mul_valid_out;
 
-            instruction_done = flp_mul_done == 1'b1 && flp_mul_valid_out == 1'b0;  // flp_mul takes the longest
+            instruction_done = fp_mul_done == 1'b1 && fp_mul_valid_out == 1'b0;  // fp_mul takes the longest
           end
 
           SIGN_STEP_8: begin
@@ -1101,19 +1101,19 @@ module control_unit#(
             fft_bram_din_b[5] = muladjoint_data_out;
             fft_bram_we_b[5] = muladjoint_valid_out;
 
-            // flp_mul BRAM 6 with constant inv(q), result is written to BRAM 6
+            // fp_mul BRAM 6 with constant inv(q), result is written to BRAM 6
             fft_bram_addr_a[6] = task_addr1;
-            flp_mul1_a = fft_bram_dout_a[6][127:64];
-            flp_mul1_b = $realtobits(-1.0 / 12289.0);
-            flp_mul2_a = fft_bram_dout_a[6][63:0];
-            flp_mul2_b = $realtobits(-1.0 / 12289.0);
-            flp_mul_valid_in = !flp_mul_done;
-            flp_mul_address_in = task_addr1;
-            fft_bram_addr_b[6] = flp_mul_address_out;
-            fft_bram_din_b[6] = {flp_mul1_result, flp_mul2_result};
-            fft_bram_we_b[6] = flp_mul_valid_out;
+            fp_mul1_a = fft_bram_dout_a[6][127:64];
+            fp_mul1_b = $realtobits(-1.0 / 12289.0);
+            fp_mul2_a = fft_bram_dout_a[6][63:0];
+            fp_mul2_b = $realtobits(-1.0 / 12289.0);
+            fp_mul_valid_in = !fp_mul_done;
+            fp_mul_address_in = task_addr1;
+            fft_bram_addr_b[6] = fp_mul_address_out;
+            fft_bram_din_b[6] = {fp_mul1_result, fp_mul2_result};
+            fft_bram_we_b[6] = fp_mul_valid_out;
 
-            instruction_done = flp_mul_done == 1'b1 && flp_mul_valid_out == 1'b0;  // flp_mul takes the longest
+            instruction_done = fp_mul_done == 1'b1 && fp_mul_valid_out == 1'b0;  // fp_mul takes the longest
           end
 
           SIGN_STEP_9: begin
@@ -1121,17 +1121,17 @@ module control_unit#(
             // add BRAM 5 and BRAM 9, result is written to BRAM 5
             fft_bram_addr_a[5] = task_addr1;
             fft_bram_addr_a[9] = task_addr1;
-            flp_adder1_a = fft_bram_dout_a[5][127:64];
-            flp_adder1_b = fft_bram_dout_a[9][127:64];
-            flp_adder2_a = fft_bram_dout_a[5][63:0];
-            flp_adder2_b = fft_bram_dout_a[9][63:0];
-            flp_adder_valid_in = !flp_adder_done;
-            flp_adder_address_in = task_addr1;
-            fft_bram_addr_b[5] = flp_adder_address_out;
-            fft_bram_din_b[5] = {flp_adder1_result, flp_adder2_result};
-            fft_bram_we_b[5] = flp_adder_valid_out;
+            fp_adder1_a = fft_bram_dout_a[5][127:64];
+            fp_adder1_b = fft_bram_dout_a[9][127:64];
+            fp_adder2_a = fft_bram_dout_a[5][63:0];
+            fp_adder2_b = fft_bram_dout_a[9][63:0];
+            fp_adder_valid_in = !fp_adder_done;
+            fp_adder_address_in = task_addr1;
+            fft_bram_addr_b[5] = fp_adder_address_out;
+            fft_bram_din_b[5] = {fp_adder1_result, fp_adder2_result};
+            fft_bram_we_b[5] = fp_adder_valid_out;
 
-            instruction_done = flp_adder_done == 1'b1 && flp_adder_valid_out == 1'b0;  // flp_adder takes the longest
+            instruction_done = fp_adder_done == 1'b1 && fp_adder_valid_out == 1'b0;  // fp_adder takes the longest
           end
 
           default: begin

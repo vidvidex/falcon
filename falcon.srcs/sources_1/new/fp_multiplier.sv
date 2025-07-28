@@ -9,7 +9,7 @@
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module flp_multiplier(
+module fp_multiplier(
     input clk,
     input valid_in,
     input [63:0] a,

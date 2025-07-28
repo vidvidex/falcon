@@ -5,7 +5,7 @@
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module flp_adder_sig_add_normalize(
+module fp_adder_sig_add_normalize(
     input logic clk,
     input logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP,
     input logic [`EXPONENT_BITS-1:0] exponent_b_2DP,
