@@ -222,7 +222,7 @@ module control_unit#(
         .N(N)
       )fft(
         .clk(clk),
-        .rst(!rst_n),
+        .rst(!rst_n || instruction_done), // Reset on instruction_done so it's ready for the next instruction
         .mode(fft_mode),
         .start(fft_start && !fft_start_i),
 
