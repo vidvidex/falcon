@@ -390,8 +390,8 @@ module control_unit#(
                .valid_out(flp_negate_valid_out),
                .address_out(flp_negate_address_out)
              );
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(1)) flp_negate_address_in_delay(.clk(clk), .in(flp_negate_address_in), .out(flp_negate_address_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) flp_negate_valid_in_delay(.clk(clk), .in(flp_negate_valid_in), .out(flp_negate_valid_in_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) flp_negate_address_in_delay(.clk(clk), .in(flp_negate_address_in), .out(flp_negate_address_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) flp_negate_valid_in_delay(.clk(clk), .in(flp_negate_valid_in), .out(flp_negate_valid_in_delayed));
 
   logic [`FFT_BRAM_DATA_WIDTH-1:0] muladjoint_data_a_in, muladjoint_data_b_in;
   logic muladjoint_valid_in, muladjoint_valid_in_delayed;
