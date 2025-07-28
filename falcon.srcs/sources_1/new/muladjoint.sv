@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module muladjoint(
+module mul_adjoint(
     input clk,
 
     input logic [`FFT_BRAM_DATA_WIDTH-1:0] a_in,
