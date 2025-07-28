@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="100,768.500 ns"></ZoomStartTime>
-      <ZoomEndTime time="101,046.301 ns"></ZoomEndTime>
-      <Cursor1Time time="100,830.900 ns"></Cursor1Time>
+      <ZoomStartTime time="729.690 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,054.063 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="216"></NameColumnWidth>
+      <NameColumnWidth column_width="212"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -498,7 +498,6 @@
       <wvobject type="group" fp_name="group550">
          <obj_property name="label">fft_bram7</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_bram_addr_a[7]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[7][8:0]</obj_property>
@@ -1167,7 +1166,6 @@
       <wvobject type="group" fp_name="group984">
          <obj_property name="label">fp_mul</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_mul_address_in">
             <obj_property name="ElementShortName">fp_mul_address_in[8:0]</obj_property>
             <obj_property name="ObjectShortName">fp_mul_address_in[8:0]</obj_property>
@@ -1267,35 +1265,35 @@
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group268">
-         <obj_property name="label">complex_multiplier</obj_property>
+         <obj_property name="label">complex_mul</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_a_real">
-            <obj_property name="ElementShortName">mul_a_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_a_real[63:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_a_real">
+            <obj_property name="ElementShortName">complex_mul_a_real[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_a_real[63:0]</obj_property>
             <obj_property name="Radix">REALRADIX</obj_property>
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_a_imag">
-            <obj_property name="ElementShortName">mul_a_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_a_imag[63:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_a_imag">
+            <obj_property name="ElementShortName">complex_mul_a_imag[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_a_imag[63:0]</obj_property>
             <obj_property name="Radix">REALRADIX</obj_property>
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_b_real">
-            <obj_property name="ElementShortName">mul_b_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_b_real[63:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_b_real">
+            <obj_property name="ElementShortName">complex_mul_b_real[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_b_real[63:0]</obj_property>
             <obj_property name="Radix">REALRADIX</obj_property>
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_b_imag">
-            <obj_property name="ElementShortName">mul_b_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_b_imag[63:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_b_imag">
+            <obj_property name="ElementShortName">complex_mul_b_imag[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_b_imag[63:0]</obj_property>
             <obj_property name="Radix">REALRADIX</obj_property>
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
@@ -1305,17 +1303,17 @@
             <obj_property name="ElementShortName">mul_valid_in_delayed</obj_property>
             <obj_property name="ObjectShortName">mul_valid_in_delayed</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_result_real">
-            <obj_property name="ElementShortName">mul_result_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_result_real[63:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_result_real">
+            <obj_property name="ElementShortName">complex_mul_result_real[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_result_real[63:0]</obj_property>
             <obj_property name="Radix">REALRADIX</obj_property>
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_result_imag">
-            <obj_property name="ElementShortName">mul_result_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_result_imag[63:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_result_imag">
+            <obj_property name="ElementShortName">complex_mul_result_imag[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_result_imag[63:0]</obj_property>
             <obj_property name="Radix">REALRADIX</obj_property>
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
@@ -1325,14 +1323,13 @@
             <obj_property name="ElementShortName">mul_valid_out</obj_property>
             <obj_property name="ObjectShortName">mul_valid_out</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/mul_address_out">
-            <obj_property name="ElementShortName">mul_address_out[8:0]</obj_property>
-            <obj_property name="ObjectShortName">mul_address_out[8:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/mul_address_out">
+            <obj_property name="ElementShortName">mul_address_out</obj_property>
+            <obj_property name="ObjectShortName">mul_address_out</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/mul_done">
-            <obj_property name="ElementShortName">mul_done</obj_property>
-            <obj_property name="ObjectShortName">mul_done</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/complex_mul_done">
+            <obj_property name="ElementShortName">complex_mul_done</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_done</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>

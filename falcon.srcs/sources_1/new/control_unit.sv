@@ -382,16 +382,16 @@ module control_unit#(
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_negate_address_out;
   logic fp_negate_done;
   fp_negate #(
-               .PARALLEL_OPS_COUNT(fp_NEGATE_PARALLEL_OPS_COUNT)
-             )fp_negate (
-               .clk(clk),
-               .double_in(fp_negate_double_in),
-               .valid_in(fp_negate_valid_in_delayed),
-               .address_in(fp_negate_address_in_delayed),
-               .double_out(fp_negate_double_out),
-               .valid_out(fp_negate_valid_out),
-               .address_out(fp_negate_address_out)
-             );
+              .PARALLEL_OPS_COUNT(fp_NEGATE_PARALLEL_OPS_COUNT)
+            )fp_negate (
+              .clk(clk),
+              .double_in(fp_negate_double_in),
+              .valid_in(fp_negate_valid_in_delayed),
+              .address_in(fp_negate_address_in_delayed),
+              .double_out(fp_negate_double_out),
+              .valid_out(fp_negate_valid_out),
+              .address_out(fp_negate_address_out)
+            );
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) fp_negate_address_in_delay(.clk(clk), .in(fp_negate_address_in), .out(fp_negate_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_negate_valid_in_delay(.clk(clk), .in(fp_negate_valid_in), .out(fp_negate_valid_in_delayed));
 
@@ -403,15 +403,15 @@ module control_unit#(
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_out;
   logic mul_adjoint_done;
   mul_adjoint mul_adjoint (
-               .clk(clk),
-               .a_in(mul_adjoint_data_a_in),
-               .b_in(mul_adjoint_data_b_in),
-               .valid_in(mul_adjoint_valid_in_delayed),
-               .address_in(mul_adjoint_address_in_delayed),
-               .data_out(mul_adjoint_data_out),
-               .valid_out(mul_adjoint_valid_out),
-               .address_out(mul_adjoint_address_out)
-             );
+                .clk(clk),
+                .a_in(mul_adjoint_data_a_in),
+                .b_in(mul_adjoint_data_b_in),
+                .valid_in(mul_adjoint_valid_in_delayed),
+                .address_in(mul_adjoint_address_in_delayed),
+                .data_out(mul_adjoint_data_out),
+                .valid_out(mul_adjoint_valid_out),
+                .address_out(mul_adjoint_address_out)
+              );
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) mul_adjoint_address_in_delay(.clk(clk), .in(mul_adjoint_address_in), .out(mul_adjoint_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_adjoint_valid_in_delay(.clk(clk), .in(mul_adjoint_valid_in), .out(mul_adjoint_valid_in_delayed));
 
@@ -426,25 +426,25 @@ module control_unit#(
   logic fp_adder_valid_out;
   logic fp_adder_done;
   fp_adder #(
-              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-            ) fp_adder1(
-              .clk(clk),
-              .valid_in(fp_adder_valid_in_delayed),
-              .a(fp_adder1_a),
-              .b(fp_adder1_b),
-              .result(fp_adder1_result),
-              .valid_out(fp_adder_valid_out)
-            );
+             .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
+           ) fp_adder1(
+             .clk(clk),
+             .valid_in(fp_adder_valid_in_delayed),
+             .a(fp_adder1_a),
+             .b(fp_adder1_b),
+             .result(fp_adder1_result),
+             .valid_out(fp_adder_valid_out)
+           );
   fp_adder #(
-              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-            ) fp_adder2(
-              .clk(clk),
-              .valid_in(fp_adder_valid_in_delayed),
-              .a(fp_adder2_a),
-              .b(fp_adder2_b),
-              .result(fp_adder2_result),
-              .valid_out()
-            );
+             .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
+           ) fp_adder2(
+             .clk(clk),
+             .valid_in(fp_adder_valid_in_delayed),
+             .a(fp_adder2_a),
+             .b(fp_adder2_b),
+             .result(fp_adder2_result),
+             .valid_out()
+           );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder1_address_in_delay(.clk(clk), .in(fp_adder_address_in), .out(fp_adder_address_out));
 
@@ -459,23 +459,23 @@ module control_unit#(
   logic fp_mul_valid_out;
   logic fp_mul_done;
   fp_multiplier fp_multiplier1(
-              .clk(clk),
-              .valid_in(fp_mul_valid_in_delayed),
-              .a(fp_mul1_a),
-              .b(fp_mul1_b),
-              .scale_factor(5'b0),
-              .result(fp_mul1_result),
-              .valid_out(fp_mul_valid_out)
-            );
+                  .clk(clk),
+                  .valid_in(fp_mul_valid_in_delayed),
+                  .a(fp_mul1_a),
+                  .b(fp_mul1_b),
+                  .scale_factor(5'b0),
+                  .result(fp_mul1_result),
+                  .valid_out(fp_mul_valid_out)
+                );
   fp_multiplier fp_multiplier2(
-              .clk(clk),
-              .valid_in(fp_mul_valid_in_delayed),
-              .a(fp_mul2_a),
-              .b(fp_mul2_b),
-              .scale_factor(5'b0),
-              .result(fp_mul2_result),
-              .valid_out()
-            );
+                  .clk(clk),
+                  .valid_in(fp_mul_valid_in_delayed),
+                  .a(fp_mul2_a),
+                  .b(fp_mul2_b),
+                  .scale_factor(5'b0),
+                  .result(fp_mul2_result),
+                  .valid_out()
+                );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_mul1_address_in_delay(.clk(clk), .in(fp_mul_address_in), .out(fp_mul_address_out));
 
@@ -487,27 +487,27 @@ module control_unit#(
   delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) copy_address_in_delay(.clk(clk), .in(copy_address_in), .out(copy_address_out));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
 
-  logic [63:0] mul_a_real, mul_a_imag, mul_b_real, mul_b_imag;
-  logic mul_valid_in, mul_valid_in_delayed;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_address_in;
-  logic [63:0] mul_result_real, mul_result_imag;
-  logic mul_valid_out;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_address_out;
-  logic mul_done;
+  logic [63:0] complex_mul_a_real, complex_mul_a_imag, complex_mul_b_real, complex_mul_b_imag;
+  logic complex_mul_valid_in, complex_mul_valid_in_delayed;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] complex_mul_address_in;
+  logic [63:0] complex_mul_result_real, complex_mul_result_imag;
+  logic complex_mul_valid_out;
+  logic [`FFT_BRAM_ADDR_WIDTH-1:0] complex_mul_address_out;
+  logic complex_mul_done;
   complex_multiplier complex_multiplier(
                        .clk(clk),
-                       .valid_in(mul_valid_in_delayed),
-                       .a_real(mul_a_real),
-                       .a_imag(mul_a_imag),
-                       .b_real(mul_b_real),
-                       .b_imag(mul_b_imag),
+                       .valid_in(complex_mul_valid_in_delayed),
+                       .a_real(complex_mul_a_real),
+                       .a_imag(complex_mul_a_imag),
+                       .b_real(complex_mul_b_real),
+                       .b_imag(complex_mul_b_imag),
                        .scale_factor(5'b0),
-                       .a_x_b_real(mul_result_real),
-                       .a_x_b_imag(mul_result_imag),
-                       .valid_out(mul_valid_out)
+                       .a_x_b_real(complex_mul_result_real),
+                       .a_x_b_imag(complex_mul_result_imag),
+                       .valid_out(complex_mul_valid_out)
                      );
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) mul_address_in_delay(.clk(clk), .in(mul_address_in), .out(mul_address_out));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_valid_in_delay(.clk(clk), .in(mul_valid_in), .out(mul_valid_in_delayed));
+  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) complex_mul_address_in_delay(.clk(clk), .in(complex_mul_address_in), .out(complex_mul_address_out));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
 
   // Task execution based on opcode
   always_ff @(posedge clk) begin
@@ -552,7 +552,7 @@ module control_unit#(
           fp_adder_done <= 1'b0;
           fp_mul_done <= 1'b0;
           copy_done <= 1'b0;
-          mul_done <= 1'b0;
+          complex_mul_done <= 1'b0;
           int_to_double_done <= 1'b0;
         end
 
@@ -620,15 +620,15 @@ module control_unit#(
 
               if(mul_adjoint_address_in == N/2-1)
                 mul_adjoint_done <= 1'b1;
-              if(mul_address_in == N/2-1)
-                mul_done <= 1'b1;
+              if(complex_mul_address_in == N/2-1)
+                complex_mul_done <= 1'b1;
             end
 
             SIGN_STEP_6: begin
               if(mul_adjoint_address_in == N/2-1)
                 mul_adjoint_done <= 1'b1;
-              if(mul_address_in == N/2-1)
-                mul_done <= 1'b1;
+              if(complex_mul_address_in == N/2-1)
+                complex_mul_done <= 1'b1;
             end
 
             SIGN_STEP_7: begin
@@ -700,7 +700,7 @@ module control_unit#(
     fp_adder_valid_in = 1'b0;
     fp_mul_valid_in = 1'b0;
     copy_valid_in = 1'b0;
-    mul_valid_in = 1'b0;
+    complex_mul_valid_in = 1'b0;
 
     // Ensure these signals are not undefined to ensure proper behaviour of the module
     sub_normalize_squared_norm_a[0] = 0;
@@ -1003,18 +1003,18 @@ module control_unit#(
             fft_bram_din_b[9] = mul_adjoint_data_out;
             fft_bram_we_b[9] = mul_adjoint_valid_out;
 
-            // mul BRAM 1 and BRAM 6, result is written to BRAM 6
+            // complex_mul BRAM 1 and BRAM 6, result is written to BRAM 6
             fft_bram_addr_a[1] = task_addr1;
             fft_bram_addr_a[6] = task_addr1;
-            mul_a_real = fft_bram_dout_a[1][127:64];
-            mul_a_imag = fft_bram_dout_a[1][63:0];
-            mul_b_real = fft_bram_dout_a[6][127:64];
-            mul_b_imag = fft_bram_dout_a[6][63:0];
-            mul_valid_in = !mul_done;
-            mul_address_in = task_addr1;
-            fft_bram_addr_b[6] = mul_address_out;
-            fft_bram_din_b[6] = {mul_result_real, mul_result_imag};
-            fft_bram_we_b[6] =mul_valid_out;
+            complex_mul_a_real = fft_bram_dout_a[1][127:64];
+            complex_mul_a_imag = fft_bram_dout_a[1][63:0];
+            complex_mul_b_real = fft_bram_dout_a[6][127:64];
+            complex_mul_b_imag = fft_bram_dout_a[6][63:0];
+            complex_mul_valid_in = !complex_mul_done;
+            complex_mul_address_in = task_addr1;
+            fft_bram_addr_b[6] = complex_mul_address_out;
+            fft_bram_din_b[6] = {complex_mul_result_real, complex_mul_result_imag};
+            fft_bram_we_b[6] = complex_mul_valid_out;
 
             instruction_done = fft_done;  // FFT takes the longest
           end
@@ -1031,20 +1031,20 @@ module control_unit#(
             fft_bram_din_b[8] = mul_adjoint_data_out;
             fft_bram_we_b[8] = mul_adjoint_valid_out;
 
-            // mul BRAM 3 and BRAM 7, result is written to BRAM 7
+            // complex_mul BRAM 3 and BRAM 7, result is written to BRAM 7
             fft_bram_addr_a[3] = task_addr1;
             fft_bram_addr_a[7] = task_addr1;
-            mul_a_real = fft_bram_dout_a[3][127:64];
-            mul_a_imag = fft_bram_dout_a[3][63:0];
-            mul_b_real = fft_bram_dout_a[7][127:64];
-            mul_b_imag = fft_bram_dout_a[7][63:0];
-            mul_valid_in = !mul_done;
-            mul_address_in = task_addr1;
-            fft_bram_addr_b[7] = mul_address_out;
-            fft_bram_din_b[7] = {mul_result_real, mul_result_imag};
-            fft_bram_we_b[7] = mul_valid_out;
+            complex_mul_a_real = fft_bram_dout_a[3][127:64];
+            complex_mul_a_imag = fft_bram_dout_a[3][63:0];
+            complex_mul_b_real = fft_bram_dout_a[7][127:64];
+            complex_mul_b_imag = fft_bram_dout_a[7][63:0];
+            complex_mul_valid_in = !complex_mul_done;
+            complex_mul_address_in = task_addr1;
+            fft_bram_addr_b[7] = complex_mul_address_out;
+            fft_bram_din_b[7] = {complex_mul_result_real, complex_mul_result_imag};
+            fft_bram_we_b[7] = complex_mul_valid_out;
 
-            instruction_done = mul_done == 1'b1 && mul_valid_out == 1'b0;  // mul takes the longest
+            instruction_done = complex_mul_done == 1'b1 && complex_mul_valid_out == 1'b0;  // mul takes the longest
           end
 
           SIGN_STEP_7: begin
