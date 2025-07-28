@@ -19,7 +19,7 @@ module shake256_squeeze(
     output logic call_keccak_f1600,//! This signal is used to start Keccak-f1600 on the state variable
     output logic we_output_buffer,  //! Used to write keccak_state into keccak_output_buffer
     output logic shift_output_buffer,  //! Used to shift the keccak_output_buffer in 64 bits such that one word is output
-    output logic data_out_valid,  //! This signal is used to write Keccak-squeeze output
+    output logic valid_out,  //! This signal is used to write Keccak-squeeze output
     output logic done   //! Becomes 1 when the entire input is absorbed.
   );
 
@@ -52,7 +52,7 @@ module shake256_squeeze(
         rst_rate_counter = 1;
         call_keccak_f1600 = 0;
         inc_rate_counter = 0;
-        data_out_valid = 0;
+        valid_out = 0;
         we_output_buffer = 1;
         shift_output_buffer = 0;
       end
@@ -61,7 +61,7 @@ module shake256_squeeze(
         rst_rate_counter = 0;
         call_keccak_f1600 = 1;
         inc_rate_counter = 1;
-        data_out_valid = 1;
+        valid_out = 1;
         we_output_buffer = 0;
         shift_output_buffer = 1;
       end
@@ -70,7 +70,7 @@ module shake256_squeeze(
         rst_rate_counter = 1;
         call_keccak_f1600 = 1;
         inc_rate_counter = 0;
-        data_out_valid = 0;
+        valid_out = 0;
         we_output_buffer = 0;
         shift_output_buffer = 0;
       end
@@ -79,7 +79,7 @@ module shake256_squeeze(
         rst_rate_counter = 0;
         call_keccak_f1600 = 0;
         inc_rate_counter = 0;
-        data_out_valid = 0;
+        valid_out = 0;
         we_output_buffer = 1;
         shift_output_buffer = 0;
       end
@@ -87,7 +87,7 @@ module shake256_squeeze(
         rst_rate_counter = 1;
         call_keccak_f1600 = 0;
         inc_rate_counter = 0;
-        data_out_valid = 0;
+        valid_out = 0;
         we_output_buffer = 0;
         shift_output_buffer = 0;
       end

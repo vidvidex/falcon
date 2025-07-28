@@ -11,12 +11,12 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module flp_multiplier(
     input clk,
-    input in_valid,
+    input valid_in,
     input [63:0] a,
     input [63:0] b,
     input signed [4:0] scale_factor, // Scale (multiply) the result by 2^scale_factor. Used for scaling IFFT results. If 0 has no effect
     output [63:0] result,
-    output out_valid
+    output valid_out
   );
 
   logic sign_a, sign_b;
@@ -52,7 +52,7 @@ module flp_multiplier(
   logic [`EXPONENT_BITS:0] exponent_sum_1DP;
   logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted_3DP;
 
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) data_valid_delay(.clk(clk), .in(in_valid), .out(data_valid_1DP));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) data_valid_delay(.clk(clk), .in(valid_in), .out(data_valid_1DP));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) sign_result_delay(.clk(clk), .in(sign_result), .out(sign_result_1DP));
   delay_register #(.BITWIDTH(`EXPONENT_BITS+1), .CYCLE_COUNT(1+2)) exponent_sum_delay(.clk(clk), .in(exponent_sum), .out(exponent_sum_1DP));
 
@@ -127,6 +127,6 @@ module flp_multiplier(
   end
 
   assign result = {sign_result_5DP, exponent_result_5DP, significant_result_5DP};
-  assign out_valid = data_valid_5DP;
+  assign valid_out = data_valid_5DP;
 
 endmodule

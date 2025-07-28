@@ -4,7 +4,7 @@
 module complex_multiplier_tb;
 
   logic clk;
-  logic in_valid, out_valid;
+  logic valid_in, valid_out;
   logic [63:0] a_real, a_imag;
   logic [63:0] b_real, b_imag;
   logic [63:0] result_real, result_imag;
@@ -14,7 +14,7 @@ module complex_multiplier_tb;
 
   complex_multiplier complex_multiplier(
                       .clk(clk),
-                      .in_valid(in_valid),
+                      .valid_in(valid_in),
                       .a_real(a_real),
                       .a_imag(a_imag),
                       .b_real(b_real),
@@ -22,7 +22,7 @@ module complex_multiplier_tb;
                       .scale_factor(scale_factor),
                       .a_x_b_real(result_real),
                       .a_x_b_imag(result_imag),
-                      .out_valid(out_valid)
+                      .valid_out(valid_out)
                     );
 
   initial begin
@@ -30,7 +30,7 @@ module complex_multiplier_tb;
     clk = 1;
     scale_factor = -1;
 
-    in_valid = 1;
+    valid_in = 1;
     a_real = $realtobits(1.5);
     a_imag = $realtobits(2.5);
     b_real = $realtobits(3.5);
@@ -43,7 +43,7 @@ module complex_multiplier_tb;
     b_imag = $realtobits(16.5);
     #10;
 
-    in_valid = 0;
+    valid_in = 0;
 
   end
 

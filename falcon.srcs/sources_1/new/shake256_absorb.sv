@@ -12,7 +12,7 @@ module shake256_absorb(
 
     input logic [15:0] inputlen_InBytes, //! Message length in bytes. If message is less than 64 bits, then the most significant bits are 0s.
     input logic [63:0] data_in,
-    input logic data_in_valid, //! This signal is provided by a data source to indicate that data_in is valid
+    input logic valid_in, //! This signal is provided by a data source to indicate that data_in is valid
     input logic keccak_round_complete,  //! This signal comes from Keccak-f1600 after its completion
 
     output logic [63:0] data_in_padded, //! This is properly processed data that will get written into state buffer.
@@ -121,7 +121,7 @@ module shake256_absorb(
   end
 
   assign done = state==FINALIZE ? 1 : 0;
-  assign data_in_padded_valid = state == CONSUME_DELIMITED_SUFFIX || (state == ABSORB && data_in_valid == 1'b1) ? 1 : 0;
+  assign data_in_padded_valid = state == CONSUME_DELIMITED_SUFFIX || (state == ABSORB && valid_in == 1'b1) ? 1 : 0;
 
   always_comb begin
     case(state)

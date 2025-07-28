@@ -214,13 +214,13 @@
          <obj_property name="ElementShortName">data_out[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_out[15:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/data_out_valid">
-         <obj_property name="ElementShortName">data_out_valid</obj_property>
-         <obj_property name="ObjectShortName">data_out_valid</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/data_out_valid_i">
-         <obj_property name="ElementShortName">data_out_valid_i</obj_property>
-         <obj_property name="ObjectShortName">data_out_valid_i</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/valid_out_i">
+         <obj_property name="ElementShortName">valid_out_i</obj_property>
+         <obj_property name="ObjectShortName">valid_out_i</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256_reset">
          <obj_property name="ElementShortName">shake256_reset</obj_property>
@@ -253,13 +253,13 @@
          <obj_property name="ElementShortName">read_message_length_counter[1:0]</obj_property>
          <obj_property name="ObjectShortName">read_message_length_counter[1:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/data_in_valid">
-         <obj_property name="ElementShortName">data_in_valid</obj_property>
-         <obj_property name="ObjectShortName">data_in_valid</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/data_in_valid_i">
-         <obj_property name="ElementShortName">data_in_valid_i</obj_property>
-         <obj_property name="ObjectShortName">data_in_valid_i</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/valid_in_i">
+         <obj_property name="ElementShortName">valid_in_i</obj_property>
+         <obj_property name="ObjectShortName">valid_in_i</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/hash_to_point/k_times_q">
          <obj_property name="ElementShortName">k_times_q[15:0]</obj_property>
@@ -293,17 +293,17 @@
          <obj_property name="ElementShortName">data_in[63:0]</obj_property>
          <obj_property name="ObjectShortName">data_in[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/data_in_valid">
-         <obj_property name="ElementShortName">data_in_valid</obj_property>
-         <obj_property name="ObjectShortName">data_in_valid</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/hash_to_point_tb/hash_to_point/shake256/data_out">
          <obj_property name="ElementShortName">data_out[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_out[15:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/data_out_valid">
-         <obj_property name="ElementShortName">data_out_valid</obj_property>
-         <obj_property name="ObjectShortName">data_out_valid</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/valid_out">
+         <obj_property name="ElementShortName">valid_out</obj_property>
+         <obj_property name="ObjectShortName">valid_out</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/absorb_done">
          <obj_property name="ElementShortName">absorb_done</obj_property>
@@ -397,9 +397,9 @@
          <obj_property name="ElementShortName">data_in[63:0]</obj_property>
          <obj_property name="ObjectShortName">data_in[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/shake256_absorb/data_in_valid">
-         <obj_property name="ElementShortName">data_in_valid</obj_property>
-         <obj_property name="ObjectShortName">data_in_valid</obj_property>
+      <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/shake256_absorb/valid_in">
+         <obj_property name="ElementShortName">valid_in</obj_property>
+         <obj_property name="ObjectShortName">valid_in</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/hash_to_point_tb/hash_to_point/shake256/shake256_absorb/keccak_round_complete">
          <obj_property name="ElementShortName">keccak_round_complete</obj_property>

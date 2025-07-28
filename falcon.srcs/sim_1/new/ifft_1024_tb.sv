@@ -50,11 +50,11 @@ module ifft_1024_tb;
   logic btf_mode;
   logic signed [4:0] btf_scale_factor;
   logic [9:0] btf_tw_addr;
-  logic btf_in_valid, btf_out_valid;
+  logic btf_valid_in, btf_valid_out;
   fft_butterfly fft_butterfly(
                  .clk(clk),
                  .mode(btf_mode),
-                 .in_valid(btf_in_valid),
+                 .valid_in(btf_valid_in),
 
                  .a_in_real(btf_a_in_real),
                  .a_in_imag(btf_a_in_imag),
@@ -70,7 +70,7 @@ module ifft_1024_tb;
                  .b_out_real(btf_b_out_real),
                  .b_out_imag(btf_b_out_imag),
 
-                 .out_valid(btf_out_valid)
+                 .valid_out(btf_valid_out)
                );
 
   fft #(
@@ -102,7 +102,7 @@ module ifft_1024_tb;
         .done(done),
 
         .btf_mode(btf_mode),
-        .btf_in_valid(btf_in_valid),
+        .btf_valid_in(btf_valid_in),
         .btf_a_in_real(btf_a_in_real),
         .btf_a_in_imag(btf_a_in_imag),
         .btf_b_in_real(btf_b_in_real),
@@ -113,7 +113,7 @@ module ifft_1024_tb;
         .btf_a_out_imag(btf_a_out_imag),
         .btf_b_out_real(btf_b_out_real),
         .btf_b_out_imag(btf_b_out_imag),
-        .btf_out_valid(btf_out_valid)
+        .btf_valid_out(btf_valid_out)
       );
 
   // Signals that split 128 bit BRAM line into real and imag part, used mostly for debugging

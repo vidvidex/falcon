@@ -10,11 +10,11 @@ module flp_adder #(
     DO_SUBSTRACTION = 0 // 0 for addition, 1 for subtraction
   ) (
     input clk,
-    input in_valid,
+    input valid_in,
     input [63:0] a,
     input [63:0] b,
     output [63:0] result,
-    output out_valid
+    output valid_out
   );
 
   logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP;
@@ -23,7 +23,7 @@ module flp_adder #(
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP;
   flp_adder_denormalization #(.DO_SUBSTRACTION(DO_SUBSTRACTION)) denormalize (
                             .clk(clk),
-                            .in_valid(in_valid),
+                            .valid_in(valid_in),
                             .a(a),
                             .b(b),
                             .sign_result_2DP(sign_result_2DP),
@@ -49,7 +49,7 @@ module flp_adder #(
                             .denorm_significant_a_2DP(denorm_significant_a_2DP),
 
                             .result(result),
-                            .out_valid(out_valid)
+                            .valid_out(valid_out)
                           );
 
 endmodule

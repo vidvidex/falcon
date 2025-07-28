@@ -11,7 +11,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module complex_multiplier(
     input clk,
-    input in_valid,
+    input valid_in,
     input [63:0] a_real,
     input [63:0] a_imag,
     input [63:0] b_real,
@@ -21,7 +21,7 @@ module complex_multiplier(
     output [63:0] a_x_b_real,
     output [63:0] a_x_b_imag,
 
-    output out_valid
+    output valid_out
   );
 
   logic mult_done;
@@ -29,12 +29,12 @@ module complex_multiplier(
 
   flp_multiplier mult_ar_x_br(
                   .clk(clk),
-                  .in_valid(in_valid),
+                  .valid_in(valid_in),
                   .a(a_real),
                   .b(b_real),
                   .scale_factor(scale_factor),
                   .result(ar_x_br),
-                  .out_valid(mult_done)
+                  .valid_out(mult_done)
                 );
   flp_multiplier mult_ar_x_bi(
                   .clk(clk),
@@ -42,8 +42,8 @@ module complex_multiplier(
                   .b(b_imag),
                   .scale_factor(scale_factor),
                   .result(ar_x_bi),
-                  .in_valid(),
-                  .out_valid()
+                  .valid_in(),
+                  .valid_out()
                 );
   flp_multiplier mult_ai_x_br(
                   .clk(clk),
@@ -51,8 +51,8 @@ module complex_multiplier(
                   .b(b_real),
                   .scale_factor(scale_factor),
                   .result(ai_x_br),
-                  .in_valid(),
-                  .out_valid()
+                  .valid_in(),
+                  .valid_out()
                 );
   flp_multiplier mult_ai_x_bi(
                   .clk(clk),
@@ -60,17 +60,17 @@ module complex_multiplier(
                   .b(b_imag),
                   .scale_factor(scale_factor),
                   .result(ai_x_bi),
-                  .in_valid(),
-                  .out_valid()
+                  .valid_in(),
+                  .valid_out()
                 );
 
   flp_adder #(.DO_SUBSTRACTION(1)) adder_real_result(
              .clk(clk),
-             .in_valid(mult_done),
+             .valid_in(mult_done),
              .a(ar_x_br),
              .b(ai_x_bi),
              .result(a_x_b_real),
-             .out_valid(out_valid)
+             .valid_out(valid_out)
            );
 
   flp_adder #(.DO_SUBSTRACTION(0)) adder_imag_result(
@@ -78,8 +78,8 @@ module complex_multiplier(
              .a(ar_x_bi),
              .b(ai_x_br),
              .result(a_x_b_imag),
-             .in_valid(),
-             .out_valid()
+             .valid_in(),
+             .valid_out()
            );
 
 endmodule

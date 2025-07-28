@@ -12,7 +12,7 @@
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module fft_butterfly_add_stage(
     input clk,
-    input in_valid,
+    input valid_in,
     input [63:0] a_real,
     input [63:0] a_imag,
     input [63:0] b_real,
@@ -25,7 +25,7 @@ module fft_butterfly_add_stage(
     output [63:0] a_m_b_real,
     output [63:0] a_m_b_imag,
 
-    output out_valid
+    output valid_out
   );
 
 
@@ -37,7 +37,7 @@ module fft_butterfly_add_stage(
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_real_2DP;
   flp_adder_denormalization denormalize_real_part (
                             .clk(clk),
-                            .in_valid(in_valid),
+                            .valid_in(valid_in),
                             .a(a_real),
                             .b(b_real),
                             .sign_result_2DP(sign_result_real_2DP),
@@ -63,7 +63,7 @@ module fft_butterfly_add_stage(
                             .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
 
                             .result(a_p_b_real),
-                            .out_valid(out_valid)
+                            .valid_out(valid_out)
                           );
   flp_adder_sig_add_normalize sub_and_normalize_real(
                             .clk(clk),
@@ -79,7 +79,7 @@ module fft_butterfly_add_stage(
 
                             // unused:
                             .data_valid_2DP(),
-                            .out_valid()
+                            .valid_out()
                           );
 
   /////////////////// Imaginary part ////////////////////
@@ -101,7 +101,7 @@ module fft_butterfly_add_stage(
                             .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
                             .switched_operands_2DP(switched_operands_imag_2DP),
                             // unused:
-                            .in_valid(),
+                            .valid_in(),
                             .data_valid_2DP()
                           );
 
@@ -119,7 +119,7 @@ module fft_butterfly_add_stage(
 
                             // unused:
                             .data_valid_2DP(),
-                            .out_valid()
+                            .valid_out()
                           );
   flp_adder_sig_add_normalize sub_and_normalize_imag(
                             .clk(clk),
@@ -134,7 +134,7 @@ module fft_butterfly_add_stage(
                             .result(a_m_b_imag),
                             // unused:
                             .data_valid_2DP(),
-                            .out_valid()
+                            .valid_out()
                           );
 
 endmodule

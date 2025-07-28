@@ -13,7 +13,7 @@ module flp_adder_sig_add_normalize(
     input logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP,
 
     output logic [63:0] result,
-    output logic out_valid
+    output logic valid_out
   );
 
   logic [`SIGNIFICANT_BITS+1:0] signed_significant_a;
@@ -151,5 +151,5 @@ module flp_adder_sig_add_normalize(
   end
 
   assign result = {sign_result_6DP, exponent_result_6DP,  exponent_result_6DP != `EXPONENT_BITS'd0 ? significant_result_6DP : `SIGNIFICANT_BITS'd0};
-  assign out_valid = data_valid_6DP;
+  assign valid_out = data_valid_6DP;
 endmodule

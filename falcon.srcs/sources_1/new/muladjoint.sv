@@ -34,7 +34,7 @@ module muladjoint(
 
   complex_multiplier complex_multiplier(
                        .clk(clk),
-                       .in_valid(valid_in),
+                       .valid_in(valid_in),
                        .a_real(a_real),
                        .a_imag(a_imag),
                        .b_real(b_real),
@@ -44,7 +44,7 @@ module muladjoint(
                        .a_x_b_real(prod_real),
                        .a_x_b_imag(prod_imag),
 
-                       .out_valid(valid_out)
+                       .valid_out(valid_out)
                      );
 
   assign data_out = {prod_real, prod_imag};
