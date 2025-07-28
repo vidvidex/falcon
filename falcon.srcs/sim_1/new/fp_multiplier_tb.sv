@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-module flp_multiplier_tb;
+module fp_multiplier_tb;
 
   logic clk;
   logic valid_in, valid_out;
@@ -12,7 +12,7 @@ module flp_multiplier_tb;
 
   always #5 clk = ~clk;
 
-  flp_multiplier flp_multiplier(
+  fp_multiplier fp_multiplier(
                   .clk(clk),
                   .valid_in(valid_in),
                   .a(a),

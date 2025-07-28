@@ -5,7 +5,7 @@
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module flp_adder_denormalization #(DO_SUBSTRACTION = 0) (
+module fp_adder_denormalization #(DO_SUBSTRACTION = 0) (
     input clk,
     input valid_in,
     input [63:0] a,

@@ -27,7 +27,7 @@ module complex_multiplier(
   logic mult_done;
   logic [63:0] ar_x_br, ar_x_bi, ai_x_br, ai_x_bi;
 
-  flp_multiplier mult_ar_x_br(
+  fp_multiplier mult_ar_x_br(
                   .clk(clk),
                   .valid_in(valid_in),
                   .a(a_real),
@@ -36,7 +36,7 @@ module complex_multiplier(
                   .result(ar_x_br),
                   .valid_out(mult_done)
                 );
-  flp_multiplier mult_ar_x_bi(
+  fp_multiplier mult_ar_x_bi(
                   .clk(clk),
                   .a(a_real),
                   .b(b_imag),
@@ -45,7 +45,7 @@ module complex_multiplier(
                   .valid_in(),
                   .valid_out()
                 );
-  flp_multiplier mult_ai_x_br(
+  fp_multiplier mult_ai_x_br(
                   .clk(clk),
                   .a(a_imag),
                   .b(b_real),
@@ -54,7 +54,7 @@ module complex_multiplier(
                   .valid_in(),
                   .valid_out()
                 );
-  flp_multiplier mult_ai_x_bi(
+  fp_multiplier mult_ai_x_bi(
                   .clk(clk),
                   .a(a_imag),
                   .b(b_imag),
@@ -64,7 +64,7 @@ module complex_multiplier(
                   .valid_out()
                 );
 
-  flp_adder #(.DO_SUBSTRACTION(1)) adder_real_result(
+  fp_adder #(.DO_SUBSTRACTION(1)) adder_real_result(
              .clk(clk),
              .valid_in(mult_done),
              .a(ar_x_br),
@@ -73,7 +73,7 @@ module complex_multiplier(
              .valid_out(valid_out)
            );
 
-  flp_adder #(.DO_SUBSTRACTION(0)) adder_imag_result(
+  fp_adder #(.DO_SUBSTRACTION(0)) adder_imag_result(
              .clk(clk),
              .a(ar_x_bi),
              .b(ai_x_br),

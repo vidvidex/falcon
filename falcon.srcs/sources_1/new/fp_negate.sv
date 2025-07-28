@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module flp_negate#(
+module fp_negate#(
     parameter int PARALLEL_OPS_COUNT = 2  //! How many operations to do in parallel
   ) (
     input clk,

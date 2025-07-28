@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-module flp_adder_tb;
+module fp_adder_tb;
 
   logic clk;
   logic valid_in, valid_out;
@@ -11,9 +11,9 @@ module flp_adder_tb;
 
   always #5 clk = ~clk;
 
-  flp_adder #(
+  fp_adder #(
              .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-           ) flp_adder(
+           ) fp_adder(
              .clk(clk),
              .valid_in(valid_in),
              .a(a),
