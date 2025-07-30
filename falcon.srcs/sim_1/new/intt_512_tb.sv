@@ -15,9 +15,9 @@ module intt_512_tb;
   logic signed[14:0] expected_polynomial [N];
 
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr1;
-  logic signed [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data1;
+  logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data1;
   logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr2;
-  logic signed [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data2;
+  logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data2;
   bram_512x128_preinit_for_ntt_tb input_bram (
                                     .clka(clk),
                                     .addra(input_bram_addr1),
