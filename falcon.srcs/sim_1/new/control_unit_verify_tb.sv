@@ -16,7 +16,7 @@ module control_unit_verify_tb;
 
   logic [31:0] instruction;
   logic instruction_done;
-  logic [`FFT_BRAM_DATA_WIDTH-1:0] bram_din, bram_dout;
+  logic [`BRAM_DATA_WIDTH-1:0] bram_din, bram_dout;
 
   always #5 clk = ~clk;
 

@@ -38,14 +38,14 @@ module hash_to_point#(
     input logic start,
 
     output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr, //! Used to read input for the hash_to_point module
-    input logic [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data,
+    input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data,
 
     output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram1_addr, //! Address for output BRAM
-    output logic [`FFT_BRAM_DATA_WIDTH-1:0] output_bram1_data, //! Data that is written to output_bram[output_bram1_addr]
+    output logic [`BRAM_DATA_WIDTH-1:0] output_bram1_data, //! Data that is written to output_bram[output_bram1_addr]
     output logic output_bram1_we, //! Write enable for output BRAM
 
     output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
-    input logic [`FFT_BRAM_DATA_WIDTH-1:0] output_bram2_data,
+    input logic [`BRAM_DATA_WIDTH-1:0] output_bram2_data,
 
     output logic done //! Are we done hashing the message to a polynomial?
   );

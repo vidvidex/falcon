@@ -2,11 +2,12 @@
 `define KEEP_HIERARCHY  "false"
 
 // BRAM
-`define FFT_BRAM_DATA_WIDTH 128
-`define FFT_BRAM_ADDR_WIDTH 9
+`define BRAM_DATA_WIDTH 128
+`define BRAM_ADDR_WIDTH 13
 
-`define NTT_BRAM_DATA_WIDTH 15
-`define NTT_BRAM_ADDR_WIDTH 10
+`define BRAM1024_ADDR_WIDTH $clog2(1024)
+`define BRAM2048_ADDR_WIDTH $clog2(2048)
+`define BRAM5632_ADDR_WIDTH $clog2(5632)
 
 // IEEE 754 double precision:
 `define SIGNIFICANT_BITS 52

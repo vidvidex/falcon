@@ -34,14 +34,14 @@ module decompress #(
     input logic start,
 
     output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr,
-    input logic [`FFT_BRAM_DATA_WIDTH-1:0] input_bram_data,
+    input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data,
 
     output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram1_addr,
-    output logic [`FFT_BRAM_DATA_WIDTH-1:0] output_bram1_data,
+    output logic [`BRAM_DATA_WIDTH-1:0] output_bram1_data,
     output logic output_bram1_we,
 
     output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
-    input logic [`FFT_BRAM_DATA_WIDTH-1:0] output_bram2_data,
+    input logic [`BRAM_DATA_WIDTH-1:0] output_bram2_data,
 
     output logic signature_error,    //! Was an error detected in the signature
     output logic done //! Decompression done, parent should also check if signature_error is set
