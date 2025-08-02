@@ -33,11 +33,11 @@ module int_to_double
 
     input logic [`BRAM_DATA_WIDTH-1:0] data_in,
     input logic valid_in,
-    input logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_in,
+    input logic [`BRAM_ADDR_WIDTH-1:0] address_in,
 
     output logic [`BRAM_DATA_WIDTH-1:0] data_out,
     output logic valid_out,
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_out
+    output logic [`BRAM_ADDR_WIDTH-1:0] address_out
   );
 
   logic signed [14:0] input_int1, input_int2;
