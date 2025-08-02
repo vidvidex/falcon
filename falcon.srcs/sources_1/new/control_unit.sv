@@ -38,7 +38,8 @@ module control_unit#(
   logic debug_NTT_INTT;
   logic debug_MUL;
   logic debug_MUL_CONST;
-  logic debug_SPLIT_MERGE;
+  logic debug_SPLIT;
+  logic debug_MERGE;
   logic debug_MOD_MULT_Q;
   logic debug_SUB_NORM_SQ;
   logic debug_DECOMPRESS;
@@ -54,12 +55,13 @@ module control_unit#(
     debug_NTT_INTT = instruction[127-6];
     debug_MUL = instruction[127-7];
     debug_MUL_CONST = instruction[127-8];
-    debug_SPLIT_MERGE = instruction[127-9];
-    debug_MOD_MULT_Q = instruction[127-10];
-    debug_SUB_NORM_SQ = instruction[127-11];
-    debug_DECOMPRESS = instruction[127-12];
-    debug_COMPRESS = instruction[127-13];
-    debug_ADD_SUB = instruction[127-14];
+    debug_SPLIT = instruction[127-9];
+    debug_MERGE = instruction[127-10];
+    debug_MOD_MULT_Q = instruction[127-11];
+    debug_SUB_NORM_SQ = instruction[127-12];
+    debug_DECOMPRESS = instruction[127-13];
+    debug_COMPRESS = instruction[127-14];
+    debug_ADD_SUB = instruction[127-15];
   end
 
   logic [15:0] modules_running, modules_running_i;
@@ -394,48 +396,6 @@ module control_unit#(
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
 
-  // parameter int fp_NEGATE_PARALLEL_OPS_COUNT = 2;
-  // logic [63:0] fp_negate_double_in [fp_NEGATE_PARALLEL_OPS_COUNT];
-  // logic fp_negate_valid_in, fp_negate_valid_in_delayed;
-  // logic [`BRAM_ADDR_WIDTH-1:0] fp_negate_address_in, fp_negate_address_in_delayed;
-  // logic [63:0] fp_negate_double_out [fp_NEGATE_PARALLEL_OPS_COUNT];
-  // logic fp_negate_valid_out;
-  // logic [`BRAM_ADDR_WIDTH-1:0] fp_negate_address_out;
-  // logic fp_negate_done;
-  // fp_negate #(
-  //             .PARALLEL_OPS_COUNT(fp_NEGATE_PARALLEL_OPS_COUNT)
-  //           )fp_negate (
-  //             .clk(clk),
-  //             .double_in(fp_negate_double_in),
-  //             .valid_in(fp_negate_valid_in_delayed),
-  //             .address_in(fp_negate_address_in_delayed),
-  //             .double_out(fp_negate_double_out),
-  //             .valid_out(fp_negate_valid_out),
-  //             .address_out(fp_negate_address_out)
-  //           );
-  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) fp_negate_address_in_delay(.clk(clk), .in(fp_negate_address_in), .out(fp_negate_address_in_delayed));
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_negate_valid_in_delay(.clk(clk), .in(fp_negate_valid_in), .out(fp_negate_valid_in_delayed));
-
-  // logic [`BRAM_DATA_WIDTH-1:0] mul_adjoint_data_a_in, mul_adjoint_data_b_in;
-  // logic mul_adjoint_valid_in, mul_adjoint_valid_in_delayed;
-  // logic [`BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_in, mul_adjoint_address_in_delayed;
-  // logic [`BRAM_DATA_WIDTH-1:0] mul_adjoint_data_out;
-  // logic mul_adjoint_valid_out;
-  // logic [`BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_out;
-  // logic mul_adjoint_done;
-  // mul_adjoint mul_adjoint (
-  //               .clk(clk),
-  //               .a_in(mul_adjoint_data_a_in),
-  //               .b_in(mul_adjoint_data_b_in),
-  //               .valid_in(mul_adjoint_valid_in_delayed),
-  //               .address_in(mul_adjoint_address_in_delayed),
-  //               .data_out(mul_adjoint_data_out),
-  //               .valid_out(mul_adjoint_valid_out),
-  //               .address_out(mul_adjoint_address_out)
-  //             );
-  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) mul_adjoint_address_in_delay(.clk(clk), .in(mul_adjoint_address_in), .out(mul_adjoint_address_in_delayed));
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_adjoint_valid_in_delay(.clk(clk), .in(mul_adjoint_valid_in), .out(mul_adjoint_valid_in_delayed));
-
   // // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
   // logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_address_in;
   // logic fp_adder_valid_in, fp_adder_valid_in_delayed;
@@ -675,8 +635,6 @@ module control_unit#(
     // mod_mult_valid_in = 1'b0;
     // sub_normalize_squared_norm_valid = 1'b0;
     // sub_normalize_squared_norm_last = 1'b0;
-    // fp_negate_valid_in = 1'b0;
-    // mul_adjoint_valid_in = 1'b0;
     // fp_adder_valid_in = 1'b0;
     fp_mul_valid_in = 1'b0;
     fp_mul_done = 1'b0;
