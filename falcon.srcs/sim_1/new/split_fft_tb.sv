@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module split_fft_tb;
 
@@ -10,11 +11,11 @@ module split_fft_tb;
   logic done;
   logic [$clog2(N):0] size;
 
-  logic [$clog2(N)-2:0] bram1_addr_a, bram1_addr_b;
-  logic [127:0] bram1_din_a, bram1_din_b;
-  logic [127:0] bram1_dout_a, bram1_dout_b;
-  logic bram1_we_a, bram1_we_b;
-  bram_512x128 bram_512x128_1 (
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a, bram1_dout_b;
+  logic bram1_we_a;
+  bram_5632x128 bram_5632x128_1 (
                   .addra(bram1_addr_a),
                   .clka(clk),
                   .dina(bram1_din_a),
@@ -25,14 +26,14 @@ module split_fft_tb;
                   .clkb(clk),
                   .dinb(bram1_din_b),
                   .doutb(bram1_dout_b),
-                  .web(bram1_we_b)
+                  .web(1'b0)
                 );
 
-  logic [$clog2(N)-2:0] bram2_addr_a, bram2_addr_b;
-  logic [127:0] bram2_din_a, bram2_din_b;
-  logic [127:0] bram2_dout_a, bram2_dout_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a, bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  bram_512x128 bram_512x128_2 (
+  bram_5632x128 bram_5632x128_2 (
                   .addra(bram2_addr_a),
                   .clka(clk),
                   .dina(bram2_din_a),
@@ -71,7 +72,7 @@ module split_fft_tb;
                  .b_out_real(btf_b_out_real),
                  .b_out_imag(btf_b_out_imag),
 
-                 .done(btf_valid_out)
+                 .valid_out(btf_valid_out)
                );
 
   split_fft #(
@@ -83,21 +84,15 @@ module split_fft_tb;
               .start(start),
 
               .bram1_addr_a(bram1_addr_a),
-              .bram1_din_a(bram1_din_a),
               .bram1_dout_a(bram1_dout_a),
-              .bram1_we_a(bram1_we_a),
               .bram1_addr_b(bram1_addr_b),
-              .bram1_din_b(bram1_din_b),
               .bram1_dout_b(bram1_dout_b),
-              .bram1_we_b(bram1_we_b),
 
               .bram2_addr_a(bram2_addr_a),
               .bram2_din_a(bram2_din_a),
-              .bram2_dout_a(bram2_dout_a),
               .bram2_we_a(bram2_we_a),
               .bram2_addr_b(bram2_addr_b),
               .bram2_din_b(bram2_din_b),
-              .bram2_dout_b(bram2_dout_b),
               .bram2_we_b(bram2_we_b),
 
               .done(done),
@@ -212,13 +207,13 @@ module split_fft_tb;
     if(!double_equal(a_imag_double, -0.392847))
       $fatal(1, "split_fft size 16: Expected first imag part to be -0.392847, got %f", a_imag_double);
 
-    b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, -0.693520))
-      $fatal(1, "split_fft size 16: Expected last real part to be -0.693520, got %f", b_real_double);
+      b_real_double = $bitstoreal(bram2_out_b_real);
+    if(!double_equal(b_real_double, 0.137950))
+      $fatal(1, "split_fft size 16: Expected last real part to be 0.137950, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -0.137950))
-      $fatal(1, "split_fft size 16: Expected last imag part to be -0.137950, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, 0.693520))
+      $fatal(1, "split_fft size 16: Expected last imag part to be 0.693520, got %f", b_imag_double);
 
     $display("All tests for split_fft with size 16 passed!");
     ////// Finish test for size = 16 //////
@@ -271,12 +266,12 @@ module split_fft_tb;
       $fatal(1, "split_fft size 1024: Expected first imag part to be -0.498463, got %f", a_imag_double);
 
     b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, -0.504580))
-      $fatal(1, "split_fft size 1024: Expected last real part to be -0.504580, got %f", b_real_double);
+    if(!double_equal(b_real_double, 0.495377))
+      $fatal(1, "split_fft size 1024: Expected last real part to be 0.495377, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -0.495376))
-      $fatal(1, "split_fft size 1024: Expected last imag part to be -0.495376, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, 0.504581))
+      $fatal(1, "split_fft size 1024: Expected last imag part to be 0.504581, got %f", b_imag_double);
 
     $display("All tests for split_fft with size 1024 passed!");
 

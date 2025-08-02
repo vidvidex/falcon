@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module merge_fft_tb;
 
@@ -10,11 +11,11 @@ module merge_fft_tb;
   logic done;
   logic [$clog2(N):0] size;
 
-  logic [$clog2(N)-2:0] bram1_addr_a, bram1_addr_b;
-  logic [127:0] bram1_din_a, bram1_din_b;
-  logic [127:0] bram1_dout_a, bram1_dout_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
-  bram_512x128 bram_512x128_1 (
+  bram_5632x128 bram_5632x128_1 (
                   .addra(bram1_addr_a),
                   .clka(clk),
                   .dina(bram1_din_a),
@@ -28,11 +29,11 @@ module merge_fft_tb;
                   .web(bram1_we_b)
                 );
 
-  logic [$clog2(N)-2:0] bram2_addr_a, bram2_addr_b;
-  logic [127:0] bram2_din_a, bram2_din_b;
-  logic [127:0] bram2_dout_a, bram2_dout_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a, bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  bram_512x128 bram_512x128_2 (
+  bram_5632x128 bram_5632x128_2 (
                   .addra(bram2_addr_a),
                   .clka(clk),
                   .dina(bram2_din_a),
@@ -71,7 +72,7 @@ module merge_fft_tb;
                  .b_out_real(btf_b_out_real),
                  .b_out_imag(btf_b_out_imag),
 
-                 .done(btf_valid_out)
+                 .valid_out(btf_valid_out)
                );
 
   merge_fft #(
@@ -83,21 +84,15 @@ module merge_fft_tb;
               .start(start),
 
               .bram1_addr_a(bram1_addr_a),
-              .bram1_din_a(bram1_din_a),
               .bram1_dout_a(bram1_dout_a),
-              .bram1_we_a(bram1_we_a),
               .bram1_addr_b(bram1_addr_b),
-              .bram1_din_b(bram1_din_b),
               .bram1_dout_b(bram1_dout_b),
-              .bram1_we_b(bram1_we_b),
 
               .bram2_addr_a(bram2_addr_a),
               .bram2_din_a(bram2_din_a),
-              .bram2_dout_a(bram2_dout_a),
               .bram2_we_a(bram2_we_a),
               .bram2_addr_b(bram2_addr_b),
               .bram2_din_b(bram2_din_b),
-              .bram2_dout_b(bram2_dout_b),
               .bram2_we_b(bram2_we_b),
 
               .done(done),
@@ -197,12 +192,12 @@ module merge_fft_tb;
       $fatal(1, "merge_fft size 16: Expected first imag part to be 17.330145, got %f", a_imag_double);
 
     b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, 2.187387))
-      $fatal(1, "merge_fft size 16: Expected last real part to be 2.187387, got %f", b_real_double);
+    if(!double_equal(b_real_double, 20.479719))
+      $fatal(1, "merge_fft size 16: Expected last real part to be 20.479719, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -11.583316))
-      $fatal(1, "merge_fft size 16: Expected last imag part to be -11.583316, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, 13.360772))
+      $fatal(1, "merge_fft size 16: Expected last imag part to be 13.360772, got %f", b_imag_double);
 
     $display("All tests for merge_fft with size 16 passed!");
     ////// Finish test for size = 16 //////
@@ -253,12 +248,12 @@ module merge_fft_tb;
       $fatal(1, "merge_fft size 1024: Expected first imag part to be 1025.567179, got %f", a_imag_double);
 
     b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, -502.552072))
-      $fatal(1, "merge_fft size 1024: Expected last real part to be -502.552072, got %f", b_real_double);
+    if(!double_equal(b_real_double, 1031.382955))
+      $fatal(1, "merge_fft size 1024: Expected last real part to be 1031.382955, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -519.015950))
-      $fatal(1, "merge_fft size 1024: Expected last imag part to be -519.015950, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, 1526.897390))
+      $fatal(1, "merge_fft size 1024: Expected last imag part to be 1526.897390, got %f", b_imag_double);
 
     $display("All tests for merge_fft with size 1024 passed!");
     $finish;

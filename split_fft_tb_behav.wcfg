@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="8,198.717 ns"></ZoomStartTime>
-      <ZoomEndTime time="8,494.257 ns"></ZoomEndTime>
+      <ZoomStartTime time="8,164.746 ns"></ZoomStartTime>
+      <ZoomEndTime time="8,501.051 ns"></ZoomEndTime>
       <Cursor1Time time="8,445.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="191"></NameColumnWidth>
+      <NameColumnWidth column_width="187"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -57,12 +57,12 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/bram1_out_a_real">
          <obj_property name="ElementShortName">bram1_out_a_real[63:0]</obj_property>
@@ -137,12 +137,14 @@
          <obj_property name="ObjectShortName">bram2_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/bram2_out_a_real">
          <obj_property name="ElementShortName">bram2_out_a_real[63:0]</obj_property>
@@ -334,13 +336,13 @@
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/split_fft/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/split_fft/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/split_fft_tb/split_fft/bram1_we_a">
@@ -352,13 +354,13 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/split_fft/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/split_fft_tb/split_fft/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/split_fft_tb/split_fft/bram2_we_a">

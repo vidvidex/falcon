@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
+
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Implements split_fft
@@ -40,21 +42,15 @@ module split_fft#(
     input logic [$clog2(N):0] size, // Size of input (number of total real and complex values together, size = 1024 means 512 real and 512 imaginary values). Must be <= N
     input logic start,
 
-    output logic [$clog2(N)-2:0] bram1_addr_a,
-    output logic [$clog2(N)-2:0] bram1_addr_b,
-    output logic [127:0] bram1_din_a,
-    output logic [127:0] bram1_din_b,
-    input logic [127:0] bram1_dout_a,
-    input logic [127:0] bram1_dout_b,
-    output logic bram1_we_a,
-    output logic bram1_we_b,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b,
+    input logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a,
+    input logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b,
 
-    output logic [$clog2(N)-2:0] bram2_addr_a,
-    output logic [$clog2(N)-2:0] bram2_addr_b,
-    output logic [127:0] bram2_din_a,
-    output logic [127:0] bram2_din_b,
-    input logic [127:0] bram2_dout_a,
-    input logic [127:0] bram2_dout_b,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b,
+    output logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a,
+    output logic [`BRAM_DATA_WIDTH-1:0] bram2_din_b,
     output logic bram2_we_a,
     output logic bram2_we_b,
 
@@ -161,9 +157,6 @@ module split_fft#(
 
       bram1_addr_a <= (u << 1) + 0;
       bram1_addr_b <= (u << 1) + 1;
-
-      bram1_we_a <= 1'b0;
-      bram1_we_b <= 1'b0;
 
       tw_addr <= u + (size >> 1);
 
