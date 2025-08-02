@@ -138,6 +138,19 @@ module control_unit_sign_tb;
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
+
+    for (int i = 0; i < N/2; i++) begin
+      modules = 16'b0000_1000_0000_0000; // int to double
+      bank1 = 5;
+      bank2 = 5;
+      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      address2 = i[`BRAM_ADDR_WIDTH-1:0];
+      #10;
+    end
+    #30;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
   end
 
 endmodule
