@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="5,782.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="5,881.601 ns"></ZoomEndTime>
-      <Cursor1Time time="5,865.000 ns"></Cursor1Time>
+      <ZoomStartTime time="25.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="138.340 ns"></ZoomEndTime>
+      <Cursor1Time time="16.486 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="191"></NameColumnWidth>
+      <NameColumnWidth column_width="187"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -57,13 +57,13 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram1_out_a_real">
@@ -139,13 +139,13 @@
          <obj_property name="ObjectShortName">bram2_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/bram2_out_a_real">
@@ -290,13 +290,13 @@
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/bram1_we_a">
@@ -308,13 +308,13 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/merge_fft_tb/merge_fft/bram2_we_a">
@@ -372,7 +372,7 @@
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_scale_factor">
          <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
          <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
@@ -380,7 +380,7 @@
       <wvobject type="array" fp_name="/merge_fft_tb/merge_fft/btf_tw_addr">
          <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
          <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
