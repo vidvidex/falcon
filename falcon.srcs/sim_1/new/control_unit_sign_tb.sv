@@ -44,16 +44,18 @@ module control_unit_sign_tb;
   logic [15:0] modules;
   logic [2:0] bank1, bank2;
   logic [12:0] address1, address2;
+  logic mode;
 
-  assign instruction = {modules, 80'b0, address2, address1, bank2, bank1};
+  assign instruction = {modules, 79'b0, mode, address2, address1, bank2, bank1};
 
   initial begin
 
+    modules = 16'b0000_0000_0000_0000;
     bank1 = 0;
     bank2 = 0;
     address1 = 0;
     address2 = 0;
-    modules = 16'b0000_0000_0000_0000;
+    mode = 0;
 
     clk = 1;
 
@@ -150,6 +152,18 @@ module control_unit_sign_tb;
     #30;
     modules = 16'b0000_0000_0000_0000;
     #10;
+
+    // Run FFT
+    modules = 16'b0000_0100_0000_0000; // FFT
+    bank1 = 5;
+    bank2 = 4;
+    mode = 0; // FFT
+    #10;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
+    #10;
+
 
   end
 
