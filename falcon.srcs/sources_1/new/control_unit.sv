@@ -165,7 +165,7 @@ module control_unit#(
   logic [`BRAM_ADDR_WIDTH-1:0] htp_output_bram1_addr, htp_output_bram2_addr;
   logic [`BRAM_DATA_WIDTH-1:0] htp_output_bram1_data, htp_output_bram2_data;
   logic htp_output_bram1_we;
-  logic htp_done;
+  logic htp_done, htp_done_delayed;
   hash_to_point #(
                   .N(N)
                 )
@@ -186,6 +186,7 @@ module control_unit#(
 
                   .done(htp_done)
                 );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) htp_done_delay(.clk(clk), .in(htp_done), .out(htp_done_delayed));
 
   logic [`BRAM_DATA_WIDTH-1:0] int_to_double_data_in;
   logic [`BRAM_ADDR_WIDTH-1:0] int_to_double_address_in, int_to_double_address_in_delayed;
@@ -717,7 +718,7 @@ module control_unit#(
       bram_addr_b[bank2] = htp_output_bram2_addr;
       htp_output_bram2_data = bram_dout_b[bank2];
 
-      instruction_done = htp_done;
+      instruction_done = htp_done_delayed;  // Deleayed so that all data is written to BRAM before the instruction is done
     end
 
     if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
