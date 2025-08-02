@@ -4,7 +4,7 @@
 module control_unit_sign_tb;
 
   parameter int N = 512;
-  parameter int MESSAGE_BLOCKS = 8;
+  parameter int MESSAGE_BLOCKS = 1+7;
   parameter int TREE_SIZE = ($clog2(N)+1) << $clog2(N);
   logic [63:0] message_blocks[MESSAGE_BLOCKS] = '{12+40, 64'h837e8bcfb23c5981, 64'h41d5b10176855b9a, 64'h92208190cdfbc47f, 64'h92e859a168bea29f, 64'ha335ead74efe6969, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
 
@@ -49,6 +49,12 @@ module control_unit_sign_tb;
 
   initial begin
 
+    bank1 = 0;
+    bank2 = 0;
+    address1 = 0;
+    address2 = 0;
+    modules = 16'b0000_0000_0000_0000;
+
     clk = 1;
 
     rst_n = 0;
@@ -65,7 +71,6 @@ module control_unit_sign_tb;
       bram_din = b00[i];
       #10;
     end
-
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
@@ -77,7 +82,6 @@ module control_unit_sign_tb;
       bram_din = b01[i];
       #10;
     end
-
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
@@ -89,7 +93,6 @@ module control_unit_sign_tb;
       bram_din = b10[i];
       #10;
     end
-
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
@@ -101,7 +104,6 @@ module control_unit_sign_tb;
       bram_din = b11[i];
       #10;
     end
-
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
@@ -113,10 +115,9 @@ module control_unit_sign_tb;
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
       #10;
     end
-
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
-    
+
     // Load tree
     for (int i = 0; i < TREE_SIZE; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
@@ -125,7 +126,16 @@ module control_unit_sign_tb;
       bram_din = tree[i];
       #10;
     end
+    modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
+    #10;
 
+    // Run hash_to_point on salt and message
+    modules = 16'b0001_0000_0000_0000; // hash_to_point
+    bank1 = 4;
+    bank2 = 5;
+    #10;
+    while (instruction_done !== 1'b1)
+      #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
   end

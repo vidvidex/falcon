@@ -5,7 +5,7 @@ module hash_to_point_tb;
 
   parameter int N = 512;
   parameter int MESSAGE_BLOCKS = 1+7;
-  logic [63:0] message_blocks[MESSAGE_BLOCKS] = '{40+12, 64'h837e8bcfb23c5981, 64'h41d5b10176855b9a, 64'h92208190cdfbc47f, 64'h92e859a168bea29f, 64'ha335ead74efe6969, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
+  logic [63:0] message_blocks[MESSAGE_BLOCKS] = '{12+40, 64'h837e8bcfb23c5981, 64'h41d5b10176855b9a, 64'h92208190cdfbc47f, 64'h92e859a168bea29f, 64'ha335ead74efe6969, 64'h6f57206f6c6c6548, 64'h0000000021646c72};
 
   logic clk;
   logic rst_n;
@@ -14,16 +14,16 @@ module hash_to_point_tb;
   logic[14:0] expected_polynomial [N];
   logic done;
 
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] bram0_addr_a, bram0_addr_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram0_addr_a, bram0_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram0_dout_a;
   logic bram0_we_b;
-  bram_512x128 bram_512x128_0 (
+  bram_5632x128 bram_5632x128_1 (
                  .addra(bram0_addr_a),
                  .clka(clk),
-                 .dina(0),
+                 .dina(128'b0),
                  .douta(bram0_dout_a),
-                 .wea(0),
+                 .wea(1'b0),
 
                  .addrb(bram0_addr_b),
                  .clkb(clk),
@@ -32,11 +32,11 @@ module hash_to_point_tb;
                  .web(bram0_we_b)
                );
 
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b;
   logic bram1_we_a;
-  bram_512x128 bram_512x128_1 (
+  bram_5632x128 bram_5632x128_2 (
                  .addra(bram1_addr_a),
                  .clka(clk),
                  .dina(bram1_din_a),
@@ -45,9 +45,9 @@ module hash_to_point_tb;
 
                  .addrb(bram1_addr_b),
                  .clkb(clk),
-                 .dinb(0),
+                 .dinb(128'b0),
                  .doutb(bram1_dout_b),
-                 .web(0)
+                 .web(1'b0)
                );
 
   hash_to_point #(
