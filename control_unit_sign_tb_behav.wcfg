@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="684.525 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,063.096 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="67,455.166 ns"></ZoomStartTime>
+      <ZoomEndTime time="67,736.967 ns"></ZoomEndTime>
+      <Cursor1Time time="67,690.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="208"></NameColumnWidth>
+      <NameColumnWidth column_width="196"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -348,6 +348,7 @@
       <wvobject type="group" fp_name="group332">
          <obj_property name="label">bram3</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][12:0]</obj_property>
@@ -564,6 +565,47 @@
       <wvobject type="group" fp_name="group3990">
          <obj_property name="label">hash_to_point</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/htp_start">
+            <obj_property name="ElementShortName">htp_start</obj_property>
+            <obj_property name="ObjectShortName">htp_start</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/htp_start_i">
+            <obj_property name="ElementShortName">htp_start_i</obj_property>
+            <obj_property name="ObjectShortName">htp_start_i</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/htp_input_bram_addr">
+            <obj_property name="ElementShortName">htp_input_bram_addr[12:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_input_bram_addr[12:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/htp_input_bram_data">
+            <obj_property name="ElementShortName">htp_input_bram_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_input_bram_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/htp_output_bram1_addr">
+            <obj_property name="ElementShortName">htp_output_bram1_addr[12:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_output_bram1_addr[12:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/htp_output_bram2_addr">
+            <obj_property name="ElementShortName">htp_output_bram2_addr[12:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_output_bram2_addr[12:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/htp_output_bram1_data">
+            <obj_property name="ElementShortName">htp_output_bram1_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_output_bram1_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/htp_output_bram2_data">
+            <obj_property name="ElementShortName">htp_output_bram2_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">htp_output_bram2_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/htp_output_bram1_we">
+            <obj_property name="ElementShortName">htp_output_bram1_we</obj_property>
+            <obj_property name="ObjectShortName">htp_output_bram1_we</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/htp_done">
+            <obj_property name="ElementShortName">htp_done</obj_property>
+            <obj_property name="ObjectShortName">htp_done</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group654">
          <obj_property name="label">int_to_double</obj_property>

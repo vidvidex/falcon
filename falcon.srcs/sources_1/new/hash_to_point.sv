@@ -37,14 +37,14 @@ module hash_to_point#(
     input logic rst_n,
     input logic start,
 
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr, //! Used to read input for the hash_to_point module
+    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr, //! Used to read input for the hash_to_point module
     input logic [`BRAM_DATA_WIDTH-1:0] input_bram_data,
 
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram1_addr, //! Address for output BRAM
+    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram1_addr, //! Address for output BRAM
     output logic [`BRAM_DATA_WIDTH-1:0] output_bram1_data, //! Data that is written to output_bram[output_bram1_addr]
     output logic output_bram1_we, //! Write enable for output BRAM
 
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
+    output logic [`BRAM_ADDR_WIDTH-1:0] output_bram2_addr, //! Used to read the other half of the memory cell that we are writing the output to
     input logic [`BRAM_DATA_WIDTH-1:0] output_bram2_data,
 
     output logic done //! Are we done hashing the message to a polynomial?
@@ -81,7 +81,7 @@ module hash_to_point#(
   logic output_we;
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) output_we_delay(.clk(clk), .in(output_we), .out(output_bram1_we));
 
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
 
   logic unsigned [15:0] k_times_q; // k*q. k = floor(2^16 / q), q = 12289
   assign k_times_q = 16'd61445; // floor(2^16 / 12289) * 12289 = 61445
@@ -268,7 +268,7 @@ module hash_to_point#(
       if(coefficient_index == N/2 - 1)
         second_half <= 1;
 
-      output_bram2_addr <= coefficient_index++ % (N/2); // Write to the first half of the memory cell, then to the second half
+      output_bram2_addr <= {{(`BRAM_ADDR_WIDTH-10){1'b0}}, coefficient_index++ % (N/2)}; // Write to the first half of the memory cell, then to the second half
       output_we <= 1;
     end
     else

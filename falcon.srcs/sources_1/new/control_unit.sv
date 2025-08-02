@@ -88,6 +88,7 @@ module control_unit#(
     debug_ADD_SUB = instruction[127-14];
   end
 
+  logic [15:0] modules_running;
   logic [2:0] bank1;
   logic [2:0] bank2;
   logic [12:0] addr1;
@@ -169,40 +170,40 @@ module control_unit#(
       bram2048_addr_a[i] = bram_addr_a[i][`BRAM2048_ADDR_WIDTH-1:0];
       bram2048_addr_b[i] = bram_addr_b[i][`BRAM2048_ADDR_WIDTH-1:0];
     end
-    for (int i = BRAM2048_COUNT; i < BRAM1024_COUNT+BRAM2048_COUNT; i++) begin
-      bram1024_addr_a[i] = bram_addr_a[i][`BRAM1024_ADDR_WIDTH-1:0];
-      bram1024_addr_b[i] = bram_addr_b[i][`BRAM1024_ADDR_WIDTH-1:0];
+    for (int i = 0; i < BRAM1024_COUNT; i++) begin
+      bram1024_addr_a[i] = bram_addr_a[i+BRAM2048_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
+      bram1024_addr_b[i] = bram_addr_b[i+BRAM2048_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
     end
   end
 
 
-  // logic htp_start, htp_start_i;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
-  // logic [`BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] htp_output_bram1_addr, htp_output_bram2_addr;
-  // logic [`BRAM_DATA_WIDTH-1:0] htp_output_bram1_data, htp_output_bram2_data;
-  // logic htp_output_bram1_we;
-  // logic htp_done;
-  // hash_to_point #(
-  //                 .N(N)
-  //               )
-  //               hash_to_point(
-  //                 .clk(clk),
-  //                 .rst_n(rst_n),
-  //                 .start(htp_start && !htp_start_i),
+  logic htp_start, htp_start_i;
+  logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
+  logic [`BRAM_ADDR_WIDTH-1:0] htp_output_bram1_addr, htp_output_bram2_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] htp_output_bram1_data, htp_output_bram2_data;
+  logic htp_output_bram1_we;
+  logic htp_done;
+  hash_to_point #(
+                  .N(N)
+                )
+                hash_to_point(
+                  .clk(clk),
+                  .rst_n(rst_n),
+                  .start(htp_start && !htp_start_i),
 
-  //                 .input_bram_addr(htp_input_bram_addr),
-  //                 .input_bram_data(htp_input_bram_data),
+                  .input_bram_addr(htp_input_bram_addr),
+                  .input_bram_data(htp_input_bram_data),
 
-  //                 .output_bram1_addr(htp_output_bram1_addr),
-  //                 .output_bram1_data(htp_output_bram1_data),
-  //                 .output_bram1_we(htp_output_bram1_we),
+                  .output_bram1_addr(htp_output_bram1_addr),
+                  .output_bram1_data(htp_output_bram1_data),
+                  .output_bram1_we(htp_output_bram1_we),
 
-  //                 .output_bram2_addr(htp_output_bram2_addr),
-  //                 .output_bram2_data(htp_output_bram2_data),
+                  .output_bram2_addr(htp_output_bram2_addr),
+                  .output_bram2_data(htp_output_bram2_data),
 
-  //                 .done(htp_done)
-  //               );
+                  .done(htp_done)
+                );
 
   // logic [`BRAM_DATA_WIDTH-1:0] int_to_double_data_in;
   // logic [`FFT_BRAM_ADDR_WIDTH-1:0] int_to_double_address_in, int_to_double_address_in_delayed, int_to_double_address_in_override;
@@ -567,8 +568,10 @@ module control_unit#(
 
     if (!rst_n) begin
 
-      // htp_start <= 1'b0;
-      // htp_start_i <= 1'b0;
+      modules_running <= 1'b0;
+
+      htp_start <= 1'b0;
+      htp_start_i <= 1'b0;
 
       // fft_start <= 1'b0;
       // fft_start_i <= 1'b0;
@@ -581,22 +584,29 @@ module control_unit#(
     end
     else begin
 
-      // htp_start_i <= htp_start;
+      htp_start_i <= htp_start;
       // fft_start_i <= fft_start;
       // decompress_start_i <= decompress_start;
       // ntt_start_i <= ntt_start;
 
       if(instruction[127-0] == 1'b1) begin // BRAM_READ
-
+        // Empty
       end
       if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
-
+        // Empty
       end
       if(instruction[127-2] == 1'b1) begin // COPY
 
       end
       if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
-
+        if(htp_done) begin
+          modules_running[3] <= 1'b0;
+          htp_start <= 1'b0;
+        end
+        else begin
+          modules_running[3] <= 1'b1;
+          htp_start <= 1'b1;
+        end
       end
       if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
 
@@ -648,10 +658,6 @@ module control_unit#(
       //     // int_to_double_done <= 1'b0;
       //   end
 
-      //   HASH_TO_POINT: begin
-      //     // htp_start <= 1'b1;
-      //   end
-
       //   FFT_IFFT: begin
       //     // fft_mode <= task_params[3]; // Set FFT mode based on task parameters
       //     // fft_start <= 1'b1;
@@ -662,14 +668,6 @@ module control_unit#(
       //     // decompress_start <= 1'b1;
       //     // ntt_mode <= 1'b0;
       //     // ntt_start <= 1'b1;
-      //   end
-
-      //   BRAM_RW: begin
-
-      //   end
-
-      //   INT_TO_DOUBLE: begin
-
       //   end
 
       //   NTT_INTT: begin
@@ -695,12 +693,13 @@ module control_unit#(
 
   always_comb begin
 
+    // If not specified otherwise set WE for all BRAMs to 0
     for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
       bram_we_a[i] = 1'b0;
       bram_we_b[i] = 1'b0;
     end
 
-    // instruction_done = 1'b0; // Default to not done
+    instruction_done = 1'b0; // Default to not done
     // int_to_double_valid_in = 1'b0;
     // int_to_double_valid_in_override = 1'b0;
     // mod_mult_valid_in = 1'b0;
@@ -737,7 +736,17 @@ module control_unit#(
     end
 
     if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
+      bram_addr_a[bank1] = htp_input_bram_addr;
+      htp_input_bram_data = bram_dout_a[bank1];
 
+      bram_addr_a[bank2] = htp_output_bram1_addr;
+      bram_din_a[bank2] = htp_output_bram1_data;
+      bram_we_a[bank2] = htp_output_bram1_we;
+
+      bram_addr_b[bank2] = htp_output_bram2_addr;
+      htp_output_bram2_data = bram_dout_b[bank2];
+
+      instruction_done = htp_done;
     end
 
     if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
@@ -799,20 +808,6 @@ module control_unit#(
     //     // end
     //   end
 
-    //   HASH_TO_POINT: begin
-    //     // fft_bram_addr_a[task_bank1] = htp_input_bram_addr;
-    //     // htp_input_bram_data = fft_bram_dout_a[task_bank1];
-
-    //     // fft_bram_addr_a[task_bank2] = htp_output_bram1_addr;
-    //     // fft_bram_din_a[task_bank2] = htp_output_bram1_data;
-    //     // fft_bram_we_a[task_bank2] = htp_output_bram1_we;
-
-    //     // fft_bram_addr_b[task_bank2] = htp_output_bram2_addr;
-    //     // htp_output_bram2_data = fft_bram_dout_b[task_bank2];
-
-    //     // instruction_done = htp_done;
-    //   end
-
     //   FFT_IFFT: begin
     //     // fft_bram_addr_a[task_bank1] = fft_bram1_addr_a;
     //     // fft_bram_din_a[task_bank1] = fft_bram1_din_a;
@@ -872,34 +867,6 @@ module control_unit#(
     //     // ntt_bram_we_b[0] = ntt_output_bram_we2;
 
     //     // instruction_done = ntt_done;  // NTT takes the longest
-    //   end
-
-    //   BRAM_RW: begin
-    //     // if(task_params[3]) begin  // BRAM write
-
-    //     //   if(task_params[2]) begin  // Run through int_to_double before writing
-    //     //     int_to_double_data_in = bram_din;
-    //     //     int_to_double_address_in_override = task_addr1; // Override: signals will not be delayed, since we don't have the delay of reading from BRAM
-    //     //     int_to_double_valid_in_override = 1'b1;
-
-    //     //     // Wait for int_to_double to finish
-    //     //     if(int_to_double_valid_out) begin
-    //     //       fft_bram_addr_a[task_bank1] = int_to_double_address_out;
-    //     //       fft_bram_din_a[task_bank1] = int_to_double_data_out;
-    //     //       fft_bram_we_a[task_bank1] = 1'b1;
-    //     //     end
-    //     //   end
-    //     //   else begin  // Write directly to BRAM
-    //     //     fft_bram_addr_a[task_bank1] = task_addr1;
-    //     //     fft_bram_din_a[task_bank1] = bram_din;
-    //     //     fft_bram_we_a[task_bank1] = 1'b1;
-    //     //   end
-    //     // end
-    //     // else begin // BRAM read
-    //     //   fft_bram_addr_a[task_bank1] = task_addr1;
-    //     //   bram_dout = fft_bram_dout_a[task_bank1];
-    //     // end
-    //     // instruction_done = 1'b1;
     //   end
 
     //   INT_TO_DOUBLE: begin
