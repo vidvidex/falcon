@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="90,623.833 ns"></ZoomStartTime>
-      <ZoomEndTime time="90,955.234 ns"></ZoomEndTime>
-      <Cursor1Time time="90,894.633 ns"></Cursor1Time>
+      <ZoomStartTime time="96,028.416 ns"></ZoomStartTime>
+      <ZoomEndTime time="96,397.923 ns"></ZoomEndTime>
+      <Cursor1Time time="96,073.012 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="180"></NameColumnWidth>
+      <NameColumnWidth column_width="213"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -51,6 +51,11 @@
       <wvobject type="array" fp_name="/control_unit_sign_tb/instruction">
          <obj_property name="ElementShortName">instruction[127:0]</obj_property>
          <obj_property name="ObjectShortName">instruction[127:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/modules">
+         <obj_property name="ElementShortName">modules[15:0]</obj_property>
+         <obj_property name="ObjectShortName">modules[15:0]</obj_property>
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_sign_tb/bank1">
@@ -191,7 +196,6 @@
       <wvobject type="group" fp_name="group381">
          <obj_property name="label">debug</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_BRAM_READ">
             <obj_property name="ElementShortName">debug_BRAM_READ</obj_property>
             <obj_property name="ObjectShortName">debug_BRAM_READ</obj_property>
@@ -228,9 +232,13 @@
             <obj_property name="ElementShortName">debug_MUL_CONST</obj_property>
             <obj_property name="ObjectShortName">debug_MUL_CONST</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_SPLIT_MERGE">
-            <obj_property name="ElementShortName">debug_SPLIT_MERGE</obj_property>
-            <obj_property name="ObjectShortName">debug_SPLIT_MERGE</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_SPLIT">
+            <obj_property name="ElementShortName">debug_SPLIT</obj_property>
+            <obj_property name="ObjectShortName">debug_SPLIT</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_MERGE">
+            <obj_property name="ElementShortName">debug_MERGE</obj_property>
+            <obj_property name="ObjectShortName">debug_MERGE</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_MOD_MULT_Q">
             <obj_property name="ElementShortName">debug_MOD_MULT_Q</obj_property>
@@ -248,14 +256,15 @@
             <obj_property name="ElementShortName">debug_COMPRESS</obj_property>
             <obj_property name="ObjectShortName">debug_COMPRESS</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_ADD_SUB">
-            <obj_property name="ElementShortName">debug_ADD_SUB</obj_property>
-            <obj_property name="ObjectShortName">debug_ADD_SUB</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_ADD">
+            <obj_property name="ElementShortName">debug_ADD</obj_property>
+            <obj_property name="ObjectShortName">debug_ADD</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group305">
          <obj_property name="label">bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][12:0]</obj_property>
@@ -472,7 +481,6 @@
       <wvobject type="group" fp_name="group341">
          <obj_property name="label">bram4</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][12:0]</obj_property>
@@ -724,57 +732,282 @@
       <wvobject type="group" fp_name="group3992">
          <obj_property name="label">fft_butterfly</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_in_real">
-            <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_a_in_real[63:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="group" fp_name="group7999">
+            <obj_property name="label">btf</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_valid_in">
+               <obj_property name="ElementShortName">btf_valid_in</obj_property>
+               <obj_property name="ObjectShortName">btf_valid_in</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_in_real">
+               <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_a_in_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_in_imag">
+               <obj_property name="ElementShortName">btf_a_in_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_a_in_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_in_real">
+               <obj_property name="ElementShortName">btf_b_in_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_b_in_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_in_imag">
+               <obj_property name="ElementShortName">btf_b_in_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_b_in_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_out_real">
+               <obj_property name="ElementShortName">btf_a_out_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_a_out_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_out_imag">
+               <obj_property name="ElementShortName">btf_a_out_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_a_out_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_out_real">
+               <obj_property name="ElementShortName">btf_b_out_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_b_out_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_out_imag">
+               <obj_property name="ElementShortName">btf_b_out_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_b_out_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_mode">
+               <obj_property name="ElementShortName">btf_mode</obj_property>
+               <obj_property name="ObjectShortName">btf_mode</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_scale_factor">
+               <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_tw_addr">
+               <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
+               <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_valid_out">
+               <obj_property name="ElementShortName">btf_valid_out</obj_property>
+               <obj_property name="ObjectShortName">btf_valid_out</obj_property>
+            </wvobject>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_in_imag">
-            <obj_property name="ElementShortName">btf_a_in_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_a_in_imag[63:0]</obj_property>
+         <wvobject type="group" fp_name="group8000">
+            <obj_property name="label">fft</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fft_btf_mode">
+               <obj_property name="ElementShortName">fft_btf_mode</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_mode</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_tw_addr">
+               <obj_property name="ElementShortName">fft_btf_tw_addr[9:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_tw_addr[9:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fft_btf_valid_in">
+               <obj_property name="ElementShortName">fft_btf_valid_in</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_valid_in</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_scale_factor">
+               <obj_property name="ElementShortName">fft_btf_scale_factor[4:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_scale_factor[4:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_a_in_real">
+               <obj_property name="ElementShortName">fft_btf_a_in_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_a_in_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_a_in_imag">
+               <obj_property name="ElementShortName">fft_btf_a_in_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_a_in_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_b_in_real">
+               <obj_property name="ElementShortName">fft_btf_b_in_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_b_in_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_b_in_imag">
+               <obj_property name="ElementShortName">fft_btf_b_in_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_b_in_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_a_out_real">
+               <obj_property name="ElementShortName">fft_btf_a_out_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_a_out_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_a_out_imag">
+               <obj_property name="ElementShortName">fft_btf_a_out_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_a_out_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_b_out_real">
+               <obj_property name="ElementShortName">fft_btf_b_out_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_b_out_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fft_btf_b_out_imag">
+               <obj_property name="ElementShortName">fft_btf_b_out_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_b_out_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fft_btf_valid_out">
+               <obj_property name="ElementShortName">fft_btf_valid_out</obj_property>
+               <obj_property name="ObjectShortName">fft_btf_valid_out</obj_property>
+            </wvobject>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_in_real">
-            <obj_property name="ElementShortName">btf_b_in_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_b_in_real[63:0]</obj_property>
+         <wvobject type="group" fp_name="group8001">
+            <obj_property name="label">split</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_btf_mode">
+               <obj_property name="ElementShortName">split_btf_mode</obj_property>
+               <obj_property name="ObjectShortName">split_btf_mode</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_tw_addr">
+               <obj_property name="ElementShortName">split_btf_tw_addr[9:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_tw_addr[9:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_btf_valid_in">
+               <obj_property name="ElementShortName">split_btf_valid_in</obj_property>
+               <obj_property name="ObjectShortName">split_btf_valid_in</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_scale_factor">
+               <obj_property name="ElementShortName">split_btf_scale_factor[4:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_scale_factor[4:0]</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_a_in_real">
+               <obj_property name="ElementShortName">split_btf_a_in_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_a_in_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_a_in_imag">
+               <obj_property name="ElementShortName">split_btf_a_in_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_a_in_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_b_in_real">
+               <obj_property name="ElementShortName">split_btf_b_in_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_b_in_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_b_in_imag">
+               <obj_property name="ElementShortName">split_btf_b_in_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_b_in_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_a_out_real">
+               <obj_property name="ElementShortName">split_btf_a_out_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_a_out_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_a_out_imag">
+               <obj_property name="ElementShortName">split_btf_a_out_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_a_out_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_b_out_real">
+               <obj_property name="ElementShortName">split_btf_b_out_real[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_b_out_real[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_btf_b_out_imag">
+               <obj_property name="ElementShortName">split_btf_b_out_imag[63:0]</obj_property>
+               <obj_property name="ObjectShortName">split_btf_b_out_imag[63:0]</obj_property>
+               <obj_property name="Radix">REALRADIX</obj_property>
+               <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+               <obj_property name="radix_fractionWidth">53</obj_property>
+               <obj_property name="radix_otherWidth">11</obj_property>
+            </wvobject>
+            <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_btf_valid_out">
+               <obj_property name="ElementShortName">split_btf_valid_out</obj_property>
+               <obj_property name="ObjectShortName">split_btf_valid_out</obj_property>
+            </wvobject>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_in_imag">
-            <obj_property name="ElementShortName">btf_b_in_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_b_in_imag[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_out_real">
-            <obj_property name="ElementShortName">btf_a_out_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_a_out_real[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_a_out_imag">
-            <obj_property name="ElementShortName">btf_a_out_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_a_out_imag[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_out_real">
-            <obj_property name="ElementShortName">btf_b_out_real[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_b_out_real[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_b_out_imag">
-            <obj_property name="ElementShortName">btf_b_out_imag[63:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_b_out_imag[63:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_mode">
-            <obj_property name="ElementShortName">btf_mode</obj_property>
-            <obj_property name="ObjectShortName">btf_mode</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_scale_factor">
-            <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/btf_tw_addr">
-            <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
-            <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_valid_in">
-            <obj_property name="ElementShortName">btf_valid_in</obj_property>
-            <obj_property name="ObjectShortName">btf_valid_in</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/btf_valid_out">
-            <obj_property name="ElementShortName">btf_valid_out</obj_property>
-            <obj_property name="ObjectShortName">btf_valid_out</obj_property>
+         <wvobject type="group" fp_name="group8002">
+            <obj_property name="label">merge</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group3991">
@@ -865,9 +1098,71 @@
             <obj_property name="ObjectShortName">fft_bram2_we_b</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group1237">
-         <obj_property name="label">fp_negate</obj_property>
+      <wvobject type="group" fp_name="group3876">
+         <obj_property name="label">split</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_start">
+            <obj_property name="ElementShortName">split_start</obj_property>
+            <obj_property name="ObjectShortName">split_start</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_start_i">
+            <obj_property name="ElementShortName">split_start_i</obj_property>
+            <obj_property name="ObjectShortName">split_start_i</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_size">
+            <obj_property name="ElementShortName">split_size[9:0]</obj_property>
+            <obj_property name="ObjectShortName">split_size[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram1_addr_a">
+            <obj_property name="ElementShortName">split_bram1_addr_a[12:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram1_addr_a[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram1_dout_a">
+            <obj_property name="ElementShortName">split_bram1_dout_a[127:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram1_dout_a[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram1_addr_b">
+            <obj_property name="ElementShortName">split_bram1_addr_b[12:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram1_addr_b[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram1_dout_b">
+            <obj_property name="ElementShortName">split_bram1_dout_b[127:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram1_dout_b[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram2_addr_a">
+            <obj_property name="ElementShortName">split_bram2_addr_a[12:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram2_addr_a[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram2_din_a">
+            <obj_property name="ElementShortName">split_bram2_din_a[127:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram2_din_a[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_bram2_we_a">
+            <obj_property name="ElementShortName">split_bram2_we_a</obj_property>
+            <obj_property name="ObjectShortName">split_bram2_we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram2_addr_b">
+            <obj_property name="ElementShortName">split_bram2_addr_b[12:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram2_addr_b[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/split_bram2_din_b">
+            <obj_property name="ElementShortName">split_bram2_din_b[127:0]</obj_property>
+            <obj_property name="ObjectShortName">split_bram2_din_b[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_bram2_we_b">
+            <obj_property name="ElementShortName">split_bram2_we_b</obj_property>
+            <obj_property name="ObjectShortName">split_bram2_we_b</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_done">
+            <obj_property name="ElementShortName">split_done</obj_property>
+            <obj_property name="ObjectShortName">split_done</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group204">
          <obj_property name="label">fp_add</obj_property>
