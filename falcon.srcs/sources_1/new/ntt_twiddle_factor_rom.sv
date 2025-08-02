@@ -8,9 +8,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ntt_twiddle_factor_rom#(
-    parameter int N
-  )(
+module ntt_twiddle_factor_rom(
     input logic clk,
     input logic mode, // 0: NTT, 1: Inverse NTT
     input logic [9:0] addr,
