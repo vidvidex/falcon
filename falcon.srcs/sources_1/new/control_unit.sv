@@ -30,7 +30,6 @@ module control_unit#(
   localparam int BRAM_BANK_COUNT = BRAM1024_COUNT + BRAM2048_COUNT + BRAM5632_COUNT;
 
   // typedef enum logic [12:0] {
-  //           FFT_IFFT      = 4'b0010, // Input is task_bram1, output is task_bram1 or task_bram2 (depends on N, see fft module header for more info). task_params[3] sets FFT (0) or IFFT (1) mode.
   //           HTP_DECMP_NTT = 4'b0011, // hash_to_point, decompress, ntt. Used in verify. NTT takes the longest, so we use it's done signal to know when everything is done
   //           NTT_INTT      = 4'b1011, // Input is bank1, which should be 0-5, output is bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
   //           MOD_MULT_Q    = 4'b1100, // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address addr1 and addr2 and writes the output to addr1
@@ -158,7 +157,6 @@ module control_unit#(
     end
   end
 
-
   logic htp_start, htp_start_i;
   logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
   logic [`BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
@@ -206,85 +204,85 @@ module control_unit#(
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) int_to_double_address_in_delay(.clk(clk), .in(int_to_double_address_in), .out(int_to_double_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
 
-  // logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
-  // logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
-  // logic btf_mode;
-  // logic signed [4:0] btf_scale_factor;
-  // logic [9:0] btf_tw_addr;
-  // logic btf_valid_in, btf_valid_out;
-  // fft_butterfly fft_butterfly(
-  //                 .clk(clk),
-  //                 .mode(btf_mode),
-  //                 .valid_in(btf_valid_in),
+  logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
+  logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
+  logic btf_mode;
+  logic signed [4:0] btf_scale_factor;
+  logic [9:0] btf_tw_addr;
+  logic btf_valid_in, btf_valid_out;
+  fft_butterfly fft_butterfly(
+                  .clk(clk),
+                  .mode(btf_mode),
+                  .valid_in(btf_valid_in),
 
-  //                 .a_in_real(btf_a_in_real),
-  //                 .a_in_imag(btf_a_in_imag),
-  //                 .b_in_real(btf_b_in_real),
-  //                 .b_in_imag(btf_b_in_imag),
+                  .a_in_real(btf_a_in_real),
+                  .a_in_imag(btf_a_in_imag),
+                  .b_in_real(btf_b_in_real),
+                  .b_in_imag(btf_b_in_imag),
 
-  //                 .tw_addr(btf_tw_addr),
+                  .tw_addr(btf_tw_addr),
 
-  //                 .scale_factor(btf_scale_factor),
+                  .scale_factor(btf_scale_factor),
 
-  //                 .a_out_real(btf_a_out_real),
-  //                 .a_out_imag(btf_a_out_imag),
-  //                 .b_out_real(btf_b_out_real),
-  //                 .b_out_imag(btf_b_out_imag),
+                  .a_out_real(btf_a_out_real),
+                  .a_out_imag(btf_a_out_imag),
+                  .b_out_real(btf_b_out_real),
+                  .b_out_imag(btf_b_out_imag),
 
-  //                 .valid_out(btf_valid_out)
-  //               );
+                  .valid_out(btf_valid_out)
+                );
 
-  // logic fft_mode, fft_start, fft_start_i, fft_done;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram1_addr_a, fft_bram1_addr_b;
-  // logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_din_a, fft_bram1_din_b;
-  // logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_dout_a, fft_bram1_dout_b;
-  // logic fft_bram1_we_a, fft_bram1_we_b;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fft_bram2_addr_a, fft_bram2_addr_b;
-  // logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_din_a, fft_bram2_din_b;
-  // logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_dout_a, fft_bram2_dout_b;
-  // logic fft_bram2_we_a, fft_bram2_we_b;
-  // fft #(
-  //       .N(N)
-  //     )fft(
-  //       .clk(clk),
-  //       .rst(!rst_n || instruction_done), // Reset on instruction_done so it's ready for the next instruction
-  //       .mode(fft_mode),
-  //       .start(fft_start && !fft_start_i),
+  logic fft_mode, fft_start, fft_start_i, fft_done;
+  logic [`BRAM_ADDR_WIDTH-1:0] fft_bram1_addr_a, fft_bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_din_a, fft_bram1_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram1_dout_a, fft_bram1_dout_b;
+  logic fft_bram1_we_a, fft_bram1_we_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] fft_bram2_addr_a, fft_bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_din_a, fft_bram2_din_b;
+  logic [`BRAM_DATA_WIDTH-1:0] fft_bram2_dout_a, fft_bram2_dout_b;
+  logic fft_bram2_we_a, fft_bram2_we_b;
+  fft #(
+        .N(N)
+      )fft(
+        .clk(clk),
+        .rst(!rst_n || instruction_done), // Reset on instruction_done so it's ready for the next instruction
+        .mode(fft_mode),
+        .start(fft_start && !fft_start_i),
 
-  //       .bram1_addr_a(fft_bram1_addr_a),
-  //       .bram1_din_a(fft_bram1_din_a),
-  //       .bram1_dout_a(fft_bram1_dout_a),
-  //       .bram1_we_a(fft_bram1_we_a),
-  //       .bram1_addr_b(fft_bram1_addr_b),
-  //       .bram1_din_b(fft_bram1_din_b),
-  //       .bram1_dout_b(fft_bram1_dout_b),
-  //       .bram1_we_b(fft_bram1_we_b),
+        .bram1_addr_a(fft_bram1_addr_a),
+        .bram1_din_a(fft_bram1_din_a),
+        .bram1_dout_a(fft_bram1_dout_a),
+        .bram1_we_a(fft_bram1_we_a),
+        .bram1_addr_b(fft_bram1_addr_b),
+        .bram1_din_b(fft_bram1_din_b),
+        .bram1_dout_b(fft_bram1_dout_b),
+        .bram1_we_b(fft_bram1_we_b),
 
-  //       .bram2_addr_a(fft_bram2_addr_a),
-  //       .bram2_din_a(fft_bram2_din_a),
-  //       .bram2_dout_a(fft_bram2_dout_a),
-  //       .bram2_we_a(fft_bram2_we_a),
-  //       .bram2_addr_b(fft_bram2_addr_b),
-  //       .bram2_din_b(fft_bram2_din_b),
-  //       .bram2_dout_b(fft_bram2_dout_b),
-  //       .bram2_we_b(fft_bram2_we_b),
+        .bram2_addr_a(fft_bram2_addr_a),
+        .bram2_din_a(fft_bram2_din_a),
+        .bram2_dout_a(fft_bram2_dout_a),
+        .bram2_we_a(fft_bram2_we_a),
+        .bram2_addr_b(fft_bram2_addr_b),
+        .bram2_din_b(fft_bram2_din_b),
+        .bram2_dout_b(fft_bram2_dout_b),
+        .bram2_we_b(fft_bram2_we_b),
 
-  //       .done(fft_done),
+        .done(fft_done),
 
-  //       .btf_mode(btf_mode),
-  //       .btf_valid_in(btf_valid_in),
-  //       .btf_a_in_real(btf_a_in_real),
-  //       .btf_a_in_imag(btf_a_in_imag),
-  //       .btf_b_in_real(btf_b_in_real),
-  //       .btf_b_in_imag(btf_b_in_imag),
-  //       .btf_scale_factor(btf_scale_factor),
-  //       .btf_tw_addr(btf_tw_addr),
-  //       .btf_a_out_real(btf_a_out_real),
-  //       .btf_a_out_imag(btf_a_out_imag),
-  //       .btf_b_out_real(btf_b_out_real),
-  //       .btf_b_out_imag(btf_b_out_imag),
-  //       .btf_valid_out(btf_valid_out)
-  //     );
+        .btf_mode(btf_mode),
+        .btf_valid_in(btf_valid_in),
+        .btf_a_in_real(btf_a_in_real),
+        .btf_a_in_imag(btf_a_in_imag),
+        .btf_b_in_real(btf_b_in_real),
+        .btf_b_in_imag(btf_b_in_imag),
+        .btf_scale_factor(btf_scale_factor),
+        .btf_tw_addr(btf_tw_addr),
+        .btf_a_out_real(btf_a_out_real),
+        .btf_a_out_imag(btf_a_out_imag),
+        .btf_b_out_real(btf_b_out_real),
+        .btf_b_out_imag(btf_b_out_imag),
+        .btf_valid_out(btf_valid_out)
+      );
 
   // logic decompress_start, decompress_start_i;
   // logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
@@ -542,13 +540,11 @@ module control_unit#(
 
     if (!rst_n) begin
 
-      modules_running <= 1'b0;
-
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
 
-      // fft_start <= 1'b0;
-      // fft_start_i <= 1'b0;
+      fft_start <= 1'b0;
+      fft_start_i <= 1'b0;
 
       // decompress_start <= 1'b0;
       // decompress_start_i <= 1'b0;
@@ -559,7 +555,7 @@ module control_unit#(
     else begin
 
       htp_start_i <= htp_start;
-      // fft_start_i <= fft_start;
+      fft_start_i <= fft_start;
       // decompress_start_i <= decompress_start;
       // ntt_start_i <= ntt_start;
 
@@ -573,20 +569,14 @@ module control_unit#(
 
       end
       if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
-        if(htp_done) begin
-          modules_running[3] <= 1'b0;
-          htp_start <= 1'b0;
-        end
-        else begin
-          modules_running[3] <= 1'b1;
-          htp_start <= 1'b1;
-        end
+        htp_start <= 1'b1;
       end
       if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
         // Empty
       end
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-
+        fft_mode <= instruction[32];
+        fft_start <= 1'b1;
       end
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
 
@@ -618,23 +608,6 @@ module control_unit#(
 
 
       // case (opcode)
-      //   NOP: begin
-      //     // htp_start <= 1'b0;
-      //     // fft_start <= 1'b0;
-      //     // decompress_start <= 1'b0;
-      //     // ntt_start <= 1'b0;
-      //     // fp_negate_done <= 1'b0;
-      //     // mul_adjoint_done <= 1'b0;
-      //     // fp_adder_done <= 1'b0;
-      //     // fp_mul_done <= 1'b0;
-      //     // copy_done <= 1'b0;
-      //     // complex_mul_done <= 1'b0;
-      //   end
-
-      //   FFT_IFFT: begin
-      //     // fft_mode <= task_params[3]; // Set FFT mode based on task parameters
-      //     // fft_start <= 1'b1;
-      //   end
 
       //   HTP_DECMP_NTT: begin
       //     // htp_start <= 1'b1;
@@ -727,17 +700,33 @@ module control_unit#(
       int_to_double_data_in = bram_dout_a[bank1];
 
       // Write output to BRAM
-      if(int_to_double_valid_out) begin
-        bram_addr_b[bank2] = int_to_double_address_out;
-        bram_din_b[bank2] = int_to_double_data_out;
-        bram_we_b[bank2] = 1'b1;
-      end
+      bram_addr_b[bank2] = int_to_double_address_out;
+      bram_din_b[bank2] = int_to_double_data_out;
+      bram_we_b[bank2] = int_to_double_valid_out;
 
       int_to_double_valid_in = 1'b1;
     end
 
     if(instruction[127-5] == 1'b1) begin // FFT_IFFT
+      bram_addr_a[bank1] = fft_bram1_addr_a;
+      bram_din_a[bank1] = fft_bram1_din_a;
+      bram_we_a[bank1] = fft_bram1_we_a;
+      bram_addr_b[bank1] = fft_bram1_addr_b;
+      bram_din_b[bank1] = fft_bram1_din_b;
+      bram_we_b[bank1] = fft_bram1_we_b;
+      fft_bram1_dout_a = bram_dout_a[bank1];
+      fft_bram1_dout_b = bram_dout_b[bank1];
 
+      bram_addr_a[bank2] = fft_bram2_addr_a;
+      bram_din_a[bank2] = fft_bram2_din_a;
+      bram_we_a[bank2] = fft_bram2_we_a;
+      bram_addr_b[bank2] = fft_bram2_addr_b;
+      bram_din_b[bank2] = fft_bram2_din_b;
+      bram_we_b[bank2] = fft_bram2_we_b;
+      fft_bram2_dout_a = bram_dout_a[bank2];
+      fft_bram2_dout_b = bram_dout_b[bank2];
+
+      instruction_done = fft_done;
     end
 
     if(instruction[127-6] == 1'b1) begin // NTT_INTT
@@ -779,68 +768,35 @@ module control_unit#(
 
 
     // case (opcode)
-    //   NOP: begin
-    //     // // No operation, do nothing except stop writing to BRAMs
-    //     // for(int i = 0; i < FFT_BRAM_BANK_COUNT; i++) begin
-    //     //   fft_bram_we_a[i] = 1'b0;
-    //     //   fft_bram_we_b[i] = 1'b0;
-    //     // end
-    //     // for(int i = 0; i < NTT_BRAM_BANK_COUNT; i++) begin
-    //     //   ntt_bram_we_a[i] = 1'b0;
-    //     //   ntt_bram_we_b[i] = 1'b0;
-    //     // end
-    //   end
-
-    //   FFT_IFFT: begin
-    //     // fft_bram_addr_a[bank1] = fft_bram1_addr_a;
-    //     // fft_bram_din_a[bank1] = fft_bram1_din_a;
-    //     // fft_bram_we_a[bank1] = fft_bram1_we_a;
-    //     // fft_bram_addr_b[bank1] = fft_bram1_addr_b;
-    //     // fft_bram_din_b[bank1] = fft_bram1_din_b;
-    //     // fft_bram_we_b[bank1] = fft_bram1_we_b;
-    //     // fft_bram1_dout_a = fft_bram_dout_a[bank1];
-    //     // fft_bram1_dout_b = fft_bram_dout_b[bank1];
-
-    //     // fft_bram_addr_a[bank2] = fft_bram2_addr_a;
-    //     // fft_bram_din_a[bank2] = fft_bram2_din_a;
-    //     // fft_bram_we_a[bank2] = fft_bram2_we_a;
-    //     // fft_bram_addr_b[bank2] = fft_bram2_addr_b;
-    //     // fft_bram_din_b[bank2] = fft_bram2_din_b;
-    //     // fft_bram_we_b[bank2] = fft_bram2_we_b;
-    //     // fft_bram2_dout_a = fft_bram_dout_a[bank2];
-    //     // fft_bram2_dout_b = fft_bram_dout_b[bank2];
-
-    //     // instruction_done = fft_done;
-    //   end
 
     //   HTP_DECMP_NTT: begin
     //     // // hash_to_point: input is BRAM0, output is BRAM3
-    //     // fft_bram_addr_a[0] = htp_input_bram_addr;
-    //     // htp_input_bram_data = fft_bram_dout_a[0];
+    //     // bram_addr_a[0] = htp_input_bram_addr;
+    //     // htp_input_bram_data = bram_dout_a[0];
 
-    //     // fft_bram_addr_a[3] = htp_output_bram1_addr;
-    //     // fft_bram_din_a[3] = htp_output_bram1_data;
-    //     // fft_bram_we_a[3] = htp_output_bram1_we;
+    //     // bram_addr_a[3] = htp_output_bram1_addr;
+    //     // bram_din_a[3] = htp_output_bram1_data;
+    //     // bram_we_a[3] = htp_output_bram1_we;
 
-    //     // fft_bram_addr_b[3] = htp_output_bram2_addr;
-    //     // htp_output_bram2_data = fft_bram_dout_b[3];
+    //     // bram_addr_b[3] = htp_output_bram2_addr;
+    //     // htp_output_bram2_data = bram_dout_b[3];
 
     //     // // decompress: input is BRAM2, output is BRAM5
-    //     // fft_bram_addr_a[2] = decompress_input_bram_addr;
-    //     // decompress_input_bram_data = fft_bram_dout_a[2];
+    //     // bram_addr_a[2] = decompress_input_bram_addr;
+    //     // decompress_input_bram_data = bram_dout_a[2];
 
-    //     // fft_bram_addr_a[5] = decompress_output_bram1_addr;
-    //     // fft_bram_din_a[5] = decompress_output_bram1_data;
-    //     // fft_bram_we_a[5] = decompress_output_bram1_we;
+    //     // bram_addr_a[5] = decompress_output_bram1_addr;
+    //     // bram_din_a[5] = decompress_output_bram1_data;
+    //     // bram_we_a[5] = decompress_output_bram1_we;
 
-    //     // fft_bram_addr_b[5] = decompress_output_bram2_addr;
-    //     // decompress_output_bram2_data = fft_bram_dout_b[5];
+    //     // bram_addr_b[5] = decompress_output_bram2_addr;
+    //     // decompress_output_bram2_data = bram_dout_b[5];
 
     //     // // NTT: input is BRAM1, output is BRAM6 (ntt bram 0)
-    //     // fft_bram_addr_a[1] = ntt_input_bram_addr1;
-    //     // ntt_input_bram_data1 = fft_bram_dout_a[1];
-    //     // fft_bram_addr_b[1] = ntt_input_bram_addr2;
-    //     // ntt_input_bram_data2 = fft_bram_dout_b[1];
+    //     // bram_addr_a[1] = ntt_input_bram_addr1;
+    //     // ntt_input_bram_data1 = bram_dout_a[1];
+    //     // bram_addr_b[1] = ntt_input_bram_addr2;
+    //     // ntt_input_bram_data2 = bram_dout_b[1];
 
     //     // ntt_bram_addr_a[0] = ntt_output_bram_addr1;
     //     // ntt_bram_din_a[0] = ntt_output_bram_data1;
@@ -853,10 +809,10 @@ module control_unit#(
     //   end
 
     //   NTT_INTT: begin
-    //     // fft_bram_addr_a[bank1] = ntt_input_bram_addr1;
-    //     // ntt_input_bram_data1 = fft_bram_dout_a[bank1];
-    //     // fft_bram_addr_b[bank1] = ntt_input_bram_addr2;
-    //     // ntt_input_bram_data2 = fft_bram_dout_b[bank1];
+    //     // bram_addr_a[bank1] = ntt_input_bram_addr1;
+    //     // ntt_input_bram_data1 = bram_dout_a[bank1];
+    //     // bram_addr_b[bank1] = ntt_input_bram_addr2;
+    //     // ntt_input_bram_data2 = bram_dout_b[bank1];
 
     //     // ntt_bram_addr_a[bank2] = ntt_output_bram_addr1;
     //     // ntt_bram_din_a[bank2] = ntt_output_bram_data1;
@@ -884,9 +840,9 @@ module control_unit#(
     //     // instruction_done = 1'b1;
 
     //     // if(mod_mult_valid_out) begin
-    //     //   fft_bram_addr_a[bank2] = mod_mult_write_addr;
-    //     //   fft_bram_din_a[bank2] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
-    //     //   fft_bram_we_a[bank2] = 1'b1;
+    //     //   bram_addr_a[bank2] = mod_mult_write_addr;
+    //     //   bram_din_a[bank2] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
+    //     //   bram_we_a[bank2] = 1'b1;
     //     // end
     //   end
 
@@ -896,17 +852,17 @@ module control_unit#(
     //     // // - data from INTT: task_bram2[addr2] and task_bram2[addr2+N/2] - 1 coefficient per memory line
     //     // // - data from decompress: task_params[2:0][addr1] - 2 coefficients per memory line
 
-    //     // fft_bram_addr_a[bank1] = addr1; // Data from hash_to_point
+    //     // bram_addr_a[bank1] = addr1; // Data from hash_to_point
     //     // ntt_bram_addr_a[bank2] = addr2; // Data from INTT
     //     // ntt_bram_addr_b[bank2] = addr2 + N/2; // Data from INTT
-    //     // fft_bram_addr_b[task_params[2:0]] = addr1; // Data from decompress
+    //     // bram_addr_b[task_params[2:0]] = addr1; // Data from decompress
 
-    //     // sub_normalize_squared_norm_a[0] = fft_bram_dout_a[bank1][64+14:64];
-    //     // sub_normalize_squared_norm_a[1] = fft_bram_dout_a[bank1][14:0];
+    //     // sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
+    //     // sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
     //     // sub_normalize_squared_norm_b[0] = ntt_bram_dout_a[bank2];
     //     // sub_normalize_squared_norm_b[1] = ntt_bram_dout_b[bank2];
-    //     // sub_normalize_squared_norm_c[0] = fft_bram_dout_b[task_params[2:0]][64+14:64];
-    //     // sub_normalize_squared_norm_c[1] = fft_bram_dout_b[task_params[2:0]][14:0];
+    //     // sub_normalize_squared_norm_c[0] = bram_dout_b[task_params[2:0]][64+14:64];
+    //     // sub_normalize_squared_norm_c[1] = bram_dout_b[task_params[2:0]][14:0];
 
     //     // sub_normalize_squared_norm_valid = 1'b1;
     //     // sub_normalize_squared_norm_last = task_params[3];
@@ -916,17 +872,17 @@ module control_unit#(
 
     //     // // Write result
     //     // if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
-    //     //   fft_bram_addr_a[0] = 0;
-    //     //   fft_bram_din_a[0] = 128'b0;
-    //     //   fft_bram_we_a[0] = 1'b1;
+    //     //   bram_addr_a[0] = 0;
+    //     //   bram_din_a[0] = 128'b0;
+    //     //   bram_we_a[0] = 1'b1;
     //     // end
     //     // else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
-    //     //   fft_bram_addr_a[0] = 0;
-    //     //   fft_bram_din_a[0] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-    //     //   fft_bram_we_a[0] = 1'b1;
+    //     //   bram_addr_a[0] = 0;
+    //     //   bram_din_a[0] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+    //     //   bram_we_a[0] = 1'b1;
     //     // end
     //     // else begin
-    //     //   fft_bram_we_a[0] = 1'b0;
+    //     //   bram_we_a[0] = 1'b0;
     //     // end
     //   end
 
