@@ -12,7 +12,7 @@
 
 
 module mod_mult #(
-    parameter int N,
+    parameter int N = 512,
     parameter int PARALLEL_OPS_COUNT  //! How many operations to do in parallel (how many a_i * b_i % 12289 operations we do at the same time)
   )(
     input logic clk,

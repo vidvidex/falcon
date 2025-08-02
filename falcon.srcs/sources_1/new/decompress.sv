@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module decompress #(
-    parameter int N
+    parameter int N = 512
   )(
     input logic clk,
     input logic rst_n,
