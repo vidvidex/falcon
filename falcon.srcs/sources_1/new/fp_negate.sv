@@ -13,11 +13,11 @@ module fp_negate#(
 
     input logic [63:0] double_in[PARALLEL_OPS_COUNT],
     input logic valid_in,
-    input logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_in,
+    input logic [`BRAM_ADDR_WIDTH-1:0] address_in,
 
     output logic [63:0] double_out[PARALLEL_OPS_COUNT],
     output logic valid_out,
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_out
+    output logic [`BRAM_ADDR_WIDTH-1:0] address_out
   );
 
   always @(posedge clk) begin
