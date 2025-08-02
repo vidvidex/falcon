@@ -11,9 +11,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="723.833 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,055.234 ns"></ZoomEndTime>
-      <Cursor1Time time="731.233 ns"></Cursor1Time>
+      <ZoomStartTime time="100,723.833 ns"></ZoomStartTime>
+      <ZoomEndTime time="101,055.234 ns"></ZoomEndTime>
+      <Cursor1Time time="101,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="180"></NameColumnWidth>
@@ -178,6 +178,15 @@
          <obj_property name="ElementShortName">addr4[12:0]</obj_property>
          <obj_property name="ObjectShortName">addr4[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/modules_running">
+         <obj_property name="ElementShortName">modules_running[15:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running[15:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/modules_running_i">
+         <obj_property name="ElementShortName">modules_running_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running_i[15:0]</obj_property>
       </wvobject>
       <wvobject type="group" fp_name="group381">
          <obj_property name="label">debug</obj_property>
@@ -624,6 +633,7 @@
       <wvobject type="group" fp_name="group3990">
          <obj_property name="label">hash_to_point</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/htp_start">
             <obj_property name="ElementShortName">htp_start</obj_property>
             <obj_property name="ObjectShortName">htp_start</obj_property>
@@ -869,7 +879,6 @@
       <wvobject type="group" fp_name="group984">
          <obj_property name="label">fp_mul</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_mul1_a">
             <obj_property name="ElementShortName">fp_mul1_a[63:0]</obj_property>
             <obj_property name="ObjectShortName">fp_mul1_a[63:0]</obj_property>
@@ -902,6 +911,10 @@
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
          </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_mul_valid_in_delayed">
+            <obj_property name="ElementShortName">fp_mul_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">fp_mul_valid_in_delayed</obj_property>
+         </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_mul1_result">
             <obj_property name="ElementShortName">fp_mul1_result[63:0]</obj_property>
             <obj_property name="ObjectShortName">fp_mul1_result[63:0]</obj_property>
@@ -917,11 +930,6 @@
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_mul_dst_addr">
-            <obj_property name="ElementShortName">fp_mul_dst_addr[12:0]</obj_property>
-            <obj_property name="ObjectShortName">fp_mul_dst_addr[12:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_mul_dst_addr_delayed">
             <obj_property name="ElementShortName">fp_mul_dst_addr_delayed[12:0]</obj_property>

@@ -45,10 +45,11 @@ module control_unit_sign_tb;
   logic [2:0] bank1, bank2, bank3, bank4;
   logic [12:0] address1, address2,address3, address4;
   logic mode;
+  logic valid;
   logic last;
   logic mul_const_selection;
 
-  assign instruction = {modules, 45'b0, mul_const_selection, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 44'b0, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -63,6 +64,7 @@ module control_unit_sign_tb;
     address4 = 0;
     mode = 0;
     last = 0;
+    valid = 0;
     mul_const_selection = 0;
 
     clk = 1;
@@ -79,6 +81,7 @@ module control_unit_sign_tb;
       bank1 = 0;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b00[i];
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
@@ -91,6 +94,7 @@ module control_unit_sign_tb;
       bank1 = 1;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b01[i];
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
@@ -103,6 +107,7 @@ module control_unit_sign_tb;
       bank1 = 2;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b10[i];
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
@@ -115,6 +120,7 @@ module control_unit_sign_tb;
       bank1 = 3;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b11[i];
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
@@ -127,6 +133,7 @@ module control_unit_sign_tb;
       bank1 = 4;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
+      valid = 1'b1;
       last = (i == MESSAGE_BLOCKS - 1) ? 1'b1 : 1'b0;
       #10;
     end
@@ -139,6 +146,7 @@ module control_unit_sign_tb;
       bank1 = 6;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = tree[i];
+      valid = 1'b1;
       last = (i == TREE_SIZE - 1) ? 1'b1 : 1'b0;
       #10;
     end
@@ -162,9 +170,11 @@ module control_unit_sign_tb;
       bank2 = 5;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
       address2 = i[`BRAM_ADDR_WIDTH-1:0];
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
+    valid = 1'b0;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -192,9 +202,11 @@ module control_unit_sign_tb;
       address2 = i[`BRAM_ADDR_WIDTH-1:0];
       address3 = i[`BRAM_ADDR_WIDTH-1:0];
       address4 = i[`BRAM_ADDR_WIDTH-1:0];
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
+    valid = 1'b0;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -212,9 +224,29 @@ module control_unit_sign_tb;
       address3 = i[`BRAM_ADDR_WIDTH-1:0];
       address4 = i[`BRAM_ADDR_WIDTH-1:0];
       mul_const_selection = 0; // 1/12289
+      valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
+    valid = 1'b0;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run mul const
+    for (int i = 0; i < N/2; i++) begin
+      modules = 16'b0000_0000_1000_0000; // mul const
+      bank3 = 4;  // mul const 4, output to 4
+      bank4 = 4;
+      address3 = i[`BRAM_ADDR_WIDTH-1:0];
+      address4 = i[`BRAM_ADDR_WIDTH-1:0];
+      mul_const_selection = 1; // -1/12289
+      valid = 1'b1;
+      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
+      #10;
+    end
+    valid = 1'b0;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;

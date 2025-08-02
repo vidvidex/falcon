@@ -62,6 +62,7 @@ module control_unit#(
     debug_ADD_SUB = instruction[127-14];
   end
 
+  logic [15:0] modules_running, modules_running_i;
   logic [2:0] bank1, bank2, bank3, bank4;
   logic [12:0] addr1, addr2, addr3, addr4;
 
@@ -145,6 +146,12 @@ module control_unit#(
       bram1024_addr_a[i] = bram_addr_a[i+BRAM2048_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
       bram1024_addr_b[i] = bram_addr_b[i+BRAM2048_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
     end
+  end
+
+  always_ff @(posedge clk) begin
+    modules_running_i <= modules_running;
+
+    instruction_done <= modules_running == 0 && modules_running_i != 0;
   end
 
   logic htp_start, htp_start_i;
@@ -536,6 +543,8 @@ module control_unit#(
 
     if (!rst_n) begin
 
+      modules_running <= 1'b0;
+
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
 
@@ -562,26 +571,46 @@ module control_unit#(
         // Empty
       end
       if(instruction[127-2] == 1'b1) begin // COPY
-
+        if(copy_done_delayed)
+          modules_running[15-2] <= 1'b0;
+        else
+          modules_running[15-2] <= 1'b1;
       end
       if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
         htp_start <= 1'b1;
+        if(htp_done_delayed)
+          modules_running[15-3] <= 1'b0;
+        else
+          modules_running[15-3] <= 1'b1;
       end
       if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
-        // Empty
+        if(int_to_double_done_delayed)
+          modules_running[15-4] <= 1'b0;
+        else
+          modules_running[15-4] <= 1'b1;
       end
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
         fft_mode <= instruction[64];
         fft_start <= 1'b1;
+        if(fft_done)
+          modules_running[15-5] <= 1'b0;
+        else
+          modules_running[15-5] <= 1'b1;
       end
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
 
       end
-      if(instruction[127-7] == 1'b1) begin // MUL
-
+      if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
+        if(complex_mul_done_delayed)
+          modules_running[15-7] <= 1'b0;
+        else
+          modules_running[15-7] <= 1'b1;
       end
       if(instruction[127-8] == 1'b1) begin // MUL_CONST
-
+        if(fp_mul_done_delayed)
+          modules_running[15-8] <= 1'b0;
+        else
+          modules_running[15-8] <= 1'b1;
       end
       if(instruction[127-9] == 1'b1) begin // SPLIT_MERGE
 
@@ -641,7 +670,6 @@ module control_unit#(
       bram_we_b[i] = 1'b0;
     end
 
-    instruction_done = 1'b0; // Default to not done
     int_to_double_valid_in = 1'b0;
     int_to_double_done = 1'b0;
     // mod_mult_valid_in = 1'b0;
@@ -673,20 +701,18 @@ module control_unit#(
     if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
       bram_addr_a[bank1] = addr1;
       bram_din_a[bank1] = bram_din;
-      bram_we_a[bank1] = 1'b1;
+      bram_we_a[bank1] = instruction[66];
     end
 
     if(instruction[127-2] == 1'b1) begin // COPY
       bram_addr_a[bank3] = addr3;
-      copy_valid_in = 1'b1;
+      copy_valid_in = instruction[66];
       copy_done = instruction[65]; // Done when we get the 'last' signal
 
       copy_dst_addr = addr4;
-      bram_addr_a[bank4] = copy_dst_addr_delayed;
-      bram_din_a[bank4] = bram_dout_a[bank3];
-      bram_we_a[bank4] = copy_valid_out;
-
-      instruction_done = copy_done_delayed;
+      bram_addr_b[bank4] = copy_dst_addr_delayed;
+      bram_din_b[bank4] = bram_dout_a[bank3];
+      bram_we_b[bank4] = copy_valid_out;
     end
 
     if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
@@ -699,8 +725,6 @@ module control_unit#(
 
       bram_addr_b[bank2] = htp_output_bram2_addr;
       htp_output_bram2_data = bram_dout_b[bank2];
-
-      instruction_done = htp_done_delayed;  // Deleayed so that all data is written to BRAM before the instruction is done
     end
 
     if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
@@ -708,15 +732,12 @@ module control_unit#(
       int_to_double_address_in = addr1;
       int_to_double_data_in = bram_dout_a[bank1];
       int_to_double_done = instruction[65]; // Done when we get the 'last' signal
+      int_to_double_valid_in = instruction[66];
 
       // Write output to BRAM
       bram_addr_b[bank2] = int_to_double_address_out;
       bram_din_b[bank2] = int_to_double_data_out;
       bram_we_b[bank2] = int_to_double_valid_out;
-
-      int_to_double_valid_in = 1'b1;
-
-      instruction_done = int_to_double_done_delayed;
     end
 
     if(instruction[127-5] == 1'b1) begin // FFT_IFFT
@@ -737,30 +758,26 @@ module control_unit#(
       bram_we_b[bank2] = fft_bram2_we_b;
       fft_bram2_dout_a = bram_dout_a[bank2];
       fft_bram2_dout_b = bram_dout_b[bank2];
-
-      instruction_done = fft_done;
     end
 
     if(instruction[127-6] == 1'b1) begin // NTT_INTT
 
     end
 
-    if(instruction[127-7] == 1'b1) begin // MUL
+    if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
       bram_addr_a[bank1] = addr1;
       bram_addr_a[bank2] = addr2;
       complex_mul_a_real = bram_dout_a[bank1][127:64];
       complex_mul_a_imag = bram_dout_a[bank1][63:0];
       complex_mul_b_real = bram_dout_a[bank2][127:64];
       complex_mul_b_imag = bram_dout_a[bank2][63:0];
-      complex_mul_valid_in = 1'b1;
+      complex_mul_valid_in = instruction[66];
       complex_mul_done = instruction[65]; // Done when we get the 'last' signal
 
       complex_mul_dst_addr = addr1;
       bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
       bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
       bram_we_b[bank1] = complex_mul_valid_out;
-
-      instruction_done = complex_mul_done_delayed;
     end
 
     if(instruction[127-8] == 1'b1) begin // MUL_CONST
@@ -768,17 +785,15 @@ module control_unit#(
       fp_mul1_a = bram_dout_a[bank3][127:64];
       fp_mul2_a = bram_dout_a[bank3][63:0];
 
-      fp_mul1_b = instruction[66] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-      fp_mul2_b = instruction[66] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-      fp_mul_valid_in = 1'b1;
+      fp_mul1_b = instruction[67] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+      fp_mul2_b = instruction[67] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+      fp_mul_valid_in = instruction[66];
       fp_mul_done = instruction[65]; // Done when we get the 'last' signal
       fp_mul_dst_addr = addr4;
 
       bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
       bram_din_b[bank4] = {fp_mul1_result, fp_mul2_result};
       bram_we_b[bank4] = fp_mul_valid_out;
-
-      instruction_done = fp_mul_done_delayed;
     end
 
     if(instruction[127-9] == 1'b1) begin // SPLIT_MERGE
