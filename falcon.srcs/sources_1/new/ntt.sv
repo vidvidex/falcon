@@ -32,8 +32,8 @@ module ntt#(
     input logic mode, // 0: NTT, 1: Inverse NTT
     input logic start, //! Data in input BRAM is valid, NTT can start
 
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
+    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
+    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
     input logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data1, //! Data that is read from input_bram[input_bram_addr1]
     input logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data2, //! Data that is read from input_bram[input_bram_addr2]
 

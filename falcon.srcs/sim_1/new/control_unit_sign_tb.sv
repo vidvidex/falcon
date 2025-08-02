@@ -46,8 +46,9 @@ module control_unit_sign_tb;
   logic [12:0] address1, address2,address3, address4;
   logic mode;
   logic last;
+  logic mul_const_selection;
 
-  assign instruction = {modules, 46'b0, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 45'b0, mul_const_selection, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -62,6 +63,7 @@ module control_unit_sign_tb;
     address4 = 0;
     mode = 0;
     last = 0;
+    mul_const_selection = 0;
 
     clk = 1;
 
@@ -179,10 +181,10 @@ module control_unit_sign_tb;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
-    // Run copy and mul
+    // Run copy and complex mul
     for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0010_0001_0000_0000; // copy and mul
-      bank1 = 5;  // Mul 5 and 3, destination 5
+      modules = 16'b0010_0001_0000_0000; // copy and complex mul
+      bank1 = 5;  // complex mul 5 and 3, destination 5
       bank2 = 3;
       bank3 = 5;  // Copy from 5 to 4
       bank4 = 4;
@@ -190,6 +192,26 @@ module control_unit_sign_tb;
       address2 = i[`BRAM_ADDR_WIDTH-1:0];
       address3 = i[`BRAM_ADDR_WIDTH-1:0];
       address4 = i[`BRAM_ADDR_WIDTH-1:0];
+      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
+      #10;
+    end
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run complex mul and mul const
+    for (int i = 0; i < N/2; i++) begin
+      modules = 16'b0000_0001_1000_0000; // complex mul and mul const
+      bank1 = 4;  // complex mul 4 and 1, destination 4
+      bank2 = 1;
+      bank3 = 5;  // mul const 5, output to 5
+      bank4 = 5;
+      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      address2 = i[`BRAM_ADDR_WIDTH-1:0];
+      address3 = i[`BRAM_ADDR_WIDTH-1:0];
+      address4 = i[`BRAM_ADDR_WIDTH-1:0];
+      mul_const_selection = 0; // 1/12289
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end

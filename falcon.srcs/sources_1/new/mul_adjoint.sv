@@ -15,11 +15,11 @@ module mul_adjoint(
     input logic [`BRAM_DATA_WIDTH-1:0] a_in,
     input logic [`BRAM_DATA_WIDTH-1:0] b_in,
     input logic valid_in,
-    input logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_in,
+    input logic [`BRAM_ADDR_WIDTH-1:0] address_in,
 
     output logic [`BRAM_DATA_WIDTH-1:0] data_out,
     output logic valid_out,
-    output logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_out
+    output logic [`BRAM_ADDR_WIDTH-1:0] address_out
   );
 
   logic [63:0] a_real, a_imag;
@@ -49,6 +49,6 @@ module mul_adjoint(
 
   assign data_out = {prod_real, prod_imag};
 
-  delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(14)) address_delay(.clk(clk), .in(address_in), .out(address_out));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(14)) address_delay(.clk(clk), .in(address_in), .out(address_out));
 
 endmodule

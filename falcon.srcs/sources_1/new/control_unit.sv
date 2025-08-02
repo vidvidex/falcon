@@ -277,12 +277,12 @@ module control_unit#(
       );
 
   // logic decompress_start, decompress_start_i;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
+  // logic [`BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
   // logic [`BRAM_DATA_WIDTH-1:0] decompress_input_bram_data;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
+  // logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
   // logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram1_data;
   // logic decompress_output_bram1_we;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
+  // logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
   // logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram2_data;
   // logic decompress_signature_error, decompress_done;
   // decompress #(
@@ -310,9 +310,9 @@ module control_unit#(
 
   // logic ntt_start, ntt_start_i;
   // logic ntt_mode;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr1;
+  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr1;
   // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_data1;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr2;
+  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr2;
   // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_data2;
   // logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr1;
   // logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_output_bram_data1;
@@ -361,8 +361,8 @@ module control_unit#(
   //            .result(mod_mult_result),
   //            .valid_out(mod_mult_valid_out)
   //          );
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr;  // Where to write the output of mod_mult
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(addr1), .out(mod_mult_write_addr));
+  // logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr;  // Where to write the output of mod_mult
+  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(addr1), .out(mod_mult_write_addr));
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
 
   // parameter int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
@@ -390,10 +390,10 @@ module control_unit#(
   // parameter int fp_NEGATE_PARALLEL_OPS_COUNT = 2;
   // logic [63:0] fp_negate_double_in [fp_NEGATE_PARALLEL_OPS_COUNT];
   // logic fp_negate_valid_in, fp_negate_valid_in_delayed;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_negate_address_in, fp_negate_address_in_delayed;
+  // logic [`BRAM_ADDR_WIDTH-1:0] fp_negate_address_in, fp_negate_address_in_delayed;
   // logic [63:0] fp_negate_double_out [fp_NEGATE_PARALLEL_OPS_COUNT];
   // logic fp_negate_valid_out;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_negate_address_out;
+  // logic [`BRAM_ADDR_WIDTH-1:0] fp_negate_address_out;
   // logic fp_negate_done;
   // fp_negate #(
   //             .PARALLEL_OPS_COUNT(fp_NEGATE_PARALLEL_OPS_COUNT)
@@ -406,15 +406,15 @@ module control_unit#(
   //             .valid_out(fp_negate_valid_out),
   //             .address_out(fp_negate_address_out)
   //           );
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) fp_negate_address_in_delay(.clk(clk), .in(fp_negate_address_in), .out(fp_negate_address_in_delayed));
+  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) fp_negate_address_in_delay(.clk(clk), .in(fp_negate_address_in), .out(fp_negate_address_in_delayed));
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_negate_valid_in_delay(.clk(clk), .in(fp_negate_valid_in), .out(fp_negate_valid_in_delayed));
 
   // logic [`BRAM_DATA_WIDTH-1:0] mul_adjoint_data_a_in, mul_adjoint_data_b_in;
   // logic mul_adjoint_valid_in, mul_adjoint_valid_in_delayed;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_in, mul_adjoint_address_in_delayed;
+  // logic [`BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_in, mul_adjoint_address_in_delayed;
   // logic [`BRAM_DATA_WIDTH-1:0] mul_adjoint_data_out;
   // logic mul_adjoint_valid_out;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_out;
+  // logic [`BRAM_ADDR_WIDTH-1:0] mul_adjoint_address_out;
   // logic mul_adjoint_done;
   // mul_adjoint mul_adjoint (
   //               .clk(clk),
@@ -426,17 +426,17 @@ module control_unit#(
   //               .valid_out(mul_adjoint_valid_out),
   //               .address_out(mul_adjoint_address_out)
   //             );
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) mul_adjoint_address_in_delay(.clk(clk), .in(mul_adjoint_address_in), .out(mul_adjoint_address_in_delayed));
+  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) mul_adjoint_address_in_delay(.clk(clk), .in(mul_adjoint_address_in), .out(mul_adjoint_address_in_delayed));
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mul_adjoint_valid_in_delay(.clk(clk), .in(mul_adjoint_valid_in), .out(mul_adjoint_valid_in_delayed));
 
   // // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_adder_address_in;
+  // logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_address_in;
   // logic fp_adder_valid_in, fp_adder_valid_in_delayed;
   // logic [63:0] fp_adder1_a, fp_adder1_b;
   // logic [63:0] fp_adder2_a, fp_adder2_b;
   // logic [63:0] fp_adder1_result;
   // logic [63:0] fp_adder2_result;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_adder_address_out;
+  // logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_address_out;
   // logic fp_adder_valid_out;
   // logic fp_adder_done;
   // fp_adder #(
@@ -460,38 +460,38 @@ module control_unit#(
   //            .valid_out()
   //          );
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder1_address_in_delay(.clk(clk), .in(fp_adder_address_in), .out(fp_adder_address_out));
+  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder1_address_in_delay(.clk(clk), .in(fp_adder_address_in), .out(fp_adder_address_out));
 
-  // // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_mul_address_in;
-  // logic fp_mul_valid_in, fp_mul_valid_in_delayed;
-  // logic [63:0] fp_mul1_a, fp_mul1_b;
-  // logic [63:0] fp_mul2_a, fp_mul2_b;
-  // logic [63:0] fp_mul1_result;
-  // logic [63:0] fp_mul2_result;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] fp_mul_address_out;
-  // logic fp_mul_valid_out;
-  // logic fp_mul_done;
-  // fp_multiplier fp_multiplier1(
-  //                 .clk(clk),
-  //                 .valid_in(fp_mul_valid_in_delayed),
-  //                 .a(fp_mul1_a),
-  //                 .b(fp_mul1_b),
-  //                 .scale_factor(5'b0),
-  //                 .result(fp_mul1_result),
-  //                 .valid_out(fp_mul_valid_out)
-  //               );
-  // fp_multiplier fp_multiplier2(
-  //                 .clk(clk),
-  //                 .valid_in(fp_mul_valid_in_delayed),
-  //                 .a(fp_mul2_a),
-  //                 .b(fp_mul2_b),
-  //                 .scale_factor(5'b0),
-  //                 .result(fp_mul2_result),
-  //                 .valid_out()
-  //               );
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_mul1_address_in_delay(.clk(clk), .in(fp_mul_address_in), .out(fp_mul_address_out));
+  // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
+  logic fp_mul_valid_in, fp_mul_valid_in_delayed;
+  logic [63:0] fp_mul1_a, fp_mul1_b;
+  logic [63:0] fp_mul2_a, fp_mul2_b;
+  logic [63:0] fp_mul1_result;
+  logic [63:0] fp_mul2_result;
+  logic [`BRAM_ADDR_WIDTH-1:0] fp_mul_dst_addr, fp_mul_dst_addr_delayed;
+  logic fp_mul_valid_out;
+  logic fp_mul_done, fp_mul_done_delayed;
+  fp_multiplier fp_multiplier1(
+                  .clk(clk),
+                  .valid_in(fp_mul_valid_in_delayed),
+                  .a(fp_mul1_a),
+                  .b(fp_mul1_b),
+                  .scale_factor(5'b0),
+                  .result(fp_mul1_result),
+                  .valid_out(fp_mul_valid_out)
+                );
+  fp_multiplier fp_multiplier2(
+                  .clk(clk),
+                  .valid_in(fp_mul_valid_in_delayed),
+                  .a(fp_mul2_a),
+                  .b(fp_mul2_b),
+                  .scale_factor(5'b0),
+                  .result(fp_mul2_result),
+                  .valid_out()
+                );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_mul_dst_addr_delay(.clk(clk), .in(fp_mul_dst_addr), .out(fp_mul_dst_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(9)) fp_mul_done_delay(.clk(clk), .in(fp_mul_done), .out(fp_mul_done_delayed));
 
   logic copy_valid_in;
   logic [`BRAM_ADDR_WIDTH-1:0] copy_dst_addr, copy_dst_addr_delayed;
@@ -650,7 +650,8 @@ module control_unit#(
     // fp_negate_valid_in = 1'b0;
     // mul_adjoint_valid_in = 1'b0;
     // fp_adder_valid_in = 1'b0;
-    // fp_mul_valid_in = 1'b0;
+    fp_mul_valid_in = 1'b0;
+    fp_mul_done = 1'b0;
     copy_valid_in = 1'b0;
     copy_done = 1'b0;
     complex_mul_valid_in = 1'b0;
@@ -763,7 +764,21 @@ module control_unit#(
     end
 
     if(instruction[127-8] == 1'b1) begin // MUL_CONST
+      bram_addr_a[bank3] = addr3;
+      fp_mul1_a = bram_dout_a[bank3][127:64];
+      fp_mul2_a = bram_dout_a[bank3][63:0];
 
+      fp_mul1_b = instruction[66] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+      fp_mul2_b = instruction[66] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+      fp_mul_valid_in = 1'b1;
+      fp_mul_done = instruction[65]; // Done when we get the 'last' signal
+      fp_mul_dst_addr = addr4;
+
+      bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
+      bram_din_b[bank4] = {fp_mul1_result, fp_mul2_result};
+      bram_we_b[bank4] = fp_mul_valid_out;
+
+      instruction_done = fp_mul_done_delayed;
     end
 
     if(instruction[127-9] == 1'b1) begin // SPLIT_MERGE

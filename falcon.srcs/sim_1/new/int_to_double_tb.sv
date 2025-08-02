@@ -9,8 +9,8 @@ module int_to_double_tb;
   logic [127:0] data_out;
   logic valid_in;
   logic valid_out;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_in;
-  logic [`FFT_BRAM_ADDR_WIDTH-1:0] address_out;
+  logic [`BRAM_ADDR_WIDTH-1:0] address_in;
+  logic [`BRAM_ADDR_WIDTH-1:0] address_out;
   int address;
 
   always #5 clk = ~clk;
