@@ -48,8 +48,9 @@ module control_unit_sign_tb;
   logic valid;
   logic last;
   logic mul_const_selection;
+  logic [3:0] split_merge_size;
 
-  assign instruction = {modules, 44'b0, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 40'b0, split_merge_size, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -66,6 +67,7 @@ module control_unit_sign_tb;
     last = 0;
     valid = 0;
     mul_const_selection = 0;
+    split_merge_size = 0;
 
     clk = 1;
 
@@ -194,8 +196,8 @@ module control_unit_sign_tb;
     // Run copy and complex mul
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0010_0001_0000_0000; // copy and complex mul
-      bank1 = 5;  // complex mul 5 and 3, destination 5
-      bank2 = 3;
+      bank1 = 5;  // complex mul 5 and 1, destination 5
+      bank2 = 1;
       bank3 = 5;  // Copy from 5 to 4
       bank4 = 4;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
@@ -215,7 +217,7 @@ module control_unit_sign_tb;
     // Run complex mul and mul const
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0000_0001_1000_0000; // complex mul and mul const
-      bank1 = 4;  // complex mul 4 and 1, destination 4
+      bank1 = 4;  // complex mul 4 and 3, destination 4
       bank2 = 1;
       bank3 = 5;  // mul const 5, output to 5
       bank4 = 5;
@@ -223,7 +225,7 @@ module control_unit_sign_tb;
       address2 = i[`BRAM_ADDR_WIDTH-1:0];
       address3 = i[`BRAM_ADDR_WIDTH-1:0];
       address4 = i[`BRAM_ADDR_WIDTH-1:0];
-      mul_const_selection = 0; // 1/12289
+      mul_const_selection = 1; // -1/12289
       valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
@@ -241,12 +243,110 @@ module control_unit_sign_tb;
       bank4 = 4;
       address3 = i[`BRAM_ADDR_WIDTH-1:0];
       address4 = i[`BRAM_ADDR_WIDTH-1:0];
-      mul_const_selection = 1; // -1/12289
+      mul_const_selection = 0; // 1/12289
       valid = 1'b1;
       last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     valid = 1'b0;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    ////// Start ff_sampling //////
+
+    // Run split (t1 -> z1_512)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 5;
+    address1 = 0;
+    bank2 = 1;
+    address2 = 512;
+    split_merge_size = 9;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_512 -> z1_256)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 1;
+    address1 = 512+128; // 128 because we're reading the second half
+    bank2 = 2;
+    address2 = 512;
+    split_merge_size = 8;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_256 -> z1_128)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 2;
+    address1 = 512+64;
+    bank2 = 3;
+    address2 = 512;
+    split_merge_size = 7;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_128 -> z1_64)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 3;
+    address1 = 512+32;
+    bank2 = 0;
+    address2 = 512;
+    split_merge_size = 6;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_64 -> z1_32)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 0;
+    address1 = 512+16;
+    bank2 = 1;
+    address2 = 1024;
+    split_merge_size = 5;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_32 -> z1_16)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 1;
+    address1 = 1024+8;
+    bank2 = 2;
+    address2 = 786;
+    split_merge_size = 4;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_16 -> z1_8)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 2;
+    address1 = 786+4;
+    bank2 = 3;
+    address2 = 640;
+    split_merge_size = 3;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
+
+    // Run split (z1_8 -> z1_4)
+    modules = 16'b0000_0000_0100_0000; // split
+    bank1 = 3;
+    address1 = 640+2;
+    bank2 = 0;
+    address2 = 576;
+    split_merge_size = 2;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
