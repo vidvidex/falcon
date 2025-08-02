@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="645.043 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,070.992 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="67,694.767 ns"></ZoomStartTime>
+      <ZoomEndTime time="68,026.168 ns"></ZoomEndTime>
+      <Cursor1Time time="67,750.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="184"></NameColumnWidth>
+      <NameColumnWidth column_width="180"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -675,18 +675,15 @@
       <wvobject type="group" fp_name="group654">
          <obj_property name="label">int_to_double</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/int_to_double_data_in">
             <obj_property name="ElementShortName">int_to_double_data_in[127:0]</obj_property>
             <obj_property name="ObjectShortName">int_to_double_data_in[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/int_to_double_address_in">
-            <obj_property name="ElementShortName">int_to_double_address_in[12:0]</obj_property>
-            <obj_property name="ObjectShortName">int_to_double_address_in[12:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/int_to_double_address_in_delayed">
             <obj_property name="ElementShortName">int_to_double_address_in_delayed[12:0]</obj_property>
             <obj_property name="ObjectShortName">int_to_double_address_in_delayed[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/int_to_double_valid_in_delayed">
             <obj_property name="ElementShortName">int_to_double_valid_in_delayed</obj_property>
@@ -704,6 +701,14 @@
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/int_to_double_valid_out">
             <obj_property name="ElementShortName">int_to_double_valid_out</obj_property>
             <obj_property name="ObjectShortName">int_to_double_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/int_to_double_done">
+            <obj_property name="ElementShortName">int_to_double_done</obj_property>
+            <obj_property name="ObjectShortName">int_to_double_done</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/int_to_double_done_delayed">
+            <obj_property name="ElementShortName">int_to_double_done_delayed</obj_property>
+            <obj_property name="ObjectShortName">int_to_double_done_delayed</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group3992">
@@ -869,10 +874,114 @@
       <wvobject type="group" fp_name="group269">
          <obj_property name="label">copy</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/copy_valid_in">
+            <obj_property name="ElementShortName">copy_valid_in</obj_property>
+            <obj_property name="ObjectShortName">copy_valid_in</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/copy_dst_addr">
+            <obj_property name="ElementShortName">copy_dst_addr[12:0]</obj_property>
+            <obj_property name="ObjectShortName">copy_dst_addr[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/copy_dst_addr_delayed">
+            <obj_property name="ElementShortName">copy_dst_addr_delayed[12:0]</obj_property>
+            <obj_property name="ObjectShortName">copy_dst_addr_delayed[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/copy_valid_out">
+            <obj_property name="ElementShortName">copy_valid_out</obj_property>
+            <obj_property name="ObjectShortName">copy_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/copy_done">
+            <obj_property name="ElementShortName">copy_done</obj_property>
+            <obj_property name="ObjectShortName">copy_done</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/copy_done_delayed">
+            <obj_property name="ElementShortName">copy_done_delayed</obj_property>
+            <obj_property name="ObjectShortName">copy_done_delayed</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group268">
          <obj_property name="label">complex_mul</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_a_real">
+            <obj_property name="ElementShortName">complex_mul_a_real[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_a_real[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_a_imag">
+            <obj_property name="ElementShortName">complex_mul_a_imag[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_a_imag[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_b_real">
+            <obj_property name="ElementShortName">complex_mul_b_real[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_b_real[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_b_imag">
+            <obj_property name="ElementShortName">complex_mul_b_imag[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_b_imag[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/complex_mul_valid_in">
+            <obj_property name="ElementShortName">complex_mul_valid_in</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_valid_in</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/complex_mul_valid_in_delayed">
+            <obj_property name="ElementShortName">complex_mul_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_valid_in_delayed</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_result_real">
+            <obj_property name="ElementShortName">complex_mul_result_real[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_result_real[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_result_imag">
+            <obj_property name="ElementShortName">complex_mul_result_imag[63:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_result_imag[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/complex_mul_valid_out">
+            <obj_property name="ElementShortName">complex_mul_valid_out</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_dst_addr">
+            <obj_property name="ElementShortName">complex_mul_dst_addr[12:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_dst_addr[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/complex_mul_dst_addr_delayed">
+            <obj_property name="ElementShortName">complex_mul_dst_addr_delayed[12:0]</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_dst_addr_delayed[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/complex_mul_done">
+            <obj_property name="ElementShortName">complex_mul_done</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_done</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/complex_mul_done_delayed">
+            <obj_property name="ElementShortName">complex_mul_done_delayed</obj_property>
+            <obj_property name="ObjectShortName">complex_mul_done_delayed</obj_property>
+         </wvobject>
       </wvobject>
    </wvobject>
 </wave_config>

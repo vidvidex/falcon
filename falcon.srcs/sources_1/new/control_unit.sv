@@ -29,13 +29,6 @@ module control_unit#(
   localparam int BRAM5632_COUNT = 1; // Number of 5632x15 BRAM banks
   localparam int BRAM_BANK_COUNT = BRAM1024_COUNT + BRAM2048_COUNT + BRAM5632_COUNT;
 
-  // typedef enum logic [12:0] {
-  //           HTP_DECMP_NTT = 4'b0011, // hash_to_point, decompress, ntt. Used in verify. NTT takes the longest, so we use it's done signal to know when everything is done
-  //           NTT_INTT      = 4'b1011, // Input is bank1, which should be 0-5, output is bank2, which should be 6 or 7. task_params[3] sets NTT (0) or INTT (1) mode.
-  //           MOD_MULT_Q    = 4'b1100, // Inputs are always BRAM 6 and BRAM 7 (because those two are the only ones with the expected shape - 1024x128). Output is task_bram2. Module reads from both input BRAMs at address addr1 and addr2 and writes the output to addr1
-  //           SUB_NORM_SQ   = 4'b1101, // Reads from BRAMs bank1[addr1] (data from hash_to_point), bank2[addr2], bank2[addr2+N/2] (data from INTT) and task_params[2:0][addr1] (data from decompress). Output is BRAM0 at address 0 (accept/reject), 0x000...00 = accept, 0xfff...ff = reject
-  //         } opcode_t;
-
   logic debug_BRAM_READ;
   logic debug_BRAM_WRITE;
   logic debug_COPY;
@@ -69,11 +62,8 @@ module control_unit#(
     debug_ADD_SUB = instruction[127-14];
   end
 
-  logic [15:0] modules_running;
-  logic [2:0] bank1;
-  logic [2:0] bank2;
-  logic [12:0] addr1;
-  logic [12:0] addr2;
+  logic [2:0] bank1, bank2, bank3, bank4;
+  logic [12:0] addr1, addr2, addr3, addr4;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a [BRAM_BANK_COUNT];
@@ -192,6 +182,7 @@ module control_unit#(
   logic [`BRAM_DATA_WIDTH-1:0] int_to_double_data_out;
   logic [`BRAM_ADDR_WIDTH-1:0] int_to_double_address_out;
   logic int_to_double_valid_out;
+  logic int_to_double_done, int_to_double_done_delayed;
   int_to_double int_to_double (
                   .clk(clk),
                   .data_in(int_to_double_data_in),
@@ -203,6 +194,7 @@ module control_unit#(
                 );
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) int_to_double_address_in_delay(.clk(clk), .in(int_to_double_address_in), .out(int_to_double_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) int_to_double_done_delay(.clk(clk), .in(int_to_double_done), .out(int_to_double_done_delayed));
 
   logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
   logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
@@ -501,42 +493,46 @@ module control_unit#(
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
   // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_mul1_address_in_delay(.clk(clk), .in(fp_mul_address_in), .out(fp_mul_address_out));
 
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_in;
-  // logic copy_valid_in;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] copy_address_out;
-  // logic copy_valid_out;
-  // logic copy_done;
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) copy_address_in_delay(.clk(clk), .in(copy_address_in), .out(copy_address_out));
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
+  logic copy_valid_in;
+  logic [`BRAM_ADDR_WIDTH-1:0] copy_dst_addr, copy_dst_addr_delayed;
+  logic copy_valid_out;
+  logic copy_done, copy_done_delayed;
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) copy_dst_addr_delay(.clk(clk), .in(copy_dst_addr), .out(copy_dst_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_done_delay(.clk(clk), .in(copy_done), .out(copy_done_delayed));
 
-  // logic [63:0] complex_mul_a_real, complex_mul_a_imag, complex_mul_b_real, complex_mul_b_imag;
-  // logic complex_mul_valid_in, complex_mul_valid_in_delayed;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] complex_mul_address_in;
-  // logic [63:0] complex_mul_result_real, complex_mul_result_imag;
-  // logic complex_mul_valid_out;
-  // logic [`FFT_BRAM_ADDR_WIDTH-1:0] complex_mul_address_out;
-  // logic complex_mul_done;
-  // complex_multiplier complex_multiplier(
-  //                      .clk(clk),
-  //                      .valid_in(complex_mul_valid_in_delayed),
-  //                      .a_real(complex_mul_a_real),
-  //                      .a_imag(complex_mul_a_imag),
-  //                      .b_real(complex_mul_b_real),
-  //                      .b_imag(complex_mul_b_imag),
-  //                      .scale_factor(5'b0),
-  //                      .a_x_b_real(complex_mul_result_real),
-  //                      .a_x_b_imag(complex_mul_result_imag),
-  //                      .valid_out(complex_mul_valid_out)
-  //                    );
-  // delay_register #(.BITWIDTH(`FFT_BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) complex_mul_address_in_delay(.clk(clk), .in(complex_mul_address_in), .out(complex_mul_address_out));
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
+  logic [63:0] complex_mul_a_real, complex_mul_a_imag, complex_mul_b_real, complex_mul_b_imag;
+  logic complex_mul_valid_in, complex_mul_valid_in_delayed;
+  logic [63:0] complex_mul_result_real, complex_mul_result_imag;
+  logic complex_mul_valid_out;
+  logic [`BRAM_ADDR_WIDTH-1:0] complex_mul_dst_addr, complex_mul_dst_addr_delayed;
+  logic complex_mul_done, complex_mul_done_delayed;
+  complex_multiplier complex_multiplier(
+                       .clk(clk),
+                       .valid_in(complex_mul_valid_in_delayed),
+                       .a_real(complex_mul_a_real),
+                       .a_imag(complex_mul_a_imag),
+                       .b_real(complex_mul_b_real),
+                       .b_imag(complex_mul_b_imag),
+                       .scale_factor(5'b0),
+                       .a_x_b_real(complex_mul_result_real),
+                       .a_x_b_imag(complex_mul_result_imag),
+                       .valid_out(complex_mul_valid_out)
+                     );
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) complex_mul_dst_addr_delay(.clk(clk), .in(complex_mul_dst_addr), .out(complex_mul_dst_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(16)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
 
   always_ff @(posedge clk) begin
 
     bank1 <= instruction[2:0];
     bank2 <= instruction[5:3];
-    addr1 <= instruction[18:6];
-    addr2 <= instruction[31:19];
+    bank3 <= instruction[8:6];
+    bank4 <= instruction[11:9];
+    addr1 <= instruction[24:12];
+    addr2 <= instruction[37:25];
+    addr3 <= instruction[50:38];
+    addr4 <= instruction[63:51];
 
     if (!rst_n) begin
 
@@ -575,7 +571,7 @@ module control_unit#(
         // Empty
       end
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-        fft_mode <= instruction[32];
+        fft_mode <= instruction[64];
         fft_start <= 1'b1;
       end
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
@@ -647,6 +643,7 @@ module control_unit#(
 
     instruction_done = 1'b0; // Default to not done
     int_to_double_valid_in = 1'b0;
+    int_to_double_done = 1'b0;
     // mod_mult_valid_in = 1'b0;
     // sub_normalize_squared_norm_valid = 1'b0;
     // sub_normalize_squared_norm_last = 1'b0;
@@ -654,8 +651,10 @@ module control_unit#(
     // mul_adjoint_valid_in = 1'b0;
     // fp_adder_valid_in = 1'b0;
     // fp_mul_valid_in = 1'b0;
-    // copy_valid_in = 1'b0;
-    // complex_mul_valid_in = 1'b0;
+    copy_valid_in = 1'b0;
+    copy_done = 1'b0;
+    complex_mul_valid_in = 1'b0;
+    complex_mul_done = 1'b0;
 
     // // Ensure these signals are not undefined to ensure proper behaviour of the module
     // sub_normalize_squared_norm_a[0] = 0;
@@ -677,7 +676,16 @@ module control_unit#(
     end
 
     if(instruction[127-2] == 1'b1) begin // COPY
+      bram_addr_a[bank3] = addr3;
+      copy_valid_in = 1'b1;
+      copy_done = instruction[65]; // Done when we get the 'last' signal
 
+      copy_dst_addr = addr4;
+      bram_addr_a[bank4] = copy_dst_addr_delayed;
+      bram_din_a[bank4] = bram_dout_a[bank3];
+      bram_we_a[bank4] = copy_valid_out;
+
+      instruction_done = copy_done_delayed;
     end
 
     if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
@@ -698,6 +706,7 @@ module control_unit#(
       bram_addr_a[bank1] = addr1;
       int_to_double_address_in = addr1;
       int_to_double_data_in = bram_dout_a[bank1];
+      int_to_double_done = instruction[65]; // Done when we get the 'last' signal
 
       // Write output to BRAM
       bram_addr_b[bank2] = int_to_double_address_out;
@@ -705,6 +714,8 @@ module control_unit#(
       bram_we_b[bank2] = int_to_double_valid_out;
 
       int_to_double_valid_in = 1'b1;
+
+      instruction_done = int_to_double_done_delayed;
     end
 
     if(instruction[127-5] == 1'b1) begin // FFT_IFFT
@@ -734,7 +745,21 @@ module control_unit#(
     end
 
     if(instruction[127-7] == 1'b1) begin // MUL
+      bram_addr_a[bank1] = addr1;
+      bram_addr_a[bank2] = addr2;
+      complex_mul_a_real = bram_dout_a[bank1][127:64];
+      complex_mul_a_imag = bram_dout_a[bank1][63:0];
+      complex_mul_b_real = bram_dout_a[bank2][127:64];
+      complex_mul_b_imag = bram_dout_a[bank2][63:0];
+      complex_mul_valid_in = 1'b1;
+      complex_mul_done = instruction[65]; // Done when we get the 'last' signal
 
+      complex_mul_dst_addr = addr1;
+      bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
+      bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
+      bram_we_b[bank1] = complex_mul_valid_out;
+
+      instruction_done = complex_mul_done_delayed;
     end
 
     if(instruction[127-8] == 1'b1) begin // MUL_CONST
