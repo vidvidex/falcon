@@ -2,31 +2,35 @@
 `include "sample_pkg.sv"
 `include "falconsoar_pkg.sv"
 
-module pre_samp
 import sample_pkg::*;
 import falconsoar_pkg::*;
-  (
-    input                 clk,
-    input                 rst_n,
-    input                 start, //start pre_samp
-    input        [3:0]  task_type,
-    output                r_en,
-    output logic [MEM_ADDR_BITS - 1:0]  r_addr,
-    input        [255:0]  r_data,
-    input        [MEM_ADDR_BITS - 1:0]  mu_addr,
-    input        [MEM_ADDR_BITS - 1:0]  isigma_addr,
-    input        [63:0]  cal2pre_samp,
-    output logic [63:0]  dout2cal_0,
-    output logic [63:0]  dout2cal_1,
-    output logic          choose2cal, //choose use fpr_mul
-    output logic [63:0]  fpr_isigma,
-    output logic [63:0]  fpr_ccs, //fpr range(0:-)
-    output logic [63:0]  fpr_r_l, //fpr range[0:1), real part
-    output logic [31:0]  int_mu_floor_l, //signed, real part
-    output logic [63:0]  fpr_r_r, //fpr range[0:1), imag part
-    output logic [31:0]  int_mu_floor_r, //signed, imag part
-    output                done
+
+
+module pre_samp#(
+    parameter int N = 512
+  ) (
+    input clk,
+    input rst_n,
+    input start, //start pre_samp
+    output r_en,
+    output logic [MEM_ADDR_BITS - 1:0] r_addr,
+    input [255:0] r_data,
+    input [MEM_ADDR_BITS - 1:0] mu_addr,
+    input [MEM_ADDR_BITS - 1:0] isigma_addr,
+    input [63:0] cal2pre_samp,
+    output logic [63:0] dout2cal_0,
+    output logic [63:0] dout2cal_1,
+    output logic choose2cal, //choose use fpr_mul
+    output logic [63:0] fpr_isigma,
+    output logic [63:0] fpr_ccs, //fpr range(0:-)
+    output logic [63:0] fpr_r_l, //fpr range[0:1), real part
+    output logic [31:0] int_mu_floor_l, //signed, real part
+    output logic [63:0] fpr_r_r, //fpr range[0:1), imag part
+    output logic [31:0] int_mu_floor_r, //signed, imag part
+    output done
   );
+
+
   logic [1:0] isigma_index;
   logic [3:0] cnt;
   logic [63:0] fpr_mu_r;
@@ -58,7 +62,7 @@ import falconsoar_pkg::*;
   end
 
   assign done = (cnt == 9);
-  assign fpr_sigma_min = (task_type == SAMPLERZ_512) ? SIGMA_MIN_512: SIGMA_MIN_1024;
+  assign fpr_sigma_min = (N == 512) ? SIGMA_MIN_512 : SIGMA_MIN_1024;
   //////////////////////////////////////////////////////////////////////////////////
   //generate r_en and r_addr in cycle 0 - 1
   assign r_en = ((cnt == 'd0) & start) | (cnt == 'd1);
@@ -184,4 +188,4 @@ import falconsoar_pkg::*;
              .m_axis_result_tdata(result_fp_sub_redundancy)    // output wire [63 : 0] m_axis_result_tdata
            );
 
-  endmoduleX
+  endmodule

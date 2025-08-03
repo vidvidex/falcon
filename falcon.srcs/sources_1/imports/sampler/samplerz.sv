@@ -1,44 +1,41 @@
 `timescale 1ns/1ps
 `include "falconsoar_pkg.sv"
 
-module samplerz
-import falconsoar_pkg::*;
-  (
+module samplerz #(
+    parameter int N = 512
+  ) (
     input logic clk,
     input logic rst_n,
+
+    input logic start,
+
+    // Interfaces
     exec_operator_if.slave task_itf,
     mem_inst_if.master_rd mem_rd,
-    mem_inst_if.master_wr mem_wr
+
+    output logic [63:0] result,
+    output logic [63:0] fpr_result,
+    output logic done
   );
+
+  import falconsoar_pkg::*;
 
   //////////////////////////////////////////////////////////////////////////////////
   //task code
-  localparam bit [3:0] SAMPLERZ_INITI = 4'd0;  // Initial Task is to generate first  Blocks PRNG data
-  // to fill buffers in refill_control module
-  localparam bit [3:0] SAMPLERZ_512 = 4'd1;  // Normal sampling operation in Falcon-512
-  localparam bit [3:0] SAMPLERZ_1024 = 4'd2;  // Normal sampling operation in Falcon-1024
 
-  wire [3:0]  task_type = task_itf.input_task[14:11];  //
-  wire restart = task_itf.input_task[15   ];  //
-  wire [MEM_ADDR_BITS - 1:0] dst_addr = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr
   wire [MEM_ADDR_BITS - 1:0] src1_addr = task_itf.input_task[TASK_REDUCE_BW - 1*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 2*MEM_ADDR_BITS];  // This is for sigma
   wire [MEM_ADDR_BITS - 1:0] src0_addr = task_itf.input_task[TASK_REDUCE_BW - 0*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 1*MEM_ADDR_BITS];  // This is for mu and random
 
   //////////////////////////////////////////////////////////////////////////////////
-  //generate start signal
-
-  wire start = ((task_type == SAMPLERZ_512)   |
-                (task_type == SAMPLERZ_1024)  ) & task_itf.start;
 
   logic samp_again;
-  logic done_refill_control; //This done is used only in SAMPLERZ_INITI
+  logic done_refill_control;
   logic done_pre_samp;
   logic done_samp_loop;
   logic done_berexp;
   logic done_chacha20;
 
   logic cnt; // to count number of sampling, once sampling two value, output sample value and done
-
   always_ff @(posedge clk) if(start)
       cnt <= 1'b0;
     else if(done_berexp)
@@ -48,22 +45,20 @@ import falconsoar_pkg::*;
   always_ff @(posedge clk) begin
     if(~rst_n)
       sample_init <= 'd1;
-    else if(start && restart)
+    else if(start)
       sample_init <= 'd1;
     else if(done_refill_control)
       sample_init <= 'd0;
   end
 
   wire fetch_en;
-  wire start_chacha20 = ((start & restart));
+  wire start_chacha20 = start;
   wire start_refill_control = (sample_init & done_chacha20); // After chacha20 generate first blocks, it should start the refill_control module to fill its' buffer firetly
   
-  wire start_pre_samp = (start & (~sample_init) & ((task_type == SAMPLERZ_512) | (task_type == SAMPLERZ_1024))) |  (done_refill_control & sample_init);
+  wire start_pre_samp = (start & (~sample_init)) | (done_refill_control & sample_init);
   wire start_samp_loop = done_pre_samp | samp_again | (done_berexp & ~cnt);
   wire start_berexp = done_samp_loop;
   wire done_samplerz = (done_berexp & cnt);
-
-  assign task_itf.op_done = done_samplerz;
 
   wire [MEM_ADDR_BITS - 1:0] isigma_addr = src1_addr;
   wire [MEM_ADDR_BITS - 1:0] mu_addr = src0_addr;
@@ -78,7 +73,6 @@ import falconsoar_pkg::*;
 
   wire read_10byte = start_samp_loop;
 
-  //wire [MEM_ADDR_BITS - 1:0] r_addr_refill_control;
   wire r_en_pre_samp;
   wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
 
@@ -123,10 +117,10 @@ import falconsoar_pkg::*;
   assign mem_rd.en = sample_init & (~start_pre_samp) ?  mem_rd_chacha20_en  :r_en_pre_samp;
   assign mem_rd.addr = sample_init & (~start_pre_samp) ?  mem_rd_chacha20_addr:r_addr_pre_samp;
   assign mem_rd_chacha20_data = mem_rd.data;
-
-  assign mem_wr.en = (done_samplerz & cnt);
-  assign mem_wr.addr = dst_addr;
-  assign mem_wr.data = {128'h0,fpr_sample_value,sample_value};
+  
+  assign result = sample_value;  // Vid's note: what's fpr_sample_value, should we use that one or just sample_value??
+  assign fpr_result = fpr_sample_value;
+  assign done = done_samplerz & cnt;
 
   //////////////////////////////////////////////////////////////////////////////////
   //instance
@@ -146,12 +140,13 @@ import falconsoar_pkg::*;
                    .done             (   done_refill_control     )  //o
                  );
 
-  pre_samp i_pre_samp
+  pre_samp #(
+                .N(N)
+              ) i_pre_samp
            (
              .clk            (   clk                 ), //i
              .rst_n          (   rst_n               ), //i
              .start          (   start_pre_samp      ), //i start pre_samp
-             .task_type      (   task_type           ), //i [4:0]
              .r_en           (   r_en_pre_samp       ), //o
              .r_addr         (   r_addr_pre_samp     ), //o [9:0]
              .r_data         (   mem_rd.data         ), //i [511:0]
@@ -233,7 +228,6 @@ import falconsoar_pkg::*;
              .clk                 (  clk                 ),
              .rst_n               (  rst_n               ),
              .start               (  start_chacha20      ),  //start signal to generate PRNG data
-             .restart             (  restart             ),  //restart signal to generate PRNG data using new Random seed
              .sample_init         (  sample_init         ),
              .fetch_en            (  fetch_en            ),
              .done                (  done_chacha20       ),  //generate PRNG data done!

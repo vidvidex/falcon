@@ -6,10 +6,6 @@
 
     package sample_pkg;
 
-        parameter bit [4:0] SAMPLERZ_INITI = 4'b0000;
-        parameter bit [4:0] SAMPLERZ_512 = 4'b0001;
-        parameter bit [4:0] SAMPLERZ_1024 = 4'b0010;
-
         parameter bit [63:0] FPR_HALF = 64'd0460_2678_8191_7264_6912;
         parameter bit [63:0] SIGMA_MIN_512 = 64'd0460_8433_6705_3390_5013;
         parameter bit [63:0] SIGMA_MIN_1024 = 64'd0460_8525_7540_0262_2308;
