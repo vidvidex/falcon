@@ -5,24 +5,20 @@
 module chacha20
 import falconsoar_pkg::*;
   (
-    input                                 clk,
-    input                                 rst_n,
-    input                                 start,  //start signal to generate PRNG data
-    input                                 restart,  //restart signal to generate PRNG data using new Random seed
-    input                                 sample_init,
-    input                                 fetch_en,
-    output                                done,  //generate PRNG data done!
-    input           [MEM_ADDR_BITS - 1:0] src_addr,  //the addr to fetch the PRNG seed
-    output                                mem_rd_chacha20_en,  //
-    output          [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr,  //
-    input           [BANK_WIDTH - 1:0] mem_rd_chacha20_data,  //
-    output          [511:0] data_o                  //PRNG data (512bits) output
+    input clk,
+    input rst_n,
+    input start,  //start signal to generate PRNG data
+    input sample_init,
+    input fetch_en,
+    output done,  //generate PRNG data done!
+    input [MEM_ADDR_BITS - 1:0] src_addr,  //the addr to fetch the PRNG seed
+    output mem_rd_chacha20_en,  //
+    output [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr,  //
+    input [BANK_WIDTH - 1:0] mem_rd_chacha20_data,  //
+    output [511:0] data_o //PRNG data (512bits) output
   );
 
-  localparam int unsigned CW [4] = '{32'h61707865,
-                                     32'h3320646e,
-                                     32'h79622d32,
-                                     32'h6b206574};
+  localparam int unsigned CW [4] = '{32'h61707865, 32'h3320646e, 32'h79622d32, 32'h6b206574};
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,10 +33,8 @@ import falconsoar_pkg::*;
   always_ff @(posedge clk, negedge rst_n) begin
     if (!rst_n)
       cnt <= '0;
-    else if (start & restart)
+    else if (start)
       cnt <= 1;
-    else if (start & (restart == 0))
-      cnt <= 4;
     else if (fetch_en & (buff_idx[4:0] == 'd31))
       cnt <= 7;
     else if (cnt == 0)
@@ -55,13 +49,13 @@ import falconsoar_pkg::*;
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // read bank signal
-  logic [63:0] cc     [2];
+  logic [63:0] cc [2];
   logic [63:0] cc_nxt [2];  //32 * 2
 
-  logic         round_done;
+  logic round_done;
   logic [383:0] init_state;  //32 * 12
 
-  pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start & restart), .pulse_out(mem_rd_chacha20_en)); //extend one cycle pulse to two cycle pulse
+  pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start), .pulse_out(mem_rd_chacha20_en)); //extend one cycle pulse to two cycle pulse
   assign mem_rd_chacha20_addr = src + cnt[1];
 
   assign round_done = (cnt == 'd23 + SAMPLERZ_READ_DELAY) | (cnt == 'd43 + SAMPLERZ_READ_DELAY) | (cnt == 'd63 + SAMPLERZ_READ_DELAY) | (cnt == 'd83 + SAMPLERZ_READ_DELAY);
@@ -136,11 +130,11 @@ import falconsoar_pkg::*;
       buff <= buff_update;
 
   always_ff @(posedge clk) begin
-    if     (start & restart)
+    if (start)
       buff_idx <= '0;
-    else if(fetch_en & sample_init)
+    else if (fetch_en & sample_init)
       buff_idx <= buff_idx + 'd2;
-    else if(fetch_en & (~sample_init))
+    else if (fetch_en & (~sample_init))
       buff_idx <= buff_idx + 1'd1;
   end
 
@@ -152,8 +146,8 @@ module chacha20_round_2stage
 import falconsoar_pkg::*;
 import sample_pkg::*;
   (
-    input  clk,
-    input  row_data_pack_t data_i,
+    input clk,
+    input row_data_pack_t data_i,
     output row_data_pack_t data_o
   );
 
@@ -162,40 +156,40 @@ import sample_pkg::*;
   vect_t state_0_r [16];
 
   qround i_qround_1 (
-           data_i  [0],
-           data_i  [4],
-           data_i  [8],
-           data_i  [12],
+           data_i [0],
+           data_i [4],
+           data_i [8],
+           data_i [12],
            state_0 [0],
            state_0 [4],
            state_0 [8],
            state_0 [12]
          );
   qround i_qround_2 (
-           data_i  [1],
-           data_i  [5],
-           data_i  [9],
-           data_i  [13],
+           data_i [1],
+           data_i [5],
+           data_i [9],
+           data_i [13],
            state_0 [1],
            state_0 [5],
            state_0 [9],
            state_0 [13]
          );
   qround i_qround_3 (
-           data_i  [2],
-           data_i  [6],
-           data_i  [10],
-           data_i  [14],
+           data_i [2],
+           data_i [6],
+           data_i [10],
+           data_i [14],
            state_0 [2],
            state_0 [6],
            state_0 [10],
            state_0 [14]
          );
   qround i_qround_4 (
-           data_i  [3],
-           data_i  [7],
-           data_i  [11],
-           data_i  [15],
+           data_i [3],
+           data_i [7],
+           data_i [11],
+           data_i [15],
            state_0 [3],
            state_0 [7],
            state_0 [11],
@@ -212,40 +206,40 @@ import sample_pkg::*;
            state_0_r [5],
            state_0_r [10],
            state_0_r [15],
-           data_o  [0],
-           data_o  [5],
-           data_o  [10],
-           data_o  [15]
+           data_o [0],
+           data_o [5],
+           data_o [10],
+           data_o [15]
          );
   qround i_qround_6 (
            state_0_r [1],
            state_0_r [6],
            state_0_r [11],
            state_0_r [12],
-           data_o  [1],
-           data_o  [6],
-           data_o  [11],
-           data_o  [12]
+           data_o [1],
+           data_o [6],
+           data_o [11],
+           data_o [12]
          );
   qround i_qround_7 (
            state_0_r [2],
            state_0_r [7],
            state_0_r [8],
            state_0_r [13],
-           data_o  [2],
-           data_o  [7],
-           data_o  [8],
-           data_o  [13]
+           data_o [2],
+           data_o [7],
+           data_o [8],
+           data_o [13]
          );
   qround i_qround_8 (
            state_0_r [3],
            state_0_r [4],
            state_0_r [9],
            state_0_r [14],
-           data_o  [3],
-           data_o  [4],
-           data_o  [9],
-           data_o  [14]
+           data_o [3],
+           data_o [4],
+           data_o [9],
+           data_o [14]
          );
 
 endmodule
@@ -290,8 +284,8 @@ import sample_pkg::*;
 endmodule
 
 module pulse_extender (
-    input  logic clk,       // Clock signal
-    input  logic pulse_in,  // Input pulse signal
+    input logic clk,       // Clock signal
+    input logic pulse_in,  // Input pulse signal
     output logic pulse_out // Extended pulse output
   );
 

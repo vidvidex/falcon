@@ -3,15 +3,19 @@
 module samplerz_tb;
 
 import falconsoar_pkg::*;
-
   logic clk;
   logic rst_n;
+  parameter int N = 512;
 
   mem_addr_t src0;
   mem_addr_t src1;
   mem_addr_t dst;
-  logic rst;
+  logic start;
   logic [3:0] task_type;
+
+  logic [63:0] result;
+  logic [63:0] fpr_result;
+  logic done;
 
   always #5 clk = ~clk;
 
@@ -19,19 +23,23 @@ import falconsoar_pkg::*;
   mem_inst_if mem_rd();
   mem_inst_if mem_wr();
 
-  samplerz samplerz (
+  samplerz #(
+             .N(N)
+           ) samplerz (
              .clk(clk),
              .rst_n(rst_n),
+             .start(start),
              .task_itf(task_itf),
              .mem_rd(mem_rd),
-             .mem_wr(mem_wr)
+             .result(result),
+             .fpr_result(fpr_result),
+             .done(done)
            );
 
   bram_model bram_inst (
                .clk(clk),
                .rst_n(rst_n),
-               .mem_rd(mem_rd.slave_rd),
-               .mem_wr(mem_wr.slave_wr)
+               .mem_rd(mem_rd.slave_rd)
              );
 
   initial begin
@@ -44,32 +52,29 @@ import falconsoar_pkg::*;
 
     src0 = 32'h00000000; // Source 0 address (mu)
     src1 = 32'h00000001; // Source 1 address (inverse sigma)
-    dst = 32'h00000002; // Destination address
-    task_type = 4'b0001; // 512 mode
+    dst = 32'b0; // Destination address
+    task_type = 4'b0; // 512 mode
 
     // Set up a task
-    rst = 1;
-    task_itf.master.start <= 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    start = 1;
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, task_type, 11'b0};
     #10;
-    rst = 0;
-    task_itf.master.start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    start = 0;
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, task_type, 11'b0};
 
-    while(task_itf.master.op_done !== 1)
+    while(done !== 1)
       #10;
 
   end
 
 endmodule
 
-module bram_model 
+module bram_model
 import falconsoar_pkg::*;
- (
+  (
     input logic clk,
     input logic rst_n,
-    mem_inst_if.slave_rd mem_rd,
-    mem_inst_if.slave_wr mem_wr
+    mem_inst_if.slave_rd mem_rd
   );
 
   logic [255:0] mem [BANK_DEPTH];
@@ -77,16 +82,10 @@ import falconsoar_pkg::*;
   initial begin
     mem[0] = {64'b0, 64'b0, $realtobits(33.198144682236155), $realtobits(33.198144682236155)};  // mu
     mem[1] = $realtobits(1/1.724965058508814);  // inverse sigma (I guess so we can use multiplication instead of division)
-    
-    for (int i = 2; i < BANK_DEPTH; i++) begin
-      mem[i] = 64'h0000000000000000; 
-    end
-  end
 
-  // Write logic
-  always_ff @(posedge clk) begin
-    if (mem_wr.en)
-      mem[mem_wr.addr] <= mem_wr.data;
+    for (int i = 2; i < BANK_DEPTH; i++) begin
+      mem[i] = 64'h0000000000000000;
+    end
   end
 
   // Read logic

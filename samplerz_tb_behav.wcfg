@@ -13,13 +13,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2,514.333 ns"></ZoomStartTime>
-      <ZoomEndTime time="2,725.134 ns"></ZoomEndTime>
-      <Cursor1Time time="2,690.000 ns"></Cursor1Time>
+      <ZoomStartTime time="723.262 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,055.348 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="207"></NameColumnWidth>
-      <ValueColumnWidth column_width="67"></ValueColumnWidth>
+      <NameColumnWidth column_width="202"></NameColumnWidth>
+      <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="8" />
    <wvobject type="group" fp_name="group12">
@@ -33,6 +33,10 @@
       <wvobject type="logic" fp_name="/samplerz_tb/rst_n">
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/src0">
          <obj_property name="ElementShortName">src0[12:0]</obj_property>
@@ -49,18 +53,35 @@
          <obj_property name="ObjectShortName">dst[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/rst">
-         <obj_property name="ElementShortName">rst</obj_property>
-         <obj_property name="ObjectShortName">rst</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/task_type">
          <obj_property name="ElementShortName">task_type[3:0]</obj_property>
          <obj_property name="ObjectShortName">task_type[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/result">
+         <obj_property name="ElementShortName">result[63:0]</obj_property>
+         <obj_property name="ObjectShortName">result[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/fpr_result">
+         <obj_property name="ElementShortName">fpr_result[63:0]</obj_property>
+         <obj_property name="ObjectShortName">fpr_result[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group81">
       <obj_property name="label">task</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/task_itf/start">
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
@@ -78,7 +99,6 @@
    <wvobject type="group" fp_name="group82">
       <obj_property name="label">mem rd</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/mem_rd/en">
          <obj_property name="ElementShortName">en</obj_property>
          <obj_property name="ObjectShortName">en</obj_property>
@@ -95,18 +115,6 @@
    <wvobject type="group" fp_name="group83">
       <obj_property name="label">mem wr</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/samplerz_tb/mem_wr/en">
-         <obj_property name="ElementShortName">en</obj_property>
-         <obj_property name="ObjectShortName">en</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/mem_wr/addr">
-         <obj_property name="ElementShortName">addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">addr[12:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/mem_wr/data">
-         <obj_property name="ElementShortName">data[255:0]</obj_property>
-         <obj_property name="ObjectShortName">data[255:0]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group13">
       <obj_property name="label">samplerz</obj_property>
@@ -120,18 +128,29 @@
          <obj_property name="ElementShortName">rst_n</obj_property>
          <obj_property name="ObjectShortName">rst_n</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/task_type">
-         <obj_property name="ElementShortName">task_type[3:0]</obj_property>
-         <obj_property name="ObjectShortName">task_type[3:0]</obj_property>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/restart">
-         <obj_property name="ElementShortName">restart</obj_property>
-         <obj_property name="ObjectShortName">restart</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/result">
+         <obj_property name="ElementShortName">result[63:0]</obj_property>
+         <obj_property name="ObjectShortName">result[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/dst_addr">
-         <obj_property name="ElementShortName">dst_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">dst_addr[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/fpr_result">
+         <obj_property name="ElementShortName">fpr_result[63:0]</obj_property>
+         <obj_property name="ObjectShortName">fpr_result[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/src1_addr">
          <obj_property name="ElementShortName">src1_addr[12:0]</obj_property>
@@ -409,18 +428,6 @@
          <obj_property name="ElementShortName">prng_data[511:0]</obj_property>
          <obj_property name="ObjectShortName">prng_data[511:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/SAMPLERZ_INITI">
-         <obj_property name="ElementShortName">SAMPLERZ_INITI[3:0]</obj_property>
-         <obj_property name="ObjectShortName">SAMPLERZ_INITI[3:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/SAMPLERZ_512">
-         <obj_property name="ElementShortName">SAMPLERZ_512[3:0]</obj_property>
-         <obj_property name="ObjectShortName">SAMPLERZ_512[3:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/SAMPLERZ_1024">
-         <obj_property name="ElementShortName">SAMPLERZ_1024[3:0]</obj_property>
-         <obj_property name="ObjectShortName">SAMPLERZ_1024[3:0]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group417">
       <obj_property name="label">pre samp</obj_property>
@@ -436,10 +443,6 @@
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/i_pre_samp/start">
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/i_pre_samp/task_type">
-         <obj_property name="ElementShortName">task_type[3:0]</obj_property>
-         <obj_property name="ObjectShortName">task_type[3:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/i_pre_samp/r_en">
          <obj_property name="ElementShortName">r_en</obj_property>
@@ -687,7 +690,6 @@
    <wvobject type="group" fp_name="group129">
       <obj_property name="label">bram</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/bram_inst/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -699,7 +701,6 @@
       <wvobject type="array" fp_name="/samplerz_tb/bram_inst/mem">
          <obj_property name="ElementShortName">mem[0:2047][255:0]</obj_property>
          <obj_property name="ObjectShortName">mem[0:2047][255:0]</obj_property>
-         <obj_property name="isExpanded"></obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
