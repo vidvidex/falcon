@@ -26,8 +26,8 @@ module control_unit#(
 
   localparam int BRAM1024_COUNT = 4; // Number of 1024x15 BRAM banks
   localparam int BRAM2048_COUNT = 2; // Number of 2048x15 BRAM banks
-  localparam int BRAM5632_COUNT = 1; // Number of 5632x15 BRAM banks
-  localparam int BRAM_BANK_COUNT = BRAM1024_COUNT + BRAM2048_COUNT + BRAM5632_COUNT;
+  localparam int BRAM6144_COUNT = 1; // Number of 6144x15 BRAM banks
+  localparam int BRAM_BANK_COUNT = BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT;
   localparam int INSTRUCTION_COUNT = 16;
 
   logic debug_BRAM_READ;
@@ -120,21 +120,21 @@ module control_unit#(
     end
   endgenerate
 
-  genvar i_bram5632;
+  genvar i_bram6144;
   generate
-    for (i_bram5632 = BRAM1024_COUNT + BRAM2048_COUNT; i_bram5632 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM5632_COUNT; i_bram5632++) begin : bram5632_bank
-      bram_5632x128 bram_5632x128_inst (
-                      .addra(bram_addr_a[i_bram5632]),
+    for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
+      bram_6144x128 bram_6144x128_inst (
+                      .addra(bram_addr_a[i_bram6144]),
                       .clka(clk),
-                      .dina(bram_din_a[i_bram5632]),
-                      .douta(bram_dout_a[i_bram5632]),
-                      .wea(bram_we_a[i_bram5632]),
+                      .dina(bram_din_a[i_bram6144]),
+                      .douta(bram_dout_a[i_bram6144]),
+                      .wea(bram_we_a[i_bram6144]),
 
-                      .addrb(bram_addr_b[i_bram5632]),
+                      .addrb(bram_addr_b[i_bram6144]),
                       .clkb(clk),
-                      .dinb(bram_din_b[i_bram5632]),
-                      .doutb(bram_dout_b[i_bram5632]),
-                      .web(bram_we_b[i_bram5632])
+                      .dinb(bram_din_b[i_bram6144]),
+                      .doutb(bram_dout_b[i_bram6144]),
+                      .web(bram_we_b[i_bram6144])
                     );
     end
   endgenerate
