@@ -7,7 +7,7 @@
 
 `define BRAM1024_ADDR_WIDTH $clog2(1024)
 `define BRAM2048_ADDR_WIDTH $clog2(2048)
-`define BRAM5632_ADDR_WIDTH $clog2(5632)
+`define BRAM6144_ADDR_WIDTH $clog2(6144)
 
 // IEEE 754 double precision:
 `define SIGNIFICANT_BITS 52
