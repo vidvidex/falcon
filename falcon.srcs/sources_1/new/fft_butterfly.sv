@@ -16,7 +16,7 @@
 module fft_butterfly(
     input clk,
     input valid_in, // Are inputs valid
-    input mode, // 0  = FFT; 1 = IFFT
+    input mode, // 0 = FFT; 1 = IFFT
     input [63:0] a_in_real,
     input [63:0] a_in_imag,
     input [63:0] b_in_real,

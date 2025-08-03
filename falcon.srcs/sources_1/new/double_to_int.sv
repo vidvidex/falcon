@@ -19,7 +19,7 @@ module double_to_int (
   logic [31:0] result_unsigned;
 
   always_comb begin
-    sign     = double_in[63];
+    sign = double_in[63];
     exponent = double_in[62:52];
     fraction = double_in[51:0];
 
