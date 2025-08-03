@@ -15,7 +15,6 @@ import falconsoar_pkg::*;
 
   always #5 clk = ~clk;
 
-
   exec_operator_if task_itf();
   mem_inst_if mem_rd();
   mem_inst_if mem_wr();

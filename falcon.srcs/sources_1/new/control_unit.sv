@@ -361,8 +361,8 @@ module control_unit#(
       btf_scale_factor = fft_btf_scale_factor;
       btf_tw_addr = fft_btf_tw_addr;
 
-      fft_btf_a_out_real = btf_a_out_real ;
-      fft_btf_a_out_imag =  btf_a_out_imag ;
+      fft_btf_a_out_real = btf_a_out_real;
+      fft_btf_a_out_imag =  btf_a_out_imag;
       fft_btf_b_out_real = btf_b_out_real;
       fft_btf_b_out_imag = btf_b_out_imag;
       fft_btf_valid_out = btf_valid_out;

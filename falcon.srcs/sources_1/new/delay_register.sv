@@ -3,7 +3,7 @@
 
 (* keep_hierarchy = `KEEP_HIERARCHY *)
 module delay_register #(
-    BITWIDTH    = 8,
+    BITWIDTH = 8,
     CYCLE_COUNT = 1
   )
   (

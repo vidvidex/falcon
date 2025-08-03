@@ -101,7 +101,7 @@ module shake256_absorb(
         rst_rate_counter = 0;
         call_keccak_f1600 = 0;
       end
-      CONSUME_DELIMITED_SUFFIX: begin // Visited when messageLen was < rate in ABSORB ; Stay in this state till {rate_counter<=rateInBytes-8}. delimitedSuffix_used is used in this state.
+      CONSUME_DELIMITED_SUFFIX: begin // Visited when messageLen was < rate in ABSORB; Stay in this state till {rate_counter<=rateInBytes-8}. delimitedSuffix_used is used in this state.
         rst_rate_counter = 0;
         call_keccak_f1600 = 0;
       end

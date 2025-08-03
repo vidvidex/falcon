@@ -7,16 +7,16 @@
     package sample_pkg;
 
         parameter bit [4:0] SAMPLERZ_INITI = 4'b0000;
-        parameter bit [4:0] SAMPLERZ_512   = 4'b0001;
-        parameter bit [4:0] SAMPLERZ_1024  = 4'b0010;
+        parameter bit [4:0] SAMPLERZ_512 = 4'b0001;
+        parameter bit [4:0] SAMPLERZ_1024 = 4'b0010;
 
-        parameter bit [63:0] FPR_HALF            = 64'd0460_2678_8191_7264_6912;
-        parameter bit [63:0] SIGMA_MIN_512       = 64'd0460_8433_6705_3390_5013;
-        parameter bit [63:0] SIGMA_MIN_1024      = 64'd0460_8525_7540_0262_2308;
+        parameter bit [63:0] FPR_HALF = 64'd0460_2678_8191_7264_6912;
+        parameter bit [63:0] SIGMA_MIN_512 = 64'd0460_8433_6705_3390_5013;
+        parameter bit [63:0] SIGMA_MIN_1024 = 64'd0460_8525_7540_0262_2308;
         parameter bit [63:0] HALF_ISIGMA_MAX_SQR = 64'd0459_4603_5065_1372_2306;
-        parameter bit [63:0] LN2                 = 64'd0460_4418_5343_1344_1775;
-        parameter bit [63:0] ILN2                = 64'd0460_9176_1400_2120_3710;
-        parameter bit [63:0] TWOPOW63            = 64'd0489_0909_1953_2435_8656;
+        parameter bit [63:0] LN2 = 64'd0460_4418_5343_1344_1775;
+        parameter bit [63:0] ILN2 = 64'd0460_9176_1400_2120_3710;
+        parameter bit [63:0] TWOPOW63 = 64'd0489_0909_1953_2435_8656;
 
         parameter bit [71:0] RCDT [18] = '{72'd30_2468_6241_1230_0491_3666,
                                            72'd15_6474_2784_4800_9195_4050,

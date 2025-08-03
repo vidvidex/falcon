@@ -5,7 +5,7 @@
 
 // performs a complex multiplication
 // i.e.: (a_real + j*a_imag) * (b_real + j*b_imag) =
-//       = (a_real*b_real - a_imag*b_imag) + j(a_imag*b_real + a_real*b_imag)
+// = (a_real*b_real - a_imag*b_imag) + j(a_imag*b_real + a_real*b_imag)
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)

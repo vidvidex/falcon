@@ -484,10 +484,10 @@ module ntt#(
 
     // Reset/initialize. We do it like this and not with the reset signal because at that point "mode" might not be set yet
     if (state != NTT && state != NTT_WAIT_FOR_MULTIPLY) begin
-      stage       = mode == 1'b0 ? 1 : N;
-      stride      = mode == 1'b0 ? N >> 1 : 1;
+      stage = mode == 1'b0 ? 1 : N;
+      stride = mode == 1'b0 ? N >> 1 : 1;
       counter_max = mode == 1'b0 ? N >> 1 : 1;
-      counter     = mode == 1'b0 ? 0 : 1;
+      counter = mode == 1'b0 ? 0 : 1;
       butterfly = 1;
       group = 0;
       i = 0;
