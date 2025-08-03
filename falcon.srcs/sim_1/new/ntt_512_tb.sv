@@ -14,41 +14,48 @@ module ntt_512_tb;
 
   logic signed[14:0] expected_polynomial [N];
 
-  logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr1;
-  logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data1;
-  logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr2;
-  logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data2;
-  bram_512x128_preinit_for_ntt_tb input_bram (
-                                    .clka(clk),
-                                    .addra(input_bram_addr1),
-                                    .dina(128'b0),
-                                    .wea(1'b0),
-                                    .douta(input_bram_data1),
+  logic finished, finished_i, finished_ii;
+  int index;
 
-                                    .clkb(clk),
-                                    .addrb(input_bram_addr2),
-                                    .dinb(128'b0),
-                                    .web(1'b0),
-                                    .doutb(input_bram_data2)
-                                  );
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_dout_a;
+  logic bram1_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_b, bram1_dout_b;
+  logic bram1_we_b;
+  bram_6144x128_preinit_for_ntt_tb bram1 (
+                                     .clka(clk),
+                                     .addra(bram1_addr_a),
+                                     .dina(bram1_din_a),
+                                     .wea(bram1_we_a),
+                                     .douta(bram1_dout_a),
 
-  logic [`NTT_BRAM_ADDR_WIDTH-1:0] output_bram_addr1;
-  logic signed [`NTT_BRAM_DATA_WIDTH-1:0] output_bram_data1;
-  logic output_bram_we1;
-  logic [`NTT_BRAM_ADDR_WIDTH-1:0] output_bram_addr2;
-  logic signed [`NTT_BRAM_DATA_WIDTH-1:0] output_bram_data2;
-  logic output_bram_we2;
-  bram_1024x15 output_bram (
-                 .clka(clk),
-                 .addra(output_bram_addr1),
-                 .dina(output_bram_data1),
-                 .wea(output_bram_we1),
+                                     .clkb(clk),
+                                     .addrb(bram1_addr_b),
+                                     .dinb(bram1_din_b),
+                                     .web(bram1_we_b),
+                                     .doutb(bram1_dout_b)
+                                   );
 
-                 .clkb(clk),
-                 .addrb(output_bram_addr2),
-                 .dinb(output_bram_data2),
-                 .web(output_bram_we2)
-               );
+  logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_dout_a;
+  logic bram2_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_din_b, bram2_dout_b;
+  logic bram2_we_b;
+  bram_6144x128 bram2 (
+                  .clka(clk),
+                  .addra(bram2_addr_a),
+                  .dina(bram2_din_a),
+                  .douta(bram2_dout_a),
+                  .wea(bram2_we_a),
+
+                  .clkb(clk),
+                  .addrb(bram2_addr_b),
+                  .dinb(bram2_din_b),
+                  .doutb(bram2_dout_b),
+                  .web(bram2_we_b)
+                );
 
   ntt #(
         .N(N)
@@ -59,34 +66,44 @@ module ntt_512_tb;
         .start(start),
         .done(done),
 
-        .input_bram_addr1(input_bram_addr1),
-        .input_bram_addr2(input_bram_addr2),
-        .input_bram_data1(input_bram_data1),
-        .input_bram_data2(input_bram_data2),
+        .bram1_addr_a(bram1_addr_a),
+        .bram1_din_a(bram1_din_a),
+        .bram1_dout_a(bram1_dout_a),
+        .bram1_we_a(bram1_we_a),
+        .bram1_addr_b(bram1_addr_b),
+        .bram1_din_b(bram1_din_b),
+        .bram1_dout_b(bram1_dout_b),
+        .bram1_we_b(bram1_we_b),
 
-        .output_bram_addr1(output_bram_addr1),
-        .output_bram_addr2(output_bram_addr2),
-        .output_bram_data1(output_bram_data1),
-        .output_bram_data2(output_bram_data2),
-        .output_bram_we1(output_bram_we1),
-        .output_bram_we2(output_bram_we2)
+        .bram2_addr_a(bram2_addr_a),
+        .bram2_din_a(bram2_din_a),
+        .bram2_dout_a(bram2_dout_a),
+        .bram2_we_a(bram2_we_a),
+        .bram2_addr_b(bram2_addr_b),
+        .bram2_din_b(bram2_din_b),
+        .bram2_dout_b(bram2_dout_b),
+        .bram2_we_b(bram2_we_b)
       );
 
   // Check if result is correct
   always_ff @(posedge clk) begin
-    if(output_bram_we1 === 1) begin
-      if(output_bram_data1 !== expected_polynomial[output_bram_addr1])
-        $fatal(1, "Test failed at index %d. Expected %d, got %d", output_bram_addr1, expected_polynomial[output_bram_addr1], output_bram_data1);
-      if(output_bram_we2 === 1) begin
-        if(output_bram_data2 !== expected_polynomial[output_bram_addr2])
-          $fatal(1, "Test failed at index %d. Expected %d, got %d", output_bram_addr2, expected_polynomial[output_bram_addr2], output_bram_data2);
-      end
+    if(finished_ii === 1) begin
+      if(bram2_dout_a !== expected_polynomial[index])
+        $fatal(1, "Test failed at index %d. Expected %d, got %d", index, expected_polynomial[index], bram2_dout_a);
+      if(bram2_dout_b !== expected_polynomial[index + N/2])
+        $fatal(1, "Test failed at index %d. Expected %d, got %d", index + N/2, expected_polynomial[index + N/2], bram2_dout_b);
     end
+
+    finished_i <= finished;
+    finished_ii <= finished_i;
   end
 
   always #5 clk = ~clk;
 
   initial begin
+    index = -2;
+    finished = 0;
+
     clk = 1;
 
     rst_n = 0;
@@ -103,6 +120,13 @@ module ntt_512_tb;
     // Wait for NTT to finish
     while (!done)
       #10;
+
+    for (int i = 0; i < N/2; i++) begin
+      bram2_addr_a = i;
+      bram2_addr_b = i + N/2;
+      index++;
+      #10;
+    end
 
     $display("All tests for ntt_512 passed!");
     $finish;

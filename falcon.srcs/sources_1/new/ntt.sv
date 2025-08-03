@@ -6,10 +6,13 @@
 // Implements both NTT and inverse NTT for negative-wrapped convolution.
 // Because we are never going to use both at the same time, we can save resources by reusing the same module.
 //
-// The module reads the input polynomial from a 512x128 BRAM
-// and then uses 2 internal BRAMs to store intermediate results and also the final result.
-// The reason for this is that we have a bunch of 512x128 BRAMs available, since we need them for signing,
-// but they are much more annoying to write back into, because each memory line stores 2 coefficients.
+// Uses 2 BRAMs to store the data. During any stage it will read from one BRAM and write to the other.
+// Stage 1: read from BRAM1, write to BRAM2
+// Stage 2: read from BRAM2, write to BRAM1
+// ... and so on
+//
+// Input is always in BRAM1
+// Output will be either in the BRAM1 or BRAM2 depending on the stage number. For N=512 it will be in BRAM1 and for N=1024 it will be in BRAM2.
 //
 // Forward NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
 // Inverse NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
@@ -30,21 +33,27 @@ module ntt#(
     input logic rst_n,
 
     input logic mode, // 0: NTT, 1: Inverse NTT
-    input logic start, //! Data in input BRAM is valid, NTT can start
+    input logic start,
 
-    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr1, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
-    output logic [`BRAM_ADDR_WIDTH-1:0] input_bram_addr2, //! Address for input BRAM. Module uses this to select which coefficient to read from input BRAM
-    input logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data1, //! Data that is read from input_bram[input_bram_addr1]
-    input logic signed [`BRAM_DATA_WIDTH-1:0] input_bram_data2, //! Data that is read from input_bram[input_bram_addr2]
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a,
+    output logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a,
+    input logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a,
+    output logic bram1_we_a,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b,
+    output logic [`BRAM_DATA_WIDTH-1:0] bram1_din_b,
+    input logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_b,
+    output logic bram1_we_b,
 
-    output logic [`NTT_BRAM_ADDR_WIDTH-1:0] output_bram_addr1, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
-    output logic [`NTT_BRAM_ADDR_WIDTH-1:0] output_bram_addr2, //! Address for output BRAM. Module uses this to select where to write the coefficient to output BRAM
-    output logic signed [`NTT_BRAM_DATA_WIDTH-1:0] output_bram_data1, //! Data that is written to output_bram[output_bram_addr1]
-    output logic signed [`NTT_BRAM_DATA_WIDTH-1:0] output_bram_data2, //! Data that is written to output_bram[output_bram_addr2]
-    output logic output_bram_we1, //! Write enable for output BRAM
-    output logic output_bram_we2, //! Write enable for output BRAM
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a,
+    output logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a,
+    input logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_a,
+    output logic bram2_we_a,
+    output logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b,
+    output logic [`BRAM_DATA_WIDTH-1:0] bram2_din_b,
+    input logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_b,
+    output logic bram2_we_b,
 
-    output logic done //! NTT is done and data in output BRAM is valid
+    output logic done
   );
 
   logic [$clog2(N)-1:0] stage_counter; // Incrementing counter that only counts at which stage we are (0..N-1)
@@ -67,16 +76,10 @@ module ntt#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
   delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mod_mult_index1_in_delay(.clk(clk), .in(mod_mult_index1_in), .out(mod_mult_index1_in_delayed));
   delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mod_mult_index2_in_delay(.clk(clk), .in(mod_mult_index2_in), .out(mod_mult_index2_in_delayed));
-  logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM (bank1/bank2/output_bram). It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
-
-  // Signals for BRAM banks
-  logic [`NTT_BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_b, bram2_addr_a, bram2_addr_b;
-  logic signed [`NTT_BRAM_DATA_WIDTH-1:0] bram1_data_in_a, bram1_data_in_b, bram2_data_in_a, bram2_data_in_b;
-  logic signed [`NTT_BRAM_DATA_WIDTH-1:0] bram1_data_out_a, bram1_data_out_b, bram2_data_out_a, bram2_data_out_b;
-  logic bram1_we_a, bram1_we_b, bram2_we_a, bram2_we_b;
+  logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM. It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
 
   // "logical" signals that get assigned to different BRAM banks depending on the stage
-  // These are routed to either input_bram, output_bram, bram_bank1 or bram_bank2
+  // These are routed to either bram1, bram2
   logic [$clog2(N)-1:0] read_addr1, read_addr2, write_addr1, write_addr2;
   logic signed [14:0] read_data1, read_data2, write_data1, write_data2;
   logic write_enable1, write_enable2;
@@ -85,12 +88,12 @@ module ntt#(
   logic signed [14:0] scale_data1_in, scale_data2_in, scale_mod_mult1, scale_mod_mult2;
   logic signed [28:0] scale_a_times_b1, scale_a_times_b2;
   logic [$clog2(N)-1:0] scale_addr1_in, scale_addr2_in, scale_addr1_1, scale_addr2_1, scale_addr1_out, scale_addr2_out;
-  logic scale_we1_in, scale_we2_in, scale_we1_1, scale_we2_1, scale_we1_out, scale_we2_out;
+  logic scale_we_a_in, scale_we_b_in, scale_we_a_1, scale_we_b_1, scale_we_a_out, scale_we_b_out;
   logic signed [14:0] scale_temp1, scale_temp2;
 
-  logic input_bram1_read_part, input_bram2_read_part; // 0 = read from top half of the BRAM, 1 = read from bottom half
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) input_bram1_read_part_delay(.clk(clk), .in(read_addr1 >= N/2), .out(input_bram1_read_part));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) input_bram2_read_part_delay(.clk(clk), .in(read_addr2 >= N/2), .out(input_bram2_read_part));
+  logic bram11_read_part, bram12_read_part; // 0 = read from top half of the BRAM, 1 = read from bottom half
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) bram11_read_part_delay(.clk(clk), .in(read_addr1 >= N/2), .out(bram11_read_part));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) bram12_read_part_delay(.clk(clk), .in(read_addr2 >= N/2), .out(bram12_read_part));
 
   // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024
   // R = pow(2, 16, 12289) (constant for Montgomery multiplication), if not using Montgomery reduction R=1
@@ -109,9 +112,7 @@ module ntt#(
           } state_t;
   state_t state, next_state;
 
-  ntt_twiddle_factor_rom #(
-                           .N(N)
-                         ) twiddle_rom_ntt (
+  ntt_twiddle_factor_rom twiddle_rom_ntt (
                            .clk(clk),
                            .mode(mode),
                            .addr(twiddle_address),
@@ -119,34 +120,6 @@ module ntt#(
                          );
 
   assign twiddle_address = mode == 1'b0 ? stage + group:  (stage >> 1) + group;
-
-  bram_1024x15 bram_bank1 (
-                 .clka(clk),
-                 .addra(bram1_addr_a),
-                 .dina(bram1_data_in_a),
-                 .wea(bram1_we_a),
-                 .douta(bram1_data_out_a),
-
-                 .clkb(clk),
-                 .addrb(bram1_addr_b),
-                 .dinb(bram1_data_in_b),
-                 .web(bram1_we_b),
-                 .doutb(bram1_data_out_b)
-               );
-
-  bram_1024x15 bram_bank2 (
-                 .clka(clk),
-                 .addra(bram2_addr_a),
-                 .dina(bram2_data_in_a),
-                 .wea(bram2_we_a),
-                 .douta(bram2_data_out_a),
-
-                 .clkb(clk),
-                 .addrb(bram2_addr_b),
-                 .dinb(bram2_data_in_b),
-                 .web(bram2_we_b),
-                 .doutb(bram2_data_out_b)
-               );
 
   mod_mult_ntt #(
                  .N(N)
@@ -228,8 +201,8 @@ module ntt#(
     scale_a_times_b2 <= scale_data2_in * intt_scale_factor;
     scale_addr1_1 <= scale_addr1_in;
     scale_addr2_1 <= scale_addr2_in;
-    scale_we1_1 <= scale_we1_in;
-    scale_we2_1 <= scale_we2_in;
+    scale_we_a_1 <= scale_we_a_in;
+    scale_we_b_1 <= scale_we_b_in;
 
     // Stage 2: Modulo 12289
     scale_temp1 = scale_a_times_b1 % 12289;
@@ -238,8 +211,8 @@ module ntt#(
     scale_mod_mult2 <= scale_temp2 < 0 ? scale_temp2 + 12289 : scale_temp2; // Make sure the result is positive
     scale_addr1_out <= scale_addr1_1;
     scale_addr2_out <= scale_addr2_1;
-    scale_we1_out <= scale_we1_1;
-    scale_we2_out <= scale_we2_1;
+    scale_we_a_out <= scale_we_a_1;
+    scale_we_b_out <= scale_we_b_1;
   end
 
   // Output decision
@@ -251,7 +224,7 @@ module ntt#(
       if(mode == 1'b0)  // For NTT we just set done to 1
         done = 1'b1;
       else begin  // For INTT we set done to 1 when the scaling pipeline is done
-        if(scale_we1_out == 1'b0 && scale_we2_out == 1'b0)
+        if(scale_we_a_out == 1'b0 && scale_we_b_out == 1'b0)
           done = 1'b1;
         else
           done = 1'b0;
@@ -260,127 +233,103 @@ module ntt#(
   end
 
   // Determine which signals are used to read/write to the BRAMs
-  // stage 0: read from input_bram, write to bank1
-  // stage 1: read from bank1, write to bank2
-  // stage 2: read from bank2, write to bank1
+  // stage 0: read from bram1, write to bank2
+  // stage 1: read from bank2, write to bank1
+  // stage 2: read from bank1, write to bank2
   // ...
-  // stage log2(N): read from bank1/bank2, write to output_bram
+  // for N=512 the final result is in bank1, for N=1024 it is in bank2
   always_comb begin
 
-    // Default values
-    output_bram_addr1 = 0;
-    output_bram_data1 = 0;
-    output_bram_we1 = 0;
-
-    output_bram_addr2 = 0;
-    output_bram_data2 = 0;
-    output_bram_we2 = 0;
-
-    input_bram_addr1 = 0;
-    input_bram_addr2 = 0;
-
     bram1_addr_a = 0;
-    bram1_data_in_a = 0;
+    bram1_din_a = 0;
     bram1_we_a = 0;
     bram1_addr_b = 0;
-    bram1_data_in_b = 0;
+    bram1_din_b = 0;
     bram1_we_b = 0;
 
     bram2_addr_a = 0;
-    bram2_data_in_a = 0;
+    bram2_din_a = 0;
     bram2_we_a = 0;
     bram2_addr_b = 0;
-    bram2_data_in_b = 0;
+    bram2_din_b = 0;
     bram2_we_b = 0;
 
     scale_data1_in = 0;
     scale_data2_in = 0;
     scale_addr1_in = 0;
     scale_addr2_in = 0;
-    scale_we1_in = 0;
-    scale_we2_in = 0;
+    scale_we_a_in = 0;
+    scale_we_b_in = 0;
 
-    if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
-      input_bram_addr1 = read_addr1 % (N/2);
-      input_bram_addr2 = read_addr2 % (N/2);
+    if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank1
+      bram1_addr_a = read_addr1;
+      bram1_addr_b = read_addr2;
     end
-    else begin // Read from bank1/bank2 when stage_counter > 0
-      if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank2
-        bram2_addr_a = read_addr1;
-        bram2_addr_b = read_addr2;
-      end
-      else begin       // When stage_counter is odd we read from bank1
-        bram1_addr_a = read_addr1;
-        bram1_addr_b = read_addr2;
-      end
+    else begin       // When stage_counter is odd we read from bank2
+      bram2_addr_a = read_addr1;
+      bram2_addr_b = read_addr2;
     end
 
-    if(stage_counter == $clog2(N)-1 || scale_we1_out == 1'b1 || scale_we2_out == 1'b1) begin      // Write to output_bram when stage_counter == log2(N)-1
-
-      if(mode == 1'b0) begin        // For NTT we write directly to output_bram
-        output_bram_addr1 = write_addr1;
-        output_bram_data1 = write_data1;
-        output_bram_we1 = write_enable1;
-
-        output_bram_addr2 = write_addr2;
-        output_bram_data2 = write_data2;
-        output_bram_we2 = write_enable2;
+    if(stage_counter == $clog2(N)-1 || scale_we_a_out == 1'b1 || scale_we_b_out == 1'b1) begin
+      if(mode == 1'b0) begin        // For NTT we write directly to bram2
+        bram2_addr_a = write_addr1;
+        bram2_din_a = write_data1;
+        bram2_we_a = write_enable1;
+        bram2_addr_b = write_addr2;
+        bram2_din_b = write_data2;
+        bram2_we_b = write_enable2;
       end
       else begin // For INTT we go through scaling pipeline
-
         // Input into scaling pipeline
         scale_data1_in = write_data1;
         scale_data2_in = write_data2;
         scale_addr1_in = write_addr1;
         scale_addr2_in = write_addr2;
-        scale_we1_in = write_enable1;
-        scale_we2_in = write_enable2;
+        scale_we_a_in = write_enable1;
+        scale_we_b_in = write_enable2;
 
         // Output from scaling pipeline
-        output_bram_addr1 = scale_addr1_out;
-        output_bram_data1 = scale_mod_mult1;
-        output_bram_we1 = scale_we1_out;
-
-        output_bram_addr2 = scale_addr2_out;
-        output_bram_data2 = scale_mod_mult2;
-        output_bram_we2 = scale_we2_out;
+        bram2_addr_a = scale_addr1_out;
+        bram2_din_a = scale_mod_mult1;
+        bram2_we_a = scale_we_a_out;
+        bram2_addr_b = scale_addr2_out;
+        bram2_din_b = scale_mod_mult2;
+        bram2_we_b = scale_we_b_out;
       end
     end
-    else begin  // Write to bank1/bank2 when stage_counter > 0
-      if(stage_counter % 2 == 0) begin        // When stage_counter is even we write to bank1
-        bram1_addr_a = write_addr1;
-        bram1_data_in_a = write_data1;
-        bram1_we_a = write_enable1;
-
-        bram1_addr_b = write_addr2;
-        bram1_data_in_b = write_data2;
-        bram1_we_b = write_enable2;
-      end
-      else begin          // When stage_counter is odd we write to bank2
+    else begin
+      if(stage_counter % 2 == 0) begin        // When stage_counter is even we write to bank2
         bram2_addr_a = write_addr1;
-        bram2_data_in_a = write_data1;
+        bram2_din_a = write_data1;
         bram2_we_a = write_enable1;
-
         bram2_addr_b = write_addr2;
-        bram2_data_in_b = write_data2;
+        bram2_din_b = write_data2;
         bram2_we_b = write_enable2;
+      end
+      else begin          // When stage_counter is odd we write to bank1
+        bram1_addr_a = write_addr1;
+        bram1_din_a = write_data1;
+        bram1_we_a = write_enable1;
+        bram1_addr_b = write_addr2;
+        bram1_din_b = write_data2;
+        bram1_we_b = write_enable2;
       end
     end
   end
 
   always_ff @(posedge clk) begin
-    if(stage_counter == 0 && state != IDLE) begin  // Read from input_bram when stage_counter == 0
-      read_data1 <= input_bram1_read_part ? input_bram_data1[14:0] : input_bram_data1[64+14:64];
-      read_data2 <= input_bram2_read_part ? input_bram_data2[14:0] : input_bram_data2[64+14:64];
+    if(stage_counter == 0 && state != IDLE) begin  // Read from bram1 when stage_counter == 0
+      read_data1 <= bram11_read_part ? bram1_dout_a[14:0] : bram1_dout_a[64+14:64];
+      read_data2 <= bram12_read_part ? bram1_dout_b[14:0] : bram1_dout_b[64+14:64];
     end
     else begin // Read from bank1/bank2 when stage_counter > 0
-      if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank2
-        read_data1 <= bram2_data_out_a;
-        read_data2 <= bram2_data_out_b;
+      if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank1
+        read_data1 <= bram1_dout_a;
+        read_data2 <= bram1_dout_b;
       end
-      else begin       // When stage_counter is odd we read from bank1
-        read_data1 <= bram1_data_out_a;
-        read_data2 <= bram1_data_out_b;
+      else begin       // When stage_counter is odd we read from bank2
+        read_data1 <= bram2_dout_a;
+        read_data2 <= bram2_dout_b;
       end
     end
   end
@@ -394,9 +343,9 @@ module ntt#(
   end
 
   always_ff @(posedge clk) begin
-    if(rst_n == 1'b0) 
+    if(rst_n == 1'b0)
       bram_write_complete <= 0;
-    else 
+    else
       bram_write_complete <= mod_mult_last;
   end
 

@@ -663,51 +663,51 @@
             <obj_property name="ElementShortName">ntt_mode</obj_property>
             <obj_property name="ObjectShortName">ntt_mode</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_addr1">
-            <obj_property name="ElementShortName">ntt_input_bram_addr1[8:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_input_bram_addr1[8:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram1_addr_a">
+            <obj_property name="ElementShortName">ntt_bram1_addr_a[8:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram1_addr_a[8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_data1">
-            <obj_property name="ElementShortName">ntt_input_bram_data1[127:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_input_bram_data1[127:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram1_dout_a">
+            <obj_property name="ElementShortName">ntt_bram1_dout_a[127:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram1_dout_a[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_addr2">
-            <obj_property name="ElementShortName">ntt_input_bram_addr2[8:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_input_bram_addr2[8:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram1_addr_b">
+            <obj_property name="ElementShortName">ntt_bram1_addr_b[8:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram1_addr_b[8:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_input_bram_data2">
-            <obj_property name="ElementShortName">ntt_input_bram_data2[127:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_input_bram_data2[127:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram1_dout_b">
+            <obj_property name="ElementShortName">ntt_bram1_dout_b[127:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram1_dout_b[127:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_addr1">
-            <obj_property name="ElementShortName">ntt_output_bram_addr1[9:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_output_bram_addr1[9:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram2_addr_a">
+            <obj_property name="ElementShortName">ntt_bram2_addr_a[9:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram2_addr_a[9:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_data1">
-            <obj_property name="ElementShortName">ntt_output_bram_data1[14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_output_bram_data1[14:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram2_din_a">
+            <obj_property name="ElementShortName">ntt_bram2_din_a[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram2_din_a[14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_we1">
-            <obj_property name="ElementShortName">ntt_output_bram_we1</obj_property>
-            <obj_property name="ObjectShortName">ntt_output_bram_we1</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_bram2_we_a">
+            <obj_property name="ElementShortName">ntt_bram2_we_a</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram2_we_a</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_addr2">
-            <obj_property name="ElementShortName">ntt_output_bram_addr2[9:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_output_bram_addr2[9:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram2_addr_b">
+            <obj_property name="ElementShortName">ntt_bram2_addr_b[9:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram2_addr_b[9:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_data2">
-            <obj_property name="ElementShortName">ntt_output_bram_data2[14:0]</obj_property>
-            <obj_property name="ObjectShortName">ntt_output_bram_data2[14:0]</obj_property>
+         <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/ntt_bram2_din_b">
+            <obj_property name="ElementShortName">ntt_bram2_din_b[14:0]</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram2_din_b[14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_output_bram_we2">
-            <obj_property name="ElementShortName">ntt_output_bram_we2</obj_property>
-            <obj_property name="ObjectShortName">ntt_output_bram_we2</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_bram2_we_b">
+            <obj_property name="ElementShortName">ntt_bram2_we_b</obj_property>
+            <obj_property name="ObjectShortName">ntt_bram2_we_b</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/ntt_done">
             <obj_property name="ElementShortName">ntt_done</obj_property>
