@@ -422,16 +422,16 @@ module control_unit#(
 
   // logic ntt_start, ntt_start_i;
   // logic ntt_mode;
-  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr1;
-  // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_data1;
-  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr2;
-  // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_data2;
-  // logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr1;
-  // logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_output_bram_data1;
-  // logic ntt_output_bram_we1;
-  // logic [`NTT_BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr2;
-  // logic [`NTT_BRAM_DATA_WIDTH-1:0] ntt_output_bram_data2;
-  // logic ntt_output_bram_we2;
+  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr_a;
+  // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_dout_a;
+  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr_b;
+  // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_dout_b;
+  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr_a;
+  // logic [`BRAM_DATA_WIDTH-1:0] ntt_output_bram_data_a;
+  // logic ntt_output_bram_we_a;
+  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr_b;
+  // logic [`BRAM_DATA_WIDTH-1:0] ntt_output_bram_data_b;
+  // logic ntt_output_bram_we_b;
   // logic ntt_done;
   // ntt #(
   //       .N(N)
@@ -441,25 +441,25 @@ module control_unit#(
   //       .start(ntt_start && !ntt_start_i),
   //       .mode(ntt_mode),
 
-  //       .input_bram_addr1(ntt_input_bram_addr1),
-  //       .input_bram_data1(ntt_input_bram_data1),
-  //       .input_bram_addr2(ntt_input_bram_addr2),
-  //       .input_bram_data2(ntt_input_bram_data2),
+  //       .input_bram_addr_a(ntt_input_bram_addr_a),
+  //       .input_bram_dout_a(ntt_input_bram_dout_a),
+  //       .input_bram_addr_b(ntt_input_bram_addr_b),
+  //       .input_bram_dout_b(ntt_input_bram_dout_b),
 
-  //       .output_bram_addr1(ntt_output_bram_addr1),
-  //       .output_bram_data1(ntt_output_bram_data1),
-  //       .output_bram_we1(ntt_output_bram_we1),
-  //       .output_bram_addr2(ntt_output_bram_addr2),
-  //       .output_bram_data2(ntt_output_bram_data2),
-  //       .output_bram_we2(ntt_output_bram_we2),
+  //       .output_bram_addr_a(ntt_output_bram_addr_a),
+  //       .output_bram_data_a(ntt_output_bram_data_a),
+  //       .output_bram_we_a(ntt_output_bram_we_a),
+  //       .output_bram_addr_b(ntt_output_bram_addr_b),
+  //       .output_bram_data_b(ntt_output_bram_data_b),
+  //       .output_bram_we_b(ntt_output_bram_we_b),
 
   //       .done(ntt_done)
   //     );
 
   // parameter int MOD_MULT_PARALLEL_OPS_COUNT = 2;
-  // logic [`NTT_BRAM_DATA_WIDTH-1:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
+  // logic [`BRAM_DATA_WIDTH-1:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
   // logic mod_mult_valid_in, mod_mult_valid_in_delayed;
-  // logic [`NTT_BRAM_DATA_WIDTH-1:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
+  // logic [`BRAM_DATA_WIDTH-1:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
   // logic mod_mult_valid_out;
   // mod_mult #(
   //            .N(N),
@@ -478,7 +478,7 @@ module control_unit#(
   // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
 
   // parameter int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
-  // logic [`NTT_BRAM_DATA_WIDTH-1:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
+  // logic [`BRAM_DATA_WIDTH-1:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
   // logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
   // logic sub_normalize_squared_norm_last, sub_normalize_squared_norm_last_delayed;
   // logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
@@ -951,33 +951,33 @@ module control_unit#(
     //     // decompress_output_bram2_data = bram_dout_b[5];
 
     //     // // NTT: input is BRAM1, output is BRAM6 (ntt bram 0)
-    //     // bram_addr_a[1] = ntt_input_bram_addr1;
-    //     // ntt_input_bram_data1 = bram_dout_a[1];
-    //     // bram_addr_b[1] = ntt_input_bram_addr2;
-    //     // ntt_input_bram_data2 = bram_dout_b[1];
+    //     // bram_addr_a[1] = ntt_input_bram_addr_a;
+    //     // ntt_input_bram_dout_a = bram_dout_a[1];
+    //     // bram_addr_b[1] = ntt_input_bram_addr_b;
+    //     // ntt_input_bram_dout_b = bram_dout_b[1];
 
-    //     // ntt_bram_addr_a[0] = ntt_output_bram_addr1;
-    //     // ntt_bram_din_a[0] = ntt_output_bram_data1;
-    //     // ntt_bram_we_a[0] = ntt_output_bram_we1;
-    //     // ntt_bram_addr_b[0] = ntt_output_bram_addr2;
-    //     // ntt_bram_din_b[0] = ntt_output_bram_data2;
-    //     // ntt_bram_we_b[0] = ntt_output_bram_we2;
+    //     // ntt_bram_addr_a[0] = ntt_output_bram_addr_a;
+    //     // ntt_bram_din_a[0] = ntt_output_bram_data_a;
+    //     // ntt_bram_we_a[0] = ntt_output_bram_we_a;
+    //     // ntt_bram_addr_b[0] = ntt_output_bram_addr_b;
+    //     // ntt_bram_din_b[0] = ntt_output_bram_data_b;
+    //     // ntt_bram_we_b[0] = ntt_output_bram_we_b;
 
     //     // instruction_done = ntt_done;  // NTT takes the longest
     //   end
 
     //   NTT_INTT: begin
-    //     // bram_addr_a[bank1] = ntt_input_bram_addr1;
-    //     // ntt_input_bram_data1 = bram_dout_a[bank1];
-    //     // bram_addr_b[bank1] = ntt_input_bram_addr2;
-    //     // ntt_input_bram_data2 = bram_dout_b[bank1];
+    //     // bram_addr_a[bank1] = ntt_input_bram_addr_a;
+    //     // ntt_input_bram_dout_a = bram_dout_a[bank1];
+    //     // bram_addr_b[bank1] = ntt_input_bram_addr_b;
+    //     // ntt_input_bram_dout_b = bram_dout_b[bank1];
 
-    //     // ntt_bram_addr_a[bank2] = ntt_output_bram_addr1;
-    //     // ntt_bram_din_a[bank2] = ntt_output_bram_data1;
-    //     // ntt_bram_we_a[bank2] = ntt_output_bram_we1;
-    //     // ntt_bram_addr_b[bank2] = ntt_output_bram_addr2;
-    //     // ntt_bram_din_b[bank2] = ntt_output_bram_data2;
-    //     // ntt_bram_we_b[bank2] = ntt_output_bram_we2;
+    //     // ntt_bram_addr_a[bank2] = ntt_output_bram_addr_a;
+    //     // ntt_bram_din_a[bank2] = ntt_output_bram_data_a;
+    //     // ntt_bram_we_a[bank2] = ntt_output_bram_we_a;
+    //     // ntt_bram_addr_b[bank2] = ntt_output_bram_addr_b;
+    //     // ntt_bram_din_b[bank2] = ntt_output_bram_data_b;
+    //     // ntt_bram_we_b[bank2] = ntt_output_bram_we_b;
 
     //     // instruction_done = ntt_done;
     //   end
