@@ -189,7 +189,7 @@ module control_unit_verify_tb;
     bank1 = 0;
     address1 = 0;
     #20;
-    if(bram_dout == 128'b1)
+    if(bram_dout == 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff)
       $display("All tests for control_unit_verify passed!");
     else
       $fatal(1, "Test failed! BRAM0[0] = %h", bram_dout);
