@@ -946,8 +946,8 @@ module control_unit#(
 
       sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
       sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
-      sub_normalize_squared_norm_b[0] = bram_dout_a[bank2][64+14:64];
-      sub_normalize_squared_norm_b[1] = bram_dout_b[bank2][64+14:64];
+      sub_normalize_squared_norm_b[0] = bram_dout_a[bank2][14:0];
+      sub_normalize_squared_norm_b[1] = bram_dout_b[bank2][14:0];
       sub_normalize_squared_norm_c[0] = bram_dout_b[bank3][64+14:64];
       sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
 

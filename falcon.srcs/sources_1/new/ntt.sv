@@ -184,8 +184,7 @@ module ntt#(
             next_state = NTT;
       end
       DONE: begin
-        if(done == 1'b1)  // After we've send the done pulse we go back to IDLE
-          next_state = IDLE;
+        next_state = DONE;
       end
       default: begin
         next_state = IDLE;
