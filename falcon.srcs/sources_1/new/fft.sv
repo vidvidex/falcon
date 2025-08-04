@@ -75,7 +75,7 @@ module fft#(
 
   assign btf_mode = mode;
 
-  // scale factor should be 0 always, except on the last stage of INTT, where we should scale (divide) by N-1
+  // scale factor should be 0 always, except on the last stage of IIFFT, where we should scale (divide) by N-1
   always_comb begin
     if (mode == 1'b0 || (mode == 1'b1 && u_2DP != $clog2(N)-2))
       btf_scale_factor = 0;
@@ -89,14 +89,13 @@ module fft#(
   logic butterfly_input_valid;
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_valid_in));
 
-
   delay_register #(.BITWIDTH(4), .CYCLE_COUNT(2)) u_delay(.clk(clk), .in(u), .out(u_2DP));
 
   typedef enum logic [2:0] {
             IDLE,
-            RUN_FFT,  // Run FFT
-            WAIT_FOR_BUTTERFLY, // Wait for the butterfly to output all remaining data
-            DONE  // FFT is done
+            RUN_FFT,
+            WAIT_FOR_BUTTERFLY,
+            DONE
           } state_t;
   state_t state, next_state;
 

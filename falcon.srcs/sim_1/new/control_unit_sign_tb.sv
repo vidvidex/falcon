@@ -42,15 +42,16 @@ module control_unit_sign_tb;
                );
 
   logic [15:0] modules;
-  logic [2:0] bank1, bank2, bank3, bank4;
-  logic [12:0] address1, address2,address3, address4;
+  logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
+  logic [12:0] address1, address2, address3, address4;
   logic mode;
   logic valid;
   logic last;
   logic mul_const_selection;
   logic [3:0] split_merge_size;
+  logic [2:0] decompress_output2;
 
-  assign instruction = {modules, 40'b0, split_merge_size, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 31'b0, decompress_output2, split_merge_size, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank6, bank5, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -59,6 +60,8 @@ module control_unit_sign_tb;
     bank2 = 0;
     bank3 = 0;
     bank4 = 0;
+    bank5 = 0;
+    bank6 = 0;
     address1 = 0;
     address2 = 0;
     address3 = 0;
@@ -68,6 +71,7 @@ module control_unit_sign_tb;
     valid = 0;
     mul_const_selection = 0;
     split_merge_size = 0;
+    decompress_output2 = 0;
 
     clk = 1;
 
@@ -157,8 +161,8 @@ module control_unit_sign_tb;
 
     // Run hash_to_point on salt and message
     modules = 16'b0001_0000_0000_0000; // hash_to_point
-    bank1 = 4;
-    bank2 = 5;
+    bank3 = 4;
+    bank4 = 5;
     #10;
     while (instruction_done !== 1'b1)
       #10;

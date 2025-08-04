@@ -66,7 +66,7 @@ module control_unit#(
   end
 
   logic [INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
-  logic [2:0] bank1, bank2, bank3, bank4;
+  logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
   logic [12:0] addr1, addr2, addr3, addr4;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
@@ -388,116 +388,128 @@ module control_unit#(
     end
   end
 
-  // logic decompress_start, decompress_start_i;
-  // logic [`BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
-  // logic [`BRAM_DATA_WIDTH-1:0] decompress_input_bram_data;
-  // logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
-  // logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram1_data;
-  // logic decompress_output_bram1_we;
-  // logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
-  // logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram2_data;
-  // logic decompress_signature_error, decompress_done;
-  // decompress #(
-  //              .N(N)
-  //            )
-  //            decompress (
-  //              .clk(clk),
-  //              .rst_n(rst_n),
-  //              .start(decompress_start && !decompress_start_i),
+  logic decompress_start, decompress_start_i;
+  logic [`BRAM_ADDR_WIDTH-1:0] decompress_input_bram_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] decompress_input_bram_data;
+  logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram1_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram1_data;
+  logic decompress_output_bram1_we;
+  logic [`BRAM_ADDR_WIDTH-1:0] decompress_output_bram2_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] decompress_output_bram2_data;
+  logic decompress_signature_error, decompress_done;
+  decompress #(
+               .N(N)
+             )
+             decompress (
+               .clk(clk),
+               .rst_n(rst_n),
+               .start(decompress_start && !decompress_start_i),
 
-  //              .input_bram_addr(decompress_input_bram_addr),
-  //              .input_bram_data(decompress_input_bram_data),
+               .input_bram_addr(decompress_input_bram_addr),
+               .input_bram_data(decompress_input_bram_data),
 
-  //              .output_bram1_addr(decompress_output_bram1_addr),
-  //              .output_bram1_data(decompress_output_bram1_data),
-  //              .output_bram1_we(decompress_output_bram1_we),
+               .output_bram1_addr(decompress_output_bram1_addr),
+               .output_bram1_data(decompress_output_bram1_data),
+               .output_bram1_we(decompress_output_bram1_we),
 
-  //              .output_bram2_addr(decompress_output_bram2_addr),
-  //              .output_bram2_data(decompress_output_bram2_data),
+               .output_bram2_addr(decompress_output_bram2_addr),
+               .output_bram2_data(decompress_output_bram2_data),
 
-  //              .signature_error(decompress_signature_error),
-  //              .done(decompress_done)
-  //            );
+               .signature_error(decompress_signature_error),
+               .done(decompress_done)
+             );
 
 
-  // logic ntt_start, ntt_start_i;
-  // logic ntt_mode;
-  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr_a;
-  // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_dout_a;
-  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_input_bram_addr_b;
-  // logic [`BRAM_DATA_WIDTH-1:0] ntt_input_bram_dout_b;
-  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr_a;
-  // logic [`BRAM_DATA_WIDTH-1:0] ntt_output_bram_data_a;
-  // logic ntt_output_bram_we_a;
-  // logic [`BRAM_ADDR_WIDTH-1:0] ntt_output_bram_addr_b;
-  // logic [`BRAM_DATA_WIDTH-1:0] ntt_output_bram_data_b;
-  // logic ntt_output_bram_we_b;
-  // logic ntt_done;
-  // ntt #(
-  //       .N(N)
-  //     )ntt(
-  //       .clk(clk),
-  //       .rst_n(rst_n),
-  //       .start(ntt_start && !ntt_start_i),
-  //       .mode(ntt_mode),
+  logic ntt_start, ntt_start_i;
+  logic ntt_mode;
+  logic [`BRAM_ADDR_WIDTH-1:0] ntt_bram1_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] ntt_bram1_din_a, ntt_bram1_dout_a;
+  logic ntt_bram1_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] ntt_bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] ntt_bram1_din_b, ntt_bram1_dout_b;
+  logic ntt_bram1_we_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] ntt_bram2_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] ntt_bram2_din_a, ntt_bram2_dout_a;
+  logic ntt_bram2_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] ntt_bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] ntt_bram2_din_b, ntt_bram2_dout_b;
+  logic ntt_bram2_we_b;
+  logic ntt_done;
+  ntt #(
+        .N(N)
+      )ntt(
+        .clk(clk),
+        .rst_n(rst_n && !instruction_done), // Reset on instruction_done so it's ready for the next instruction
+        .start(ntt_start && !ntt_start_i),
+        .mode(ntt_mode),
 
-  //       .input_bram_addr_a(ntt_input_bram_addr_a),
-  //       .input_bram_dout_a(ntt_input_bram_dout_a),
-  //       .input_bram_addr_b(ntt_input_bram_addr_b),
-  //       .input_bram_dout_b(ntt_input_bram_dout_b),
+        .bram1_addr_a(ntt_bram1_addr_a),
+        .bram1_din_a(ntt_bram1_din_a),
+        .bram1_dout_a(ntt_bram1_dout_a),
+        .bram1_we_a(ntt_bram1_we_a),
+        .bram1_addr_b(ntt_bram1_addr_b),
+        .bram1_din_b(ntt_bram1_din_b),
+        .bram1_dout_b(ntt_bram1_dout_b),
+        .bram1_we_b(ntt_bram1_we_b),
 
-  //       .output_bram_addr_a(ntt_output_bram_addr_a),
-  //       .output_bram_data_a(ntt_output_bram_data_a),
-  //       .output_bram_we_a(ntt_output_bram_we_a),
-  //       .output_bram_addr_b(ntt_output_bram_addr_b),
-  //       .output_bram_data_b(ntt_output_bram_data_b),
-  //       .output_bram_we_b(ntt_output_bram_we_b),
+        .bram2_addr_a(ntt_bram2_addr_a),
+        .bram2_din_a(ntt_bram2_din_a),
+        .bram2_dout_a(ntt_bram2_dout_a),
+        .bram2_we_a(ntt_bram2_we_a),
+        .bram2_addr_b(ntt_bram2_addr_b),
+        .bram2_din_b(ntt_bram2_din_b),
+        .bram2_dout_b(ntt_bram2_dout_b),
+        .bram2_we_b(ntt_bram2_we_b),
 
-  //       .done(ntt_done)
-  //     );
+        .done(ntt_done)
+      );
 
-  // parameter int MOD_MULT_PARALLEL_OPS_COUNT = 2;
-  // logic [`BRAM_DATA_WIDTH-1:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
-  // logic mod_mult_valid_in, mod_mult_valid_in_delayed;
-  // logic [`BRAM_DATA_WIDTH-1:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
-  // logic mod_mult_valid_out;
-  // mod_mult #(
-  //            .N(N),
-  //            .PARALLEL_OPS_COUNT(MOD_MULT_PARALLEL_OPS_COUNT)
-  //          )mod_mult (
-  //            .clk(clk),
-  //            .rst_n(rst_n),
-  //            .a(mod_mult_a),
-  //            .b(mod_mult_b),
-  //            .valid_in(mod_mult_valid_in_delayed),
-  //            .result(mod_mult_result),
-  //            .valid_out(mod_mult_valid_out)
-  //          );
-  // logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr;  // Where to write the output of mod_mult
-  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(addr1), .out(mod_mult_write_addr));
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
+  parameter int MOD_MULT_PARALLEL_OPS_COUNT = 2;
+  logic signed [14:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
+  logic mod_mult_valid_in, mod_mult_valid_in_delayed;
+  logic signed [14:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
+  logic mod_mult_valid_out;
+  logic mod_mult_done, mod_mult_done_delayed;
+  mod_mult #(
+             .N(N),
+             .PARALLEL_OPS_COUNT(MOD_MULT_PARALLEL_OPS_COUNT)
+           )mod_mult (
+             .clk(clk),
+             .rst_n(rst_n),
+             .a(mod_mult_a),
+             .b(mod_mult_b),
+             .valid_in(mod_mult_valid_in_delayed),
+             .result(mod_mult_result),
+             .valid_out(mod_mult_valid_out)
+           );
+  logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr;  // Where to write the output of mod_mult
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(addr3), .out(mod_mult_write_addr));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
 
-  // parameter int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
-  // logic [`BRAM_DATA_WIDTH-1:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
-  // logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
-  // logic sub_normalize_squared_norm_last, sub_normalize_squared_norm_last_delayed;
-  // logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
-  // sub_normalize_squared_norm #(
-  //                              .N(N),
-  //                              .PARALLEL_OPS_COUNT(SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT)
-  //                            )sub_normalize_squared_norm (
-  //                              .clk(clk),
-  //                              .rst_n(rst_n),
-  //                              .a(sub_normalize_squared_norm_a),
-  //                              .b(sub_normalize_squared_norm_b),
-  //                              .c(sub_normalize_squared_norm_c),
-  //                              .valid(sub_normalize_squared_norm_valid_delayed),
-  //                              .last(sub_normalize_squared_norm_last_delayed),
-  //                              .accept(sub_normalize_squared_norm_accept),
-  //                              .reject(sub_normalize_squared_norm_reject)
-  //                            );
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
+  parameter int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
+  logic signed [14:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
+  logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
+  logic sub_normalize_squared_norm_last, sub_normalize_squared_norm_last_delayed;
+  logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
+  logic sub_normalize_squared_norm_done_delayed;
+  sub_normalize_squared_norm #(
+                               .N(N),
+                               .PARALLEL_OPS_COUNT(SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT)
+                             )sub_normalize_squared_norm (
+                               .clk(clk),
+                               .rst_n(rst_n),
+                               .a(sub_normalize_squared_norm_a),
+                               .b(sub_normalize_squared_norm_b),
+                               .c(sub_normalize_squared_norm_c),
+                               .valid(sub_normalize_squared_norm_valid_delayed),
+                               .last(sub_normalize_squared_norm_last_delayed),
+                               .accept(sub_normalize_squared_norm_accept),
+                               .reject(sub_normalize_squared_norm_reject)
+                             );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(8)) sub_normalize_squared_norm_done_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_done_delayed));
 
   // // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
   // logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_address_in;
@@ -599,16 +611,17 @@ module control_unit#(
     bank2 <= instruction[5:3];
     bank3 <= instruction[8:6];
     bank4 <= instruction[11:9];
-    addr1 <= instruction[24:12];
-    addr2 <= instruction[37:25];
-    addr3 <= instruction[50:38];
-    addr4 <= instruction[63:51];
+    bank5 <= instruction[14:12];
+    bank6 <= instruction[17:15];
+    addr1 <= instruction[30:18];
+    addr2 <= instruction[43:31];
+    addr3 <= instruction[56:44];
+    addr4 <= instruction[69:57];
 
     if(!rst_n)
-      modules_running <= 1'b0;
+      modules_running <= 1'b0;  // Only clear this on reset
 
     if (!rst_n || instruction[127:127-INSTRUCTION_COUNT+1] == 0) begin
-
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
 
@@ -618,19 +631,19 @@ module control_unit#(
       split_start <= 1'b0;
       split_start_i <= 1'b0;
 
-      // decompress_start <= 1'b0;
-      // decompress_start_i <= 1'b0;
+      decompress_start <= 1'b0;
+      decompress_start_i <= 1'b0;
 
-      // ntt_start <= 1'b0;
-      // ntt_start_i <= 1'b0;
+      ntt_start <= 1'b0;
+      ntt_start_i <= 1'b0;
     end
     else begin
 
       htp_start_i <= htp_start;
       fft_start_i <= fft_start;
       split_start_i <= split_start;
-      // decompress_start_i <= decompress_start;
-      // ntt_start_i <= ntt_start;
+      decompress_start_i <= decompress_start;
+      ntt_start_i <= ntt_start;
 
       if(instruction[127-0] == 1'b1) begin // BRAM_READ
         // Empty
@@ -663,7 +676,7 @@ module control_unit#(
       end
 
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-        fft_mode <= instruction[64];
+        fft_mode <= instruction[70];
         fft_start <= 1'b1;
         if(fft_done)
           modules_running[INSTRUCTION_COUNT-5] <= 1'b0;
@@ -672,7 +685,12 @@ module control_unit#(
       end
 
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
-
+        ntt_mode <= instruction[70];
+        ntt_start <= 1'b1;
+        if(ntt_done)
+          modules_running[INSTRUCTION_COUNT-6] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-6] <= 1'b1;
       end
 
       if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
@@ -690,7 +708,7 @@ module control_unit#(
       end
 
       if(instruction[127-9] == 1'b1) begin // SPLIT
-        split_size <= 1 << instruction[71:68];
+        split_size <= 1 << instruction[77:74];
         split_start <= 1'b1;
         if(split_done)
           modules_running[INSTRUCTION_COUNT-9] <= 1'b0;
@@ -703,15 +721,25 @@ module control_unit#(
       end
 
       if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
-
+        if(mod_mult_done_delayed)
+          modules_running[INSTRUCTION_COUNT-11] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-11] <= 1'b1;
       end
 
       if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
-
+        if(sub_normalize_squared_norm_done_delayed)
+          modules_running[INSTRUCTION_COUNT-12] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-12] <= 1'b1;
       end
 
       if(instruction[127-13] == 1'b1) begin // DECOMPRESS
-
+        decompress_start <= 1'b1;
+        if(decompress_done)
+          modules_running[INSTRUCTION_COUNT-13] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-13] <= 1'b1;
       end
 
       if(instruction[127-14] == 1'b1) begin // COMPRESS
@@ -721,35 +749,6 @@ module control_unit#(
       if(instruction[127-15] == 1'b1) begin // ADD
 
       end
-
-
-      // case (opcode)
-
-      //   HTP_DECMP_NTT: begin
-      //     // htp_start <= 1'b1;
-      //     // decompress_start <= 1'b1;
-      //     // ntt_mode <= 1'b0;
-      //     // ntt_start <= 1'b1;
-      //   end
-
-      //   NTT_INTT: begin
-      //     // ntt_mode <= task_params[3]; // Set NTT mode based on task parameters
-      //     // ntt_start <= 1'b1;
-      //   end
-
-      //   MOD_MULT_Q: begin
-
-      //   end
-
-      //   SUB_NORM_SQ: begin
-
-      //   end
-
-      //   default: begin
-
-      //   end
-
-      // endcase
     end
   end
 
@@ -763,9 +762,10 @@ module control_unit#(
 
     int_to_double_valid_in = 1'b0;
     int_to_double_done = 1'b0;
-    // mod_mult_valid_in = 1'b0;
-    // sub_normalize_squared_norm_valid = 1'b0;
-    // sub_normalize_squared_norm_last = 1'b0;
+    mod_mult_valid_in = 1'b0;
+    mod_mult_done = 1'b0;
+    sub_normalize_squared_norm_valid = 1'b0;
+    sub_normalize_squared_norm_last = 1'b0;
     // fp_adder_valid_in = 1'b0;
     fp_mul_valid_in = 1'b0;
     fp_mul_done = 1'b0;
@@ -774,13 +774,13 @@ module control_unit#(
     complex_mul_valid_in = 1'b0;
     complex_mul_done = 1'b0;
 
-    // // Ensure these signals are not undefined to ensure proper behaviour of the module
-    // sub_normalize_squared_norm_a[0] = 0;
-    // sub_normalize_squared_norm_a[1] = 0;
-    // sub_normalize_squared_norm_b[0] = 0;
-    // sub_normalize_squared_norm_b[1] = 0;
-    // sub_normalize_squared_norm_c[0] = 0;
-    // sub_normalize_squared_norm_c[1] = 0;
+    // Ensure these signals are not undefined to ensure proper behaviour of the module
+    sub_normalize_squared_norm_a[0] = 0;
+    sub_normalize_squared_norm_a[1] = 0;
+    sub_normalize_squared_norm_b[0] = 0;
+    sub_normalize_squared_norm_b[1] = 0;
+    sub_normalize_squared_norm_c[0] = 0;
+    sub_normalize_squared_norm_c[1] = 0;
 
     if(instruction[127-0] == 1'b1) begin // BRAM_READ
       bram_addr_a[bank1] = addr1;
@@ -790,13 +790,13 @@ module control_unit#(
     if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
       bram_addr_a[bank1] = addr1;
       bram_din_a[bank1] = bram_din;
-      bram_we_a[bank1] = instruction[66];
+      bram_we_a[bank1] = instruction[72];
     end
 
     if(instruction[127-2] == 1'b1) begin // COPY
       bram_addr_a[bank3] = addr3;
-      copy_valid_in = instruction[66];
-      copy_done = instruction[65]; // Done when we get the 'last' signal
+      copy_valid_in = instruction[72];
+      copy_done = instruction[71]; // Done when we get the 'last' signal
 
       copy_dst_addr = addr4;
       bram_addr_b[bank4] = copy_dst_addr_delayed;
@@ -805,23 +805,23 @@ module control_unit#(
     end
 
     if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
-      bram_addr_a[bank1] = htp_input_bram_addr;
-      htp_input_bram_data = bram_dout_a[bank1];
+      bram_addr_a[bank3] = htp_input_bram_addr;
+      htp_input_bram_data = bram_dout_a[bank3];
 
-      bram_addr_a[bank2] = htp_output_bram1_addr;
-      bram_din_a[bank2] = htp_output_bram1_data;
-      bram_we_a[bank2] = htp_output_bram1_we;
+      bram_addr_a[bank4] = htp_output_bram1_addr;
+      bram_din_a[bank4] = htp_output_bram1_data;
+      bram_we_a[bank4] = htp_output_bram1_we;
 
-      bram_addr_b[bank2] = htp_output_bram2_addr;
-      htp_output_bram2_data = bram_dout_b[bank2];
+      bram_addr_b[bank4] = htp_output_bram2_addr;
+      htp_output_bram2_data = bram_dout_b[bank4];
     end
 
     if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
       bram_addr_a[bank1] = addr1;
       int_to_double_address_in = addr1;
       int_to_double_data_in = bram_dout_a[bank1];
-      int_to_double_done = instruction[65]; // Done when we get the 'last' signal
-      int_to_double_valid_in = instruction[66];
+      int_to_double_done = instruction[71]; // Done when we get the 'last' signal
+      int_to_double_valid_in = instruction[72];
 
       // Write output to BRAM
       bram_addr_b[bank2] = int_to_double_address_out;
@@ -850,7 +850,23 @@ module control_unit#(
     end
 
     if(instruction[127-6] == 1'b1) begin // NTT_INTT
+      bram_addr_a[bank1] = ntt_bram1_addr_a;
+      bram_din_a[bank1] = ntt_bram1_din_a;
+      bram_we_a[bank1] = ntt_bram1_we_a;
+      bram_addr_b[bank1] = ntt_bram1_addr_b;
+      bram_din_b[bank1] = ntt_bram1_din_b;
+      bram_we_b[bank1] = ntt_bram1_we_b;
+      ntt_bram1_dout_a = bram_dout_a[bank1];
+      ntt_bram1_dout_b = bram_dout_b[bank1];
 
+      bram_addr_a[bank2] = ntt_bram2_addr_a;
+      bram_din_a[bank2] = ntt_bram2_din_a;
+      bram_we_a[bank2] = ntt_bram2_we_a;
+      bram_addr_b[bank2] = ntt_bram2_addr_b;
+      bram_din_b[bank2] = ntt_bram2_din_b;
+      bram_we_b[bank2] = ntt_bram2_we_b;
+      ntt_bram2_dout_a = bram_dout_a[bank2];
+      ntt_bram2_dout_b = bram_dout_b[bank2];
     end
 
     if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
@@ -860,8 +876,8 @@ module control_unit#(
       complex_mul_a_imag = bram_dout_a[bank1][63:0];
       complex_mul_b_real = bram_dout_a[bank2][127:64];
       complex_mul_b_imag = bram_dout_a[bank2][63:0];
-      complex_mul_valid_in = instruction[66];
-      complex_mul_done = instruction[65]; // Done when we get the 'last' signal
+      complex_mul_valid_in = instruction[72];
+      complex_mul_done = instruction[71]; // Done when we get the 'last' signal
 
       complex_mul_dst_addr = addr1;
       bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
@@ -874,10 +890,10 @@ module control_unit#(
       fp_mul1_a = bram_dout_a[bank3][127:64];
       fp_mul2_a = bram_dout_a[bank3][63:0];
 
-      fp_mul1_b = instruction[67] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-      fp_mul2_b = instruction[67] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-      fp_mul_valid_in = instruction[66];
-      fp_mul_done = instruction[65]; // Done when we get the 'last' signal
+      fp_mul1_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+      fp_mul2_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+      fp_mul_valid_in = instruction[72];
+      fp_mul_done = instruction[71]; // Done when we get the 'last' signal
       fp_mul_dst_addr = addr4;
 
       bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
@@ -904,15 +920,70 @@ module control_unit#(
     end
 
     if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
+      // From each input BRAM we read at address "addr1" and "addr2"
+      bram_addr_a[bank1] = addr1;
+      bram_addr_b[bank1] = addr2;
+      bram_addr_a[bank2] = addr1;
+      bram_addr_b[bank2] = addr2;
 
+      mod_mult_a[0] = bram_dout_a[bank1][14:0];
+      mod_mult_a[1] = bram_dout_b[bank1][14:0];
+      mod_mult_b[0] = bram_dout_a[bank2][14:0];
+      mod_mult_b[1] = bram_dout_b[bank2][14:0];
+      mod_mult_valid_in = instruction[72];
+      mod_mult_done = instruction[71]; // Done when we get the 'last' signal
+
+      bram_addr_a[bank3] = mod_mult_write_addr;
+      bram_din_a[bank3] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
+      bram_we_a[bank3] = mod_mult_valid_out;
     end
 
     if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
+      bram_addr_a[bank1] = addr1; // Data from hash_to_point
+      bram_addr_a[bank2] = addr2; // Data from INTT
+      bram_addr_b[bank2] = addr2 + N/2; // Data from INTT
+      bram_addr_b[bank3] = addr3; // Data from decompress
 
+      sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
+      sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
+      sub_normalize_squared_norm_b[0] = bram_dout_a[bank2][64+14:64];
+      sub_normalize_squared_norm_b[1] = bram_dout_b[bank2][64+14:64];
+      sub_normalize_squared_norm_c[0] = bram_dout_b[bank3][64+14:64];
+      sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
+
+      sub_normalize_squared_norm_valid = instruction[72];
+      sub_normalize_squared_norm_last = instruction[71];
+
+      // Write result
+      if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
+        bram_addr_a[bank4] = addr4;
+        bram_din_a[bank4] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+        bram_we_a[bank4] = 1'b1;
+      end
+      else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
+        bram_addr_a[bank4] = addr4;
+        bram_din_a[bank4] = 128'h0;
+        bram_we_a[bank4] = 1'b1;
+      end
+      else begin
+        bram_we_a[bank4] = 1'b0;
+      end
     end
 
     if(instruction[127-13] == 1'b1) begin // DECOMPRESS
+      bram_addr_a[bank5] = decompress_input_bram_addr;
+      decompress_input_bram_data = bram_dout_a[bank5];
 
+      bram_addr_a[bank6] = decompress_output_bram1_addr;
+      bram_din_a[bank6] = decompress_output_bram1_data;
+      bram_we_a[bank6] = decompress_output_bram1_we;
+
+      bram_addr_a[instruction[80:78]] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
+      bram_din_a[instruction[80:78]] = decompress_output_bram1_data;
+      bram_we_a[instruction[80:78]] = decompress_output_bram1_we;
+
+      bram_addr_b[bank6] = decompress_output_bram2_addr;
+      decompress_output_bram2_data = bram_dout_b[bank6];
     end
 
     if(instruction[127-14] == 1'b1) begin // COMPRESS
@@ -922,134 +993,5 @@ module control_unit#(
     if(instruction[127-15] == 1'b1) begin // ADD
 
     end
-
-
-
-    // case (opcode)
-
-    //   HTP_DECMP_NTT: begin
-    //     // // hash_to_point: input is BRAM0, output is BRAM3
-    //     // bram_addr_a[0] = htp_input_bram_addr;
-    //     // htp_input_bram_data = bram_dout_a[0];
-
-    //     // bram_addr_a[3] = htp_output_bram1_addr;
-    //     // bram_din_a[3] = htp_output_bram1_data;
-    //     // bram_we_a[3] = htp_output_bram1_we;
-
-    //     // bram_addr_b[3] = htp_output_bram2_addr;
-    //     // htp_output_bram2_data = bram_dout_b[3];
-
-    //     // // decompress: input is BRAM2, output is BRAM5
-    //     // bram_addr_a[2] = decompress_input_bram_addr;
-    //     // decompress_input_bram_data = bram_dout_a[2];
-
-    //     // bram_addr_a[5] = decompress_output_bram1_addr;
-    //     // bram_din_a[5] = decompress_output_bram1_data;
-    //     // bram_we_a[5] = decompress_output_bram1_we;
-
-    //     // bram_addr_b[5] = decompress_output_bram2_addr;
-    //     // decompress_output_bram2_data = bram_dout_b[5];
-
-    //     // // NTT: input is BRAM1, output is BRAM6 (ntt bram 0)
-    //     // bram_addr_a[1] = ntt_input_bram_addr_a;
-    //     // ntt_input_bram_dout_a = bram_dout_a[1];
-    //     // bram_addr_b[1] = ntt_input_bram_addr_b;
-    //     // ntt_input_bram_dout_b = bram_dout_b[1];
-
-    //     // ntt_bram_addr_a[0] = ntt_output_bram_addr_a;
-    //     // ntt_bram_din_a[0] = ntt_output_bram_data_a;
-    //     // ntt_bram_we_a[0] = ntt_output_bram_we_a;
-    //     // ntt_bram_addr_b[0] = ntt_output_bram_addr_b;
-    //     // ntt_bram_din_b[0] = ntt_output_bram_data_b;
-    //     // ntt_bram_we_b[0] = ntt_output_bram_we_b;
-
-    //     // instruction_done = ntt_done;  // NTT takes the longest
-    //   end
-
-    //   NTT_INTT: begin
-    //     // bram_addr_a[bank1] = ntt_input_bram_addr_a;
-    //     // ntt_input_bram_dout_a = bram_dout_a[bank1];
-    //     // bram_addr_b[bank1] = ntt_input_bram_addr_b;
-    //     // ntt_input_bram_dout_b = bram_dout_b[bank1];
-
-    //     // ntt_bram_addr_a[bank2] = ntt_output_bram_addr_a;
-    //     // ntt_bram_din_a[bank2] = ntt_output_bram_data_a;
-    //     // ntt_bram_we_a[bank2] = ntt_output_bram_we_a;
-    //     // ntt_bram_addr_b[bank2] = ntt_output_bram_addr_b;
-    //     // ntt_bram_din_b[bank2] = ntt_output_bram_data_b;
-    //     // ntt_bram_we_b[bank2] = ntt_output_bram_we_b;
-
-    //     // instruction_done = ntt_done;
-    //   end
-
-    //   MOD_MULT_Q: begin
-    //     // // From each input BRAM we read at address "addr1" and "addr2"
-    //     // ntt_bram_addr_a[0] = addr1;
-    //     // ntt_bram_addr_b[0] = addr2;
-    //     // ntt_bram_addr_a[1] = addr1;
-    //     // ntt_bram_addr_b[1] = addr2;
-
-    //     // mod_mult_a[0] = ntt_bram_dout_a[0];
-    //     // mod_mult_a[1] = ntt_bram_dout_b[0];
-    //     // mod_mult_b[0] = ntt_bram_dout_a[1];
-    //     // mod_mult_b[1] = ntt_bram_dout_b[1];
-
-    //     // mod_mult_valid_in = 1'b1;
-    //     // instruction_done = 1'b1;
-
-    //     // if(mod_mult_valid_out) begin
-    //     //   bram_addr_a[bank2] = mod_mult_write_addr;
-    //     //   bram_din_a[bank2] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
-    //     //   bram_we_a[bank2] = 1'b1;
-    //     // end
-    //   end
-
-    //   SUB_NORM_SQ: begin
-    //     // // Reads the following data from BRAMs:
-    //     // // - data from hash_to_point: task_bram1[addr1] - 2 coefficients per memory line
-    //     // // - data from INTT: task_bram2[addr2] and task_bram2[addr2+N/2] - 1 coefficient per memory line
-    //     // // - data from decompress: task_params[2:0][addr1] - 2 coefficients per memory line
-
-    //     // bram_addr_a[bank1] = addr1; // Data from hash_to_point
-    //     // ntt_bram_addr_a[bank2] = addr2; // Data from INTT
-    //     // ntt_bram_addr_b[bank2] = addr2 + N/2; // Data from INTT
-    //     // bram_addr_b[task_params[2:0]] = addr1; // Data from decompress
-
-    //     // sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
-    //     // sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
-    //     // sub_normalize_squared_norm_b[0] = ntt_bram_dout_a[bank2];
-    //     // sub_normalize_squared_norm_b[1] = ntt_bram_dout_b[bank2];
-    //     // sub_normalize_squared_norm_c[0] = bram_dout_b[task_params[2:0]][64+14:64];
-    //     // sub_normalize_squared_norm_c[1] = bram_dout_b[task_params[2:0]][14:0];
-
-    //     // sub_normalize_squared_norm_valid = 1'b1;
-    //     // sub_normalize_squared_norm_last = task_params[3];
-
-    //     // instruction_done = sub_normalize_squared_norm_accept == 1'b1 || sub_normalize_squared_norm_reject == 1'b1;
-
-
-    //     // // Write result
-    //     // if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
-    //     //   bram_addr_a[0] = 0;
-    //     //   bram_din_a[0] = 128'b0;
-    //     //   bram_we_a[0] = 1'b1;
-    //     // end
-    //     // else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
-    //     //   bram_addr_a[0] = 0;
-    //     //   bram_din_a[0] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-    //     //   bram_we_a[0] = 1'b1;
-    //     // end
-    //     // else begin
-    //     //   bram_we_a[0] = 1'b0;
-    //     // end
-    //   end
-
-    //   default: begin
-
-    //   end
-
-    // endcase
-
   end
-
 endmodule
