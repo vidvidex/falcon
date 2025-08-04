@@ -14,8 +14,8 @@ module ntt_512_tb;
 
   logic signed[14:0] expected_polynomial [N];
 
-  logic finished, finished_i, finished_ii;
-  int index;
+  logic finished, finished_i, finished_ii, finished_iii;
+  int index = 0;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_dout_a;
@@ -87,21 +87,22 @@ module ntt_512_tb;
 
   // Check if result is correct
   always_ff @(posedge clk) begin
-    if(finished_ii === 1) begin
+    if(finished_iii === 1 && index < N/2) begin
       if(bram2_dout_a !== expected_polynomial[index])
         $fatal(1, "Test failed at index %d. Expected %d, got %d", index, expected_polynomial[index], bram2_dout_a);
       if(bram2_dout_b !== expected_polynomial[index + N/2])
         $fatal(1, "Test failed at index %d. Expected %d, got %d", index + N/2, expected_polynomial[index + N/2], bram2_dout_b);
+      index++;
     end
 
     finished_i <= finished;
     finished_ii <= finished_i;
+    finished_iii <= finished_ii;
   end
 
   always #5 clk = ~clk;
 
   initial begin
-    index = -2;
     finished = 0;
 
     clk = 1;
@@ -121,11 +122,12 @@ module ntt_512_tb;
     while (!done)
       #10;
 
+    finished <= 1;
+
     for (int i = 0; i < N/2; i++) begin
-      bram2_addr_a = i;
-      bram2_addr_b = i + N/2;
-      index++;
       #10;
+      bram2_addr_a <= i;
+      bram2_addr_b <= i + N/2;
     end
 
     $display("All tests for ntt_512 passed!");

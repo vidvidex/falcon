@@ -92,8 +92,8 @@ module ntt#(
   logic signed [14:0] scale_temp1, scale_temp2;
 
   logic bram11_read_part, bram12_read_part; // 0 = read from top half of the BRAM, 1 = read from bottom half
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) bram11_read_part_delay(.clk(clk), .in(read_addr1 >= N/2), .out(bram11_read_part));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) bram12_read_part_delay(.clk(clk), .in(read_addr2 >= N/2), .out(bram12_read_part));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) bram11_read_part_delay(.clk(clk), .in(i >= N/2), .out(bram11_read_part));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) bram12_read_part_delay(.clk(clk), .in(i+stride >= N/2), .out(bram12_read_part));
 
   // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024
   // R = pow(2, 16, 12289) (constant for Montgomery multiplication), if not using Montgomery reduction R=1
@@ -319,8 +319,14 @@ module ntt#(
 
   always_ff @(posedge clk) begin
     if(stage_counter == 0 && state != IDLE) begin  // Read from bram1 when stage_counter == 0
-      read_data1 <= bram11_read_part ? bram1_dout_a[14:0] : bram1_dout_a[64+14:64];
-      read_data2 <= bram12_read_part ? bram1_dout_b[14:0] : bram1_dout_b[64+14:64];
+      if(mode == 1'b0) begin
+        read_data1 <= bram1_dout_a[64+14:64];
+        read_data2 <= bram1_dout_a[14:0];
+      end
+      else begin
+        read_data1 <= bram11_read_part ? bram1_dout_a[14:0] : bram1_dout_a[64+14:64];
+        read_data2 <= bram12_read_part ? bram1_dout_b[14:0] : bram1_dout_b[64+14:64];
+      end
     end
     else begin // Read from bank1/bank2 when stage_counter > 0
       if(stage_counter % 2 == 0) begin        // When stage_counter is even we read from bank1
@@ -383,8 +389,8 @@ module ntt#(
     case (state)
       NTT: begin
 
-        read_addr1 <= i;
-        read_addr2 <= i+stride;
+        read_addr1 <= (mode == 1'b1 && stage_counter == 0 && state != IDLE) ? (i % (N/2)) : i;
+        read_addr2 <= (mode == 1'b1 && stage_counter == 0 && state != IDLE) ? (i + stride) % (N/2) : (i + stride);
 
         if (mode == 1'b0) begin
           mod_mult_valid_in <= 1'b1;

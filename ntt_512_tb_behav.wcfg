@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="25,991.634 ns"></ZoomStartTime>
-      <ZoomEndTime time="26,313.674 ns"></ZoomEndTime>
-      <Cursor1Time time="26,260.000 ns"></Cursor1Time>
+      <ZoomStartTime time="27.268 ns"></ZoomStartTime>
+      <ZoomEndTime time="403.661 ns"></ZoomEndTime>
+      <Cursor1Time time="90.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="224"></NameColumnWidth>
+      <NameColumnWidth column_width="220"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
@@ -179,7 +179,6 @@
       <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_dout_a">
          <obj_property name="ElementShortName">bram1_dout_a[127:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_dout_a[127:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ntt_512_tb/uut/bram1_we_a">
          <obj_property name="ElementShortName">bram1_we_a</obj_property>
@@ -198,7 +197,6 @@
       <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_dout_b">
          <obj_property name="ElementShortName">bram1_dout_b[127:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_dout_b[127:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/ntt_512_tb/uut/bram1_we_b">
          <obj_property name="ElementShortName">bram1_we_b</obj_property>
@@ -257,22 +255,27 @@
       <wvobject type="array" fp_name="/ntt_512_tb/uut/stage_counter">
          <obj_property name="ElementShortName">stage_counter[8:0]</obj_property>
          <obj_property name="ObjectShortName">stage_counter[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/stage">
          <obj_property name="ElementShortName">stage[9:0]</obj_property>
          <obj_property name="ObjectShortName">stage[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/counter">
          <obj_property name="ElementShortName">counter[9:0]</obj_property>
          <obj_property name="ObjectShortName">counter[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/counter_max">
          <obj_property name="ElementShortName">counter_max[9:0]</obj_property>
          <obj_property name="ObjectShortName">counter_max[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/stride">
          <obj_property name="ElementShortName">stride[8:0]</obj_property>
          <obj_property name="ObjectShortName">stride[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/ntt_512_tb/uut/butterfly">
          <obj_property name="ElementShortName">butterfly[8:0]</obj_property>
@@ -364,31 +367,10 @@
             <obj_property name="ObjectShortName">mod_mult_last</obj_property>
          </wvobject>
       </wvobject>
-      <wvobject type="group" fp_name="group204">
-         <obj_property name="label">bram1</obj_property>
-         <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_addr_a">
-            <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
-            <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_dout_a">
-            <obj_property name="ElementShortName">bram1_dout_a[127:0]</obj_property>
-            <obj_property name="ObjectShortName">bram1_dout_a[127:0]</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_addr_b">
-            <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
-            <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
-            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-         </wvobject>
-         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_dout_b">
-            <obj_property name="ElementShortName">bram1_dout_b[127:0]</obj_property>
-            <obj_property name="ObjectShortName">bram1_dout_b[127:0]</obj_property>
-         </wvobject>
-      </wvobject>
       <wvobject type="group" fp_name="group211">
          <obj_property name="label">bram read/write</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/ntt_512_tb/uut/read_addr1">
             <obj_property name="ElementShortName">read_addr1[8:0]</obj_property>
             <obj_property name="ObjectShortName">read_addr1[8:0]</obj_property>
@@ -436,6 +418,28 @@
          <wvobject type="logic" fp_name="/ntt_512_tb/uut/write_enable2">
             <obj_property name="ElementShortName">write_enable2</obj_property>
             <obj_property name="ObjectShortName">write_enable2</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group204">
+         <obj_property name="label">bram1</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_addr_a">
+            <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_dout_a">
+            <obj_property name="ElementShortName">bram1_dout_a[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_dout_a[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_addr_b">
+            <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/ntt_512_tb/uut/bram1_dout_b">
+            <obj_property name="ElementShortName">bram1_dout_b[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram1_dout_b[127:0]</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group206">
