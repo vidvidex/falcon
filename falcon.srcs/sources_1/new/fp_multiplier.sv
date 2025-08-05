@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 // Changes compared to the original code:
 // - removed external integer multiplication option. Instead we instantiate dedicated multipliers in this module (because we don't need to share them with anything else)
