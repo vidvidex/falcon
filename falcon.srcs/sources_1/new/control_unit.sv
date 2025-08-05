@@ -617,6 +617,11 @@ module control_unit#(
     if(!rst_n)
       modules_running <= 1'b0;  // Only clear this on reset
 
+    if(!rst_n || instruction_done)
+      pipelined_inst_index <= -1;
+    else
+      pipelined_inst_index <= pipelined_inst_index + 1;
+
     if (!rst_n || instruction[127:127-INSTRUCTION_COUNT+1] == 0) begin
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
@@ -632,8 +637,6 @@ module control_unit#(
 
       ntt_start <= 1'b0;
       ntt_start_i <= 1'b0;
-
-      pipelined_inst_index <= -1;
     end
     else begin
 
@@ -642,8 +645,6 @@ module control_unit#(
       split_start_i <= split_start;
       decompress_start_i <= decompress_start;
       ntt_start_i <= ntt_start;
-
-      pipelined_inst_index <= pipelined_inst_index + 1;
 
       if(instruction[127-0] == 1'b1) begin // BRAM_READ
         // Empty
