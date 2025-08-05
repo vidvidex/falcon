@@ -47,7 +47,6 @@ module int_to_double
   logic [51:0] mantissa1, mantissa2;
   logic [14:0] normalized1, normalized2;
   logic [5:0] shift1, shift2;
-  logic [3:0] i1, i2;
   logic [63:0] output_double1, output_double2;
 
   // Convert first integer to double
@@ -58,13 +57,40 @@ module int_to_double
 
     if (abs_val1 != 0) begin
       // Find MSB position
-      shift1 = 0;
-      for (i1 = 14; i1 >= 0; i1 = i1 - 1) begin
-        if (abs_val1[i1]) begin
-          shift1 = i1;
-          break;
-        end
-      end
+      casez (abs_val1)
+        15'b1??????????????:
+          shift1 = 14;
+        15'b01?????????????:
+          shift1 = 13;
+        15'b001????????????:
+          shift1 = 12;
+        15'b0001???????????:
+          shift1 = 11;
+        15'b00001??????????:
+          shift1 = 10;
+        15'b000001?????????:
+          shift1 = 9;
+        15'b0000001????????:
+          shift1 = 8;
+        15'b00000001???????:
+          shift1 = 7;
+        15'b000000001??????:
+          shift1 = 6;
+        15'b0000000001?????:
+          shift1 = 5;
+        15'b00000000001????:
+          shift1 = 4;
+        15'b000000000001???:
+          shift1 = 3;
+        15'b0000000000001??:
+          shift1 = 2;
+        15'b00000000000001?:
+          shift1 = 1;
+        15'b000000000000001:
+          shift1 = 0;
+        default:
+          shift1 = 0;
+      endcase
 
       // Exponent = bias + MSB position
       exponent1 = 11'd1023 + shift1;
@@ -92,13 +118,40 @@ module int_to_double
 
     if (abs_val2 != 0) begin
       // Find MSB position
-      shift2 = 0;
-      for (i2 = 14; i2 >= 0; i2 = i2 - 1) begin
-        if (abs_val2[i2]) begin
-          shift2 = i2;
-          break;
-        end
-      end
+      casez (abs_val2)
+        15'b1??????????????:
+          shift2 = 14;
+        15'b01?????????????:
+          shift2 = 13;
+        15'b001????????????:
+          shift2 = 12;
+        15'b0001???????????:
+          shift2 = 11;
+        15'b00001??????????:
+          shift2 = 10;
+        15'b000001?????????:
+          shift2 = 9;
+        15'b0000001????????:
+          shift2 = 8;
+        15'b00000001???????:
+          shift2 = 7;
+        15'b000000001??????:
+          shift2 = 6;
+        15'b0000000001?????:
+          shift2 = 5;
+        15'b00000000001????:
+          shift2 = 4;
+        15'b000000000001???:
+          shift2 = 3;
+        15'b0000000000001??:
+          shift2 = 2;
+        15'b00000000000001?:
+          shift2 = 1;
+        15'b000000000000001:
+          shift2 = 0;
+        default:
+          shift2 = 0;
+      endcase
 
       // Exponent = bias + MSB position
       exponent2 = 11'd1023 + shift2;

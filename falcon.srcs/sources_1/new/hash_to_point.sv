@@ -217,7 +217,6 @@ module hash_to_point#(
     if (rst_n == 1'b0) begin
       read_message_length_counter <= 0;
       message_len_bytes <= 0;
-      output_we <= 0;
     end
     else begin
       if(state == READ_MESSAGE_LENGTH)
@@ -260,6 +259,7 @@ module hash_to_point#(
       coefficient <= 0;
       coefficient_index <= 0;
       second_half <= 0;
+      output_we <= 0;
     end
     else if (valid_out_i == 1'b1 && t < k_times_q && done != 1) begin
 
@@ -268,7 +268,9 @@ module hash_to_point#(
       if(coefficient_index == N/2 - 1)
         second_half <= 1;
 
-      output_bram2_addr <= {{(`BRAM_ADDR_WIDTH-10){1'b0}}, coefficient_index++ % (N/2)}; // Write to the first half of the memory cell, then to the second half
+      output_bram2_addr <= {{(`BRAM_ADDR_WIDTH-10){1'b0}}, coefficient_index % (N/2)}; // Write to the first half of the memory cell, then to the second
+      coefficient_index <= coefficient_index + 1;
+
       output_we <= 1;
     end
     else
