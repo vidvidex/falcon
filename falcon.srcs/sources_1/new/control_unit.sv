@@ -614,17 +614,6 @@ module control_unit#(
 
   always_ff @(posedge clk) begin
 
-    bank1 <= instruction[2:0];
-    bank2 <= instruction[5:3];
-    bank3 <= instruction[8:6];
-    bank4 <= instruction[11:9];
-    bank5 <= instruction[14:12];
-    bank6 <= instruction[17:15];
-    addr1 <= instruction[30:18];
-    addr2 <= instruction[43:31];
-    addr3 <= instruction[56:44];
-    addr4 <= instruction[69:57];
-
     if(!rst_n)
       modules_running <= 1'b0;  // Only clear this on reset
 
@@ -765,6 +754,17 @@ module control_unit#(
 
   always_comb begin
 
+    bank1 = instruction[2:0];
+    bank2 = instruction[5:3];
+    bank3 = instruction[8:6];
+    bank4 = instruction[11:9];
+    bank5 = instruction[14:12];
+    bank6 = instruction[17:15];
+    addr1 = instruction[30:18];
+    addr2 = instruction[43:31];
+    addr3 = instruction[56:44];
+    addr4 = instruction[69:57];
+
     // If not specified otherwise set WE for all BRAMs to 0
     for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
       bram_we_a[i] = 1'b0;
@@ -801,7 +801,7 @@ module control_unit#(
     if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
       bram_addr_a[bank1] = addr1;
       bram_din_a[bank1] = bram_din;
-      bram_we_a[bank1] = instruction[72];
+      bram_we_a[bank1] = 1'b1;
     end
 
     if(instruction[127-2] == 1'b1) begin // COPY
