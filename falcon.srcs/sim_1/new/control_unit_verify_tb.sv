@@ -83,7 +83,7 @@ module control_unit_verify_tb;
     #10;
 
     // Load signature
-    for (int i = 0; i < SIGNATURE_BLOCKS; i++) begin
+    for (int i = 0; i < SIGNATURE_BLOCKS/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 1;
       address1 = i;
