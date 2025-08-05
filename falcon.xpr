@@ -437,22 +437,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/new/trivium64.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/new/trivium64_update.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/coefficients/fft_twiddle_factors.mem">
         <FileInfo SFType="MIF">
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -704,14 +688,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/trivium64_tb.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/hash_to_point_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
@@ -832,12 +808,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/trivium64_tb_behav.wcfg">
-        <FileInfo>
-          <Attr Name="UserDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/samplerz_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
@@ -903,7 +873,6 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/ifft_1024_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/split_fft_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/merge_fft_tb_behav.wcfg"/>
-        <Option Name="XSimWcfgFile" Val="$PPRDIR/trivium64_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/samplerz_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/control_unit_sign_tb_behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/control_unit_verify_tb_behav.wcfg"/>
