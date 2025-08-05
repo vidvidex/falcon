@@ -83,7 +83,7 @@ module control_unit_verify_tb;
     #10;
 
     // Load signature
-    for (int i = 0; i < N/2; i++) begin
+    for (int i = 0; i < SIGNATURE_BLOCKS; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 1;
       address1 = i;
@@ -136,18 +136,10 @@ module control_unit_verify_tb;
     #10;
 
     // Compute public_key * decompressed signature % 12289 (in NTT domain) by running mod_mult_q
-    for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0000_0000_0001_0000; // mod_mult_q
-      bank1 = 1;
-      bank2 = 2;
-      bank3 = 4;
-      address1 = i;
-      address2 = i + N/2;
-      address3 = i;
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
-      #10;
-    end
+    modules = 16'b0000_0000_0001_0000; // mod_mult_q
+    bank1 = 1;
+    bank2 = 2;
+    bank3 = 4;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -165,20 +157,12 @@ module control_unit_verify_tb;
     #10;
 
     // Run sub_normalize_squared_norm pipeline on the output of INTT
-    for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0000_0000_0000_1000; // sub_normalize_squared_norm
-      bank1 = 5;
-      address1 = i;
-      bank2 = 1;
-      address2 = i;
-      bank3 = 3;
-      address3 = i;
-      bank4 = 0;
-      address4 = 0;
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
-      #10;
-    end
+    modules = 16'b0000_0000_0000_1000; // sub_normalize_squared_norm
+    bank1 = 5;
+    bank2 = 1;
+    bank3 = 3;
+    bank4 = 0;
+    address4 = 0;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM

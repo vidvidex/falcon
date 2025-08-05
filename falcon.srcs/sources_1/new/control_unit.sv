@@ -157,6 +157,10 @@ module control_unit#(
     instruction_done <= modules_running == 0 && modules_running_i != 0;
   end
 
+  logic [$clog2(N)-1:0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
+  logic pipelined_inst_last; // Last/done signal for pipelined operations
+  logic pipelined_inst_valid;
+
   logic htp_start, htp_start_i;
   logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
   logic [`BRAM_DATA_WIDTH-1:0] htp_input_bram_data;
@@ -482,8 +486,8 @@ module control_unit#(
              .result(mod_mult_result),
              .valid_out(mod_mult_valid_out)
            );
-  logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr;  // Where to write the output of mod_mult
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(addr3), .out(mod_mult_write_addr));
+  logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr, mod_mult_write_addr_delayed;  // Where to write the output of mod_mult
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(mod_mult_write_addr), .out(mod_mult_write_addr_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
 
@@ -605,6 +609,9 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(16)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
 
+  assign pipelined_inst_valid = pipelined_inst_index < (N/2) ? 1'b1 : 1'b0;
+  assign pipelined_inst_last = pipelined_inst_index > (N/2)-2 ? 1'b1 : 1'b0;
+
   always_ff @(posedge clk) begin
 
     bank1 <= instruction[2:0];
@@ -636,6 +643,8 @@ module control_unit#(
 
       ntt_start <= 1'b0;
       ntt_start_i <= 1'b0;
+
+      pipelined_inst_index <= -1;
     end
     else begin
 
@@ -644,6 +653,8 @@ module control_unit#(
       split_start_i <= split_start;
       decompress_start_i <= decompress_start;
       ntt_start_i <= ntt_start;
+
+      pipelined_inst_index <= pipelined_inst_index + 1;
 
       if(instruction[127-0] == 1'b1) begin // BRAM_READ
         // Empty
@@ -796,7 +807,7 @@ module control_unit#(
     if(instruction[127-2] == 1'b1) begin // COPY
       bram_addr_a[bank3] = addr3;
       copy_valid_in = instruction[72];
-      copy_done = instruction[71]; // Done when we get the 'last' signal
+      copy_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
 
       copy_dst_addr = addr4;
       bram_addr_b[bank4] = copy_dst_addr_delayed;
@@ -820,7 +831,7 @@ module control_unit#(
       bram_addr_a[bank1] = addr1;
       int_to_double_address_in = addr1;
       int_to_double_data_in = bram_dout_a[bank1];
-      int_to_double_done = instruction[71]; // Done when we get the 'last' signal
+      int_to_double_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
       int_to_double_valid_in = instruction[72];
 
       // Write output to BRAM
@@ -877,7 +888,7 @@ module control_unit#(
       complex_mul_b_real = bram_dout_a[bank2][127:64];
       complex_mul_b_imag = bram_dout_a[bank2][63:0];
       complex_mul_valid_in = instruction[72];
-      complex_mul_done = instruction[71]; // Done when we get the 'last' signal
+      complex_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
 
       complex_mul_dst_addr = addr1;
       bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
@@ -893,7 +904,7 @@ module control_unit#(
       fp_mul1_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
       fp_mul2_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
       fp_mul_valid_in = instruction[72];
-      fp_mul_done = instruction[71]; // Done when we get the 'last' signal
+      fp_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
       fp_mul_dst_addr = addr4;
 
       bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
@@ -920,29 +931,29 @@ module control_unit#(
     end
 
     if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
-      // From each input BRAM we read at address "addr1" and "addr2"
-      bram_addr_a[bank1] = addr1;
-      bram_addr_b[bank1] = addr2;
-      bram_addr_a[bank2] = addr1;
-      bram_addr_b[bank2] = addr2;
+      bram_addr_a[bank1] = pipelined_inst_index;
+      bram_addr_b[bank1] = pipelined_inst_index + N/2;
+      bram_addr_a[bank2] = pipelined_inst_index;
+      bram_addr_b[bank2] = pipelined_inst_index + N/2;
 
       mod_mult_a[0] = bram_dout_a[bank1][14:0];
       mod_mult_a[1] = bram_dout_b[bank1][14:0];
       mod_mult_b[0] = bram_dout_a[bank2][14:0];
       mod_mult_b[1] = bram_dout_b[bank2][14:0];
-      mod_mult_valid_in = instruction[72];
-      mod_mult_done = instruction[71]; // Done when we get the 'last' signal
+      mod_mult_valid_in = pipelined_inst_valid;
+      mod_mult_done = pipelined_inst_last;
+      mod_mult_write_addr = pipelined_inst_index;
 
-      bram_addr_a[bank3] = mod_mult_write_addr;
+      bram_addr_a[bank3] = mod_mult_write_addr_delayed;
       bram_din_a[bank3] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
       bram_we_a[bank3] = mod_mult_valid_out;
     end
 
     if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
-      bram_addr_a[bank1] = addr1; // Data from hash_to_point
-      bram_addr_a[bank2] = addr2; // Data from INTT
-      bram_addr_b[bank2] = addr2 + N/2; // Data from INTT
-      bram_addr_b[bank3] = addr3; // Data from decompress
+      bram_addr_a[bank1] = pipelined_inst_index; // Data from hash_to_point
+      bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT
+      bram_addr_b[bank2] = pipelined_inst_index + N/2; // Data from INTT
+      bram_addr_b[bank3] = pipelined_inst_index; // Data from decompress
 
       sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
       sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
@@ -951,8 +962,8 @@ module control_unit#(
       sub_normalize_squared_norm_c[0] = bram_dout_b[bank3][64+14:64];
       sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
 
-      sub_normalize_squared_norm_valid = instruction[72];
-      sub_normalize_squared_norm_last = instruction[71];
+      sub_normalize_squared_norm_valid = pipelined_inst_valid;
+      sub_normalize_squared_norm_last = pipelined_inst_last;
 
       // Write result
       if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
