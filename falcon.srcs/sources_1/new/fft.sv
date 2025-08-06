@@ -114,6 +114,8 @@ module fft#(
       bram1_addr_b = j + t;
       bram1_we_a = 0;
       bram1_we_b = 0;
+      bram1_din_a = 0;
+      bram1_din_b = 0;
 
       // Write to BRAM2
       bram2_addr_a = write_addr1;
@@ -129,6 +131,8 @@ module fft#(
       bram2_addr_b = j + t;
       bram2_we_a = 0;
       bram2_we_b = 0;
+      bram2_din_a = 0;
+      bram2_din_b = 0;
 
       // Write to BRAM1
       bram1_addr_a = write_addr1;

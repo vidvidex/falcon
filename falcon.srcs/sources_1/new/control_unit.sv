@@ -354,6 +354,63 @@ module control_unit#(
               .btf_valid_out(split_btf_valid_out)
             );
 
+  logic merge_start, merge_start_i;
+  logic [$clog2(N):0] merge_size;
+  logic [`BRAM_ADDR_WIDTH-1:0] merge_bram1_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] merge_bram1_dout_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] merge_bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] merge_bram1_dout_b;
+  logic [`BRAM_ADDR_WIDTH-1:0] merge_bram2_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] merge_bram2_din_a;
+  logic merge_bram2_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] merge_bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] merge_bram2_din_b;
+  logic merge_bram2_we_b;
+  logic merge_done;
+  logic merge_btf_mode;
+  logic [9:0] merge_btf_tw_addr;
+  logic merge_btf_valid_in;
+  logic signed [4:0] merge_btf_scale_factor;
+  logic [63:0] merge_btf_a_in_real, merge_btf_a_in_imag, merge_btf_b_in_real, merge_btf_b_in_imag;
+  logic [63:0] merge_btf_a_out_real, merge_btf_a_out_imag, merge_btf_b_out_real, merge_btf_b_out_imag;
+  logic merge_btf_valid_out;
+  merge_fft #(
+              .N(N)
+            )merge_fft(
+              .clk(clk),
+              .rst(!rst_n || instruction_done),
+              .size(merge_size),
+              .start(merge_start && !merge_start_i),
+
+              .bram1_addr_a(merge_bram1_addr_a),
+              .bram1_dout_a(merge_bram1_dout_a),
+              .bram1_addr_b(merge_bram1_addr_b),
+              .bram1_dout_b(merge_bram1_dout_b),
+
+              .bram2_addr_a(merge_bram2_addr_a),
+              .bram2_din_a(merge_bram2_din_a),
+              .bram2_we_a(merge_bram2_we_a),
+              .bram2_addr_b(merge_bram2_addr_b),
+              .bram2_din_b(merge_bram2_din_b),
+              .bram2_we_b(merge_bram2_we_b),
+
+              .done(merge_done),
+
+              .btf_mode(merge_btf_mode),
+              .btf_valid_in(merge_btf_valid_in),
+              .btf_a_in_real(merge_btf_a_in_real),
+              .btf_a_in_imag(merge_btf_a_in_imag),
+              .btf_b_in_real(merge_btf_b_in_real),
+              .btf_b_in_imag(merge_btf_b_in_imag),
+              .btf_scale_factor(merge_btf_scale_factor),
+              .btf_tw_addr(merge_btf_tw_addr),
+              .btf_a_out_real(merge_btf_a_out_real),
+              .btf_a_out_imag(merge_btf_a_out_imag),
+              .btf_b_out_real(merge_btf_b_out_real),
+              .btf_b_out_imag(merge_btf_b_out_imag),
+              .btf_valid_out(merge_btf_valid_out)
+            );
+
   always_comb begin
     if(instruction[122]) begin
       btf_mode = fft_btf_mode;
@@ -370,6 +427,17 @@ module control_unit#(
       fft_btf_b_out_real = btf_b_out_real;
       fft_btf_b_out_imag = btf_b_out_imag;
       fft_btf_valid_out = btf_valid_out;
+
+      split_btf_a_out_real = 0;
+      split_btf_a_out_imag = 0;
+      split_btf_b_out_real = 0;
+      split_btf_b_out_imag = 0;
+      split_btf_valid_out = 0;
+      merge_btf_a_out_real = 0;
+      merge_btf_a_out_imag = 0;
+      merge_btf_b_out_real = 0;
+      merge_btf_b_out_imag = 0;
+      merge_btf_valid_out = 0;
     end
     else if(instruction[118]) begin
       btf_mode = split_btf_mode;
@@ -386,9 +454,44 @@ module control_unit#(
       split_btf_b_out_real = btf_b_out_real;
       split_btf_b_out_imag = btf_b_out_imag;
       split_btf_valid_out = btf_valid_out;
+
+      fft_btf_a_out_real = 0;
+      fft_btf_a_out_imag =  0;
+      fft_btf_b_out_real = 0;
+      fft_btf_b_out_imag = 0;
+      fft_btf_valid_out = 0;
+      merge_btf_a_out_real = 0;
+      merge_btf_a_out_imag = 0;
+      merge_btf_b_out_real = 0;
+      merge_btf_b_out_imag = 0;
+      merge_btf_valid_out = 0;
     end
     else begin
-      // todo merge
+      btf_mode = merge_btf_mode;
+      btf_valid_in = merge_btf_valid_in;
+      btf_a_in_real = merge_btf_a_in_real;
+      btf_a_in_imag = merge_btf_a_in_imag;
+      btf_b_in_real = merge_btf_b_in_real;
+      btf_b_in_imag = merge_btf_b_in_imag;
+      btf_scale_factor = merge_btf_scale_factor;
+      btf_tw_addr = merge_btf_tw_addr;
+
+      merge_btf_a_out_real = btf_a_out_real;
+      merge_btf_a_out_imag = btf_a_out_imag;
+      merge_btf_b_out_real = btf_b_out_real;
+      merge_btf_b_out_imag = btf_b_out_imag;
+      merge_btf_valid_out = btf_valid_out;
+
+      fft_btf_a_out_real = 0;
+      fft_btf_a_out_imag =  0;
+      fft_btf_b_out_real = 0;
+      fft_btf_b_out_imag = 0;
+      fft_btf_valid_out = 0;
+      split_btf_a_out_real = 0;
+      split_btf_a_out_imag = 0;
+      split_btf_b_out_real = 0;
+      split_btf_b_out_imag = 0;
+      split_btf_valid_out = 0;
     end
   end
 
@@ -468,7 +571,7 @@ module control_unit#(
         .done(ntt_done)
       );
 
-  parameter int MOD_MULT_PARALLEL_OPS_COUNT = 2;
+  localparam int MOD_MULT_PARALLEL_OPS_COUNT = 2;
   logic signed [14:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
   logic mod_mult_valid_in, mod_mult_valid_in_delayed;
   logic signed [14:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
@@ -491,7 +594,7 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
 
-  parameter int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
+  localparam int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
   logic signed [14:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
   logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
   logic sub_normalize_squared_norm_last, sub_normalize_squared_norm_last_delayed;
@@ -632,6 +735,9 @@ module control_unit#(
       split_start <= 1'b0;
       split_start_i <= 1'b0;
 
+      merge_start <= 1'b0;
+      merge_start_i <= 1'b0;
+
       decompress_start <= 1'b0;
       decompress_start_i <= 1'b0;
 
@@ -643,6 +749,7 @@ module control_unit#(
       htp_start_i <= htp_start;
       fft_start_i <= fft_start;
       split_start_i <= split_start;
+      merge_start_i <= merge_start;
       decompress_start_i <= decompress_start;
       ntt_start_i <= ntt_start;
 
@@ -718,7 +825,12 @@ module control_unit#(
       end
 
       if(instruction[127-10] == 1'b1) begin // MERGE
-
+        merge_size <= 1 << instruction[77:74];
+        merge_start <= 1'b1;
+        if(merge_done)
+          modules_running[INSTRUCTION_COUNT-10] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-10] <= 1'b1;
       end
 
       if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
@@ -766,8 +878,12 @@ module control_unit#(
     addr3 = instruction[56:44];
     addr4 = instruction[69:57];
 
-    // If not specified otherwise set WE for all BRAMs to 0
+    // If not specified otherwise set BRAM signals to 0 (this includes WE, which will turn off writing)
     for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
+      bram_addr_a[i] = 0;
+      bram_addr_b[i] = 0;
+      bram_din_a[i] = 0;
+      bram_din_b[i] = 0;
       bram_we_a[i] = 1'b0;
       bram_we_b[i] = 1'b0;
     end
@@ -786,18 +902,12 @@ module control_unit#(
     complex_mul_valid_in = 1'b0;
     complex_mul_done = 1'b0;
 
-    // Ensure these signals are not undefined to ensure proper behaviour of the module
-    sub_normalize_squared_norm_a[0] = 0;
-    sub_normalize_squared_norm_a[1] = 0;
-    sub_normalize_squared_norm_b[0] = 0;
-    sub_normalize_squared_norm_b[1] = 0;
-    sub_normalize_squared_norm_c[0] = 0;
-    sub_normalize_squared_norm_c[1] = 0;
-
     if(instruction[127-0] == 1'b1) begin // BRAM_READ
       bram_addr_a[bank1] = addr1;
       bram_dout = bram_dout_a[bank1];
     end
+    else
+      bram_dout = 0;
 
     if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
       bram_addr_a[bank1] = addr1;
@@ -815,6 +925,11 @@ module control_unit#(
       bram_din_b[bank4] = bram_dout_a[bank3];
       bram_we_b[bank4] = copy_valid_out;
     end
+    else begin
+      copy_valid_in = 1'b0;
+      copy_done = 1'b0;
+      copy_dst_addr = 0;
+    end
 
     if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
       bram_addr_a[bank3] = htp_input_bram_addr;
@@ -826,6 +941,10 @@ module control_unit#(
 
       bram_addr_b[bank4] = htp_output_bram2_addr;
       htp_output_bram2_data = bram_dout_b[bank4];
+    end
+    else begin
+      htp_input_bram_data = 0;
+      htp_output_bram2_data = 0;
     end
 
     if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
@@ -839,6 +958,12 @@ module control_unit#(
       bram_addr_b[bank2] = int_to_double_address_out;
       bram_din_b[bank2] = int_to_double_data_out;
       bram_we_b[bank2] = int_to_double_valid_out;
+    end
+    else begin
+      int_to_double_address_in = 0;
+      int_to_double_data_in = 0;
+      int_to_double_done = 1'b0;
+      int_to_double_valid_in = 1'b0;
     end
 
     if(instruction[127-5] == 1'b1) begin // FFT_IFFT
@@ -860,6 +985,12 @@ module control_unit#(
       fft_bram2_dout_a = bram_dout_a[bank2];
       fft_bram2_dout_b = bram_dout_b[bank2];
     end
+    else begin
+      fft_bram1_dout_a = 0;
+      fft_bram1_dout_b = 0;
+      fft_bram2_dout_a = 0;
+      fft_bram2_dout_b = 0;
+    end
 
     if(instruction[127-6] == 1'b1) begin // NTT_INTT
       bram_addr_a[bank1] = ntt_bram1_addr_a;
@@ -880,6 +1011,12 @@ module control_unit#(
       ntt_bram2_dout_a = bram_dout_a[bank2];
       ntt_bram2_dout_b = bram_dout_b[bank2];
     end
+    else begin
+      ntt_bram1_dout_a = 0;
+      ntt_bram1_dout_b = 0;
+      ntt_bram2_dout_a = 0;
+      ntt_bram2_dout_b = 0;
+    end
 
     if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
       bram_addr_a[bank1] = addr1;
@@ -895,6 +1032,15 @@ module control_unit#(
       bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
       bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
       bram_we_b[bank1] = complex_mul_valid_out;
+    end
+    else begin
+      complex_mul_a_real = 0;
+      complex_mul_a_imag = 0;
+      complex_mul_b_real = 0;
+      complex_mul_b_imag = 0;
+      complex_mul_valid_in = 1'b0;
+      complex_mul_done = 1'b0;
+      complex_mul_dst_addr = 0;
     end
 
     if(instruction[127-8] == 1'b1) begin // MUL_CONST
@@ -912,6 +1058,15 @@ module control_unit#(
       bram_din_b[bank4] = {fp_mul1_result, fp_mul2_result};
       bram_we_b[bank4] = fp_mul_valid_out;
     end
+    else begin
+      fp_mul1_a = 0;
+      fp_mul2_a = 0;
+      fp_mul1_b = 0;
+      fp_mul2_b = 0;
+      fp_mul_valid_in = 1'b0;
+      fp_mul_done = 1'b0;
+      fp_mul_dst_addr = 0;
+    end
 
     if(instruction[127-9] == 1'b1) begin // SPLIT
       bram_addr_a[bank1] = split_bram1_addr_a + addr1;
@@ -926,9 +1081,27 @@ module control_unit#(
       bram_din_b[bank2] = split_bram2_din_b;
       bram_we_b[bank2] = split_bram2_we_b;
     end
+    else begin
+      split_bram1_dout_a = 0;
+      split_bram1_dout_b = 0;
+    end
 
     if(instruction[127-10] == 1'b1) begin // MERGE
+      bram_addr_a[bank1] = merge_bram1_addr_a + addr1;
+      bram_addr_b[bank1] = merge_bram1_addr_b + addr1;
+      merge_bram1_dout_a = bram_dout_a[bank1];
+      merge_bram1_dout_b = bram_dout_b[bank1];
 
+      bram_addr_a[bank2] = merge_bram2_addr_a + addr2;
+      bram_din_a[bank2] = merge_bram2_din_a;
+      bram_we_a[bank2] = merge_bram2_we_a;
+      bram_addr_b[bank2] = merge_bram2_addr_b + addr2;
+      bram_din_b[bank2] = merge_bram2_din_b;
+      bram_we_b[bank2] = merge_bram2_we_b;
+    end
+    else begin
+      merge_bram1_dout_a = 0;
+      merge_bram1_dout_b = 0;
     end
 
     if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
@@ -948,6 +1121,15 @@ module control_unit#(
       bram_addr_a[bank3] = mod_mult_write_addr_delayed;
       bram_din_a[bank3] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
       bram_we_a[bank3] = mod_mult_valid_out;
+    end
+    else begin
+      mod_mult_a[0] = 0;
+      mod_mult_a[1] = 0;
+      mod_mult_b[0] = 0;
+      mod_mult_b[1] = 0;
+      mod_mult_valid_in = 1'b0;
+      mod_mult_done = 1'b0;
+      mod_mult_write_addr = 0;
     end
 
     if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
@@ -981,6 +1163,16 @@ module control_unit#(
         bram_we_a[bank4] = 1'b0;
       end
     end
+    else begin
+      sub_normalize_squared_norm_a[0] = 0;
+      sub_normalize_squared_norm_a[1] = 0;
+      sub_normalize_squared_norm_b[0] = 0;
+      sub_normalize_squared_norm_b[1] = 0;
+      sub_normalize_squared_norm_c[0] = 0;
+      sub_normalize_squared_norm_c[1] = 0;
+      sub_normalize_squared_norm_valid = 1'b0;
+      sub_normalize_squared_norm_last = 1'b0;
+    end
 
     if(instruction[127-13] == 1'b1) begin // DECOMPRESS
       bram_addr_a[bank5] = decompress_input_bram_addr;
@@ -996,6 +1188,10 @@ module control_unit#(
 
       bram_addr_b[bank6] = decompress_output_bram2_addr;
       decompress_output_bram2_data = bram_dout_b[bank6];
+    end
+    else begin
+      decompress_input_bram_data = 0;
+      decompress_output_bram2_data = 0;
     end
 
     if(instruction[127-14] == 1'b1) begin // COMPRESS
