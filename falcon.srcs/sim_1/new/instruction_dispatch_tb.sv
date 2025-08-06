@@ -11,6 +11,12 @@ module instruction_dispatch_tb;
   logic algorithm_select; // 0 = signing, 1 = verification
   logic done;
 
+  logic dma_bram_en;
+  logic [15:0] dma_bram_addr;
+  logic [15:0] dma_bram_byte_we;
+  logic[127:0] dma_bram_din;
+  logic [127:0] dma_bram_dout;
+
   instruction_dispatch #(
                          .N(N)
                        ) instruction_dispatch (
@@ -18,13 +24,24 @@ module instruction_dispatch_tb;
                          .rst_n(rst_n),
                          .start(start),
                          .algorithm_select(algorithm_select),
-                         .done(done)
+                         .done(done),
+
+                         .dma_bram_en(dma_bram_en),
+                         .dma_bram_addr(dma_bram_addr),
+                         .dma_bram_din(dma_bram_din),
+                         .dma_bram_dout(dma_bram_dout),
+                         .dma_bram_byte_we(dma_bram_byte_we)
                        );
 
 
   always #5 clk = ~clk;
 
   initial begin
+    dma_bram_en = 0;
+    dma_bram_addr = 0;
+    dma_bram_byte_we = 0;
+    dma_bram_din = 0;
+
     clk = 1;
 
     rst_n = 0;

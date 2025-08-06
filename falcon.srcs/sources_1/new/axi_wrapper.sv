@@ -27,6 +27,13 @@ module axi_wrapper #
   (
     // Users to add ports here
 
+    // DMA interface
+    input logic dma_bram_en,
+    input logic [15:0] dma_bram_addr,
+    input logic [15:0] dma_bram_byte_we,
+    input logic[127:0] dma_bram_din,
+    output logic [127:0] dma_bram_dout,
+
     // User ports ends
     // Do not modify the ports beyond this line
 
@@ -227,7 +234,8 @@ module axi_wrapper #
     end
     else begin
 
-      slv_reg2 <= {31'b0, done}; // slv_reg2 is used to poll whether the operation is done (0 for not done, 1 for done)
+      slv_reg2 <= {29'b0, done, 1'b0, done}; // slv_reg2 is used to poll whether the operation is done (0 for not done, 1 for done)
+      slv_reg3 <= 32'hABCD1234; // Dummy value so we see that reading is correct
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -392,7 +400,13 @@ module axi_wrapper #
                          .rst_n(S_AXI_ARESETN),
                          .start(start),
                          .algorithm_select(slv_reg1[0]),
-                         .done(done)
+                         .done(done),
+
+                         .dma_bram_en(dma_bram_en),
+                         .dma_bram_addr(dma_bram_addr),
+                         .dma_bram_din(dma_bram_din),
+                         .dma_bram_dout(dma_bram_dout),
+                         .dma_bram_byte_we(dma_bram_byte_we)
                        );
 
   always @( posedge S_AXI_ACLK ) begin

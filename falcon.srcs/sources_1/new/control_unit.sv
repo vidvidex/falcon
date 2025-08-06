@@ -21,7 +21,14 @@ module control_unit#(
     output logic instruction_done,
 
     input logic [`BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
-    output logic [`BRAM_DATA_WIDTH-1:0] bram_dout // Data read from BRAM
+    output logic [`BRAM_DATA_WIDTH-1:0] bram_dout, // Data read from BRAM
+
+    // DMA interface
+    input logic dma_bram_en, // Enable signal for BRAM DMA interface. When this is high, DMA has access to the BRAM
+    input logic [15:0] dma_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
+    input logic [15:0] dma_bram_byte_we,
+    input logic[127:0] dma_bram_din,  // Data to write to BRAM
+    output logic [127:0] dma_bram_dout // Data read from BRAM
   );
 
   localparam int BRAM1024_COUNT = 4; // Number of 1024x15 BRAM banks
@@ -64,6 +71,9 @@ module control_unit#(
     debug_COMPRESS = instruction[127-14];
     debug_ADD = instruction[127-15];
   end
+
+  logic [2:0] dma_bank;
+  logic [`BRAM_ADDR_WIDTH-1:0] dma_addr;
 
   logic [INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
@@ -902,304 +912,282 @@ module control_unit#(
     complex_mul_valid_in = 1'b0;
     complex_mul_done = 1'b0;
 
-    if(instruction[127-0] == 1'b1) begin // BRAM_READ
-      bram_addr_a[bank1] = addr1;
-      bram_dout = bram_dout_a[bank1];
+    bram_dout = 0;
+    copy_dst_addr = 0;
+    htp_input_bram_data = 0;
+    htp_output_bram2_data = 0;
+    int_to_double_address_in = 0;
+    int_to_double_data_in = 0;
+    fft_bram1_dout_a = 0;
+    fft_bram1_dout_b = 0;
+    fft_bram2_dout_a = 0;
+    fft_bram2_dout_b = 0;
+    ntt_bram1_dout_a = 0;
+    ntt_bram1_dout_b = 0;
+    ntt_bram2_dout_a = 0;
+    ntt_bram2_dout_b = 0;
+    complex_mul_a_real = 0;
+    complex_mul_a_imag = 0;
+    complex_mul_b_real = 0;
+    complex_mul_b_imag = 0;
+    complex_mul_dst_addr = 0;
+    fp_mul1_a = 0;
+    fp_mul2_a = 0;
+    fp_mul1_b = 0;
+    fp_mul2_b = 0;
+    fp_mul_dst_addr = 0;
+    split_bram1_dout_a = 0;
+    split_bram1_dout_b = 0;
+    merge_bram1_dout_a = 0;
+    merge_bram1_dout_b = 0;
+    mod_mult_a[0] = 0;
+    mod_mult_a[1] = 0;
+    mod_mult_b[0] = 0;
+    mod_mult_b[1] = 0;
+    mod_mult_write_addr = 0;
+    sub_normalize_squared_norm_a[0] = 0;
+    sub_normalize_squared_norm_a[1] = 0;
+    sub_normalize_squared_norm_b[0] = 0;
+    sub_normalize_squared_norm_b[1] = 0;
+    sub_normalize_squared_norm_c[0] = 0;
+    sub_normalize_squared_norm_c[1] = 0;
+    decompress_input_bram_data = 0;
+    decompress_output_bram2_data = 0;
+    dma_bram_dout = 0;
+
+    if(dma_bram_en == 1'b1) begin     // DMA has BRAM access
+
+      dma_bank = dma_bram_addr[15:13];  // Top 3 bits of the address specify the bank
+      dma_addr = dma_bram_addr[12:0]; // Lower 13 bits specify the address within the bank
+
+      bram_addr_a[dma_bank] = dma_addr;
+      bram_din_a[dma_bank] = dma_bram_din;
+      bram_we_a[dma_bank] = dma_bram_byte_we[0];
+      dma_bram_dout = bram_dout_a[dma_bank];
     end
-    else
-      bram_dout = 0;
+    else begin  // Instructions have BRAM access
 
-    if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
-      bram_addr_a[bank1] = addr1;
-      bram_din_a[bank1] = bram_din;
-      bram_we_a[bank1] = 1'b1;
-    end
-
-    if(instruction[127-2] == 1'b1) begin // COPY
-      bram_addr_a[bank3] = addr3;
-      copy_valid_in = instruction[72];
-      copy_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
-
-      copy_dst_addr = addr4;
-      bram_addr_b[bank4] = copy_dst_addr_delayed;
-      bram_din_b[bank4] = bram_dout_a[bank3];
-      bram_we_b[bank4] = copy_valid_out;
-    end
-    else begin
-      copy_valid_in = 1'b0;
-      copy_done = 1'b0;
-      copy_dst_addr = 0;
-    end
-
-    if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
-      bram_addr_a[bank3] = htp_input_bram_addr;
-      htp_input_bram_data = bram_dout_a[bank3];
-
-      bram_addr_a[bank4] = htp_output_bram1_addr;
-      bram_din_a[bank4] = htp_output_bram1_data;
-      bram_we_a[bank4] = htp_output_bram1_we;
-
-      bram_addr_b[bank4] = htp_output_bram2_addr;
-      htp_output_bram2_data = bram_dout_b[bank4];
-    end
-    else begin
-      htp_input_bram_data = 0;
-      htp_output_bram2_data = 0;
-    end
-
-    if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
-      bram_addr_a[bank1] = addr1;
-      int_to_double_address_in = addr1;
-      int_to_double_data_in = bram_dout_a[bank1];
-      int_to_double_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
-      int_to_double_valid_in = instruction[72];
-
-      // Write output to BRAM
-      bram_addr_b[bank2] = int_to_double_address_out;
-      bram_din_b[bank2] = int_to_double_data_out;
-      bram_we_b[bank2] = int_to_double_valid_out;
-    end
-    else begin
-      int_to_double_address_in = 0;
-      int_to_double_data_in = 0;
-      int_to_double_done = 1'b0;
-      int_to_double_valid_in = 1'b0;
-    end
-
-    if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-      bram_addr_a[bank1] = fft_bram1_addr_a;
-      bram_din_a[bank1] = fft_bram1_din_a;
-      bram_we_a[bank1] = fft_bram1_we_a;
-      bram_addr_b[bank1] = fft_bram1_addr_b;
-      bram_din_b[bank1] = fft_bram1_din_b;
-      bram_we_b[bank1] = fft_bram1_we_b;
-      fft_bram1_dout_a = bram_dout_a[bank1];
-      fft_bram1_dout_b = bram_dout_b[bank1];
-
-      bram_addr_a[bank2] = fft_bram2_addr_a;
-      bram_din_a[bank2] = fft_bram2_din_a;
-      bram_we_a[bank2] = fft_bram2_we_a;
-      bram_addr_b[bank2] = fft_bram2_addr_b;
-      bram_din_b[bank2] = fft_bram2_din_b;
-      bram_we_b[bank2] = fft_bram2_we_b;
-      fft_bram2_dout_a = bram_dout_a[bank2];
-      fft_bram2_dout_b = bram_dout_b[bank2];
-    end
-    else begin
-      fft_bram1_dout_a = 0;
-      fft_bram1_dout_b = 0;
-      fft_bram2_dout_a = 0;
-      fft_bram2_dout_b = 0;
-    end
-
-    if(instruction[127-6] == 1'b1) begin // NTT_INTT
-      bram_addr_a[bank1] = ntt_bram1_addr_a;
-      bram_din_a[bank1] = ntt_bram1_din_a;
-      bram_we_a[bank1] = ntt_bram1_we_a;
-      bram_addr_b[bank1] = ntt_bram1_addr_b;
-      bram_din_b[bank1] = ntt_bram1_din_b;
-      bram_we_b[bank1] = ntt_bram1_we_b;
-      ntt_bram1_dout_a = bram_dout_a[bank1];
-      ntt_bram1_dout_b = bram_dout_b[bank1];
-
-      bram_addr_a[bank2] = ntt_bram2_addr_a;
-      bram_din_a[bank2] = ntt_bram2_din_a;
-      bram_we_a[bank2] = ntt_bram2_we_a;
-      bram_addr_b[bank2] = ntt_bram2_addr_b;
-      bram_din_b[bank2] = ntt_bram2_din_b;
-      bram_we_b[bank2] = ntt_bram2_we_b;
-      ntt_bram2_dout_a = bram_dout_a[bank2];
-      ntt_bram2_dout_b = bram_dout_b[bank2];
-    end
-    else begin
-      ntt_bram1_dout_a = 0;
-      ntt_bram1_dout_b = 0;
-      ntt_bram2_dout_a = 0;
-      ntt_bram2_dout_b = 0;
-    end
-
-    if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
-      bram_addr_a[bank1] = addr1;
-      bram_addr_a[bank2] = addr2;
-      complex_mul_a_real = bram_dout_a[bank1][127:64];
-      complex_mul_a_imag = bram_dout_a[bank1][63:0];
-      complex_mul_b_real = bram_dout_a[bank2][127:64];
-      complex_mul_b_imag = bram_dout_a[bank2][63:0];
-      complex_mul_valid_in = instruction[72];
-      complex_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
-
-      complex_mul_dst_addr = addr1;
-      bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
-      bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
-      bram_we_b[bank1] = complex_mul_valid_out;
-    end
-    else begin
-      complex_mul_a_real = 0;
-      complex_mul_a_imag = 0;
-      complex_mul_b_real = 0;
-      complex_mul_b_imag = 0;
-      complex_mul_valid_in = 1'b0;
-      complex_mul_done = 1'b0;
-      complex_mul_dst_addr = 0;
-    end
-
-    if(instruction[127-8] == 1'b1) begin // MUL_CONST
-      bram_addr_a[bank3] = addr3;
-      fp_mul1_a = bram_dout_a[bank3][127:64];
-      fp_mul2_a = bram_dout_a[bank3][63:0];
-
-      fp_mul1_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-      fp_mul2_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-      fp_mul_valid_in = instruction[72];
-      fp_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
-      fp_mul_dst_addr = addr4;
-
-      bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
-      bram_din_b[bank4] = {fp_mul1_result, fp_mul2_result};
-      bram_we_b[bank4] = fp_mul_valid_out;
-    end
-    else begin
-      fp_mul1_a = 0;
-      fp_mul2_a = 0;
-      fp_mul1_b = 0;
-      fp_mul2_b = 0;
-      fp_mul_valid_in = 1'b0;
-      fp_mul_done = 1'b0;
-      fp_mul_dst_addr = 0;
-    end
-
-    if(instruction[127-9] == 1'b1) begin // SPLIT
-      bram_addr_a[bank1] = split_bram1_addr_a + addr1;
-      bram_addr_b[bank1] = split_bram1_addr_b + addr1;
-      split_bram1_dout_a = bram_dout_a[bank1];
-      split_bram1_dout_b = bram_dout_b[bank1];
-
-      bram_addr_a[bank2] = split_bram2_addr_a + addr2;
-      bram_din_a[bank2] = split_bram2_din_a;
-      bram_we_a[bank2] = split_bram2_we_a;
-      bram_addr_b[bank2] = split_bram2_addr_b + addr2;
-      bram_din_b[bank2] = split_bram2_din_b;
-      bram_we_b[bank2] = split_bram2_we_b;
-    end
-    else begin
-      split_bram1_dout_a = 0;
-      split_bram1_dout_b = 0;
-    end
-
-    if(instruction[127-10] == 1'b1) begin // MERGE
-      bram_addr_a[bank1] = merge_bram1_addr_a + addr1;
-      bram_addr_b[bank1] = merge_bram1_addr_b + addr1;
-      merge_bram1_dout_a = bram_dout_a[bank1];
-      merge_bram1_dout_b = bram_dout_b[bank1];
-
-      bram_addr_a[bank2] = merge_bram2_addr_a + addr2;
-      bram_din_a[bank2] = merge_bram2_din_a;
-      bram_we_a[bank2] = merge_bram2_we_a;
-      bram_addr_b[bank2] = merge_bram2_addr_b + addr2;
-      bram_din_b[bank2] = merge_bram2_din_b;
-      bram_we_b[bank2] = merge_bram2_we_b;
-    end
-    else begin
-      merge_bram1_dout_a = 0;
-      merge_bram1_dout_b = 0;
-    end
-
-    if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
-      bram_addr_a[bank1] = pipelined_inst_index;
-      bram_addr_b[bank1] = pipelined_inst_index + N/2;
-      bram_addr_a[bank2] = pipelined_inst_index;
-      bram_addr_b[bank2] = pipelined_inst_index + N/2;
-
-      mod_mult_a[0] = bram_dout_a[bank1][14:0];
-      mod_mult_a[1] = bram_dout_b[bank1][14:0];
-      mod_mult_b[0] = bram_dout_a[bank2][14:0];
-      mod_mult_b[1] = bram_dout_b[bank2][14:0];
-      mod_mult_valid_in = pipelined_inst_valid;
-      mod_mult_done = pipelined_inst_last;
-      mod_mult_write_addr = pipelined_inst_index;
-
-      bram_addr_a[bank3] = mod_mult_write_addr_delayed;
-      bram_din_a[bank3] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
-      bram_we_a[bank3] = mod_mult_valid_out;
-    end
-    else begin
-      mod_mult_a[0] = 0;
-      mod_mult_a[1] = 0;
-      mod_mult_b[0] = 0;
-      mod_mult_b[1] = 0;
-      mod_mult_valid_in = 1'b0;
-      mod_mult_done = 1'b0;
-      mod_mult_write_addr = 0;
-    end
-
-    if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
-      bram_addr_a[bank1] = pipelined_inst_index; // Data from hash_to_point
-      bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT
-      bram_addr_b[bank2] = pipelined_inst_index + N/2; // Data from INTT
-      bram_addr_b[bank3] = pipelined_inst_index; // Data from decompress
-
-      sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
-      sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
-      sub_normalize_squared_norm_b[0] = bram_dout_a[bank2][14:0];
-      sub_normalize_squared_norm_b[1] = bram_dout_b[bank2][14:0];
-      sub_normalize_squared_norm_c[0] = bram_dout_b[bank3][64+14:64];
-      sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
-
-      sub_normalize_squared_norm_valid = pipelined_inst_valid;
-      sub_normalize_squared_norm_last = pipelined_inst_last;
-
-      // Write result
-      if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
-        bram_addr_a[bank4] = addr4;
-        bram_din_a[bank4] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-        bram_we_a[bank4] = 1'b1;
+      if(instruction[127-0] == 1'b1) begin // BRAM_READ
+        bram_addr_a[bank1] = addr1;
+        bram_dout = bram_dout_a[bank1];
       end
-      else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
-        bram_addr_a[bank4] = addr4;
-        bram_din_a[bank4] = 128'h0;
-        bram_we_a[bank4] = 1'b1;
+
+      if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
+        bram_addr_a[bank1] = addr1;
+        bram_din_a[bank1] = bram_din;
+        bram_we_a[bank1] = 1'b1;
       end
-      else begin
-        bram_we_a[bank4] = 1'b0;
+
+      if(instruction[127-2] == 1'b1) begin // COPY
+        bram_addr_a[bank3] = addr3;
+        copy_valid_in = instruction[72];
+        copy_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
+
+        copy_dst_addr = addr4;
+        bram_addr_b[bank4] = copy_dst_addr_delayed;
+        bram_din_b[bank4] = bram_dout_a[bank3];
+        bram_we_b[bank4] = copy_valid_out;
       end
-    end
-    else begin
-      sub_normalize_squared_norm_a[0] = 0;
-      sub_normalize_squared_norm_a[1] = 0;
-      sub_normalize_squared_norm_b[0] = 0;
-      sub_normalize_squared_norm_b[1] = 0;
-      sub_normalize_squared_norm_c[0] = 0;
-      sub_normalize_squared_norm_c[1] = 0;
-      sub_normalize_squared_norm_valid = 1'b0;
-      sub_normalize_squared_norm_last = 1'b0;
-    end
 
-    if(instruction[127-13] == 1'b1) begin // DECOMPRESS
-      bram_addr_a[bank5] = decompress_input_bram_addr;
-      decompress_input_bram_data = bram_dout_a[bank5];
+      if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
+        bram_addr_a[bank3] = htp_input_bram_addr;
+        htp_input_bram_data = bram_dout_a[bank3];
 
-      bram_addr_a[bank6] = decompress_output_bram1_addr;
-      bram_din_a[bank6] = decompress_output_bram1_data;
-      bram_we_a[bank6] = decompress_output_bram1_we;
+        bram_addr_a[bank4] = htp_output_bram1_addr;
+        bram_din_a[bank4] = htp_output_bram1_data;
+        bram_we_a[bank4] = htp_output_bram1_we;
 
-      bram_addr_a[instruction[80:78]] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
-      bram_din_a[instruction[80:78]] = decompress_output_bram1_data;
-      bram_we_a[instruction[80:78]] = decompress_output_bram1_we;
+        bram_addr_b[bank4] = htp_output_bram2_addr;
+        htp_output_bram2_data = bram_dout_b[bank4];
+      end
 
-      bram_addr_b[bank6] = decompress_output_bram2_addr;
-      decompress_output_bram2_data = bram_dout_b[bank6];
-    end
-    else begin
-      decompress_input_bram_data = 0;
-      decompress_output_bram2_data = 0;
-    end
+      if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
+        bram_addr_a[bank1] = addr1;
+        int_to_double_address_in = addr1;
+        int_to_double_data_in = bram_dout_a[bank1];
+        int_to_double_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
+        int_to_double_valid_in = instruction[72];
 
-    if(instruction[127-14] == 1'b1) begin // COMPRESS
+        // Write output to BRAM
+        bram_addr_b[bank2] = int_to_double_address_out;
+        bram_din_b[bank2] = int_to_double_data_out;
+        bram_we_b[bank2] = int_to_double_valid_out;
+      end
 
-    end
+      if(instruction[127-5] == 1'b1) begin // FFT_IFFT
+        bram_addr_a[bank1] = fft_bram1_addr_a;
+        bram_din_a[bank1] = fft_bram1_din_a;
+        bram_we_a[bank1] = fft_bram1_we_a;
+        bram_addr_b[bank1] = fft_bram1_addr_b;
+        bram_din_b[bank1] = fft_bram1_din_b;
+        bram_we_b[bank1] = fft_bram1_we_b;
+        fft_bram1_dout_a = bram_dout_a[bank1];
+        fft_bram1_dout_b = bram_dout_b[bank1];
 
-    if(instruction[127-15] == 1'b1) begin // ADD
+        bram_addr_a[bank2] = fft_bram2_addr_a;
+        bram_din_a[bank2] = fft_bram2_din_a;
+        bram_we_a[bank2] = fft_bram2_we_a;
+        bram_addr_b[bank2] = fft_bram2_addr_b;
+        bram_din_b[bank2] = fft_bram2_din_b;
+        bram_we_b[bank2] = fft_bram2_we_b;
+        fft_bram2_dout_a = bram_dout_a[bank2];
+        fft_bram2_dout_b = bram_dout_b[bank2];
+      end
 
+      if(instruction[127-6] == 1'b1) begin // NTT_INTT
+        bram_addr_a[bank1] = ntt_bram1_addr_a;
+        bram_din_a[bank1] = ntt_bram1_din_a;
+        bram_we_a[bank1] = ntt_bram1_we_a;
+        bram_addr_b[bank1] = ntt_bram1_addr_b;
+        bram_din_b[bank1] = ntt_bram1_din_b;
+        bram_we_b[bank1] = ntt_bram1_we_b;
+        ntt_bram1_dout_a = bram_dout_a[bank1];
+        ntt_bram1_dout_b = bram_dout_b[bank1];
+
+        bram_addr_a[bank2] = ntt_bram2_addr_a;
+        bram_din_a[bank2] = ntt_bram2_din_a;
+        bram_we_a[bank2] = ntt_bram2_we_a;
+        bram_addr_b[bank2] = ntt_bram2_addr_b;
+        bram_din_b[bank2] = ntt_bram2_din_b;
+        bram_we_b[bank2] = ntt_bram2_we_b;
+        ntt_bram2_dout_a = bram_dout_a[bank2];
+        ntt_bram2_dout_b = bram_dout_b[bank2];
+      end
+
+      if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
+        bram_addr_a[bank1] = addr1;
+        bram_addr_a[bank2] = addr2;
+        complex_mul_a_real = bram_dout_a[bank1][127:64];
+        complex_mul_a_imag = bram_dout_a[bank1][63:0];
+        complex_mul_b_real = bram_dout_a[bank2][127:64];
+        complex_mul_b_imag = bram_dout_a[bank2][63:0];
+        complex_mul_valid_in = instruction[72];
+        complex_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
+
+        complex_mul_dst_addr = addr1;
+        bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
+        bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
+        bram_we_b[bank1] = complex_mul_valid_out;
+      end
+
+      if(instruction[127-8] == 1'b1) begin // MUL_CONST
+        bram_addr_a[bank3] = addr3;
+        fp_mul1_a = bram_dout_a[bank3][127:64];
+        fp_mul2_a = bram_dout_a[bank3][63:0];
+
+        fp_mul1_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul2_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul_valid_in = instruction[72];
+        fp_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
+        fp_mul_dst_addr = addr4;
+
+        bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
+        bram_din_b[bank4] = {fp_mul1_result, fp_mul2_result};
+        bram_we_b[bank4] = fp_mul_valid_out;
+      end
+
+      if(instruction[127-9] == 1'b1) begin // SPLIT
+        bram_addr_a[bank1] = split_bram1_addr_a + addr1;
+        bram_addr_b[bank1] = split_bram1_addr_b + addr1;
+        split_bram1_dout_a = bram_dout_a[bank1];
+        split_bram1_dout_b = bram_dout_b[bank1];
+
+        bram_addr_a[bank2] = split_bram2_addr_a + addr2;
+        bram_din_a[bank2] = split_bram2_din_a;
+        bram_we_a[bank2] = split_bram2_we_a;
+        bram_addr_b[bank2] = split_bram2_addr_b + addr2;
+        bram_din_b[bank2] = split_bram2_din_b;
+        bram_we_b[bank2] = split_bram2_we_b;
+      end
+
+      if(instruction[127-10] == 1'b1) begin // MERGE
+        bram_addr_a[bank1] = merge_bram1_addr_a + addr1;
+        bram_addr_b[bank1] = merge_bram1_addr_b + addr1;
+        merge_bram1_dout_a = bram_dout_a[bank1];
+        merge_bram1_dout_b = bram_dout_b[bank1];
+
+        bram_addr_a[bank2] = merge_bram2_addr_a + addr2;
+        bram_din_a[bank2] = merge_bram2_din_a;
+        bram_we_a[bank2] = merge_bram2_we_a;
+        bram_addr_b[bank2] = merge_bram2_addr_b + addr2;
+        bram_din_b[bank2] = merge_bram2_din_b;
+        bram_we_b[bank2] = merge_bram2_we_b;
+      end
+
+      if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
+        bram_addr_a[bank1] = pipelined_inst_index;
+        bram_addr_b[bank1] = pipelined_inst_index + N/2;
+        bram_addr_a[bank2] = pipelined_inst_index;
+        bram_addr_b[bank2] = pipelined_inst_index + N/2;
+
+        mod_mult_a[0] = bram_dout_a[bank1][14:0];
+        mod_mult_a[1] = bram_dout_b[bank1][14:0];
+        mod_mult_b[0] = bram_dout_a[bank2][14:0];
+        mod_mult_b[1] = bram_dout_b[bank2][14:0];
+        mod_mult_valid_in = pipelined_inst_valid;
+        mod_mult_done = pipelined_inst_last;
+        mod_mult_write_addr = pipelined_inst_index;
+
+        bram_addr_a[bank3] = mod_mult_write_addr_delayed;
+        bram_din_a[bank3] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
+        bram_we_a[bank3] = mod_mult_valid_out;
+      end
+
+      if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
+        bram_addr_a[bank1] = pipelined_inst_index; // Data from hash_to_point
+        bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT
+        bram_addr_b[bank2] = pipelined_inst_index + N/2; // Data from INTT
+        bram_addr_b[bank3] = pipelined_inst_index; // Data from decompress
+
+        sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
+        sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
+        sub_normalize_squared_norm_b[0] = bram_dout_a[bank2][14:0];
+        sub_normalize_squared_norm_b[1] = bram_dout_b[bank2][14:0];
+        sub_normalize_squared_norm_c[0] = bram_dout_b[bank3][64+14:64];
+        sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
+
+        sub_normalize_squared_norm_valid = pipelined_inst_valid;
+        sub_normalize_squared_norm_last = pipelined_inst_last;
+
+        // Write result
+        if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
+          bram_addr_a[bank4] = addr4;
+          bram_din_a[bank4] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+          bram_we_a[bank4] = 1'b1;
+        end
+        else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
+          bram_addr_a[bank4] = addr4;
+          bram_din_a[bank4] = 128'h0;
+          bram_we_a[bank4] = 1'b1;
+        end
+        else begin
+          bram_we_a[bank4] = 1'b0;
+        end
+      end
+
+      if(instruction[127-13] == 1'b1) begin // DECOMPRESS
+        bram_addr_a[bank5] = decompress_input_bram_addr;
+        decompress_input_bram_data = bram_dout_a[bank5];
+
+        bram_addr_a[bank6] = decompress_output_bram1_addr;
+        bram_din_a[bank6] = decompress_output_bram1_data;
+        bram_we_a[bank6] = decompress_output_bram1_we;
+
+        bram_addr_a[instruction[80:78]] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
+        bram_din_a[instruction[80:78]] = decompress_output_bram1_data;
+        bram_we_a[instruction[80:78]] = decompress_output_bram1_we;
+
+        bram_addr_b[bank6] = decompress_output_bram2_addr;
+        decompress_output_bram2_data = bram_dout_b[bank6];
+      end
+
+      if(instruction[127-14] == 1'b1) begin // COMPRESS
+
+      end
+
+      if(instruction[127-15] == 1'b1) begin // ADD
+
+      end
     end
   end
 endmodule
