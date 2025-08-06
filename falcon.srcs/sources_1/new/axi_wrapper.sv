@@ -245,25 +245,25 @@ module axi_wrapper #
                 // Slave register 1
                 slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
               end
-        //   2'h2:
-        //     for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-        //       if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-        //         // Respective byte enables are asserted as per write strobes
-        //         // Slave register 2
-        //         slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-        //       end
-          2'h3:
-            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                // Respective byte enables are asserted as per write strobes
-                // Slave register 3
-                slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-              end
+          // 2'h2:
+          //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+          //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+          //       // Respective byte enables are asserted as per write strobes
+          //       // Slave register 2
+          //       slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+          //     end
+          // 2'h3:
+          //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+          //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+          //       // Respective byte enables are asserted as per write strobes
+          //       // Slave register 3
+          //       slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+          //     end
           default : begin
             slv_reg0 <= slv_reg0;
             slv_reg1 <= slv_reg1;
-            slv_reg2 <= slv_reg2;
-            slv_reg3 <= slv_reg3;
+            // slv_reg2 <= slv_reg2;
+            // slv_reg3 <= slv_reg3;
           end
         endcase
       end
