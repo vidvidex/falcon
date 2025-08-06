@@ -17,7 +17,14 @@ module instruction_dispatch#(
     input logic start,
     input logic algorithm_select, // 0 = signing, 1 = verification
 
-    output logic done
+    output logic done,
+
+    // DMA interface
+    input logic dma_bram_en, // Enable signal for BRAM DMA interface. When this is high, DMA has access to the BRAM
+    input logic [15:0] dma_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
+    input logic [15:0] dma_bram_byte_we,
+    input logic[127:0] dma_bram_din,  // Data to write to BRAM
+    output logic [127:0] dma_bram_dout // Data read from BRAM
   );
 
   localparam int MESSAGE_BLOCKS = 1+7; // First block is the length (in bytes)
@@ -49,7 +56,7 @@ module instruction_dispatch#(
         };
 
   localparam int SIGN_INSTRUCTION_COUNT = N; // TODO
-  logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
+  // logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
 
   logic [127:0] instruction;
   logic instruction_done;
@@ -67,7 +74,13 @@ module instruction_dispatch#(
                  .instruction(instruction),
                  .instruction_done(instruction_done),
                  .bram_din(bram_din),
-                 .bram_dout(bram_dout)
+                 .bram_dout(bram_dout),
+
+                 .dma_bram_en(dma_bram_en),
+                 .dma_bram_addr(dma_bram_addr),
+                 .dma_bram_din(dma_bram_din),
+                 .dma_bram_dout(dma_bram_dout),
+                 .dma_bram_byte_we(dma_bram_byte_we)
                );
 
   int i;  // For loading data to BRAM, wont be used in final design
@@ -129,7 +142,8 @@ module instruction_dispatch#(
         if(instruction_done)
           instruction <= 128'b0;
         else
-          instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
+          // instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
+          instruction <= verify_instructions[instruction_index];
 
         // Done condition for successful verify
         if(instruction_index == 317 && (bram_dout == 128'hffffffffffffffffffffffffffffffff || bram_dout == 128'b0))
