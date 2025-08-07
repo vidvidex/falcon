@@ -1,0 +1,9 @@
+.metadata/
+_ide/
+*.log
+.analytics
+RemoteSystemsTempFiles/
+falcon_system/
+falcon_wrapper/
+Debug/
+*.ld
