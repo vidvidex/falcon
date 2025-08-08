@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="346.163 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="79,285.705 ns"></ZoomStartTime>
+      <ZoomEndTime time="79,662.859 ns"></ZoomEndTime>
+      <Cursor1Time time="79,600.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="154"></ValueColumnWidth>
+      <ValueColumnWidth column_width="150"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
@@ -59,6 +59,14 @@
       <wvobject type="array" fp_name="/control_unit_verify_tb/bram_dout">
          <obj_property name="ElementShortName">bram_dout[127:0]</obj_property>
          <obj_property name="ObjectShortName">bram_dout[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/signature_accepted">
+         <obj_property name="ElementShortName">signature_accepted</obj_property>
+         <obj_property name="ObjectShortName">signature_accepted</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/signature_rejected">
+         <obj_property name="ElementShortName">signature_rejected</obj_property>
+         <obj_property name="ObjectShortName">signature_rejected</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/modules">
          <obj_property name="ElementShortName">modules[15:0]</obj_property>
@@ -144,6 +152,14 @@
       <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/instruction_done">
          <obj_property name="ElementShortName">instruction_done</obj_property>
          <obj_property name="ObjectShortName">instruction_done</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/signature_accepted">
+         <obj_property name="ElementShortName">signature_accepted</obj_property>
+         <obj_property name="ObjectShortName">signature_accepted</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/signature_rejected">
+         <obj_property name="ElementShortName">signature_rejected</obj_property>
+         <obj_property name="ObjectShortName">signature_rejected</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/bram_din">
          <obj_property name="ElementShortName">bram_din[127:0]</obj_property>

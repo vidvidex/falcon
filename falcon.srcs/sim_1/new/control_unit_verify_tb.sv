@@ -16,6 +16,9 @@ module control_unit_verify_tb;
   logic instruction_done;
   logic [`BRAM_DATA_WIDTH-1:0] bram_din, bram_dout;
 
+  logic signature_accepted;
+  logic signature_rejected;
+
   always #5 clk = ~clk;
 
   control_unit #(
@@ -25,6 +28,10 @@ module control_unit_verify_tb;
                  .rst_n(rst_n),
                  .instruction(instruction),
                  .instruction_done(instruction_done),
+
+                 .signature_accepted(signature_accepted),
+                 .signature_rejected(signature_rejected),
+
                  .bram_din(bram_din),
                  .bram_dout(bram_dout)
                );
@@ -149,22 +156,20 @@ module control_unit_verify_tb;
     bank1 = 5;
     bank2 = 1;
     bank3 = 3;
-    bank4 = 0;
-    addr1 = 0; // Output to bank0 at address 0
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
     // Verify the result by reading BRAM0 at address 0
-    modules = 16'b1000_0000_0000_0000; // BRAM_READ
-    bank1 = 0;
-    addr1 = 0;
-    #20;
-    if(bram_dout == 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff)
+    while(signature_accepted === 1'b0 && signature_rejected === 1'b0)
+      #10;
+
+
+    if(signature_accepted === 1'b1 && signature_rejected === 1'b0)
       $display("All tests for control_unit_verify passed!");
     else
-      $fatal(1, "Test failed! BRAM0[0] = %h", bram_dout);
+      $fatal(1, "Test failed! signature_accepted: %b, signature_rejected: %b", signature_accepted, signature_rejected);
 
     $finish;
   end

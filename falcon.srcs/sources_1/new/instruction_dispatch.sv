@@ -17,7 +17,8 @@ module instruction_dispatch#(
     input logic start,
     input logic algorithm_select, // 0 = signing, 1 = verification
 
-    output logic done,
+    output logic signature_accepted,
+    output logic signature_rejected,
 
     // DMA interface
     input logic dma_bram_en, // Enable signal for BRAM DMA interface. When this is high, DMA has access to the BRAM
@@ -27,23 +28,20 @@ module instruction_dispatch#(
     output logic [127:0] dma_bram_dout // Data read from BRAM
   );
 
-  localparam int VERIFY_INSTRUCTION_COUNT = 5 + 1 + 5; // run verify, read result, 5xNOP
+  localparam int VERIFY_INSTRUCTION_COUNT = 5;
   logic [127:0] verify_instructions[VERIFY_INSTRUCTION_COUNT] = '{
-          128'h120400000000c18000000000001e1b90, // NTT, decompress, hash_to_point,
-          128'h020000000000c18000000000001e1b8c, // NTT
-          128'h001000000000c18000000000001e1b11, // mod_mult_q
-          128'h020000000000c1c000000000001e1b0c, // INTT
-          128'h000800000000c1c000000000001e10cd, // sub_norm_sq
-          128'h800000000000c1c000000000000210c8 // read result
+          128'h1204000000000000000c000000021b90,
+          128'h0200000000000000000000000000000c,
+          128'h00100000000000000000000000000111,
+          128'h0200000000000000000010000000000c,
+          128'h000800000000000000000000000000cd
         };
 
   localparam int SIGN_INSTRUCTION_COUNT = N; // TODO
-  logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
+  // logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
 
   logic [127:0] instruction;
   logic instruction_done;
-  logic [`BRAM_DATA_WIDTH-1:0] bram_din;
-  logic [`BRAM_DATA_WIDTH-1:0] bram_dout;
 
   logic running;
   logic [$clog2(SIGN_INSTRUCTION_COUNT)-1:0] instruction_index;
@@ -55,8 +53,12 @@ module instruction_dispatch#(
                  .rst_n(rst_n),
                  .instruction(instruction),
                  .instruction_done(instruction_done),
-                 .bram_din(bram_din),
-                 .bram_dout(bram_dout),
+
+                 .signature_accepted(signature_accepted),
+                 .signature_rejected(signature_rejected),
+
+                 .bram_din(128'b0),
+                 .bram_dout(),
 
                  .dma_bram_en(dma_bram_en),
                  .dma_bram_addr(dma_bram_addr),
@@ -67,7 +69,6 @@ module instruction_dispatch#(
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
-      done <= 1'b0;
       running <= 1'b0;
       instruction_index <= 0;
     end
@@ -78,18 +79,19 @@ module instruction_dispatch#(
 
       if(running) begin
 
-        // Increment on instruction done
         if(instruction_done)
           instruction_index <= instruction_index + 1;
 
         if(instruction_done)
           instruction <= 128'b0;
         else
-          instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
+          // instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
+          instruction <= verify_instructions[instruction_index];
 
-        // Done condition for successful verify
-        if(instruction_index == 5 && (bram_dout == 128'hffffffffffffffffffffffffffffffff || bram_dout == 128'b0))
-          done <= 1'b1;
+        if(algorithm_select == 1'b1 && (signature_accepted == 1'b1 || signature_rejected == 1'b1)) begin
+          running <= 1'b0;
+          instruction_index <= 0;
+        end
       end
     end
   end

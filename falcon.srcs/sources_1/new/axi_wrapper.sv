@@ -6,7 +6,10 @@
 //
 //  - slv_reg0 is used to start the module. Any change in slv_reg0 will trigger start
 //  - slv_reg1 is used to select the algorithm (0 for signing, 1 for verification)
-//  - slv_reg2 can be used to poll whether the operation is done (0 for not done, 1 for done)
+//  - slv_reg2 can be used to poll whether the operation is done
+//        [0] = 1 ... verify: signature accepted
+//        [1] = 1 ... verify: signature rejected
+//        [2] = 1 ... signing: done
 //  - slv_reg3 is the enable signal for the DMA BRAM interface. When this is high, the DMA has access to the BRAM. Normally dma_bram_en would be used for that but it doesn't seem to work.
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -101,7 +104,8 @@ module axi_wrapper #
   // Falcon
   logic start;
   logic algorithm_select; // 0 = signing, 1 = verification
-  logic done;
+  logic signature_accepted;
+  logic signature_rejected;
   logic [C_S_AXI_DATA_WIDTH-1:0] slv_reg0_old;
 
   // AXI4LITE signals
@@ -233,7 +237,7 @@ module axi_wrapper #
     end
     else begin
 
-      slv_reg2 <= {31'b0, done}; // slv_reg2 is used to poll whether the operation is done (0 for not done, 1 for done)
+      slv_reg2 <= {30'b0, signature_rejected, signature_accepted};
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -398,7 +402,9 @@ module axi_wrapper #
                          .rst_n(S_AXI_ARESETN),
                          .start(start),
                          .algorithm_select(slv_reg1[0]),
-                         .done(done),
+
+                         .signature_accepted(signature_accepted),
+                         .signature_rejected(signature_rejected),
 
                          .dma_bram_en(slv_reg3[0]),
                          .dma_bram_addr(dma_bram_addr),
