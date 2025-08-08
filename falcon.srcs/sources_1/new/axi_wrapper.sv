@@ -7,8 +7,7 @@
 //  - slv_reg0 is used to start the module. Any change in slv_reg0 will trigger start
 //  - slv_reg1 is used to select the algorithm (0 for signing, 1 for verification)
 //  - slv_reg2 can be used to poll whether the operation is done (0 for not done, 1 for done)
-//  - slv_reg3 is not used
-//
+//  - slv_reg3 is the enable signal for the DMA BRAM interface. When this is high, the DMA has access to the BRAM. Normally dma_bram_en would be used for that but it doesn't seem to work.
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -28,8 +27,8 @@ module axi_wrapper #
     // Users to add ports here
 
     // DMA interface
-    input logic dma_bram_en,
-    input logic [15:0] dma_bram_addr,
+    // input logic dma_bram_en,
+    input logic [19:0] dma_bram_addr,
     input logic [15:0] dma_bram_byte_we,
     input logic[127:0] dma_bram_din,
     output logic [127:0] dma_bram_dout,
@@ -234,8 +233,7 @@ module axi_wrapper #
     end
     else begin
 
-      slv_reg2 <= {29'b0, done, 1'b0, done}; // slv_reg2 is used to poll whether the operation is done (0 for not done, 1 for done)
-      slv_reg3 <= 32'hABCD1234; // Dummy value so we see that reading is correct
+      slv_reg2 <= {31'b0, done}; // slv_reg2 is used to poll whether the operation is done (0 for not done, 1 for done)
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -260,18 +258,18 @@ module axi_wrapper #
           //       // Slave register 2
           //       slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
           //     end
-          // 2'h3:
-          //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-          //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-          //       // Respective byte enables are asserted as per write strobes
-          //       // Slave register 3
-          //       slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-          //     end
+          2'h3:
+            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+                // Respective byte enables are asserted as per write strobes
+                // Slave register 3
+                slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+              end
           default : begin
             slv_reg0 <= slv_reg0;
             slv_reg1 <= slv_reg1;
             // slv_reg2 <= slv_reg2;
-            // slv_reg3 <= slv_reg3;
+            slv_reg3 <= slv_reg3;
           end
         endcase
       end
@@ -402,7 +400,7 @@ module axi_wrapper #
                          .algorithm_select(slv_reg1[0]),
                          .done(done),
 
-                         .dma_bram_en(dma_bram_en),
+                         .dma_bram_en(slv_reg3[0]),
                          .dma_bram_addr(dma_bram_addr),
                          .dma_bram_din(dma_bram_din),
                          .dma_bram_dout(dma_bram_dout),

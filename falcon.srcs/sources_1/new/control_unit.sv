@@ -25,7 +25,7 @@ module control_unit#(
 
     // DMA interface
     input logic dma_bram_en, // Enable signal for BRAM DMA interface. When this is high, DMA has access to the BRAM
-    input logic [15:0] dma_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
+    input logic [19:0] dma_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
     input logic [15:0] dma_bram_byte_we,
     input logic[127:0] dma_bram_din,  // Data to write to BRAM
     output logic [127:0] dma_bram_dout // Data read from BRAM
@@ -957,8 +957,8 @@ module control_unit#(
 
     if(dma_bram_en == 1'b1) begin     // DMA has BRAM access
 
-      dma_bank = dma_bram_addr[15:13];  // Top 3 bits of the address specify the bank
-      dma_addr = dma_bram_addr[12:0]; // Lower 13 bits specify the address within the bank
+      dma_bank = dma_bram_addr[19:17];  // Top 3 bits of the address specify the bank
+      dma_addr = dma_bram_addr[16:4]; // Middle 13 bits specify the address within the bank,
 
       bram_addr_a[dma_bank] = dma_addr;
       bram_din_a[dma_bank] = dma_bram_din;

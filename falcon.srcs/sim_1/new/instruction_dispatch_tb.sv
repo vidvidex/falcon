@@ -12,7 +12,7 @@ module instruction_dispatch_tb;
   logic done;
 
   logic dma_bram_en;
-  logic [15:0] dma_bram_addr;
+  logic [19:0] dma_bram_addr;
   logic [15:0] dma_bram_byte_we;
   logic[127:0] dma_bram_din;
   logic [127:0] dma_bram_dout;
