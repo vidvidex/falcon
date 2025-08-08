@@ -235,24 +235,22 @@ void bram_read(unsigned int bram_id, unsigned int bram_addr, uint128_t *dest, un
 // Creates an uint128_t from 2 uint64_t values
 uint128_t createUint128_t(uint64_t high, uint64_t low) { return ((uint128_t)high << 64) | low; }
 
-// Starts the verification process
-// If block is 1, it will block until the verification is done
-// If block is 0, it will return immediately after starting the verification
-void start_verification(int block) {
+// Runs verify. Returns 1 if signature accepted and 0 if rejected. Returns -1 if hardware returned an unknown code
+int verify() {
     // Set the algorithm to Falcon
     *((int *)ALGORITHM_SELECT_REG) = 0b1;
 
-    // Start the verification process
+    // Start verify
     *((int *)START_REG) = 0b1;
 
-    // If block is 1 we should wait for the verification to complete
-    if (!block)
-        return;
-
     // Wait for the verification to complete
-    while (*((int *)POLL_DONE_REG) != 0b1) {
-        // Busy wait
-    }
+    while (*((int *)POLL_DONE_REG) == 0);
+
+    if(*((int *)POLL_DONE_REG) == 0b1)
+		return 1;
+    else if(*((int *)POLL_DONE_REG) == 0b10)
+		return 0;
+    else return -1;
 }
 
 uint128_t arr[N];
@@ -269,7 +267,12 @@ int main() {
     print("Keys, signature, and message loaded.\n");
 
     print("Starting verification...\n");
-    start_verification(1);
+    int status = verify();
+
+    if(status == 1)
+    	print("Signature accepted\n");
+    else
+    	print("Signature rejected\n");
 
     print("Done\n");
 
