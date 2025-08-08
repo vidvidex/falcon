@@ -34,6 +34,7 @@ module sub_normalize_squared_norm#(
   logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] squared_norm; // Sum of all parallel elementwise sums
   logic over_bound; // If this is high we are already over the bound. In that case the data we're processing doesn't matter anymore. We are just waiting for the "last" signal to pass through the pipeline, so we can set "reject" high
   logic last1, last2, last3, last4, last5;
+  logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] temp_sum;
 
   logic [26:0] bound2; // The bound squared
   generate
@@ -128,10 +129,10 @@ module sub_normalize_squared_norm#(
       last5 <= 0;
     end
     else begin
-      logic signed [29+$clog2(PARALLEL_OPS_COUNT):0] temp_sum = 0;
+      temp_sum = 0;
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
         temp_sum += elementwise_sum[i];
-      
+
       squared_norm <= squared_norm + temp_sum;
       if(squared_norm > bound2)
         over_bound <= 1;

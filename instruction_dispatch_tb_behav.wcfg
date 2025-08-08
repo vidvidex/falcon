@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="50,506.198 ns"></ZoomStartTime>
-      <ZoomEndTime time="50,829.016 ns"></ZoomEndTime>
-      <Cursor1Time time="50,560.000 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="513.916 ns"></ZoomEndTime>
+      <Cursor1Time time="0.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="220"></NameColumnWidth>
+      <NameColumnWidth column_width="208"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="3" />
+   <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group1346">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -43,6 +43,27 @@
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/done">
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/dma_bram_en">
+         <obj_property name="ElementShortName">dma_bram_en</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_en</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/dma_bram_addr">
+         <obj_property name="ElementShortName">dma_bram_addr[17:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_addr[17:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/dma_bram_byte_we">
+         <obj_property name="ElementShortName">dma_bram_byte_we[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_byte_we[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/dma_bram_din">
+         <obj_property name="ElementShortName">dma_bram_din[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_din[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/dma_bram_dout">
+         <obj_property name="ElementShortName">dma_bram_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_dout[127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
@@ -73,6 +94,14 @@
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/signature_accepted">
+         <obj_property name="ElementShortName">signature_accepted</obj_property>
+         <obj_property name="ObjectShortName">signature_accepted</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/signature_rejected">
+         <obj_property name="ElementShortName">signature_rejected</obj_property>
+         <obj_property name="ObjectShortName">signature_rejected</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/public_key">
          <obj_property name="ElementShortName">public_key[0:511][14:0]</obj_property>
          <obj_property name="ObjectShortName">public_key[0:511][14:0]</obj_property>
@@ -86,12 +115,8 @@
          <obj_property name="ObjectShortName">signature_blocks[0:80][63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/verify_instructions">
-         <obj_property name="ElementShortName">verify_instructions[0:317][127:0]</obj_property>
-         <obj_property name="ObjectShortName">verify_instructions[0:317][127:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/sign_instructions">
-         <obj_property name="ElementShortName">sign_instructions[0:511][127:0]</obj_property>
-         <obj_property name="ObjectShortName">sign_instructions[0:511][127:0]</obj_property>
+         <obj_property name="ElementShortName">verify_instructions[0:10][127:0]</obj_property>
+         <obj_property name="ObjectShortName">verify_instructions[0:10][127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/instruction">
          <obj_property name="ElementShortName">instruction[127:0]</obj_property>
@@ -113,23 +138,6 @@
          <obj_property name="ElementShortName">instruction_index[8:0]</obj_property>
          <obj_property name="ObjectShortName">instruction_index[8:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/i">
-         <obj_property name="ElementShortName">i[31:0]</obj_property>
-         <obj_property name="ObjectShortName">i[31:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/public_key_loaded">
-         <obj_property name="ElementShortName">public_key_loaded</obj_property>
-         <obj_property name="ObjectShortName">public_key_loaded</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/signature_loaded">
-         <obj_property name="ElementShortName">signature_loaded</obj_property>
-         <obj_property name="ObjectShortName">signature_loaded</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/message_loaded">
-         <obj_property name="ElementShortName">message_loaded</obj_property>
-         <obj_property name="ObjectShortName">message_loaded</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
@@ -179,6 +187,35 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/bram_dout">
          <obj_property name="ElementShortName">bram_dout[127:0]</obj_property>
          <obj_property name="ObjectShortName">bram_dout[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/signature_accepted">
+         <obj_property name="ElementShortName">signature_accepted</obj_property>
+         <obj_property name="ObjectShortName">signature_accepted</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/signature_rejected">
+         <obj_property name="ElementShortName">signature_rejected</obj_property>
+         <obj_property name="ObjectShortName">signature_rejected</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/dma_bram_en">
+         <obj_property name="ElementShortName">dma_bram_en</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_en</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/dma_bram_addr">
+         <obj_property name="ElementShortName">dma_bram_addr[17:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_addr[17:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/dma_bram_byte_we">
+         <obj_property name="ElementShortName">dma_bram_byte_we[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_byte_we[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/dma_bram_din">
+         <obj_property name="ElementShortName">dma_bram_din[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_din[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/dma_bram_dout">
+         <obj_property name="ElementShortName">dma_bram_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_bram_dout[127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/bank1">
          <obj_property name="ElementShortName">bank1[2:0]</obj_property>
@@ -254,7 +291,6 @@
       <wvobject type="group" fp_name="group1655">
          <obj_property name="label">debug</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/debug_BRAM_READ">
             <obj_property name="ElementShortName">debug_BRAM_READ</obj_property>
             <obj_property name="ObjectShortName">debug_BRAM_READ</obj_property>
@@ -1185,6 +1221,7 @@
       <wvobject type="group" fp_name="group1451">
          <obj_property name="label">decompress</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress_start">
             <obj_property name="ElementShortName">decompress_start</obj_property>
             <obj_property name="ObjectShortName">decompress_start</obj_property>
@@ -1233,7 +1270,6 @@
       <wvobject type="group" fp_name="group1452">
          <obj_property name="label">mod_mult_q</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a">
             <obj_property name="ElementShortName">mod_mult_a[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_a[0:1][14:0]</obj_property>
@@ -1462,6 +1498,171 @@
             <obj_property name="ElementShortName">sub_normalize_squared_norm_done_delayed</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_done_delayed</obj_property>
          </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group423">
+      <obj_property name="label">New Group 26</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/rst_n">
+         <obj_property name="ElementShortName">rst_n</obj_property>
+         <obj_property name="ObjectShortName">rst_n</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/start">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/input_bram_addr">
+         <obj_property name="ElementShortName">input_bram_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_addr[12:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/input_bram_data">
+         <obj_property name="ElementShortName">input_bram_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/output_bram1_addr">
+         <obj_property name="ElementShortName">output_bram1_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram1_addr[12:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/output_bram1_data">
+         <obj_property name="ElementShortName">output_bram1_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram1_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/output_bram1_we">
+         <obj_property name="ElementShortName">output_bram1_we</obj_property>
+         <obj_property name="ObjectShortName">output_bram1_we</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/output_bram2_addr">
+         <obj_property name="ElementShortName">output_bram2_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram2_addr[12:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/output_bram2_data">
+         <obj_property name="ElementShortName">output_bram2_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">output_bram2_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/signature_error">
+         <obj_property name="ElementShortName">signature_error</obj_property>
+         <obj_property name="ObjectShortName">signature_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/done">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/coefficient_index">
+         <obj_property name="ElementShortName">coefficient_index[9:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient_index[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/bits_used">
+         <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
+         <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/total_bits_used">
+         <obj_property name="ElementShortName">total_bits_used[13:0]</obj_property>
+         <obj_property name="ObjectShortName">total_bits_used[13:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/invalid_bits_used_error">
+         <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
+         <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/cannot_find_high_error">
+         <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
+         <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/used_bit_count_error">
+         <obj_property name="ElementShortName">used_bit_count_error</obj_property>
+         <obj_property name="ObjectShortName">used_bit_count_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/remaining_bits_not_zeros_error">
+         <obj_property name="ElementShortName">remaining_bits_not_zeros_error</obj_property>
+         <obj_property name="ObjectShortName">remaining_bits_not_zeros_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/invalid_zero_representation_error">
+         <obj_property name="ElementShortName">invalid_zero_representation_error</obj_property>
+         <obj_property name="ObjectShortName">invalid_zero_representation_error</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/decompress_coefficient_rst_n">
+         <obj_property name="ElementShortName">decompress_coefficient_rst_n</obj_property>
+         <obj_property name="ObjectShortName">decompress_coefficient_rst_n</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/read_signature_length_counter">
+         <obj_property name="ElementShortName">read_signature_length_counter[1:0]</obj_property>
+         <obj_property name="ObjectShortName">read_signature_length_counter[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/signature_length_bits">
+         <obj_property name="ElementShortName">signature_length_bits[13:0]</obj_property>
+         <obj_property name="ObjectShortName">signature_length_bits[13:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/input_bram_data_valid">
+         <obj_property name="ElementShortName">input_bram_data_valid</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/input_bram_data_valid_delayed">
+         <obj_property name="ElementShortName">input_bram_data_valid_delayed</obj_property>
+         <obj_property name="ObjectShortName">input_bram_data_valid_delayed</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/second_half">
+         <obj_property name="ElementShortName">second_half</obj_property>
+         <obj_property name="ObjectShortName">second_half</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/second_half_delayed">
+         <obj_property name="ElementShortName">second_half_delayed</obj_property>
+         <obj_property name="ObjectShortName">second_half_delayed</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/coefficient">
+         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/coefficient_delayed">
+         <obj_property name="ElementShortName">coefficient_delayed[14:0]</obj_property>
+         <obj_property name="ObjectShortName">coefficient_delayed[14:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/output_we">
+         <obj_property name="ElementShortName">output_we</obj_property>
+         <obj_property name="ObjectShortName">output_we</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/buffer">
+         <obj_property name="ElementShortName">buffer[255:0]</obj_property>
+         <obj_property name="ObjectShortName">buffer[255:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/buffer_tmp">
+         <obj_property name="ElementShortName">buffer_tmp[255:0]</obj_property>
+         <obj_property name="ObjectShortName">buffer_tmp[255:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/buffer_valid_bits">
+         <obj_property name="ElementShortName">buffer_valid_bits[8:0]</obj_property>
+         <obj_property name="ObjectShortName">buffer_valid_bits[8:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/valid_bits">
+         <obj_property name="ElementShortName">valid_bits[7:0]</obj_property>
+         <obj_property name="ObjectShortName">valid_bits[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/waiting_for_input_data">
+         <obj_property name="ElementShortName">waiting_for_input_data</obj_property>
+         <obj_property name="ObjectShortName">waiting_for_input_data</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/state">
+         <obj_property name="ElementShortName">state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/next_state">
+         <obj_property name="ElementShortName">next_state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/coefficient_valid">
+         <obj_property name="ElementShortName">coefficient_valid</obj_property>
+         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/N">
+         <obj_property name="ElementShortName">N[31:0]</obj_property>
+         <obj_property name="ObjectShortName">N[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress/slen">
+         <obj_property name="ElementShortName">slen[31:0]</obj_property>
+         <obj_property name="ObjectShortName">slen[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
