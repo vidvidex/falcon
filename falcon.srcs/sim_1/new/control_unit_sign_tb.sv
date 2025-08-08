@@ -222,7 +222,7 @@ module control_unit_sign_tb;
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0000_0001_1000_0000; // complex mul and mul const
       bank1 = 4;  // complex mul 4 and 3, destination 4
-      bank2 = 1;
+      bank2 = 3;
       bank3 = 5;  // mul const 5, output to 5
       bank4 = 5;
       address1 = i[`BRAM_ADDR_WIDTH-1:0];
