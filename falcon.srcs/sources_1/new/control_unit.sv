@@ -44,7 +44,7 @@ module control_unit#(
   logic debug_INT_TO_DOUBLE;
   logic debug_FFT_IFFT;
   logic debug_NTT_INTT;
-  logic debug_MUL;
+  logic debug_COMPLEX_MUL;
   logic debug_MUL_CONST;
   logic debug_SPLIT;
   logic debug_MERGE;
@@ -61,7 +61,7 @@ module control_unit#(
     debug_INT_TO_DOUBLE = instruction[127-4];
     debug_FFT_IFFT = instruction[127-5];
     debug_NTT_INTT = instruction[127-6];
-    debug_MUL = instruction[127-7];
+    debug_COMPLEX_MUL = instruction[127-7];
     debug_MUL_CONST = instruction[127-8];
     debug_SPLIT = instruction[127-9];
     debug_MERGE = instruction[127-10];
@@ -77,7 +77,7 @@ module control_unit#(
 
   logic [INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
-  logic [12:0] addr1, addr2, addr3, addr4;
+  logic [12:0] addr1, addr2;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a [BRAM_BANK_COUNT];
@@ -794,7 +794,7 @@ module control_unit#(
       end
 
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-        fft_mode <= instruction[70];
+        fft_mode <= instruction[44];
         fft_start <= 1'b1;
         if(fft_done)
           modules_running[INSTRUCTION_COUNT-5] <= 1'b0;
@@ -803,7 +803,7 @@ module control_unit#(
       end
 
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
-        ntt_mode <= instruction[70];
+        ntt_mode <= instruction[44];
         ntt_start <= 1'b1;
         if(ntt_done)
           modules_running[INSTRUCTION_COUNT-6] <= 1'b0;
@@ -826,7 +826,7 @@ module control_unit#(
       end
 
       if(instruction[127-9] == 1'b1) begin // SPLIT
-        split_size <= 1 << instruction[77:74];
+        split_size <= 1 << instruction[49:46];
         split_start <= 1'b1;
         if(split_done)
           modules_running[INSTRUCTION_COUNT-9] <= 1'b0;
@@ -835,7 +835,7 @@ module control_unit#(
       end
 
       if(instruction[127-10] == 1'b1) begin // MERGE
-        merge_size <= 1 << instruction[77:74];
+        merge_size <= 1 << instruction[49:46];
         merge_start <= 1'b1;
         if(merge_done)
           modules_running[INSTRUCTION_COUNT-10] <= 1'b0;
@@ -885,8 +885,6 @@ module control_unit#(
     bank6 = instruction[17:15];
     addr1 = instruction[30:18];
     addr2 = instruction[43:31];
-    addr3 = instruction[56:44];
-    addr4 = instruction[69:57];
 
     // If not specified otherwise set BRAM signals to 0 (this includes WE, which will turn off writing)
     for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
@@ -958,7 +956,7 @@ module control_unit#(
     if(dma_bram_en == 1'b1) begin     // DMA has BRAM access
 
       dma_bank = dma_bram_addr[19:17];  // Top 3 bits of the address specify the bank
-      dma_addr = dma_bram_addr[16:4]; // Middle 13 bits specify the address within the bank,
+      dma_addr = dma_bram_addr[16:4]; // Middle 13 bits specify the address within the bank, bottom 4 bits are ignored
 
       bram_addr_a[dma_bank] = dma_addr;
       bram_din_a[dma_bank] = dma_bram_din;
@@ -979,11 +977,11 @@ module control_unit#(
       end
 
       if(instruction[127-2] == 1'b1) begin // COPY
-        bram_addr_a[bank3] = addr3;
-        copy_valid_in = instruction[72];
-        copy_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
+        bram_addr_a[bank3] = pipelined_inst_index;
+        copy_valid_in = pipelined_inst_valid;
+        copy_done = pipelined_inst_last;
 
-        copy_dst_addr = addr4;
+        copy_dst_addr = pipelined_inst_index;
         bram_addr_b[bank4] = copy_dst_addr_delayed;
         bram_din_b[bank4] = bram_dout_a[bank3];
         bram_we_b[bank4] = copy_valid_out;
@@ -1002,11 +1000,11 @@ module control_unit#(
       end
 
       if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
-        bram_addr_a[bank1] = addr1;
-        int_to_double_address_in = addr1;
+        bram_addr_a[bank1] = pipelined_inst_index;
+        int_to_double_address_in = pipelined_inst_index;
         int_to_double_data_in = bram_dout_a[bank1];
-        int_to_double_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
-        int_to_double_valid_in = instruction[72];
+        int_to_double_done = pipelined_inst_last;
+        int_to_double_valid_in = pipelined_inst_valid;
 
         // Write output to BRAM
         bram_addr_b[bank2] = int_to_double_address_out;
@@ -1055,31 +1053,31 @@ module control_unit#(
       end
 
       if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
-        bram_addr_a[bank1] = addr1;
-        bram_addr_a[bank2] = addr2;
+        bram_addr_a[bank1] = pipelined_inst_index;
+        bram_addr_a[bank2] = pipelined_inst_index;
         complex_mul_a_real = bram_dout_a[bank1][127:64];
         complex_mul_a_imag = bram_dout_a[bank1][63:0];
         complex_mul_b_real = bram_dout_a[bank2][127:64];
         complex_mul_b_imag = bram_dout_a[bank2][63:0];
-        complex_mul_valid_in = instruction[72];
-        complex_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
+        complex_mul_valid_in = pipelined_inst_valid;
+        complex_mul_done = pipelined_inst_last;
 
-        complex_mul_dst_addr = addr1;
+        complex_mul_dst_addr = pipelined_inst_index;
         bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
         bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
         bram_we_b[bank1] = complex_mul_valid_out;
       end
 
       if(instruction[127-8] == 1'b1) begin // MUL_CONST
-        bram_addr_a[bank3] = addr3;
+        bram_addr_a[bank3] = pipelined_inst_index;
         fp_mul1_a = bram_dout_a[bank3][127:64];
         fp_mul2_a = bram_dout_a[bank3][63:0];
 
-        fp_mul1_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-        fp_mul2_b = instruction[73] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-        fp_mul_valid_in = instruction[72];
-        fp_mul_done = instruction[71]; // Done when we get the 'pipelined_inst_last' signal
-        fp_mul_dst_addr = addr4;
+        fp_mul1_b = instruction[45] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul2_b = instruction[45] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul_valid_in = pipelined_inst_valid;
+        fp_mul_done = pipelined_inst_last;
+        fp_mul_dst_addr = pipelined_inst_index;
 
         bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
         bram_din_b[bank4] = {fp_mul1_result, fp_mul2_result};
@@ -1151,12 +1149,12 @@ module control_unit#(
 
         // Write result
         if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
-          bram_addr_a[bank4] = addr4;
+          bram_addr_a[bank4] = addr1;
           bram_din_a[bank4] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
           bram_we_a[bank4] = 1'b1;
         end
         else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
-          bram_addr_a[bank4] = addr4;
+          bram_addr_a[bank4] = addr1;
           bram_din_a[bank4] = 128'h0;
           bram_we_a[bank4] = 1'b1;
         end
@@ -1173,9 +1171,9 @@ module control_unit#(
         bram_din_a[bank6] = decompress_output_bram1_data;
         bram_we_a[bank6] = decompress_output_bram1_we;
 
-        bram_addr_a[instruction[80:78]] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
-        bram_din_a[instruction[80:78]] = decompress_output_bram1_data;
-        bram_we_a[instruction[80:78]] = decompress_output_bram1_we;
+        bram_addr_a[instruction[52:50]] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
+        bram_din_a[instruction[52:50]] = decompress_output_bram1_data;
+        bram_we_a[instruction[52:50]] = decompress_output_bram1_we;
 
         bram_addr_b[bank6] = decompress_output_bram2_addr;
         decompress_output_bram2_data = bram_dout_b[bank6];

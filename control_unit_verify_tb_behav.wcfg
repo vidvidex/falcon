@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="748.333 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,050.334 ns"></ZoomEndTime>
-      <Cursor1Time time="756.133 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="346.163 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="162"></ValueColumnWidth>
+      <ValueColumnWidth column_width="154"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="3" />
+   <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -95,37 +95,9 @@
          <obj_property name="ObjectShortName">bank6[2:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/address1">
-         <obj_property name="ElementShortName">address1[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address1[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/address2">
-         <obj_property name="ElementShortName">address2[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address2[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/address3">
-         <obj_property name="ElementShortName">address3[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address3[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/address4">
-         <obj_property name="ElementShortName">address4[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address4[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/control_unit_verify_tb/mode">
          <obj_property name="ElementShortName">mode</obj_property>
          <obj_property name="ObjectShortName">mode</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/valid">
-         <obj_property name="ElementShortName">valid</obj_property>
-         <obj_property name="ObjectShortName">valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/last">
-         <obj_property name="ElementShortName">last</obj_property>
-         <obj_property name="ObjectShortName">last</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/control_unit_verify_tb/mul_const_selection">
          <obj_property name="ElementShortName">mul_const_selection</obj_property>
@@ -236,9 +208,9 @@
             <obj_property name="ElementShortName">debug_NTT_INTT</obj_property>
             <obj_property name="ObjectShortName">debug_NTT_INTT</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/debug_MUL">
-            <obj_property name="ElementShortName">debug_MUL</obj_property>
-            <obj_property name="ObjectShortName">debug_MUL</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/debug_COMPLEX_MUL">
+            <obj_property name="ElementShortName">debug_COMPLEX_MUL</obj_property>
+            <obj_property name="ObjectShortName">debug_COMPLEX_MUL</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/debug_MUL_CONST">
             <obj_property name="ElementShortName">debug_MUL_CONST</obj_property>
@@ -935,120 +907,6 @@
             <obj_property name="ElementShortName">sub_normalize_squared_norm_done_delayed</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_done_delayed</obj_property>
          </wvobject>
-      </wvobject>
-   </wvobject>
-   <wvobject type="group" fp_name="group596">
-      <obj_property name="label">New Group 41</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/a">
-         <obj_property name="ElementShortName">a[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">a[0:1][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/b">
-         <obj_property name="ElementShortName">b[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">b[0:1][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/c">
-         <obj_property name="ElementShortName">c[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">c[0:1][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/valid">
-         <obj_property name="ElementShortName">valid</obj_property>
-         <obj_property name="ObjectShortName">valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/last">
-         <obj_property name="ElementShortName">last</obj_property>
-         <obj_property name="ObjectShortName">last</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/accept">
-         <obj_property name="ElementShortName">accept</obj_property>
-         <obj_property name="ObjectShortName">accept</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/reject">
-         <obj_property name="ElementShortName">reject</obj_property>
-         <obj_property name="ObjectShortName">reject</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/difference">
-         <obj_property name="ElementShortName">difference[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">difference[0:1][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/difference_normalized">
-         <obj_property name="ElementShortName">difference_normalized[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">difference_normalized[0:1][14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/difference_normalized_squared">
-         <obj_property name="ElementShortName">difference_normalized_squared[0:1][28:0]</obj_property>
-         <obj_property name="ObjectShortName">difference_normalized_squared[0:1][28:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/c_squared">
-         <obj_property name="ElementShortName">c_squared[0:1][28:0]</obj_property>
-         <obj_property name="ObjectShortName">c_squared[0:1][28:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/elementwise_sum">
-         <obj_property name="ElementShortName">elementwise_sum[0:1][30:0]</obj_property>
-         <obj_property name="ObjectShortName">elementwise_sum[0:1][30:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/c1">
-         <obj_property name="ElementShortName">c1[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">c1[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/c2">
-         <obj_property name="ElementShortName">c2[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">c2[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/squared_norm">
-         <obj_property name="ElementShortName">squared_norm[30:0]</obj_property>
-         <obj_property name="ObjectShortName">squared_norm[30:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/over_bound">
-         <obj_property name="ElementShortName">over_bound</obj_property>
-         <obj_property name="ObjectShortName">over_bound</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/last1">
-         <obj_property name="ElementShortName">last1</obj_property>
-         <obj_property name="ObjectShortName">last1</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/last2">
-         <obj_property name="ElementShortName">last2</obj_property>
-         <obj_property name="ObjectShortName">last2</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/last3">
-         <obj_property name="ElementShortName">last3</obj_property>
-         <obj_property name="ObjectShortName">last3</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/last4">
-         <obj_property name="ElementShortName">last4</obj_property>
-         <obj_property name="ObjectShortName">last4</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/last5">
-         <obj_property name="ElementShortName">last5</obj_property>
-         <obj_property name="ObjectShortName">last5</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/bound2">
-         <obj_property name="ElementShortName">bound2[26:0]</obj_property>
-         <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm/PARALLEL_OPS_COUNT">
-         <obj_property name="ElementShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
-         <obj_property name="ObjectShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
