@@ -30,20 +30,15 @@ module instruction_dispatch#(
   localparam int VERIFY_INSTRUCTION_COUNT = 5 + 1 + 5; // run verify, read result, 5xNOP
   logic [127:0] verify_instructions[VERIFY_INSTRUCTION_COUNT] = '{
           128'h120400000000c18000000000001e1b90, // NTT, decompress, hash_to_point,
-          128'h00000000000000000000000000000000,
           128'h020000000000c18000000000001e1b8c, // NTT
-          128'h00000000000000000000000000000000,
           128'h001000000000c18000000000001e1b11, // mod_mult_q
-          128'h00000000000000000000000000000000,
           128'h020000000000c1c000000000001e1b0c, // INTT
-          128'h00000000000000000000000000000000,
           128'h000800000000c1c000000000001e10cd, // sub_norm_sq
-          128'h00000000000000000000000000000000,
           128'h800000000000c1c000000000000210c8 // read result
         };
 
   localparam int SIGN_INSTRUCTION_COUNT = N; // TODO
-  // logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
+  logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
 
   logic [127:0] instruction;
   logic instruction_done;
@@ -83,18 +78,17 @@ module instruction_dispatch#(
 
       if(running) begin
 
-        // Increment on instruction done, if we're loading data (first 307 instructions)
+        // Increment on instruction done
         if(instruction_done)
-          instruction_index <= instruction_index + 2;
+          instruction_index <= instruction_index + 1;
 
         if(instruction_done)
           instruction <= 128'b0;
         else
-          // instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
-          instruction <= verify_instructions[instruction_index];
+          instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
 
         // Done condition for successful verify
-        if(instruction_index == 10 && (bram_dout == 128'hffffffffffffffffffffffffffffffff || bram_dout == 128'b0))
+        if(instruction_index == 5 && (bram_dout == 128'hffffffffffffffffffffffffffffffff || bram_dout == 128'b0))
           done <= 1'b1;
       end
     end

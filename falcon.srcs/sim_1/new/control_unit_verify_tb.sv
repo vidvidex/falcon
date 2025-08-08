@@ -31,15 +31,13 @@ module control_unit_verify_tb;
 
   logic [15:0] modules;
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
-  logic [12:0] address1, address2, address3, address4;
+  logic [12:0] addr1, addr2;
   logic mode;
-  logic valid;
-  logic last;
   logic mul_const_selection;
   logic [3:0] split_merge_size;
   logic [2:0] decompress_output2;
 
-  assign instruction = {modules, 31'b0, decompress_output2, split_merge_size, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank6, bank5, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 59'b0, decompress_output2, split_merge_size, mul_const_selection, mode, addr2, addr1, bank6, bank5, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -50,13 +48,9 @@ module control_unit_verify_tb;
     bank4 = 0;
     bank5 = 0;
     bank6 = 0;
-    address1 = 0;
-    address2 = 0;
-    address3 = 0;
-    address4 = 0;
+    addr1 = 0;
+    addr2 = 0;
     mode = 0;
-    last = 0;
-    valid = 0;
     mul_const_selection = 0;
     split_merge_size = 0;
     decompress_output2 = 0;
@@ -73,10 +67,8 @@ module control_unit_verify_tb;
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 0;
-      address1 = i;
+      addr1 = i;
       bram_din = {49'b0, public_key[i], 49'b0, public_key[i + N/2]};
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -86,10 +78,8 @@ module control_unit_verify_tb;
     for (int i = 0; i < SIGNATURE_BLOCKS/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 1;
-      address1 = i;
+      addr1 = i;
       bram_din = {signature_blocks[2*i], signature_blocks[2*i+1]};
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -99,10 +89,8 @@ module control_unit_verify_tb;
     for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 6;
-      address1 = i;
+      addr1 = i;
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
-      valid = 1'b1;
-      last = (i == MESSAGE_BLOCKS - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -162,7 +150,7 @@ module control_unit_verify_tb;
     bank2 = 1;
     bank3 = 3;
     bank4 = 0;
-    address4 = 0;
+    addr1 = 0; // Output to bank0 at address 0
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -171,7 +159,7 @@ module control_unit_verify_tb;
     // Verify the result by reading BRAM0 at address 0
     modules = 16'b1000_0000_0000_0000; // BRAM_READ
     bank1 = 0;
-    address1 = 0;
+    addr1 = 0;
     #20;
     if(bram_dout == 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff)
       $display("All tests for control_unit_verify passed!");

@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="85,328.951 ns"></ZoomStartTime>
-      <ZoomEndTime time="85,750.210 ns"></ZoomEndTime>
-      <Cursor1Time time="85,500.000 ns"></Cursor1Time>
+      <ZoomStartTime time="100,544.200 ns"></ZoomStartTime>
+      <ZoomEndTime time="101,091.161 ns"></ZoomEndTime>
+      <Cursor1Time time="101,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="209"></NameColumnWidth>
+      <NameColumnWidth column_width="201"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -78,24 +78,14 @@
          <obj_property name="ObjectShortName">bank4[2:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/control_unit_sign_tb/address1">
-         <obj_property name="ElementShortName">address1[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address1[12:0]</obj_property>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/addr1">
+         <obj_property name="ElementShortName">addr1[12:0]</obj_property>
+         <obj_property name="ObjectShortName">addr1[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/control_unit_sign_tb/address2">
-         <obj_property name="ElementShortName">address2[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address2[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_sign_tb/address3">
-         <obj_property name="ElementShortName">address3[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address3[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_sign_tb/address4">
-         <obj_property name="ElementShortName">address4[12:0]</obj_property>
-         <obj_property name="ObjectShortName">address4[12:0]</obj_property>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/addr2">
+         <obj_property name="ElementShortName">addr2[12:0]</obj_property>
+         <obj_property name="ObjectShortName">addr2[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/control_unit_sign_tb/instruction_done">
@@ -174,16 +164,6 @@
          <obj_property name="ObjectShortName">addr2[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/addr3">
-         <obj_property name="ElementShortName">addr3[12:0]</obj_property>
-         <obj_property name="ObjectShortName">addr3[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/addr4">
-         <obj_property name="ElementShortName">addr4[12:0]</obj_property>
-         <obj_property name="ObjectShortName">addr4[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/modules_running">
          <obj_property name="ElementShortName">modules_running[15:0]</obj_property>
          <obj_property name="ObjectShortName">modules_running[15:0]</obj_property>
@@ -225,9 +205,9 @@
             <obj_property name="ElementShortName">debug_NTT_INTT</obj_property>
             <obj_property name="ObjectShortName">debug_NTT_INTT</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_MUL">
-            <obj_property name="ElementShortName">debug_MUL</obj_property>
-            <obj_property name="ObjectShortName">debug_MUL</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_COMPLEX_MUL">
+            <obj_property name="ElementShortName">debug_COMPLEX_MUL</obj_property>
+            <obj_property name="ObjectShortName">debug_COMPLEX_MUL</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_MUL_CONST">
             <obj_property name="ElementShortName">debug_MUL_CONST</obj_property>
@@ -514,17 +494,17 @@
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
             <obj_property name="label">addr_b[12:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_din_b[4]">
-            <obj_property name="DisplayName">label</obj_property>
-            <obj_property name="ElementShortName">[4][127:0]</obj_property>
-            <obj_property name="ObjectShortName">[4][127:0]</obj_property>
-            <obj_property name="label">din_b[127:0]</obj_property>
-         </wvobject>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_dout_b[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][127:0]</obj_property>
             <obj_property name="ObjectShortName">[4][127:0]</obj_property>
             <obj_property name="label">dout_b[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_din_b[4]">
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="ElementShortName">[4][127:0]</obj_property>
+            <obj_property name="ObjectShortName">[4][127:0]</obj_property>
+            <obj_property name="label">din_b[127:0]</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/bram_we_b[4]">
             <obj_property name="DisplayName">label</obj_property>

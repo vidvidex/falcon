@@ -43,15 +43,13 @@ module control_unit_sign_tb;
 
   logic [15:0] modules;
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
-  logic [12:0] address1, address2, address3, address4;
+  logic [12:0] addr1, addr2;
   logic mode;
-  logic valid;
-  logic last;
   logic mul_const_selection;
   logic [3:0] split_merge_size;
   logic [2:0] decompress_output2;
 
-  assign instruction = {modules, 31'b0, decompress_output2, split_merge_size, mul_const_selection, valid, last, mode, address4, address3, address2, address1, bank6, bank5, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 59'b0, decompress_output2, split_merge_size, mul_const_selection, mode, addr2, addr1, bank6, bank5, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -62,13 +60,9 @@ module control_unit_sign_tb;
     bank4 = 0;
     bank5 = 0;
     bank6 = 0;
-    address1 = 0;
-    address2 = 0;
-    address3 = 0;
-    address4 = 0;
+    addr1 = 0;
+    addr2 = 0;
     mode = 0;
-    last = 0;
-    valid = 0;
     mul_const_selection = 0;
     split_merge_size = 0;
     decompress_output2 = 0;
@@ -85,10 +79,8 @@ module control_unit_sign_tb;
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 0;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      addr1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b00[i];
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -98,10 +90,8 @@ module control_unit_sign_tb;
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 1;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      addr1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b01[i];
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -111,10 +101,8 @@ module control_unit_sign_tb;
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 2;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      addr1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b10[i];
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -124,10 +112,8 @@ module control_unit_sign_tb;
     for (int i = 0; i < N/2; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 3;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      addr1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = b11[i];
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -137,10 +123,8 @@ module control_unit_sign_tb;
     for (int i = 0; i < MESSAGE_BLOCKS; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 4;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      addr1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = {64'b0, message_blocks[i]}; // Write 64 bits of message, padding with zeros
-      valid = 1'b1;
-      last = (i == MESSAGE_BLOCKS - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -150,10 +134,8 @@ module control_unit_sign_tb;
     for (int i = 0; i < TREE_SIZE; i++) begin
       modules = 16'b0100_0000_0000_0000; // BRAM_WRITE
       bank1 = 6;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
+      addr1 = i[`BRAM_ADDR_WIDTH-1:0];
       bram_din = tree[i];
-      valid = 1'b1;
-      last = (i == TREE_SIZE - 1) ? 1'b1 : 1'b0;
       #10;
     end
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -170,17 +152,9 @@ module control_unit_sign_tb;
     #10;
 
     // Run int_to_double
-    for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0000_1000_0000_0000; // int to double
-      bank1 = 5;
-      bank2 = 5;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
-      address2 = i[`BRAM_ADDR_WIDTH-1:0];
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
-      #10;
-    end
-    valid = 1'b0;
+    modules = 16'b0000_1000_0000_0000; // int to double
+    bank1 = 5;
+    bank2 = 5;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -198,61 +172,33 @@ module control_unit_sign_tb;
     #10;
 
     // Run copy and complex mul
-    for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0010_0001_0000_0000; // copy and complex mul
-      bank1 = 5;  // complex mul 5 and 1, destination 5
-      bank2 = 1;
-      bank3 = 5;  // Copy from 5 to 4
-      bank4 = 4;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
-      address2 = i[`BRAM_ADDR_WIDTH-1:0];
-      address3 = i[`BRAM_ADDR_WIDTH-1:0];
-      address4 = i[`BRAM_ADDR_WIDTH-1:0];
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
-      #10;
-    end
-    valid = 1'b0;
+    modules = 16'b0010_0001_0000_0000; // copy and complex mul
+    bank1 = 5;  // complex mul 5 and 1, destination 5
+    bank2 = 1;
+    bank3 = 5;  // Copy from 5 to 4
+    bank4 = 4;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
     #10;
 
     // Run complex mul and mul const
-    for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0000_0001_1000_0000; // complex mul and mul const
-      bank1 = 4;  // complex mul 4 and 3, destination 4
-      bank2 = 3;
-      bank3 = 5;  // mul const 5, output to 5
-      bank4 = 5;
-      address1 = i[`BRAM_ADDR_WIDTH-1:0];
-      address2 = i[`BRAM_ADDR_WIDTH-1:0];
-      address3 = i[`BRAM_ADDR_WIDTH-1:0];
-      address4 = i[`BRAM_ADDR_WIDTH-1:0];
-      mul_const_selection = 1; // -1/12289
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
-      #10;
-    end
-    valid = 1'b0;
+    modules = 16'b0000_0001_1000_0000; // complex mul and mul const
+    bank1 = 4;  // complex mul 4 and 3, destination 4
+    bank2 = 3;
+    bank3 = 5;  // mul const 5, output to 5
+    bank4 = 5;
+    mul_const_selection = 1; // -1/12289
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
     #10;
 
     // Run mul const
-    for (int i = 0; i < N/2; i++) begin
-      modules = 16'b0000_0000_1000_0000; // mul const
-      bank3 = 4;  // mul const 4, output to 4
-      bank4 = 4;
-      address3 = i[`BRAM_ADDR_WIDTH-1:0];
-      address4 = i[`BRAM_ADDR_WIDTH-1:0];
-      mul_const_selection = 0; // 1/12289
-      valid = 1'b1;
-      last = (i == N/2 - 1) ? 1'b1 : 1'b0;
-      #10;
-    end
-    valid = 1'b0;
+    modules = 16'b0000_0000_1000_0000; // mul const
+    bank3 = 4;  // mul const 4, output to 4
+    bank4 = 4;
+    mul_const_selection = 0; // 1/12289
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -263,9 +209,9 @@ module control_unit_sign_tb;
     // Run split (t1 -> z1_512)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 5;
-    address1 = 0;
+    addr1 = 0;
     bank2 = 1;
-    address2 = 512;
+    addr2 = 512;
     split_merge_size = 9;
     while (instruction_done !== 1'b1)
       #10;
@@ -275,9 +221,9 @@ module control_unit_sign_tb;
     // Run split (z1_512 -> z1_256)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 1;
-    address1 = 512+128; // 128 because we're reading the second half
+    addr1 = 512+128; // 128 because we're reading the second half
     bank2 = 2;
-    address2 = 512;
+    addr2 = 512;
     split_merge_size = 8;
     while (instruction_done !== 1'b1)
       #10;
@@ -287,9 +233,9 @@ module control_unit_sign_tb;
     // Run split (z1_256 -> z1_128)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 2;
-    address1 = 512+64;
+    addr1 = 512+64;
     bank2 = 3;
-    address2 = 512;
+    addr2 = 512;
     split_merge_size = 7;
     while (instruction_done !== 1'b1)
       #10;
@@ -299,9 +245,9 @@ module control_unit_sign_tb;
     // Run split (z1_128 -> z1_64)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 3;
-    address1 = 512+32;
+    addr1 = 512+32;
     bank2 = 0;
-    address2 = 512;
+    addr2 = 512;
     split_merge_size = 6;
     while (instruction_done !== 1'b1)
       #10;
@@ -311,9 +257,9 @@ module control_unit_sign_tb;
     // Run split (z1_64 -> z1_32)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 0;
-    address1 = 512+16;
+    addr1 = 512+16;
     bank2 = 1;
-    address2 = 1024;
+    addr2 = 1024;
     split_merge_size = 5;
     while (instruction_done !== 1'b1)
       #10;
@@ -323,9 +269,9 @@ module control_unit_sign_tb;
     // Run split (z1_32 -> z1_16)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 1;
-    address1 = 1024+8;
+    addr1 = 1024+8;
     bank2 = 2;
-    address2 = 786;
+    addr2 = 786;
     split_merge_size = 4;
     while (instruction_done !== 1'b1)
       #10;
@@ -335,9 +281,9 @@ module control_unit_sign_tb;
     // Run split (z1_16 -> z1_8)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 2;
-    address1 = 786+4;
+    addr1 = 786+4;
     bank2 = 3;
-    address2 = 640;
+    addr2 = 640;
     split_merge_size = 3;
     while (instruction_done !== 1'b1)
       #10;
@@ -347,9 +293,9 @@ module control_unit_sign_tb;
     // Run split (z1_8 -> z1_4)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 3;
-    address1 = 640+2;
+    addr1 = 640+2;
     bank2 = 0;
-    address2 = 576;
+    addr2 = 576;
     split_merge_size = 2;
     while (instruction_done !== 1'b1)
       #10;
