@@ -65,6 +65,7 @@ void load_message();
 void load_signature();
 void bram_write(uint128_t *src, unsigned int bram_id, unsigned int bram_addr, unsigned int count);
 void bram_read(unsigned int bram_id, unsigned int bram_addr, uint128_t *dest, unsigned int count);
+void start_verification(int block);
 
 uint64_t public_key[N] = {
     4162,  5489,  9391,  6649,  9653,  4881,  3686,  191,   134,   209,   164,   7392,  9905,  8495,  7293,  4815,  3294,  839,   8742,  10592, 8248,  3744,
@@ -234,8 +235,27 @@ void bram_read(unsigned int bram_id, unsigned int bram_addr, uint128_t *dest, un
 // Creates an uint128_t from 2 uint64_t values
 uint128_t createUint128_t(uint64_t high, uint64_t low) { return ((uint128_t)high << 64) | low; }
 
-uint128_t local_array1[4] = {1, 2, 3, 4};
-uint128_t local_array2[N/2] = {0};
+// Starts the verification process
+// If block is 1, it will block until the verification is done
+// If block is 0, it will return immediately after starting the verification
+void start_verification(int block) {
+    // Set the algorithm to Falcon
+    *((int *)ALGORITHM_SELECT_REG) = 0b1;
+
+    // Start the verification process
+    *((int *)START_REG) = 0b1;
+
+    // If block is 1 we should wait for the verification to complete
+    if (!block)
+        return;
+
+    // Wait for the verification to complete
+    while (*((int *)POLL_DONE_REG) != 0b1) {
+        // Busy wait
+    }
+}
+
+uint128_t arr[N];
 
 int main() {
     init_platform();
@@ -248,6 +268,8 @@ int main() {
     load_message();
     print("Keys, signature, and message loaded.\n");
 
+    print("Starting verification...\n");
+    start_verification(1);
 
     print("Done\n");
 
