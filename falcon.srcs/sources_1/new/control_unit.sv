@@ -20,6 +20,9 @@ module control_unit#(
     input logic [127:0] instruction,
     output logic instruction_done,
 
+    output logic signature_accepted,
+    output logic signature_rejected,
+
     input logic [`BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
     output logic [`BRAM_DATA_WIDTH-1:0] bram_dout, // Data read from BRAM
 
@@ -727,8 +730,11 @@ module control_unit#(
 
   always_ff @(posedge clk) begin
 
-    if(!rst_n)
-      modules_running <= 1'b0;  // Only clear this on reset
+    if(!rst_n) begin
+      modules_running <= 1'b0;
+      signature_accepted <= 1'b0;
+      signature_rejected <= 1'b0;
+    end
 
     if(!rst_n || instruction_done)
       pipelined_inst_index <= -1;
@@ -855,6 +861,15 @@ module control_unit#(
           modules_running[INSTRUCTION_COUNT-12] <= 1'b0;
         else
           modules_running[INSTRUCTION_COUNT-12] <= 1'b1;
+
+        if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
+          signature_accepted <= 1'b1;
+          signature_rejected <= 1'b0;
+        end
+        else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
+          signature_accepted <= 1'b0;
+          signature_rejected <= 1'b1;
+        end
       end
 
       if(instruction[127-13] == 1'b1) begin // DECOMPRESS
@@ -1146,21 +1161,6 @@ module control_unit#(
 
         sub_normalize_squared_norm_valid = pipelined_inst_valid;
         sub_normalize_squared_norm_last = pipelined_inst_last;
-
-        // Write result
-        if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
-          bram_addr_a[bank4] = addr1;
-          bram_din_a[bank4] = 128'hFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-          bram_we_a[bank4] = 1'b1;
-        end
-        else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
-          bram_addr_a[bank4] = addr1;
-          bram_din_a[bank4] = 128'h0;
-          bram_we_a[bank4] = 1'b1;
-        end
-        else begin
-          bram_we_a[bank4] = 1'b0;
-        end
       end
 
       if(instruction[127-13] == 1'b1) begin // DECOMPRESS
