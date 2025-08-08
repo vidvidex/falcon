@@ -39,7 +39,7 @@
 #define AXI_LITE_BASE 0xA0000000
 #define START_REG AXI_LITE_BASE
 #define ALGORITHM_SELECT_REG (AXI_LITE_BASE + 4)
-#define P (AXI_LITE_BASE + 8)
+#define POLL_DONE_REG (AXI_LITE_BASE + 8)
 #define BRAM_ENABLE_REG (AXI_LITE_BASE + 12)
 
 // Base address for accessing device BRAM
@@ -202,7 +202,7 @@ void load_signature() {
 // Writes count*128bit of data from src to BRAM bram_id at address bram_addr
 void bram_write(uint128_t *src, unsigned int bram_id, unsigned int bram_addr, unsigned int count) {
     volatile uint128_t *bram_ptr = (volatile uint128_t *)BRAM_BASE;
-    unsigned int bank_offset = bram_id << 14; // Top 3 bits are BRAM id
+    unsigned int bank_offset = bram_id << 13; // Top 3 bits are BRAM id
 
     for (unsigned int i = 0; i < count; i++) {
         // Enable BRAM access
@@ -218,7 +218,7 @@ void bram_write(uint128_t *src, unsigned int bram_id, unsigned int bram_addr, un
 // Reads count*128 bit of data from BRAM bram_id at address bram_addr to dest
 void bram_read(unsigned int bram_id, unsigned int bram_addr, uint128_t *dest, unsigned int count) {
     volatile uint128_t *bram_ptr = (volatile uint128_t *)BRAM_BASE;
-    unsigned int bank_offset = bram_id << 14; // Top 3 bits are BRAM id
+    unsigned int bank_offset = bram_id << 13; // Top 3 bits are BRAM id
 
     for (unsigned int i = 0; i < count; i++) {
         // Enable BRAM access
@@ -242,9 +242,11 @@ int main() {
 
     print("Starting Falcon\n");
 
+    print("Loading keys, signature, and message...\n");
     load_public_key();
     load_signature();
     load_message();
+    print("Keys, signature, and message loaded.\n");
 
 
     print("Done\n");
