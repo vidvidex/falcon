@@ -247,7 +247,7 @@ module control_unit_sign_tb;
     bank1 = 3;
     addr1 = 512+32;
     bank2 = 0;
-    addr2 = 512;
+    addr2 = 1536;
     split_merge_size = 6;
     while (instruction_done !== 1'b1)
       #10;
@@ -257,7 +257,7 @@ module control_unit_sign_tb;
     // Run split (z1_64 -> z1_32)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 0;
-    addr1 = 512+16;
+    addr1 = 1536+16;
     bank2 = 1;
     addr2 = 1024;
     split_merge_size = 5;
@@ -271,7 +271,7 @@ module control_unit_sign_tb;
     bank1 = 1;
     addr1 = 1024+8;
     bank2 = 2;
-    addr2 = 786;
+    addr2 = 768;
     split_merge_size = 4;
     while (instruction_done !== 1'b1)
       #10;
@@ -281,7 +281,7 @@ module control_unit_sign_tb;
     // Run split (z1_16 -> z1_8)
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 2;
-    addr1 = 786+4;
+    addr1 = 768+4;
     bank2 = 3;
     addr2 = 640;
     split_merge_size = 3;
@@ -295,7 +295,7 @@ module control_unit_sign_tb;
     bank1 = 3;
     addr1 = 640+2;
     bank2 = 0;
-    addr2 = 576;
+    addr2 = 1600;
     split_merge_size = 2;
     while (instruction_done !== 1'b1)
       #10;
