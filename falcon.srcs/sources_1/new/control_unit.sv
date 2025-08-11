@@ -34,10 +34,11 @@ module control_unit#(
     output logic [127:0] dma_bram_dout // Data read from BRAM
   );
 
-  localparam int BRAM1024_COUNT = 4; // Number of 1024x15 BRAM banks
-  localparam int BRAM2048_COUNT = 2; // Number of 2048x15 BRAM banks
-  localparam int BRAM6144_COUNT = 1; // Number of 6144x15 BRAM banks
-  localparam int BRAM_BANK_COUNT = BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT;
+  localparam int BRAM1024_COUNT = 3; // Number of 1024x128 BRAM banks
+  localparam int BRAM2048_COUNT = 2; // Number of 2048x128 BRAM banks
+  localparam int BRAM3072_COUNT = 1; // Number of 3072x128 BRAM banks
+  localparam int BRAM6144_COUNT = 1; // Number of 6144x128 BRAM banks
+  localparam int BRAM_BANK_COUNT = BRAM3072_COUNT + BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT;
   localparam int INSTRUCTION_COUNT = 16;
 
   logic debug_BRAM_READ;
@@ -91,13 +92,34 @@ module control_unit#(
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_b [BRAM_BANK_COUNT];
   logic bram_we_b [BRAM_BANK_COUNT];
 
+  logic [`BRAM3072_ADDR_WIDTH-1:0] bram3072_addr_a [BRAM3072_COUNT];
+  logic [`BRAM3072_ADDR_WIDTH-1:0] bram3072_addr_b [BRAM3072_COUNT];
+  genvar i_bram3072;
+  generate
+    for (i_bram3072 = 0; i_bram3072 < BRAM3072_COUNT; i_bram3072++) begin : bram3072_bank
+      bram_3072x128 bram_3072x128_inst (
+                      .addra(bram3072_addr_a[i_bram3072]),
+                      .clka(clk),
+                      .dina(bram_din_a[i_bram3072]),
+                      .douta(bram_dout_a[i_bram3072]),
+                      .wea(bram_we_a[i_bram3072]),
+
+                      .addrb(bram3072_addr_b[i_bram3072]),
+                      .clkb(clk),
+                      .dinb(bram_din_b[i_bram3072]),
+                      .doutb(bram_dout_b[i_bram3072]),
+                      .web(bram_we_b[i_bram3072])
+                    );
+    end
+  endgenerate
+
   logic [`BRAM2048_ADDR_WIDTH-1:0] bram2048_addr_a [BRAM2048_COUNT];
   logic [`BRAM2048_ADDR_WIDTH-1:0] bram2048_addr_b [BRAM2048_COUNT];
   genvar i_bram2048;
   generate
-    for (i_bram2048 = 0; i_bram2048 < BRAM2048_COUNT; i_bram2048++) begin : bram2048_bank
+    for (i_bram2048 = BRAM3072_COUNT; i_bram2048 < BRAM2048_COUNT + BRAM3072_COUNT; i_bram2048++) begin : bram2048_bank
       bram_2048x128 bram_2048x128_inst (
-                      .addra(bram2048_addr_a[i_bram2048]),
+                      .addra(bram2048_addr_a[i_bram2048-BRAM3072_COUNT]),
                       .clka(clk),
                       .dina(bram_din_a[i_bram2048]),
                       .douta(bram_dout_a[i_bram2048]),
@@ -116,15 +138,15 @@ module control_unit#(
   logic [`BRAM1024_ADDR_WIDTH-1:0] bram1024_addr_b [BRAM1024_COUNT];
   genvar i_bram1024;
   generate
-    for (i_bram1024 = BRAM2048_COUNT; i_bram1024 < BRAM1024_COUNT + BRAM2048_COUNT; i_bram1024++) begin : bram1024_bank
+    for (i_bram1024 = BRAM2048_COUNT+BRAM3072_COUNT; i_bram1024 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT; i_bram1024++) begin : bram1024_bank
       bram_1024x128 bram_1024x128_inst (
-                      .addra(bram1024_addr_a[i_bram1024-BRAM2048_COUNT]),
+                      .addra(bram1024_addr_a[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
                       .clka(clk),
                       .dina(bram_din_a[i_bram1024]),
                       .douta(bram_dout_a[i_bram1024]),
                       .wea(bram_we_a[i_bram1024]),
 
-                      .addrb(bram1024_addr_b[i_bram1024-BRAM2048_COUNT]),
+                      .addrb(bram1024_addr_b[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
                       .clkb(clk),
                       .dinb(bram_din_b[i_bram1024]),
                       .doutb(bram_dout_b[i_bram1024]),
@@ -135,7 +157,7 @@ module control_unit#(
 
   genvar i_bram6144;
   generate
-    for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
+    for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
       bram_6144x128 bram_6144x128_inst (
                       .addra(bram_addr_a[i_bram6144]),
                       .clka(clk),
@@ -154,13 +176,17 @@ module control_unit#(
 
   // Route from bram signals with widths specific to each BRAM type to the common bram signals
   always_comb begin
+    for (int i = 0; i < BRAM3072_COUNT; i++) begin
+      bram3072_addr_a[i] = bram_addr_a[i][`BRAM3072_ADDR_WIDTH-1:0];
+      bram3072_addr_b[i] = bram_addr_b[i][`BRAM3072_ADDR_WIDTH-1:0];
+    end
     for (int i = 0; i < BRAM2048_COUNT; i++) begin
-      bram2048_addr_a[i] = bram_addr_a[i][`BRAM2048_ADDR_WIDTH-1:0];
-      bram2048_addr_b[i] = bram_addr_b[i][`BRAM2048_ADDR_WIDTH-1:0];
+      bram2048_addr_a[i] = bram_addr_a[i + BRAM3072_COUNT][`BRAM2048_ADDR_WIDTH-1:0];
+      bram2048_addr_b[i] = bram_addr_b[i + BRAM3072_COUNT][`BRAM2048_ADDR_WIDTH-1:0];
     end
     for (int i = 0; i < BRAM1024_COUNT; i++) begin
-      bram1024_addr_a[i] = bram_addr_a[i+BRAM2048_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
-      bram1024_addr_b[i] = bram_addr_b[i+BRAM2048_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
+      bram1024_addr_a[i] = bram_addr_a[i+BRAM2048_COUNT + BRAM3072_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
+      bram1024_addr_b[i] = bram_addr_b[i+BRAM2048_COUNT + BRAM3072_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
     end
   end
 
