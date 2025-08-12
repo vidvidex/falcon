@@ -149,41 +149,67 @@ def verify512():
     print("};")
 
 
-def ffsampling(N, n, bram, next_free):
+def treesize(n):
+    logn = int(math.log2(n))
+    return (logn + 1) << logn
 
-    out_bram = bram + 1
-    if out_bram >= 4:  # Rotate BRAM use (we don't use % because the first one is always 5)
-        out_bram = 0
 
-    if N == n and N == 512:  # For N=512 we'll skip BRAM0 and go straight to BRAM1, so the rest is the same as for N=1024
-        out_bram = 1
-        next_free[0] = 1536  # BRAM0 will have an empty spot where z1 1024 would go
+def ffsampling(N, n, curr_bram, next_free_addr, t0, t1, tree):
+
+    prev_bram = (curr_bram - 1) % 4 if t1 != 0 else 5  # On top level (when t1 == 0) read from BRAM5
+    next_bram = (curr_bram + 1) % 4
+    sm_size = int(math.log2(n))
+
+    z0 = next_free_addr[curr_bram]  # Located in curr_bram
+    z1 = z0 + n
+
+    tmp = next_free_addr[next_bram]  # Located in next_bram (future z0 and z1)
+
+    next_free_addr[curr_bram] += 2 * n
 
     if n == 1:
-        print(f"n={n},\tbram={bram}\t\tsamplerz")
+        print(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0},{t1},\tout_bram={curr_bram},\tout_addr={z0},{z1}")
         return
 
-    in_addr = next_free[bram] - n * 2 + n // 2 if bram < 4 else 0  # First iteration is special case (0), for others take output address of previous + n/2
-    out_addr = 512 if n >= 128 else next_free[out_bram]
-    split_merge_size = int(math.log2(n))
+    tree0 = tree + n
+    tree1 = tree0 + treesize(n // 2)
 
-    next_free[out_bram] += n
+    print(f"n={n},\tsplit_fft1 \tin_bram={prev_bram},\tin_addr={t1},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={sm_size}")
 
-    print(
-        f"n={n},\tsplit_fft \tin_bram={bram},\tin_addr={in_addr},\tout_bram={out_bram},\tout_addr={out_addr}\tsplit_merge_size={split_merge_size}"
+    ffsampling(
+        N=N,
+        n=n // 2,
+        curr_bram=next_bram,
+        next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
+        t0=z1,
+        t1=z1 + n // 2,
+        tree=tree1,
     )
 
-    ffsampling(N=N, n=n // 2, bram=out_bram, next_free=next_free)
+    print(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={sm_size}")
 
-    print(f"n={n},\tbram={bram},\t\tmerge_fft")
+    print(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    print(f"n={n},\tbram={bram},\t\tcopy, ...")
+    print(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    print(f"n={n},\tbram={bram},\t\tsplit_fft")
+    tree_bram = 6
+    print(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    ffsampling(N=N, n=n // 2, bram=out_bram, next_free=next_free)
+    print(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    print(f"n={n},\tbram={bram},\t\tmerge_fft")
+    print(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={sm_size}")
+
+    ffsampling(
+        N=N,
+        n=n // 2,
+        curr_bram=next_bram,
+        next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
+        t0=z0,
+        t1=z0 + n // 2,
+        tree=tree0,
+    )
+
+    print(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={sm_size}")
 
 
 def sign512():
@@ -250,7 +276,7 @@ def sign512():
         )
     )
 
-    ffsampling(N=512, n=512, bram=5, next_free=[512, 512, 512, 512])
+    ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[512, 512, 512, 512], t0=0, t1=0, tree=0)
 
     formatted_instructions = [f"128'h{instruction:032x}" for instruction in instructions]
 
