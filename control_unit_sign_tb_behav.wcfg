@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="100,544.200 ns"></ZoomStartTime>
-      <ZoomEndTime time="101,091.161 ns"></ZoomEndTime>
-      <Cursor1Time time="101,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="882.666 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,023.467 ns"></ZoomEndTime>
+      <Cursor1Time time="923.866 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="201"></NameColumnWidth>
+      <NameColumnWidth column_width="197"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -245,6 +245,7 @@
       <wvobject type="group" fp_name="group305">
          <obj_property name="label">bram0</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[0]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[0][12:0]</obj_property>
@@ -461,7 +462,6 @@
       <wvobject type="group" fp_name="group341">
          <obj_property name="label">bram4</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[4]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[4][12:0]</obj_property>

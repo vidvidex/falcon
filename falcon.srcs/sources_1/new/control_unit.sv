@@ -199,6 +199,7 @@ module control_unit#(
   logic [$clog2(N)-1:0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
   logic pipelined_inst_last; // Last/done signal for pipelined operations
   logic pipelined_inst_valid;
+  logic [$clog2(N)-1:0] element_count;
 
   logic htp_start, htp_start_i;
   logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
@@ -751,8 +752,9 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(16)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
 
-  assign pipelined_inst_valid = pipelined_inst_index < (N/2) ? 1'b1 : 1'b0;
-  assign pipelined_inst_last = pipelined_inst_index > (N/2)-2 ? 1'b1 : 1'b0;
+  assign element_count = (1 << instruction[49:46]);
+  assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
+  assign pipelined_inst_last = pipelined_inst_index > element_count-2 ? 1'b1 : 1'b0;
 
   always_ff @(posedge clk) begin
 

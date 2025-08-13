@@ -41,10 +41,10 @@ module control_unit_verify_tb;
   logic [12:0] addr1, addr2;
   logic mode;
   logic mul_const_selection;
-  logic [3:0] split_merge_size;
+  logic [3:0] element_count;
   logic [2:0] decompress_output2;
 
-  assign instruction = {modules, 59'b0, decompress_output2, split_merge_size, mul_const_selection, mode, addr2, addr1, bank6, bank5, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 59'b0, decompress_output2, element_count, mul_const_selection, mode, addr2, addr1, bank6, bank5, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -59,7 +59,7 @@ module control_unit_verify_tb;
     addr2 = 0;
     mode = 0;
     mul_const_selection = 0;
-    split_merge_size = 0;
+    element_count = 0;
     decompress_output2 = 0;
 
     clk = 1;
@@ -135,6 +135,7 @@ module control_unit_verify_tb;
     bank1 = 1;
     bank2 = 2;
     bank3 = 4;
+    element_count = $clog2(256);
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
@@ -156,6 +157,7 @@ module control_unit_verify_tb;
     bank1 = 5;
     bank2 = 1;
     bank3 = 3;
+    element_count = $clog2(256);
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
