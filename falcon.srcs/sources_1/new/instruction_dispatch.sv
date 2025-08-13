@@ -20,12 +20,12 @@ module instruction_dispatch#(
     output logic signature_accepted,
     output logic signature_rejected,
 
-    // DMA interface
-    input logic dma_bram_en, // Enable signal for BRAM DMA interface. When this is high, DMA has access to the BRAM
-    input logic [19:0] dma_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
-    input logic [15:0] dma_bram_byte_we,
-    input logic[127:0] dma_bram_din,  // Data to write to BRAM
-    output logic [127:0] dma_bram_dout // Data read from BRAM
+    // External BRAM interface
+    input logic ext_bram_en, // Enable signal for external BRAM interface. When this is high, software has access to the BRAM
+    input logic [19:0] ext_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bank
+    input logic [15:0] ext_bram_we,
+    input logic[127:0] ext_bram_din,  // Data to write to BRAM
+    output logic [127:0] ext_bram_dout // Data read from BRAM
   );
 
   localparam int VERIFY_INSTRUCTION_COUNT = 5;
@@ -60,11 +60,11 @@ module instruction_dispatch#(
                  .bram_din(128'b0),
                  .bram_dout(),
 
-                 .dma_bram_en(dma_bram_en),
-                 .dma_bram_addr(dma_bram_addr),
-                 .dma_bram_din(dma_bram_din),
-                 .dma_bram_dout(dma_bram_dout),
-                 .dma_bram_byte_we(dma_bram_byte_we)
+                 .ext_bram_en(ext_bram_en),
+                 .ext_bram_addr(ext_bram_addr),
+                 .ext_bram_din(ext_bram_din),
+                 .ext_bram_dout(ext_bram_dout),
+                 .ext_bram_we(ext_bram_we)
                );
 
   always_ff @(posedge clk) begin
