@@ -4,18 +4,18 @@ module axi_wrapper_tb;
 
   logic clk, rst_n;
 
-  logic dma_bram_en;
-  logic [19:0] dma_bram_addr;
-  logic [15:0] dma_bram_byte_we;
-  logic[127:0] dma_bram_din;
-  logic [127:0] dma_bram_dout;
+  logic ext_bram_en;
+  logic [19:0] ext_bram_addr;
+  logic [15:0] ext_bram_we;
+  logic[127:0] ext_bram_din;
+  logic [127:0] ext_bram_dout;
 
   axi_wrapper axi_wrapper (
-                // .dma_bram_en(dma_bram_en),
-                .dma_bram_addr(dma_bram_addr),
-                .dma_bram_byte_we(dma_bram_byte_we),
-                .dma_bram_din(dma_bram_din),
-                .dma_bram_dout(dma_bram_dout),
+                // .ext_bram_en(ext_bram_en),
+                .ext_bram_addr(ext_bram_addr),
+                .ext_bram_we(ext_bram_we),
+                .ext_bram_din(ext_bram_din),
+                .ext_bram_dout(ext_bram_dout),
 
                 .S_AXI_ACLK(clk),
                 .S_AXI_ARESETN(rst_n),
@@ -49,28 +49,28 @@ module axi_wrapper_tb;
     #10;
     rst_n = 1;
 
-    dma_bram_en = 0;
-    dma_bram_addr = 0;
-    dma_bram_byte_we = 0;
-    dma_bram_din = 0;
+    ext_bram_en = 0;
+    ext_bram_addr = 0;
+    ext_bram_we = 0;
+    ext_bram_din = 0;
 
     #50;
-    dma_bram_en = 1;
-    dma_bram_addr = 16'h0001;
-    dma_bram_byte_we = 16'hFFFF; // Write all bytes
-    dma_bram_din = 128'hffffffff_ffffffff_ffffffff_ffffffff;
+    ext_bram_en = 1;
+    ext_bram_addr = 16'h0001;
+    ext_bram_we = 16'hFFFF; // Write all bytes
+    ext_bram_din = 128'hffffffff_ffffffff_ffffffff_ffffffff;
     #10;
-    dma_bram_en = 0;
-    dma_bram_addr = 16'h0000;
-    dma_bram_byte_we = 16'b0;
-    dma_bram_din = 128'b0;
+    ext_bram_en = 0;
+    ext_bram_addr = 16'h0000;
+    ext_bram_we = 16'b0;
+    ext_bram_din = 128'b0;
 
     #20;
-    dma_bram_addr = 16'h0001;
+    ext_bram_addr = 16'h0001;
     #10;
-    dma_bram_en = 1;
+    ext_bram_en = 1;
     #50;
-    dma_bram_en = 0;
+    ext_bram_en = 0;
 
 
   end

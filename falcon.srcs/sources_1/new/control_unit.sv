@@ -26,12 +26,12 @@ module control_unit#(
     input logic [`BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
     output logic [`BRAM_DATA_WIDTH-1:0] bram_dout, // Data read from BRAM
 
-    // DMA interface
-    input logic dma_bram_en, // Enable signal for BRAM DMA interface. When this is high, DMA has access to the BRAM
-    input logic [19:0] dma_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
-    input logic [15:0] dma_bram_byte_we,
-    input logic[127:0] dma_bram_din,  // Data to write to BRAM
-    output logic [127:0] dma_bram_dout // Data read from BRAM
+    // External BRAM interface
+    input logic ext_bram_en, // Enable signal for External BRAM interface. When this is high, software has access to the BRAM
+    input logic [19:0] ext_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bask
+    input logic [15:0] ext_bram_we,
+    input logic[127:0] ext_bram_din,  // Data to write to BRAM
+    output logic [127:0] ext_bram_dout // Data read from BRAM
   );
 
   localparam int BRAM1024_COUNT = 3; // Number of 1024x128 BRAM banks
@@ -76,8 +76,8 @@ module control_unit#(
     debug_ADD_SUB = instruction[127-15];
   end
 
-  logic [2:0] dma_bank;
-  logic [`BRAM_ADDR_WIDTH-1:0] dma_addr;
+  logic [2:0] ext_bram_bank;
+  logic [`BRAM_ADDR_WIDTH-1:0] ext_local_bram_addr;
 
   logic [INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
@@ -1003,17 +1003,17 @@ module control_unit#(
     fp_adder2_a = 0;
     fp_adder2_b = 0;
     fp_adder_dst_addr = 0;
-    dma_bram_dout = 0;
+    ext_bram_dout = 0;
 
-    if(dma_bram_en == 1'b1) begin     // DMA has BRAM access
+    if(ext_bram_en == 1'b1) begin     // Software has BRAM access
 
-      dma_bank = dma_bram_addr[19:17];  // Top 3 bits of the address specify the bank
-      dma_addr = dma_bram_addr[16:4]; // Middle 13 bits specify the address within the bank, bottom 4 bits are ignored
+      ext_bram_bank = ext_bram_addr[19:17];  // Top 3 bits of the address specify the bank
+      ext_local_bram_addr = ext_bram_addr[16:4]; // Middle 13 bits specify the address within the bank, bottom 4 bits are ignored
 
-      bram_addr_a[dma_bank] = dma_addr;
-      bram_din_a[dma_bank] = dma_bram_din;
-      bram_we_a[dma_bank] = dma_bram_byte_we[0];
-      dma_bram_dout = bram_dout_a[dma_bank];
+      bram_addr_a[ext_bram_bank] = ext_local_bram_addr;
+      bram_din_a[ext_bram_bank] = ext_bram_din;
+      bram_we_a[ext_bram_bank] = ext_bram_we[0];
+      ext_bram_dout = bram_dout_a[ext_bram_bank];
     end
     else begin  // Instructions have BRAM access
 

@@ -10,7 +10,7 @@
 //        [0] = 1 ... verify: signature accepted
 //        [1] = 1 ... verify: signature rejected
 //        [2] = 1 ... signing: done
-//  - slv_reg3 is the enable signal for the DMA BRAM interface. When this is high, the DMA has access to the BRAM. Normally dma_bram_en would be used for that but it doesn't seem to work.
+//  - slv_reg3 is the enable signal for the external BRAM interface. When this is high, software has access to the BRAM. Normally ext_bram_en would be used for that but it doesn't seem to work.
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -29,12 +29,12 @@ module axi_wrapper #
   (
     // Users to add ports here
 
-    // DMA interface
-    // input logic dma_bram_en,
-    input logic [19:0] dma_bram_addr,
-    input logic [15:0] dma_bram_byte_we,
-    input logic[127:0] dma_bram_din,
-    output logic [127:0] dma_bram_dout,
+    // External BRAM interface
+    // input logic ext_bram_en,
+    input logic [19:0] ext_bram_addr,
+    input logic [15:0] ext_bram_we,
+    input logic[127:0] ext_bram_din,
+    output logic [127:0] ext_bram_dout,
 
     // User ports ends
     // Do not modify the ports beyond this line
@@ -406,11 +406,11 @@ module axi_wrapper #
                          .signature_accepted(signature_accepted),
                          .signature_rejected(signature_rejected),
 
-                         .dma_bram_en(slv_reg3[0]),
-                         .dma_bram_addr(dma_bram_addr),
-                         .dma_bram_din(dma_bram_din),
-                         .dma_bram_dout(dma_bram_dout),
-                         .dma_bram_byte_we(dma_bram_byte_we)
+                         .ext_bram_en(slv_reg3[0]),
+                         .ext_bram_addr(ext_bram_addr),
+                         .ext_bram_din(ext_bram_din),
+                         .ext_bram_dout(ext_bram_dout),
+                         .ext_bram_we(ext_bram_we)
                        );
 
   always @( posedge S_AXI_ACLK ) begin
