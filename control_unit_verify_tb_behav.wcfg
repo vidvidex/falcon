@@ -261,9 +261,9 @@
             <obj_property name="ElementShortName">debug_COMPRESS</obj_property>
             <obj_property name="ObjectShortName">debug_COMPRESS</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/debug_ADD">
-            <obj_property name="ElementShortName">debug_ADD</obj_property>
-            <obj_property name="ObjectShortName">debug_ADD</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/DEBUG_ADD_SUB">
+            <obj_property name="ElementShortName">DEBUG_ADD_SUB</obj_property>
+            <obj_property name="ObjectShortName">DEBUG_ADD_SUB</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group15727">

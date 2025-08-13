@@ -36,51 +36,52 @@ module fft_butterfly_add_stage(
   logic [`SIGNIFICANT_BITS:0] significant_b_real_2DP;
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_real_2DP;
   fp_adder_denormalization denormalize_real_part (
-                            .clk(clk),
-                            .valid_in(valid_in),
-                            .a(a_real),
-                            .b(b_real),
-                            .sign_result_2DP(sign_result_real_2DP),
-                            .data_valid_2DP(data_valid_real_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_real_2DP),
-                            .signs_equal_2DP(signs_equal_real_2DP),
-                            .exponent_b_2DP(exponent_b_real_2DP),
-                            .significant_b_2DP(significant_b_real_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
-                            .switched_operands_2DP(switched_operands_real_2DP)
-                          );
+                             .clk(clk),
+                             .mode(1'b0),  // Add
+                             .valid_in(valid_in),
+                             .a(a_real),
+                             .b(b_real),
+                             .sign_result_2DP(sign_result_real_2DP),
+                             .data_valid_2DP(data_valid_real_2DP),
+                             .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
+                             .denorm_underflow_2DP(denorm_underflow_real_2DP),
+                             .signs_equal_2DP(signs_equal_real_2DP),
+                             .exponent_b_2DP(exponent_b_real_2DP),
+                             .significant_b_2DP(significant_b_real_2DP),
+                             .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
+                             .switched_operands_2DP(switched_operands_real_2DP)
+                           );
 
   fp_adder_sig_add_normalize add_and_normalize_real(
-                            .clk(clk),
-                            .sign_result_2DP(sign_result_real_2DP),
-                            .data_valid_2DP(data_valid_real_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_real_2DP),
-                            .signs_equal_2DP(signs_equal_real_2DP),
-                            .exponent_b_2DP(signed'(exponent_b_real_2DP)+scale_factor),
-                            .significant_b_2DP(significant_b_real_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
+                               .clk(clk),
+                               .sign_result_2DP(sign_result_real_2DP),
+                               .data_valid_2DP(data_valid_real_2DP),
+                               .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
+                               .denorm_underflow_2DP(denorm_underflow_real_2DP),
+                               .signs_equal_2DP(signs_equal_real_2DP),
+                               .exponent_b_2DP(signed'(exponent_b_real_2DP)+scale_factor),
+                               .significant_b_2DP(significant_b_real_2DP),
+                               .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
 
-                            .result(a_p_b_real),
-                            .valid_out(valid_out)
-                          );
+                               .result(a_p_b_real),
+                               .valid_out(valid_out)
+                             );
   fp_adder_sig_add_normalize sub_and_normalize_real(
-                            .clk(clk),
-                            .sign_result_2DP(switched_operands_real_2DP ? sign_result_real_2DP : ~sign_result_real_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_real_2DP),
-                            .signs_equal_2DP(~signs_equal_real_2DP),
-                            .exponent_b_2DP(exponent_b_real_2DP),
-                            .significant_b_2DP(significant_b_real_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
+                               .clk(clk),
+                               .sign_result_2DP(switched_operands_real_2DP ? sign_result_real_2DP : ~sign_result_real_2DP),
+                               .bit_shifted_out_2DP(bit_shifted_out_real_2DP),
+                               .denorm_underflow_2DP(denorm_underflow_real_2DP),
+                               .signs_equal_2DP(~signs_equal_real_2DP),
+                               .exponent_b_2DP(exponent_b_real_2DP),
+                               .significant_b_2DP(significant_b_real_2DP),
+                               .denorm_significant_a_2DP(denorm_significant_a_real_2DP),
 
-                            .result(a_m_b_real),
+                               .result(a_m_b_real),
 
-                            // unused:
-                            .data_valid_2DP(),
-                            .valid_out()
-                          );
+                               // unused:
+                               .data_valid_2DP(),
+                               .valid_out()
+                             );
 
   /////////////////// Imaginary part ////////////////////
 
@@ -89,52 +90,53 @@ module fft_butterfly_add_stage(
   logic [`SIGNIFICANT_BITS:0] significant_b_imag_2DP;
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_imag_2DP;
   fp_adder_denormalization denormalize_imag_part (
-                            .clk(clk),
-                            .a(a_imag),
-                            .b(b_imag),
-                            .sign_result_2DP(sign_result_imag_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_imag_2DP),
-                            .signs_equal_2DP(signs_equal_imag_2DP),
-                            .exponent_b_2DP(exponent_b_imag_2DP),
-                            .significant_b_2DP(significant_b_imag_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
-                            .switched_operands_2DP(switched_operands_imag_2DP),
-                            // unused:
-                            .valid_in(),
-                            .data_valid_2DP()
-                          );
+                             .clk(clk),
+                             .mode(1'b0),  // Add
+                             .a(a_imag),
+                             .b(b_imag),
+                             .sign_result_2DP(sign_result_imag_2DP),
+                             .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
+                             .denorm_underflow_2DP(denorm_underflow_imag_2DP),
+                             .signs_equal_2DP(signs_equal_imag_2DP),
+                             .exponent_b_2DP(exponent_b_imag_2DP),
+                             .significant_b_2DP(significant_b_imag_2DP),
+                             .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
+                             .switched_operands_2DP(switched_operands_imag_2DP),
+                             // unused:
+                             .valid_in(),
+                             .data_valid_2DP()
+                           );
 
   fp_adder_sig_add_normalize add_and_normalize_imag(
-                            .clk(clk),
-                            .sign_result_2DP(sign_result_imag_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_imag_2DP),
-                            .signs_equal_2DP(signs_equal_imag_2DP),
-                            .exponent_b_2DP(signed'(exponent_b_imag_2DP)+scale_factor),
-                            .significant_b_2DP(significant_b_imag_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
+                               .clk(clk),
+                               .sign_result_2DP(sign_result_imag_2DP),
+                               .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
+                               .denorm_underflow_2DP(denorm_underflow_imag_2DP),
+                               .signs_equal_2DP(signs_equal_imag_2DP),
+                               .exponent_b_2DP(signed'(exponent_b_imag_2DP)+scale_factor),
+                               .significant_b_2DP(significant_b_imag_2DP),
+                               .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
 
-                            .result(a_p_b_imag),
+                               .result(a_p_b_imag),
 
-                            // unused:
-                            .data_valid_2DP(),
-                            .valid_out()
-                          );
+                               // unused:
+                               .data_valid_2DP(),
+                               .valid_out()
+                             );
   fp_adder_sig_add_normalize sub_and_normalize_imag(
-                            .clk(clk),
-                            .sign_result_2DP(switched_operands_imag_2DP ? sign_result_imag_2DP : ~sign_result_imag_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_imag_2DP),
-                            .signs_equal_2DP(~signs_equal_imag_2DP),
-                            .exponent_b_2DP(exponent_b_imag_2DP),
-                            .significant_b_2DP(significant_b_imag_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
+                               .clk(clk),
+                               .sign_result_2DP(switched_operands_imag_2DP ? sign_result_imag_2DP : ~sign_result_imag_2DP),
+                               .bit_shifted_out_2DP(bit_shifted_out_imag_2DP),
+                               .denorm_underflow_2DP(denorm_underflow_imag_2DP),
+                               .signs_equal_2DP(~signs_equal_imag_2DP),
+                               .exponent_b_2DP(exponent_b_imag_2DP),
+                               .significant_b_2DP(significant_b_imag_2DP),
+                               .denorm_significant_a_2DP(denorm_significant_a_imag_2DP),
 
-                            .result(a_m_b_imag),
-                            // unused:
-                            .data_valid_2DP(),
-                            .valid_out()
-                          );
+                               .result(a_m_b_imag),
+                               // unused:
+                               .data_valid_2DP(),
+                               .valid_out()
+                             );
 
 endmodule
