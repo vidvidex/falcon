@@ -53,6 +53,7 @@ module decompress #(
              N == 1024 ? 1280-1-40 : 0;
 
   logic [$clog2(N):0] coefficient_index;
+  logic coefficient_valid;
 
   logic [6:0] bits_used; //! Number of bits used to decompress the current coefficient
   logic [$clog2(slen*8):0] total_bits_used; //! Total number of bits used to decompress the signature
