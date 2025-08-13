@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="79,285.705 ns"></ZoomStartTime>
-      <ZoomEndTime time="79,662.859 ns"></ZoomEndTime>
-      <Cursor1Time time="79,600.000 ns"></Cursor1Time>
+      <ZoomStartTime time="3,021.302 ns"></ZoomStartTime>
+      <ZoomEndTime time="3,433.496 ns"></ZoomEndTime>
+      <Cursor1Time time="3,090.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="150"></ValueColumnWidth>
+      <ValueColumnWidth column_width="146"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
@@ -111,9 +111,9 @@
          <obj_property name="ElementShortName">mul_const_selection</obj_property>
          <obj_property name="ObjectShortName">mul_const_selection</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify_tb/split_merge_size">
-         <obj_property name="ElementShortName">split_merge_size[3:0]</obj_property>
-         <obj_property name="ObjectShortName">split_merge_size[3:0]</obj_property>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/element_count">
+         <obj_property name="ElementShortName">element_count[3:0]</obj_property>
+         <obj_property name="ObjectShortName">element_count[3:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/decompress_output2">
          <obj_property name="ElementShortName">decompress_output2[2:0]</obj_property>
@@ -178,6 +178,11 @@
          <obj_property name="ElementShortName">modules_running_i[15:0]</obj_property>
          <obj_property name="ObjectShortName">modules_running_i[15:0]</obj_property>
          <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/element_count">
+         <obj_property name="ElementShortName">element_count[8:0]</obj_property>
+         <obj_property name="ObjectShortName">element_count[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/pipelined_inst_index">
          <obj_property name="ElementShortName">pipelined_inst_index[8:0]</obj_property>
@@ -876,7 +881,6 @@
       <wvobject type="group" fp_name="group15794">
          <obj_property name="label">sub_norm_sq</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_a">
             <obj_property name="ElementShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>

@@ -46,10 +46,10 @@ module control_unit_sign_tb;
   logic [12:0] addr1, addr2;
   logic mode;
   logic mul_const_selection;
-  logic [3:0] split_merge_size;
+  logic [3:0] element_count;
   logic [2:0] decompress_output2;
 
-  assign instruction = {modules, 59'b0, decompress_output2, split_merge_size, mul_const_selection, mode, addr2, addr1, bank6, bank5, bank4, bank3, bank2, bank1};
+  assign instruction = {modules, 59'b0, decompress_output2, element_count, mul_const_selection, mode, addr2, addr1, bank6, bank5, bank4, bank3, bank2, bank1};
 
   initial begin
 
@@ -64,7 +64,7 @@ module control_unit_sign_tb;
     addr2 = 0;
     mode = 0;
     mul_const_selection = 0;
-    split_merge_size = 0;
+    element_count = 0;
     decompress_output2 = 0;
 
     clk = 1;
@@ -212,7 +212,7 @@ module control_unit_sign_tb;
     addr1 = 0;
     bank2 = 1;
     addr2 = 512;
-    split_merge_size = 9;
+    element_count = 9;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -224,7 +224,7 @@ module control_unit_sign_tb;
     addr1 = 512+128; // 128 because we're reading the second half
     bank2 = 2;
     addr2 = 512;
-    split_merge_size = 8;
+    element_count = 8;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -236,7 +236,7 @@ module control_unit_sign_tb;
     addr1 = 512+64;
     bank2 = 3;
     addr2 = 512;
-    split_merge_size = 7;
+    element_count = 7;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -248,7 +248,7 @@ module control_unit_sign_tb;
     addr1 = 512+32;
     bank2 = 0;
     addr2 = 1536;
-    split_merge_size = 6;
+    element_count = 6;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -260,7 +260,7 @@ module control_unit_sign_tb;
     addr1 = 1536+16;
     bank2 = 1;
     addr2 = 1024;
-    split_merge_size = 5;
+    element_count = 5;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -272,7 +272,7 @@ module control_unit_sign_tb;
     addr1 = 1024+8;
     bank2 = 2;
     addr2 = 768;
-    split_merge_size = 4;
+    element_count = 4;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -284,7 +284,7 @@ module control_unit_sign_tb;
     addr1 = 768+4;
     bank2 = 3;
     addr2 = 640;
-    split_merge_size = 3;
+    element_count = 3;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -296,7 +296,7 @@ module control_unit_sign_tb;
     addr1 = 640+2;
     bank2 = 0;
     addr2 = 1600;
-    split_merge_size = 2;
+    element_count = 2;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
