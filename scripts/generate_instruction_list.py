@@ -114,7 +114,7 @@ class InstructionGenerator:
             bank1=1,  # MOD_MULT_Q input 1
             bank2=2,  # MOD_MULT_Q input 2
             bank3=4,  # MOD_MULT_Q output
-            element_count=log2N-1,
+            element_count=log2N - 1,
         )
 
         # timestep 4: INTT
@@ -131,7 +131,7 @@ class InstructionGenerator:
             bank1=5,  # SUB_NORM_SQ input 1
             bank2=1,  # SUB_NORM_SQ input 2
             bank3=3,  # SUB_NORM_SQ input 3
-            element_count=log2N-1,
+            element_count=log2N - 1,
         )
 
     def print_verilog(self):
@@ -153,11 +153,11 @@ class InstructionGenerator:
         sm_size = int(math.log2(n))
 
         z0 = next_free_addr[curr_bram]  # Located in curr_bram
-        z1 = z0 + n
+        z1 = z0 + n // 2
 
         tmp = next_free_addr[next_bram]  # Located in next_bram (future z0 and z1)
 
-        next_free_addr[curr_bram] += 2 * n
+        next_free_addr[curr_bram] += n
 
         if n == 1:
             print(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0},{t1},\tout_bram={curr_bram},\tout_addr={z0},{z1}")
@@ -182,7 +182,7 @@ class InstructionGenerator:
             curr_bram=next_bram,
             next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
             t0=z1,
-            t1=z1 + n // 2,
+            t1=z1 + n // 4,
             tree=tree1,
         )
 
@@ -213,7 +213,7 @@ class InstructionGenerator:
             curr_bram=next_bram,
             next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
             t0=z0,
-            t1=z0 + n // 2,
+            t1=z0 + n // 4,
             tree=tree0,
         )
 
@@ -251,6 +251,8 @@ class InstructionGenerator:
             bank2=1,  # COMPLEX_MUL input 2
             bank3=5,  # COPY input
             bank4=4,  # COPY output
+            address1=0,  # Start offset for COPY and COMPLEX_MUL
+            address2=0,  # End offset for COPY and COMPLEX_MUL
         )
 
         # timestep 5: COMPLEX_MUL, MUL_CONST
@@ -260,6 +262,8 @@ class InstructionGenerator:
             bank2=3,  # COMPLEX_MUL input 2
             bank3=5,  # MUL_CONST input
             bank4=5,  # MUL_CONST output
+            address1=0,  # Start offset for COMPLEX_MUL
+            address2=0,  # End offset for COMPLEX_MUL
             mul_const_selection=1,  # Select constant for multiplication
         )
 
@@ -271,7 +275,7 @@ class InstructionGenerator:
             mul_const_selection=0,  # Select constant for multiplication
         )
 
-        self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[512, 512, 512, 512], t0=0, t1=0, tree=0)
+        self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[256, 256, 256, 256], t0=0, t1=0, tree=0)
 
         self.print_verilog()
 
@@ -279,7 +283,7 @@ class InstructionGenerator:
 if __name__ == "__main__":
 
     generator = InstructionGenerator()
-    generator.verify512()
-    # generator.sign512()
+    # generator.verify512()
+    generator.sign512()
 
     generator.print_verilog()

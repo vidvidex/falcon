@@ -155,6 +155,7 @@ module control_unit_sign_tb;
     modules = 16'b0000_1000_0000_0000; // int to double
     bank1 = 5;
     bank2 = 5;
+    element_count = $clog2(256);
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -177,6 +178,8 @@ module control_unit_sign_tb;
     bank2 = 1;
     bank3 = 5;  // Copy from 5 to 4
     bank4 = 4;
+    addr1 = 0;  // Offsets for copy and complex mul (same offsets for both modules)
+    addr2 = 0;
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -188,6 +191,8 @@ module control_unit_sign_tb;
     bank2 = 3;
     bank3 = 5;  // mul const 5, output to 5
     bank4 = 5;
+    addr1 = 0;  // Offsets for complex mul
+    addr2 = 0;
     mul_const_selection = 1; // -1/12289
     while (instruction_done !== 1'b1)
       #10;
@@ -210,7 +215,7 @@ module control_unit_sign_tb;
     modules = 16'b0000_0000_0100_0000; // split
     bank1 = 5;
     addr1 = 0;
-    bank2 = 1;
+    bank2 = 0;
     addr2 = 512;
     element_count = 9;
     while (instruction_done !== 1'b1)
@@ -220,10 +225,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_512 -> z1_256)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 1;
-    addr1 = 512+128; // 128 because we're reading the second half
-    bank2 = 2;
-    addr2 = 512;
+    bank1 = 0;
+    addr1 = 640;
+    bank2 = 1;
+    addr2 = 384;
     element_count = 8;
     while (instruction_done !== 1'b1)
       #10;
@@ -232,10 +237,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_256 -> z1_128)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 2;
-    addr1 = 512+64;
-    bank2 = 3;
-    addr2 = 512;
+    bank1 = 1;
+    addr1 = 448;
+    bank2 = 2;
+    addr2 = 320;
     element_count = 7;
     while (instruction_done !== 1'b1)
       #10;
@@ -244,10 +249,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_128 -> z1_64)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 3;
-    addr1 = 512+32;
-    bank2 = 0;
-    addr2 = 1536;
+    bank1 = 2;
+    addr1 = 352;
+    bank2 = 3;
+    addr2 = 288;
     element_count = 6;
     while (instruction_done !== 1'b1)
       #10;
@@ -256,10 +261,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_64 -> z1_32)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 0;
-    addr1 = 1536+16;
-    bank2 = 1;
-    addr2 = 1024;
+    bank1 = 3;
+    addr1 = 304;
+    bank2 = 0;
+    addr2 = 784;
     element_count = 5;
     while (instruction_done !== 1'b1)
       #10;
@@ -268,10 +273,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_32 -> z1_16)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 1;
-    addr1 = 1024+8;
-    bank2 = 2;
-    addr2 = 768;
+    bank1 = 0;
+    addr1 = 792;
+    bank2 = 1;
+    addr2 = 520;
     element_count = 4;
     while (instruction_done !== 1'b1)
       #10;
@@ -280,10 +285,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_16 -> z1_8)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 2;
-    addr1 = 768+4;
-    bank2 = 3;
-    addr2 = 640;
+    bank1 = 1;
+    addr1 = 524;
+    bank2 = 2;
+    addr2 = 388;
     element_count = 3;
     while (instruction_done !== 1'b1)
       #10;
@@ -292,10 +297,10 @@ module control_unit_sign_tb;
 
     // Run split (z1_8 -> z1_4)
     modules = 16'b0000_0000_0100_0000; // split
-    bank1 = 3;
-    addr1 = 640+2;
-    bank2 = 0;
-    addr2 = 1600;
+    bank1 = 2;
+    addr1 = 390;
+    bank2 = 3;
+    addr2 = 322;
     element_count = 2;
     while (instruction_done !== 1'b1)
       #10;

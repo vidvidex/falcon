@@ -125,7 +125,7 @@ module control_unit#(
                       .douta(bram_dout_a[i_bram2048]),
                       .wea(bram_we_a[i_bram2048]),
 
-                      .addrb(bram2048_addr_b[i_bram2048]),
+                      .addrb(bram2048_addr_b[i_bram2048-BRAM3072_COUNT]),
                       .clkb(clk),
                       .dinb(bram_din_b[i_bram2048]),
                       .doutb(bram_dout_b[i_bram2048]),
@@ -1020,11 +1020,11 @@ module control_unit#(
       end
 
       if(instruction[127-2] == 1'b1) begin // COPY
-        bram_addr_a[bank3] = pipelined_inst_index;
+        bram_addr_a[bank3] = addr1 + pipelined_inst_index;
         copy_valid_in = pipelined_inst_valid;
         copy_done = pipelined_inst_last;
 
-        copy_dst_addr = pipelined_inst_index;
+        copy_dst_addr = addr2 + pipelined_inst_index;
         bram_addr_b[bank4] = copy_dst_addr_delayed;
         bram_din_b[bank4] = bram_dout_a[bank3];
         bram_we_b[bank4] = copy_valid_out;
@@ -1096,8 +1096,8 @@ module control_unit#(
       end
 
       if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
-        bram_addr_a[bank1] = pipelined_inst_index;
-        bram_addr_a[bank2] = pipelined_inst_index;
+        bram_addr_a[bank1] = addr1 + pipelined_inst_index;
+        bram_addr_a[bank2] = addr1 + pipelined_inst_index;
         complex_mul_a_real = bram_dout_a[bank1][127:64];
         complex_mul_a_imag = bram_dout_a[bank1][63:0];
         complex_mul_b_real = bram_dout_a[bank2][127:64];
@@ -1105,7 +1105,7 @@ module control_unit#(
         complex_mul_valid_in = pipelined_inst_valid;
         complex_mul_done = pipelined_inst_last;
 
-        complex_mul_dst_addr = pipelined_inst_index;
+        complex_mul_dst_addr = addr2 + pipelined_inst_index;
         bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
         bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
         bram_we_b[bank1] = complex_mul_valid_out;
