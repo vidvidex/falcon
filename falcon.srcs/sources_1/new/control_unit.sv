@@ -157,7 +157,7 @@ module control_unit#(
 
   genvar i_bram6144;
   generate
-    for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
+    for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
       bram_6144x128 bram_6144x128_inst (
                       .addra(bram_addr_a[i_bram6144]),
                       .clka(clk),
@@ -185,8 +185,8 @@ module control_unit#(
       bram2048_addr_b[i] = bram_addr_b[i + BRAM3072_COUNT][`BRAM2048_ADDR_WIDTH-1:0];
     end
     for (int i = 0; i < BRAM1024_COUNT; i++) begin
-      bram1024_addr_a[i] = bram_addr_a[i+BRAM2048_COUNT + BRAM3072_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
-      bram1024_addr_b[i] = bram_addr_b[i+BRAM2048_COUNT + BRAM3072_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
+      bram1024_addr_a[i] = bram_addr_a[i + BRAM2048_COUNT + BRAM3072_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
+      bram1024_addr_b[i] = bram_addr_b[i + BRAM2048_COUNT + BRAM3072_COUNT][`BRAM1024_ADDR_WIDTH-1:0];
     end
   end
 
