@@ -231,7 +231,6 @@ module hash_to_point#(
   end
 
   assign done = state == FINISH;
-  assign ready = state == ABSORB;
 
   // State 1 of converting hash output to coefficient: Read and swap the bytes of the hash output
   always_ff @(posedge clk) begin
