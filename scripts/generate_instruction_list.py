@@ -1,95 +1,95 @@
 import math
 
 
-def pack_instruction(fields):
-    instruction = 0
-    total_bits = 0
-    for name, width, value in fields:
-        instruction = (instruction << width) | (value & ((1 << width) - 1))
-        total_bits += width
-    return instruction
+class InstructionGenerator:
 
+    def pack_instruction(self, fields):
+        instruction = 0
+        for name, width, value in fields:
+            instruction = (instruction << width) | (value & ((1 << width) - 1))
+        return instruction
 
-def add_instruction(
-    modules=0,
-    bank1=0,
-    bank2=0,
-    bank3=0,
-    bank4=0,
-    bank5=0,
-    bank6=0,
-    address1=0,
-    address2=0,
-    mode=0,
-    mul_const_selection=0,
-    split_merge_size=0,
-    decompress_output2=0,
-):
-    fields = [
-        ("modules", 16, modules),
-        ("empty", 59, 0),
-        ("decompress_output2", 3, decompress_output2),
-        ("split_merge_size", 4, split_merge_size),
-        ("mul_const_selection", 1, mul_const_selection),
-        ("mode", 1, mode),
-        ("address2", 13, address2),
-        ("address1", 13, address1),
-        ("bank6", 3, bank6),
-        ("bank5", 3, bank5),
-        ("bank4", 3, bank4),
-        ("bank3", 3, bank3),
-        ("bank2", 3, bank2),
-        ("bank1", 3, bank1),
-    ]
-    return pack_instruction(fields)
+    def add_instruction(
+        self,
+        modules=0,
+        bank1=0,
+        bank2=0,
+        bank3=0,
+        bank4=0,
+        bank5=0,
+        bank6=0,
+        address1=0,
+        address2=0,
+        mode=0,
+        mul_const_selection=0,
+        element_count=0,
+        decompress_output2=0,
+    ):
+        fields = [
+            ("modules", 16, modules),
+            ("empty", 59, 0),
+            ("decompress_output2", 3, decompress_output2),
+            ("element_count", 4, element_count),
+            ("mul_const_selection", 1, mul_const_selection),
+            ("mode", 1, mode),
+            ("address2", 13, address2),
+            ("address1", 13, address1),
+            ("bank6", 3, bank6),
+            ("bank5", 3, bank5),
+            ("bank4", 3, bank4),
+            ("bank3", 3, bank3),
+            ("bank2", 3, bank2),
+            ("bank1", 3, bank1),
+        ]
+        self.instructions.append(self.pack_instruction(fields))
 
+    def sel_module(
+        self,
+        BRAM_READ=0,
+        BRAM_WRITE=0,
+        COPY=0,
+        HASH_TO_POINT=0,
+        INT_TO_DOUBLE=0,
+        FFT_IFFT=0,
+        NTT_INTT=0,
+        COMPLEX_MUL=0,
+        MUL_CONST=0,
+        SPLIT=0,
+        MERGE=0,
+        MOD_MULT_Q=0,
+        SUB_NORM_SQ=0,
+        DECOMPRESS=0,
+        COMPRESS=0,
+        ADD=0,
+    ):
+        modules = (
+            (BRAM_READ << 15)
+            | (BRAM_WRITE << 14)
+            | (COPY << 13)
+            | (HASH_TO_POINT << 12)
+            | (INT_TO_DOUBLE << 11)
+            | (FFT_IFFT << 10)
+            | (NTT_INTT << 9)
+            | (COMPLEX_MUL << 8)
+            | (MUL_CONST << 7)
+            | (SPLIT << 6)
+            | (MERGE << 5)
+            | (MOD_MULT_Q << 4)
+            | (SUB_NORM_SQ << 3)
+            | (DECOMPRESS << 2)
+            | (COMPRESS << 1)
+            | (ADD << 0)
+        )
+        return modules
 
-def sel_module(
-    BRAM_READ=0,
-    BRAM_WRITE=0,
-    COPY=0,
-    HASH_TO_POINT=0,
-    INT_TO_DOUBLE=0,
-    FFT_IFFT=0,
-    NTT_INTT=0,
-    COMPLEX_MUL=0,
-    MUL_CONST=0,
-    SPLIT=0,
-    MERGE=0,
-    MOD_MULT_Q=0,
-    SUB_NORM_SQ=0,
-    DECOMPRESS=0,
-    COMPRESS=0,
-    ADD=0,
-):
-    modules = (
-        (BRAM_READ << 15)
-        | (BRAM_WRITE << 14)
-        | (COPY << 13)
-        | (HASH_TO_POINT << 12)
-        | (INT_TO_DOUBLE << 11)
-        | (FFT_IFFT << 10)
-        | (NTT_INTT << 9)
-        | (COMPLEX_MUL << 8)
-        | (MUL_CONST << 7)
-        | (SPLIT << 6)
-        | (MERGE << 5)
-        | (MOD_MULT_Q << 4)
-        | (SUB_NORM_SQ << 3)
-        | (DECOMPRESS << 2)
-        | (COMPRESS << 1)
-        | (ADD << 0)
-    )
-    return modules
+    def verify512(self):
+        self.instructions = []
+        N = 512
+        log2N = int(math.log2(N))
 
-
-def verify512():
-    instructions = []
-
-    # timestep 1: NTT, DECOMPRESS, HASH_TO_POINT
-    instructions.append(
-        add_instruction(
-            modules=sel_module(NTT_INTT=1, DECOMPRESS=1, HASH_TO_POINT=1),
+        # timestep 1: NTT, DECOMPRESS, HASH_TO_POINT
+        self.add_instruction(
+            modules=self.sel_module(NTT_INTT=1, DECOMPRESS=1, HASH_TO_POINT=1),
             mode=0,  # NTT mode: NTT
             bank1=0,  # NTT bank1
             bank2=2,  # NTT bank2
@@ -99,193 +99,187 @@ def verify512():
             bank6=4,  # decompress output
             decompress_output2=3,  # Second output for decompress
         )
-    )
 
-    # timestep 2: NTT
-    instructions.append(
-        add_instruction(
-            modules=sel_module(NTT_INTT=1),
+        # timestep 2: NTT
+        self.add_instruction(
+            modules=self.sel_module(NTT_INTT=1),
             mode=0,  # NTT mode: NTT
             bank1=4,  # NTT bank1
             bank2=1,  # NTT bank2
         )
-    )
 
-    # timestep 3: MOD_MULT_Q
-    instructions.append(
-        add_instruction(
-            modules=sel_module(MOD_MULT_Q=1),
+        # timestep 3: MOD_MULT_Q
+        self.add_instruction(
+            modules=self.sel_module(MOD_MULT_Q=1),
             bank1=1,  # MOD_MULT_Q input 1
             bank2=2,  # MOD_MULT_Q input 2
             bank3=4,  # MOD_MULT_Q output
+            element_count=log2N-1,
         )
-    )
 
-    # timestep 4: INTT
-    instructions.append(
-        add_instruction(
-            modules=sel_module(NTT_INTT=1),
+        # timestep 4: INTT
+        self.add_instruction(
+            modules=self.sel_module(NTT_INTT=1),
             mode=1,  # NTT mode: INTT
             bank1=4,  # NTT bank1
             bank2=1,  # NTT bank2
         )
-    )
 
-    # timestep 5: SUB_NORM_SQ
-    instructions.append(
-        add_instruction(
-            modules=sel_module(SUB_NORM_SQ=1),
+        # timestep 5: SUB_NORM_SQ
+        self.add_instruction(
+            modules=self.sel_module(SUB_NORM_SQ=1),
             bank1=5,  # SUB_NORM_SQ input 1
             bank2=1,  # SUB_NORM_SQ input 2
             bank3=3,  # SUB_NORM_SQ input 3
+            element_count=log2N-1,
         )
-    )
 
-    formatted_instructions = [f"128'h{instruction:032x}" for instruction in instructions]
+    def print_verilog(self):
+        formatted_instructions = [f"128'h{instruction:032x}" for instruction in self.instructions]
 
-    print(f"localparam int VERIFY_INSTRUCTION_COUNT = {len(formatted_instructions)};")
-    print("logic [127:0] verify_instructions[VERIFY_INSTRUCTION_COUNT] = '{")
-    print(",\n".join(formatted_instructions))
-    print("};")
+        print(f"localparam int VERIFY_INSTRUCTION_COUNT = {len(formatted_instructions)};")
+        print("logic [127:0] verify_instructions[VERIFY_INSTRUCTION_COUNT] = '{")
+        print(",\n".join(formatted_instructions))
+        print("};")
 
+    def treesize(self, n):
+        logn = int(math.log2(n))
+        return (logn + 1) << logn
 
-def treesize(n):
-    logn = int(math.log2(n))
-    return (logn + 1) << logn
+    def ffsampling(self, N, n, curr_bram, next_free_addr, t0, t1, tree):
 
+        prev_bram = (curr_bram - 1) % 4 if t1 != 0 else 5  # On top level (when t1 == 0) read from BRAM5
+        next_bram = (curr_bram + 1) % 4
+        sm_size = int(math.log2(n))
 
-def ffsampling(N, n, curr_bram, next_free_addr, t0, t1, tree):
+        z0 = next_free_addr[curr_bram]  # Located in curr_bram
+        z1 = z0 + n
 
-    prev_bram = (curr_bram - 1) % 4 if t1 != 0 else 5  # On top level (when t1 == 0) read from BRAM5
-    next_bram = (curr_bram + 1) % 4
-    sm_size = int(math.log2(n))
+        tmp = next_free_addr[next_bram]  # Located in next_bram (future z0 and z1)
 
-    z0 = next_free_addr[curr_bram]  # Located in curr_bram
-    z1 = z0 + n
+        next_free_addr[curr_bram] += 2 * n
 
-    tmp = next_free_addr[next_bram]  # Located in next_bram (future z0 and z1)
+        if n == 1:
+            print(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0},{t1},\tout_bram={curr_bram},\tout_addr={z0},{z1}")
+            return
 
-    next_free_addr[curr_bram] += 2 * n
+        tree0 = tree + n
+        tree1 = tree0 + self.treesize(n // 2)
 
-    if n == 1:
-        print(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0},{t1},\tout_bram={curr_bram},\tout_addr={z0},{z1}")
-        return
+        print(f"n={n},\tsplit_fft1 \tin_bram={prev_bram},\tin_addr={t1},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={sm_size}")
+        self.add_instruction(
+            modules=self.sel_module(SPLIT=1),
+            bank1=prev_bram,  # Input
+            address1=t1,
+            bank2=curr_bram,  # Output
+            address2=z1,
+            element_count=sm_size,
+        )
 
-    tree0 = tree + n
-    tree1 = tree0 + treesize(n // 2)
+        self.ffsampling(
+            N=N,
+            n=n // 2,
+            curr_bram=next_bram,
+            next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
+            t0=z1,
+            t1=z1 + n // 2,
+            tree=tree1,
+        )
 
-    print(f"n={n},\tsplit_fft1 \tin_bram={prev_bram},\tin_addr={t1},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={sm_size}")
+        print(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={sm_size}")
+        self.add_instruction(
+            modules=self.sel_module(MERGE=1),
+            bank1=next_bram,  # Input
+            address1=tmp,
+            bank2=curr_bram,  # Output
+            address2=z1,
+            element_count=sm_size,
+        )
 
-    ffsampling(
-        N=N,
-        n=n // 2,
-        curr_bram=next_bram,
-        next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
-        t0=z1,
-        t1=z1 + n // 2,
-        tree=tree1,
-    )
+        print(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    print(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={sm_size}")
+        print(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    print(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
+        tree_bram = 6
+        print(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    print(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
+        print(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
 
-    tree_bram = 6
-    print(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
+        print(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={sm_size}")
 
-    print(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
+        self.ffsampling(
+            N=N,
+            n=n // 2,
+            curr_bram=next_bram,
+            next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
+            t0=z0,
+            t1=z0 + n // 2,
+            tree=tree0,
+        )
 
-    print(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={sm_size}")
+        print(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={sm_size}")
 
-    ffsampling(
-        N=N,
-        n=n // 2,
-        curr_bram=next_bram,
-        next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
-        t0=z0,
-        t1=z0 + n // 2,
-        tree=tree0,
-    )
+    def sign512(self):
+        self.instructions = []
 
-    print(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={sm_size}")
-
-
-def sign512():
-    instructions = []
-
-    # timestep 1: HASH_TO_POINT
-    instructions.append(
-        add_instruction(
-            modules=sel_module(HASH_TO_POINT=1),
+        # timestep 1: HASH_TO_POINT
+        self.add_instruction(
+            modules=self.sel_module(HASH_TO_POINT=1),
             bank3=4,  # HASH_TO_POINT input
             bank4=5,  # HASH_TO_POINT output
         )
-    )
 
-    # timestep 2: INT_TO_DOUBLE
-    instructions.append(
-        add_instruction(
-            modules=sel_module(INT_TO_DOUBLE=1),
+        # timestep 2: INT_TO_DOUBLE
+        self.add_instruction(
+            modules=self.sel_module(INT_TO_DOUBLE=1),
             bank1=5,  # INT_TO_DOUBLE input
             bank2=5,  # INT_TO_DOUBLE output
         )
-    )
 
-    # timestep 3: FFT
-    instructions.append(
-        add_instruction(
-            modules=sel_module(FFT_IFFT=1),
+        # timestep 3: FFT
+        self.add_instruction(
+            modules=self.sel_module(FFT_IFFT=1),
             mode=0,  # FFT mode: FFT
             bank1=5,  # FFT bank1
             bank2=4,  # FFT bank2
         )
-    )
 
-    # timestep 4: COPY, COMPLEX_MUL
-    instructions.append(
-        add_instruction(
-            modules=sel_module(COPY=1, COMPLEX_MUL=1),
+        # timestep 4: COPY, COMPLEX_MUL
+        self.add_instruction(
+            modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
             bank1=5,  # COMPLEX_MUL input 1, output
             bank2=1,  # COMPLEX_MUL input 2
             bank3=5,  # COPY input
             bank4=4,  # COPY output
         )
-    )
 
-    # timestep 5: COMPLEX_MUL, MUL_CONST
-    instructions.append(
-        add_instruction(
-            modules=sel_module(COMPLEX_MUL=1, MUL_CONST=1),
+        # timestep 5: COMPLEX_MUL, MUL_CONST
+        self.add_instruction(
+            modules=self.sel_module(COMPLEX_MUL=1, MUL_CONST=1),
             bank1=4,  # COMPLEX_MUL input 1, output
             bank2=3,  # COMPLEX_MUL input 2
             bank3=5,  # MUL_CONST input
             bank4=5,  # MUL_CONST output
             mul_const_selection=1,  # Select constant for multiplication
         )
-    )
 
-    # timestep 6: MUL_CONST
-    instructions.append(
-        add_instruction(
-            modules=sel_module(MUL_CONST=1),
+        # timestep 6: MUL_CONST
+        self.add_instruction(
+            modules=self.sel_module(MUL_CONST=1),
             bank3=4,  # MUL_CONST input
             bank4=4,  # MUL_CONST output
             mul_const_selection=0,  # Select constant for multiplication
         )
-    )
 
-    ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[512, 512, 512, 512], t0=0, t1=0, tree=0)
+        self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[512, 512, 512, 512], t0=0, t1=0, tree=0)
 
-    formatted_instructions = [f"128'h{instruction:032x}" for instruction in instructions]
-
-    print(f"localparam int SIGN_INSTRUCTION_COUNT = {len(formatted_instructions)};")
-    print("logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT] = '{")
-    print(",\n".join(formatted_instructions))
-    print("};")
+        self.print_verilog()
 
 
 if __name__ == "__main__":
-    # verify512()
-    sign512()
+
+    generator = InstructionGenerator()
+    generator.verify512()
+    # generator.sign512()
+
+    generator.print_verilog()
