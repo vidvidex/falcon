@@ -8,13 +8,13 @@ module fp_adder_tb;
   logic [63:0] a;
   logic [63:0] b;
   logic [63:0] result;
+  logic mode;
 
   always #5 clk = ~clk;
 
-  fp_adder #(
-             .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-           ) fp_adder(
+  fp_adder fp_adder(
              .clk(clk),
+             .mode(mode),  // 0 = add, 1 = subtract
              .valid_in(valid_in),
              .a(a),
              .b(b),
@@ -25,6 +25,7 @@ module fp_adder_tb;
   initial begin
 
     clk = 1;
+    mode = 0;
 
     a = $realtobits(1.0);
     b = $realtobits(2.0);

@@ -64,8 +64,9 @@ module complex_multiplier(
                   .valid_out()
                 );
 
-  fp_adder #(.DO_SUBSTRACTION(1)) adder_real_result(
+  fp_adder adder_real_result(
              .clk(clk),
+             .mode(1'b1), // Subtract
              .valid_in(mult_done),
              .a(ar_x_br),
              .b(ai_x_bi),
@@ -73,8 +74,9 @@ module complex_multiplier(
              .valid_out(valid_out)
            );
 
-  fp_adder #(.DO_SUBSTRACTION(0)) adder_imag_result(
+  fp_adder adder_imag_result(
              .clk(clk),
+             .mode(1'b0), // Add
              .a(ar_x_bi),
              .b(ai_x_br),
              .result(a_x_b_imag),

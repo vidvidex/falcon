@@ -56,7 +56,7 @@ module control_unit#(
   logic debug_SUB_NORM_SQ;
   logic debug_DECOMPRESS;
   logic debug_COMPRESS;
-  logic debug_ADD;
+  logic debug_ADD_SUB;
   always_comb begin
     debug_BRAM_READ = instruction[127-0];
     debug_BRAM_WRITE = instruction[127-1];
@@ -73,7 +73,7 @@ module control_unit#(
     debug_SUB_NORM_SQ = instruction[127-12];
     debug_DECOMPRESS = instruction[127-13];
     debug_COMPRESS = instruction[127-14];
-    debug_ADD = instruction[127-15];
+    debug_ADD_SUB = instruction[127-15];
   end
 
   logic [2:0] dma_bank;
@@ -193,7 +193,8 @@ module control_unit#(
   always_ff @(posedge clk) begin
     modules_running_i <= modules_running;
 
-    instruction_done <= modules_running == 0 && modules_running_i != 0;
+    // Instruction done when no modules are running. Alternatively when we're using the debug read/write instructions
+    instruction_done <= modules_running == 0 && modules_running_i != 0 || (instruction[127-0] == 1'b1 || instruction[127-1] == 1'b1);
   end
 
   logic [$clog2(N)-1:0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
@@ -658,38 +659,37 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(8)) sub_normalize_squared_norm_done_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_done_delayed));
 
-  // // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
-  // logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_address_in;
-  // logic fp_adder_valid_in, fp_adder_valid_in_delayed;
-  // logic [63:0] fp_adder1_a, fp_adder1_b;
-  // logic [63:0] fp_adder2_a, fp_adder2_b;
-  // logic [63:0] fp_adder1_result;
-  // logic [63:0] fp_adder2_result;
-  // logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_address_out;
-  // logic fp_adder_valid_out;
-  // logic fp_adder_done;
-  // fp_adder #(
-  //            .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-  //          ) fp_adder1(
-  //            .clk(clk),
-  //            .valid_in(fp_adder_valid_in_delayed),
-  //            .a(fp_adder1_a),
-  //            .b(fp_adder1_b),
-  //            .result(fp_adder1_result),
-  //            .valid_out(fp_adder_valid_out)
-  //          );
-  // fp_adder #(
-  //            .DO_SUBSTRACTION(0)  // 0 for addition, 1 for subtraction
-  //          ) fp_adder2(
-  //            .clk(clk),
-  //            .valid_in(fp_adder_valid_in_delayed),
-  //            .a(fp_adder2_a),
-  //            .b(fp_adder2_b),
-  //            .result(fp_adder2_result),
-  //            .valid_out()
-  //          );
-  // delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
-  // delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder1_address_in_delay(.clk(clk), .in(fp_adder_address_in), .out(fp_adder_address_out));
+  // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
+  logic fp_adder_mode;
+  logic fp_adder_valid_in, fp_adder_valid_in_delayed;
+  logic [63:0] fp_adder1_a, fp_adder1_b;
+  logic [63:0] fp_adder2_a, fp_adder2_b;
+  logic [63:0] fp_adder1_result;
+  logic [63:0] fp_adder2_result;
+  logic [`BRAM_ADDR_WIDTH-1:0] fp_adder_dst_addr, fp_adder_dst_addr_delayed;
+  logic fp_adder_valid_out;
+  logic fp_adder_done, fp_adder_done_delayed;
+  fp_adder fp_adder1(
+             .clk(clk),
+             .mode(fp_adder_mode),
+             .valid_in(fp_adder_valid_in_delayed),
+             .a(fp_adder1_a),
+             .b(fp_adder1_b),
+             .result(fp_adder1_result),
+             .valid_out(fp_adder_valid_out)
+           );
+  fp_adder fp_adder2(
+             .clk(clk),
+             .mode(fp_adder_mode),
+             .valid_in(fp_adder_valid_in_delayed),
+             .a(fp_adder2_a),
+             .b(fp_adder2_b),
+             .result(fp_adder2_result),
+             .valid_out()
+           );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder_dst_addr_delay(.clk(clk), .in(fp_adder_dst_addr), .out(fp_adder_dst_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(9)) fp_adder_done_delay(.clk(clk), .in(fp_adder_done), .out(fp_adder_done_delayed));
 
   // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
   logic fp_mul_valid_in, fp_mul_valid_in_delayed;
@@ -912,8 +912,11 @@ module control_unit#(
 
       end
 
-      if(instruction[127-15] == 1'b1) begin // ADD
-
+      if(instruction[127-15] == 1'b1) begin // ADD_SUB
+        if(fp_adder_done_delayed)
+          modules_running[INSTRUCTION_COUNT-15] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-15] <= 1'b1;
       end
     end
   end
@@ -945,7 +948,8 @@ module control_unit#(
     mod_mult_done = 1'b0;
     sub_normalize_squared_norm_valid = 1'b0;
     sub_normalize_squared_norm_last = 1'b0;
-    // fp_adder_valid_in = 1'b0;
+    fp_adder_valid_in = 1'b0;
+    fp_adder_done = 1'b0;
     fp_mul_valid_in = 1'b0;
     fp_mul_done = 1'b0;
     copy_valid_in = 1'b0;
@@ -994,6 +998,11 @@ module control_unit#(
     sub_normalize_squared_norm_c[1] = 0;
     decompress_input_bram_data = 0;
     decompress_output_bram2_data = 0;
+    fp_adder1_a = 0;
+    fp_adder1_b = 0;
+    fp_adder2_a = 0;
+    fp_adder2_b = 0;
+    fp_adder_dst_addr = 0;
     dma_bram_dout = 0;
 
     if(dma_bram_en == 1'b1) begin     // DMA has BRAM access
@@ -1211,8 +1220,24 @@ module control_unit#(
 
       end
 
-      if(instruction[127-15] == 1'b1) begin // ADD
+      if(instruction[127-15] == 1'b1) begin // ADD_SUB
+        fp_adder_mode = instruction[44];
 
+        bram_addr_a[bank1] = addr1 + pipelined_inst_index;
+        bram_addr_a[bank2] = addr2 + pipelined_inst_index;
+
+        fp_adder1_a = bram_dout_a[bank1][127:64];
+        fp_adder2_a = bram_dout_a[bank1][63:0];
+        fp_adder1_b = bram_dout_a[bank2][127:64];
+        fp_adder2_b = bram_dout_a[bank2][63:0];
+
+        fp_adder_valid_in = pipelined_inst_valid;
+        fp_adder_done = pipelined_inst_last;
+        fp_adder_dst_addr = addr1 + pipelined_inst_index;
+
+        bram_addr_b[bank2] = fp_adder_dst_addr_delayed;
+        bram_din_b[bank2] = {fp_adder1_result, fp_adder2_result};
+        bram_we_b[bank2] = fp_adder_valid_out;
       end
     end
   end

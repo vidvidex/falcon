@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="95,943.304 ns"></ZoomStartTime>
-      <ZoomEndTime time="96,107.340 ns"></ZoomEndTime>
-      <Cursor1Time time="96,071.675 ns"></Cursor1Time>
+      <ZoomStartTime time="61,550.820 ns"></ZoomStartTime>
+      <ZoomEndTime time="61,741.836 ns"></ZoomEndTime>
+      <Cursor1Time time="61,600.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="193"></NameColumnWidth>
+      <NameColumnWidth column_width="189"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="3" />
+   <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -164,6 +164,23 @@
          <obj_property name="ObjectShortName">addr2[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/pipelined_inst_index">
+         <obj_property name="ElementShortName">pipelined_inst_index[8:0]</obj_property>
+         <obj_property name="ObjectShortName">pipelined_inst_index[8:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/pipelined_inst_last">
+         <obj_property name="ElementShortName">pipelined_inst_last</obj_property>
+         <obj_property name="ObjectShortName">pipelined_inst_last</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/pipelined_inst_valid">
+         <obj_property name="ElementShortName">pipelined_inst_valid</obj_property>
+         <obj_property name="ObjectShortName">pipelined_inst_valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/element_count">
+         <obj_property name="ElementShortName">element_count[8:0]</obj_property>
+         <obj_property name="ObjectShortName">element_count[8:0]</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/modules_running">
          <obj_property name="ElementShortName">modules_running[15:0]</obj_property>
          <obj_property name="ObjectShortName">modules_running[15:0]</obj_property>
@@ -237,9 +254,9 @@
             <obj_property name="ElementShortName">debug_COMPRESS</obj_property>
             <obj_property name="ObjectShortName">debug_COMPRESS</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_ADD">
-            <obj_property name="ElementShortName">debug_ADD</obj_property>
-            <obj_property name="ObjectShortName">debug_ADD</obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/debug_ADD_SUB">
+            <obj_property name="ElementShortName">debug_ADD_SUB</obj_property>
+            <obj_property name="ObjectShortName">debug_ADD_SUB</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group305">
@@ -300,7 +317,6 @@
       <wvobject type="group" fp_name="group314">
          <obj_property name="label">bram1</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[1]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[1][12:0]</obj_property>
@@ -355,7 +371,6 @@
       <wvobject type="group" fp_name="group323">
          <obj_property name="label">bram2</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[2]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[2][12:0]</obj_property>
@@ -410,7 +425,6 @@
       <wvobject type="group" fp_name="group332">
          <obj_property name="label">bram3</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_addr_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][12:0]</obj_property>
@@ -1084,7 +1098,6 @@
       <wvobject type="group" fp_name="group3876">
          <obj_property name="label">split</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/split_start">
             <obj_property name="ElementShortName">split_start</obj_property>
             <obj_property name="ObjectShortName">split_start</obj_property>
@@ -1212,8 +1225,86 @@
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group204">
-         <obj_property name="label">fp_add</obj_property>
+         <obj_property name="label">fp_add_sub</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_adder_mode">
+            <obj_property name="ElementShortName">fp_adder_mode</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_mode</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_adder_valid_in">
+            <obj_property name="ElementShortName">fp_adder_valid_in</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_valid_in</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_adder_valid_in_delayed">
+            <obj_property name="ElementShortName">fp_adder_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_valid_in_delayed</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder1_a">
+            <obj_property name="ElementShortName">fp_adder1_a[63:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder1_a[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder1_b">
+            <obj_property name="ElementShortName">fp_adder1_b[63:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder1_b[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder2_a">
+            <obj_property name="ElementShortName">fp_adder2_a[63:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder2_a[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder2_b">
+            <obj_property name="ElementShortName">fp_adder2_b[63:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder2_b[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder1_result">
+            <obj_property name="ElementShortName">fp_adder1_result[63:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder1_result[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder2_result">
+            <obj_property name="ElementShortName">fp_adder2_result[63:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder2_result[63:0]</obj_property>
+            <obj_property name="Radix">REALRADIX</obj_property>
+            <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+            <obj_property name="radix_fractionWidth">53</obj_property>
+            <obj_property name="radix_otherWidth">11</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/fp_adder_dst_addr_delayed">
+            <obj_property name="ElementShortName">fp_adder_dst_addr_delayed[12:0]</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_dst_addr_delayed[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_adder_valid_out">
+            <obj_property name="ElementShortName">fp_adder_valid_out</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_valid_out</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_adder_done">
+            <obj_property name="ElementShortName">fp_adder_done</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_done</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/control_unit_sign_tb/control_unit/fp_adder_done_delayed">
+            <obj_property name="ElementShortName">fp_adder_done_delayed</obj_property>
+            <obj_property name="ObjectShortName">fp_adder_done_delayed</obj_property>
+         </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group984">
          <obj_property name="label">fp_mul</obj_property>
@@ -1396,11 +1487,5 @@
             <obj_property name="ObjectShortName">complex_mul_done_delayed</obj_property>
          </wvobject>
       </wvobject>
-   </wvobject>
-   <wvobject type="array" fp_name="/control_unit_sign_tb/control_unit/bram_din_a[0]">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">[0][127:0]</obj_property>
-      <obj_property name="ObjectShortName">[0][127:0]</obj_property>
-      <obj_property name="label">din_a[127:0]</obj_property>
    </wvobject>
 </wave_config>

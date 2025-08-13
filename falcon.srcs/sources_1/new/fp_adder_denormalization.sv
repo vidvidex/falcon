@@ -5,8 +5,10 @@
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module fp_adder_denormalization #(DO_SUBSTRACTION = 0) (
+module fp_adder_denormalization (
     input clk,
+    input logic mode, // 0 = add, 1 = subtract
+
     input valid_in,
     input [63:0] a,
     input [63:0] b,
@@ -20,7 +22,7 @@ module fp_adder_denormalization #(DO_SUBSTRACTION = 0) (
 
   logic sign_a, sign_b;
   assign sign_a = a[63];
-  assign sign_b = DO_SUBSTRACTION ? ~b[63] : b[63];
+  assign sign_b = mode ? ~b[63] : b[63];
 
   logic [`EXPONENT_BITS-1:0] exponent_a, exponent_b;
   assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];

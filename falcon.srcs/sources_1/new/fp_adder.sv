@@ -6,10 +6,9 @@
 // input: unbuffered
 // output: buffered
 (* keep_hierarchy = `KEEP_HIERARCHY *)
-module fp_adder #(
-    DO_SUBSTRACTION = 0 // 0 for addition, 1 for subtraction
-  ) (
+module fp_adder (
     input clk,
+    input logic mode, // 0 = add, 1 = subtract
     input valid_in,
     input [63:0] a,
     input [63:0] b,
@@ -21,8 +20,9 @@ module fp_adder #(
   logic [`EXPONENT_BITS-1:0] exponent_b_2DP;
   logic [`SIGNIFICANT_BITS:0] significant_b_2DP;
   logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP;
-  fp_adder_denormalization #(.DO_SUBSTRACTION(DO_SUBSTRACTION)) denormalize (
+  fp_adder_denormalization denormalize (
                             .clk(clk),
+                            .mode(mode),
                             .valid_in(valid_in),
                             .a(a),
                             .b(b),
