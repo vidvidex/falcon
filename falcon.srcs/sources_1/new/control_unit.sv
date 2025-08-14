@@ -998,6 +998,7 @@ module control_unit#(
     sub_normalize_squared_norm_c[1] = 0;
     decompress_input_bram_data = 0;
     decompress_output_bram2_data = 0;
+    fp_adder_mode = 0;
     fp_adder1_a = 0;
     fp_adder1_b = 0;
     fp_adder2_a = 0;
