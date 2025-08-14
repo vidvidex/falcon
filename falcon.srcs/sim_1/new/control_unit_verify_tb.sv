@@ -163,10 +163,8 @@ module control_unit_verify_tb;
     modules = 16'b0000_0000_0000_0000; // Stop writing to BRAM
     #10;
 
-    // Verify the result by reading BRAM0 at address 0
     while(signature_accepted === 1'b0 && signature_rejected === 1'b0)
       #10;
-
 
     if(signature_accepted === 1'b1 && signature_rejected === 1'b0)
       $display("All tests for control_unit_verify passed!");
