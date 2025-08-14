@@ -180,6 +180,7 @@ module control_unit_sign_tb;
     bank4 = 4;
     addr1 = 0;  // Offsets for copy and complex mul (same offsets for both modules)
     addr2 = 0;
+    element_count = $clog2(256);
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
@@ -193,6 +194,7 @@ module control_unit_sign_tb;
     bank4 = 5;
     addr1 = 0;  // Offsets for complex mul
     addr2 = 0;
+    element_count = $clog2(256);
     mul_const_selection = 1; // -1/12289
     while (instruction_done !== 1'b1)
       #10;
@@ -204,6 +206,7 @@ module control_unit_sign_tb;
     bank3 = 4;  // mul const 4, output to 4
     bank4 = 4;
     mul_const_selection = 0; // 1/12289
+    element_count = $clog2(256);
     while (instruction_done !== 1'b1)
       #10;
     modules = 16'b0000_0000_0000_0000;
