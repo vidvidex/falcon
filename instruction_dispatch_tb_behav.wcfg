@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="317.801 ns"></ZoomEndTime>
-      <Cursor1Time time="40.000 ns"></Cursor1Time>
+      <ZoomStartTime time="34,413.127 ns"></ZoomStartTime>
+      <ZoomEndTime time="34,799.375 ns"></ZoomEndTime>
+      <Cursor1Time time="34,560.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="130"></ValueColumnWidth>
+      <ValueColumnWidth column_width="122"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group148">
@@ -134,8 +134,8 @@
          <obj_property name="ObjectShortName">verify_instructions[0:4][127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/sign_instructions">
-         <obj_property name="ElementShortName">sign_instructions[0:0][127:0]</obj_property>
-         <obj_property name="ObjectShortName">sign_instructions[0:0][127:0]</obj_property>
+         <obj_property name="ElementShortName">sign_instructions[0:14][127:0]</obj_property>
+         <obj_property name="ObjectShortName">sign_instructions[0:14][127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/instruction">
          <obj_property name="ElementShortName">instruction[127:0]</obj_property>
@@ -150,8 +150,9 @@
          <obj_property name="ObjectShortName">running</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/instruction_index">
-         <obj_property name="ElementShortName">instruction_index[-1:0]</obj_property>
-         <obj_property name="ObjectShortName">instruction_index[-1:0]</obj_property>
+         <obj_property name="ElementShortName">instruction_index[4:0]</obj_property>
+         <obj_property name="ObjectShortName">instruction_index[4:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
@@ -234,6 +235,15 @@
          <obj_property name="ElementShortName">debug_ADD_SUB</obj_property>
          <obj_property name="ObjectShortName">debug_ADD_SUB</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/modules_running">
+         <obj_property name="ElementShortName">modules_running[15:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running[15:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/modules_running_i">
+         <obj_property name="ElementShortName">modules_running_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running_i[15:0]</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/element_count">
          <obj_property name="ElementShortName">element_count[8:0]</obj_property>
          <obj_property name="ObjectShortName">element_count[8:0]</obj_property>
@@ -251,41 +261,29 @@
          <obj_property name="ElementShortName">pipelined_inst_valid</obj_property>
          <obj_property name="ObjectShortName">pipelined_inst_valid</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_input_bram_addr">
-         <obj_property name="ElementShortName">htp_input_bram_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">htp_input_bram_addr[12:0]</obj_property>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/copy_valid_in">
+         <obj_property name="ElementShortName">copy_valid_in</obj_property>
+         <obj_property name="ObjectShortName">copy_valid_in</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_input_bram_data">
-         <obj_property name="ElementShortName">htp_input_bram_data[127:0]</obj_property>
-         <obj_property name="ObjectShortName">htp_input_bram_data[127:0]</obj_property>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/copy_dst_addr">
+         <obj_property name="ElementShortName">copy_dst_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">copy_dst_addr[12:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_output_bram1_addr">
-         <obj_property name="ElementShortName">htp_output_bram1_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">htp_output_bram1_addr[12:0]</obj_property>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/copy_dst_addr_delayed">
+         <obj_property name="ElementShortName">copy_dst_addr_delayed[12:0]</obj_property>
+         <obj_property name="ObjectShortName">copy_dst_addr_delayed[12:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_output_bram2_addr">
-         <obj_property name="ElementShortName">htp_output_bram2_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">htp_output_bram2_addr[12:0]</obj_property>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/copy_valid_out">
+         <obj_property name="ElementShortName">copy_valid_out</obj_property>
+         <obj_property name="ObjectShortName">copy_valid_out</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_output_bram1_data">
-         <obj_property name="ElementShortName">htp_output_bram1_data[127:0]</obj_property>
-         <obj_property name="ObjectShortName">htp_output_bram1_data[127:0]</obj_property>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/copy_done">
+         <obj_property name="ElementShortName">copy_done</obj_property>
+         <obj_property name="ObjectShortName">copy_done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_output_bram2_data">
-         <obj_property name="ElementShortName">htp_output_bram2_data[127:0]</obj_property>
-         <obj_property name="ObjectShortName">htp_output_bram2_data[127:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_output_bram1_we">
-         <obj_property name="ElementShortName">htp_output_bram1_we</obj_property>
-         <obj_property name="ObjectShortName">htp_output_bram1_we</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_done">
-         <obj_property name="ElementShortName">htp_done</obj_property>
-         <obj_property name="ObjectShortName">htp_done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_done_delayed">
-         <obj_property name="ElementShortName">htp_done_delayed</obj_property>
-         <obj_property name="ObjectShortName">htp_done_delayed</obj_property>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/copy_done_delayed">
+         <obj_property name="ElementShortName">copy_done_delayed</obj_property>
+         <obj_property name="ObjectShortName">copy_done_delayed</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

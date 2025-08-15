@@ -309,6 +309,18 @@ module control_unit_sign_tb;
       #10;
     modules = 16'b0000_0000_0000_0000;
     #10;
+
+    // Run copy instead of the last split
+    modules = 16'b0010_0000_0000_0000; // copy
+    bank3 = 3;
+    addr1 = 323;
+    bank4 = 0;
+    addr2 = 801;
+    element_count = 0;
+    while (instruction_done !== 1'b1)
+      #10;
+    modules = 16'b0000_0000_0000_0000;
+    #10;
   end
 
 endmodule

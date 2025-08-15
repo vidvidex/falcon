@@ -192,13 +192,13 @@ module control_unit#(
 
   always_ff @(posedge clk) begin
     modules_running_i <= modules_running;
-
-    // Instruction done when no modules are running. Alternatively when we're using the debug read/write instructions
-    instruction_done <= modules_running == 0 && modules_running_i != 0 || (instruction[127-0] == 1'b1 || instruction[127-1] == 1'b1);
   end
 
+  // Instruction done when no modules are running. Alternatively when we're using the debug read/write instructions
+  assign instruction_done = modules_running == 0 && modules_running_i != 0 || (instruction[127-0] == 1'b1 || instruction[127-1] == 1'b1);
+
   logic [$clog2(N)-1:0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
-  logic pipelined_inst_last; // Last/done signal for pipelined operations
+  logic pipelined_inst_done; // Last/done signal for pipelined operations
   logic pipelined_inst_valid;
   logic [$clog2(N)-1:0] element_count;
 
@@ -249,7 +249,7 @@ module control_unit#(
                 );
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) int_to_double_address_in_delay(.clk(clk), .in(int_to_double_address_in), .out(int_to_double_address_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) int_to_double_done_delay(.clk(clk), .in(int_to_double_done), .out(int_to_double_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) int_to_double_done_delay(.clk(clk), .in(int_to_double_done), .out(int_to_double_done_delayed));
 
   logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
   logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
@@ -633,14 +633,14 @@ module control_unit#(
   logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr, mod_mult_write_addr_delayed;  // Where to write the output of mod_mult
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(mod_mult_write_addr), .out(mod_mult_write_addr_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(6)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
 
   localparam int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
   logic signed [14:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
   logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
-  logic sub_normalize_squared_norm_last, sub_normalize_squared_norm_last_delayed;
+  logic sub_normalize_squared_norm_last_delayed;
   logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
-  logic sub_normalize_squared_norm_done_delayed;
+  logic sub_normalize_squared_norm_done, sub_normalize_squared_norm_done_delayed;
   sub_normalize_squared_norm #(
                                .N(N),
                                .PARALLEL_OPS_COUNT(SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT)
@@ -656,8 +656,8 @@ module control_unit#(
                                .reject(sub_normalize_squared_norm_reject)
                              );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_last_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(8)) sub_normalize_squared_norm_done_delay(.clk(clk), .in(sub_normalize_squared_norm_last), .out(sub_normalize_squared_norm_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_done), .out(sub_normalize_squared_norm_last_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) sub_normalize_squared_norm_done_delay(.clk(clk), .in(sub_normalize_squared_norm_done), .out(sub_normalize_squared_norm_done_delayed));
 
   // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
   logic fp_adder_mode;
@@ -720,7 +720,7 @@ module control_unit#(
                 );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_mul_dst_addr_delay(.clk(clk), .in(fp_mul_dst_addr), .out(fp_mul_dst_addr_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(9)) fp_mul_done_delay(.clk(clk), .in(fp_mul_done), .out(fp_mul_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(8)) fp_mul_done_delay(.clk(clk), .in(fp_mul_done), .out(fp_mul_done_delayed));
 
   logic copy_valid_in;
   logic [`BRAM_ADDR_WIDTH-1:0] copy_dst_addr, copy_dst_addr_delayed;
@@ -728,7 +728,7 @@ module control_unit#(
   logic copy_done, copy_done_delayed;
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) copy_dst_addr_delay(.clk(clk), .in(copy_dst_addr), .out(copy_dst_addr_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_done_delay(.clk(clk), .in(copy_done), .out(copy_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) copy_done_delay(.clk(clk), .in(copy_done), .out(copy_done_delayed));
 
   logic [63:0] complex_mul_a_real, complex_mul_a_imag, complex_mul_b_real, complex_mul_b_imag;
   logic complex_mul_valid_in, complex_mul_valid_in_delayed;
@@ -750,11 +750,11 @@ module control_unit#(
                      );
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(16)) complex_mul_dst_addr_delay(.clk(clk), .in(complex_mul_dst_addr), .out(complex_mul_dst_addr_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(16)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(15)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
 
   assign element_count = (1 << instruction[49:46]);
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
-  assign pipelined_inst_last = pipelined_inst_index > element_count-2 ? 1'b1 : 1'b0;
+  assign pipelined_inst_done = pipelined_inst_index > element_count-1 ? 1'b1 : 1'b0;
 
   always_ff @(posedge clk) begin
 
@@ -788,8 +788,7 @@ module control_unit#(
       ntt_start <= 1'b0;
       ntt_start_i <= 1'b0;
     end
-    else begin
-
+    else if (!instruction_done) begin
       htp_start_i <= htp_start;
       fft_start_i <= fft_start;
       split_start_i <= split_start;
@@ -947,7 +946,7 @@ module control_unit#(
     mod_mult_valid_in = 1'b0;
     mod_mult_done = 1'b0;
     sub_normalize_squared_norm_valid = 1'b0;
-    sub_normalize_squared_norm_last = 1'b0;
+    sub_normalize_squared_norm_done = 1'b0;
     fp_adder_valid_in = 1'b0;
     fp_adder_done = 1'b0;
     fp_mul_valid_in = 1'b0;
@@ -1032,7 +1031,7 @@ module control_unit#(
       if(instruction[127-2] == 1'b1) begin // COPY
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
         copy_valid_in = pipelined_inst_valid;
-        copy_done = pipelined_inst_last;
+        copy_done = pipelined_inst_done;
 
         copy_dst_addr = addr2 + pipelined_inst_index;
         bram_addr_b[bank4] = copy_dst_addr_delayed;
@@ -1056,7 +1055,7 @@ module control_unit#(
         bram_addr_a[bank1] = pipelined_inst_index;
         int_to_double_address_in = pipelined_inst_index;
         int_to_double_data_in = bram_dout_a[bank1];
-        int_to_double_done = pipelined_inst_last;
+        int_to_double_done = pipelined_inst_done;
         int_to_double_valid_in = pipelined_inst_valid;
 
         // Write output to BRAM
@@ -1113,7 +1112,7 @@ module control_unit#(
         complex_mul_b_real = bram_dout_a[bank2][127:64];
         complex_mul_b_imag = bram_dout_a[bank2][63:0];
         complex_mul_valid_in = pipelined_inst_valid;
-        complex_mul_done = pipelined_inst_last;
+        complex_mul_done = pipelined_inst_done;
 
         complex_mul_dst_addr = addr2 + pipelined_inst_index;
         bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
@@ -1129,7 +1128,7 @@ module control_unit#(
         fp_mul1_b = instruction[45] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
         fp_mul2_b = instruction[45] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
         fp_mul_valid_in = pipelined_inst_valid;
-        fp_mul_done = pipelined_inst_last;
+        fp_mul_done = pipelined_inst_done;
         fp_mul_dst_addr = pipelined_inst_index;
 
         bram_addr_b[bank4] = fp_mul_dst_addr_delayed;
@@ -1176,7 +1175,7 @@ module control_unit#(
         mod_mult_b[0] = bram_dout_a[bank2][14:0];
         mod_mult_b[1] = bram_dout_b[bank2][14:0];
         mod_mult_valid_in = pipelined_inst_valid;
-        mod_mult_done = pipelined_inst_last;
+        mod_mult_done = pipelined_inst_done;
         mod_mult_write_addr = pipelined_inst_index;
 
         bram_addr_a[bank3] = mod_mult_write_addr_delayed;
@@ -1198,7 +1197,7 @@ module control_unit#(
         sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
 
         sub_normalize_squared_norm_valid = pipelined_inst_valid;
-        sub_normalize_squared_norm_last = pipelined_inst_last;
+        sub_normalize_squared_norm_done = pipelined_inst_done;
       end
 
       if(instruction[127-13] == 1'b1) begin // DECOMPRESS
@@ -1233,7 +1232,7 @@ module control_unit#(
         fp_adder2_b = bram_dout_a[bank2][63:0];
 
         fp_adder_valid_in = pipelined_inst_valid;
-        fp_adder_done = pipelined_inst_last;
+        fp_adder_done = pipelined_inst_done;
         fp_adder_dst_addr = addr1 + pipelined_inst_index;
 
         bram_addr_b[bank2] = fp_adder_dst_addr_delayed;
