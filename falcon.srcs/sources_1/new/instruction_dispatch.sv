@@ -9,7 +9,7 @@
 
 
 module instruction_dispatch#(
-    parameter int N = 1024
+    parameter int N = 512
   )(
     input logic clk,
     input logic rst_n,
@@ -17,6 +17,7 @@ module instruction_dispatch#(
     input logic start,
     input logic algorithm_select, // 0 = signing, 1 = verification
 
+    output logic done,
     output logic signature_accepted,
     output logic signature_rejected,
 
@@ -37,14 +38,32 @@ module instruction_dispatch#(
           128'h000800000000000000020000000000cd
         };
 
-  localparam int SIGN_INSTRUCTION_COUNT = N; // TODO
-  // logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT];
+  localparam int SIGN_INSTRUCTION_COUNT = 15;
+  logic [127:0] sign_instructions[SIGN_INSTRUCTION_COUNT] = '{
+          128'h10000000000000000000000000000b00,
+          128'h0800000000000000000200000000002d,
+          128'h04000000000000000000000000000025,
+          128'h2100000000000000000200000000094d,
+          128'h01800000000000000002200000000b5c,
+          128'h00800000000000000002000000000900,
+          128'h00400000000000000002410000000005,
+          128'h0040000000000000000200c00a000008,
+          128'h00400000000000000001c0a007000011,
+          128'h0040000000000000000180900580001a,
+          128'h00400000000000000001418804c00003,
+          128'h0040000000000000000101040c600008,
+          128'h00400000000000000000c0c208300011,
+          128'h0040000000000000000080a10618001a,
+          128'h200000000000000000004190850c00c0
+        };
+
 
   logic [127:0] instruction;
   logic instruction_done;
 
   logic running;
-  logic [$clog2(SIGN_INSTRUCTION_COUNT)-1:0] instruction_index;
+  localparam int MAX_INSTRUCTION_COUNT = (SIGN_INSTRUCTION_COUNT > VERIFY_INSTRUCTION_COUNT) ? SIGN_INSTRUCTION_COUNT : VERIFY_INSTRUCTION_COUNT;
+  logic [$clog2(MAX_INSTRUCTION_COUNT):0] instruction_index;
 
   control_unit #(
                  .N(N)
@@ -71,6 +90,7 @@ module instruction_dispatch#(
     if (!rst_n) begin
       running <= 1'b0;
       instruction_index <= 0;
+      done <= 1'b0;
     end
     else begin
 
@@ -78,21 +98,21 @@ module instruction_dispatch#(
         running <= 1'b1;
 
       if(running) begin
-
-        if(instruction_done)
-          instruction_index <= instruction_index + 1;
-
-        if(instruction_done)
-          instruction <= 128'b0;
-        else
-          // instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
-          instruction <= verify_instructions[instruction_index];
-
-        if(algorithm_select == 1'b1 && (signature_accepted == 1'b1 || signature_rejected == 1'b1)) begin
+        if((algorithm_select == 1'b0 && instruction_index == SIGN_INSTRUCTION_COUNT) || (algorithm_select == 1'b1 && instruction_index == VERIFY_INSTRUCTION_COUNT)) begin
           running <= 1'b0;
           instruction_index <= 0;
+          instruction <= 128'b0;
+          done <= 1'b1;
         end
+        else if(instruction_done) begin
+          instruction_index <= instruction_index + 1;
+          instruction <= 128'b0;
+        end
+        else
+          instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
       end
+      else
+        instruction <= 128'b0;
     end
   end
 

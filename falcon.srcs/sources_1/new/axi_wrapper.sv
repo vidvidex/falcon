@@ -237,7 +237,7 @@ module axi_wrapper #
     end
     else begin
 
-      slv_reg2 <= {30'b0, signature_rejected, signature_accepted};
+      slv_reg2 <= {29'b0, done, signature_rejected, signature_accepted};
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -403,6 +403,7 @@ module axi_wrapper #
                          .start(start),
                          .algorithm_select(slv_reg1[0]),
 
+                         .done(done),
                          .signature_accepted(signature_accepted),
                          .signature_rejected(signature_rejected),
 

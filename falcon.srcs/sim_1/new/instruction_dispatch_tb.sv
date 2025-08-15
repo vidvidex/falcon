@@ -53,7 +53,7 @@ module instruction_dispatch_tb;
 
     #20;
 
-    algorithm_select = 1;
+    algorithm_select = 0;
     start = 1;
     #10;
     start = 0;

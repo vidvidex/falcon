@@ -213,105 +213,105 @@ class InstructionGenerator:
             tree=tree1,
         )
 
-        if n > 2:  # Replace last merge with a copy
-            dprint(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={element_count_log2}")
-            self.add_instruction(
-                modules=self.sel_module(MERGE=1),
-                bank1=next_bram,  # Input
-                address1=tmp,
-                bank2=curr_bram,  # Output
-                address2=z1,
-                element_count=element_count_log2,
-            )
-        else:
-            dprint(f"n={n},\tcopy_merge1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}")
-            self.add_instruction(
-                modules=self.sel_module(COPY=1),
-                bank3=next_bram,  # Input
-                address1=tmp,
-                bank4=curr_bram,  # Output
-                address2=z1,
-                element_count=element_count_log2,
-            )
+        # if n > 2:  # Replace last merge with a copy
+        #     dprint(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={element_count_log2}")
+        #     self.add_instruction(
+        #         modules=self.sel_module(MERGE=1),
+        #         bank1=next_bram,  # Input
+        #         address1=tmp,
+        #         bank2=curr_bram,  # Output
+        #         address2=z1,
+        #         element_count=element_count_log2,
+        #     )
+        # else:
+        #     dprint(f"n={n},\tcopy_merge1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}")
+        #     self.add_instruction(
+        #         modules=self.sel_module(COPY=1),
+        #         bank3=next_bram,  # Input
+        #         address1=tmp,
+        #         bank4=curr_bram,  # Output
+        #         address2=z1,
+        #         element_count=element_count_log2,
+        #     )
 
-        dprint(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
-        self.add_instruction(
-            modules=self.sel_module(COPY=1),
-            bank3=prev_bram,  # Input
-            address1=t1,
-            bank4=next_bram,  # Output
-            address2=tmp,
-            element_count=element_count_log2,
-        )
+        # dprint(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
+        # self.add_instruction(
+        #     modules=self.sel_module(COPY=1),
+        #     bank3=prev_bram,  # Input
+        #     address1=t1,
+        #     bank4=next_bram,  # Output
+        #     address2=tmp,
+        #     element_count=element_count_log2,
+        # )
 
-        dprint(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
-        self.add_instruction(
-            modules=self.sel_module(ADD_SUB=1),
-            mode=1,  # Subtract mode
-            bank1=curr_bram,  # Input1
-            address1=z1,
-            bank2=next_bram,  # Input2, output
-            address2=tmp,
-            element_count=element_count_log2,
-        )
+        # dprint(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
+        # self.add_instruction(
+        #     modules=self.sel_module(ADD_SUB=1),
+        #     mode=1,  # Subtract mode
+        #     bank1=curr_bram,  # Input1
+        #     address1=z1,
+        #     bank2=next_bram,  # Input2, output
+        #     address2=tmp,
+        #     element_count=element_count_log2,
+        # )
 
-        dprint(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
-        self.add_instruction(
-            modules=self.sel_module(COMPLEX_MUL=1),
-            mode=1,  # Subtract mode
-            bank1=next_bram,  # Input1, output
-            address1=tmp,
-            bank2=tree_bram,  # Input2
-            address2=tree,
-            element_count=element_count_log2,
-        )
+        # dprint(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
+        # self.add_instruction(
+        #     modules=self.sel_module(COMPLEX_MUL=1),
+        #     mode=1,  # Subtract mode
+        #     bank1=next_bram,  # Input1, output
+        #     address1=tmp,
+        #     bank2=tree_bram,  # Input2
+        #     address2=tree,
+        #     element_count=element_count_log2,
+        # )
 
-        dprint(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
-        self.add_instruction(
-            modules=self.sel_module(ADD_SUB=1),
-            mode=0,  # Add mode
-            bank1=prev_bram,  # Input1
-            address1=t0,
-            bank2=next_bram,  # Input2, output
-            address2=tmp,
-            element_count=element_count_log2,
-        )
+        # dprint(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
+        # self.add_instruction(
+        #     modules=self.sel_module(ADD_SUB=1),
+        #     mode=0,  # Add mode
+        #     bank1=prev_bram,  # Input1
+        #     address1=t0,
+        #     bank2=next_bram,  # Input2, output
+        #     address2=tmp,
+        #     element_count=element_count_log2,
+        # )
 
-        if n > 2:  # Replace last split with a copy
-            dprint(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
-        else:
-            dprint(f"n={n},\tcopy_split2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
-            self.add_instruction(
-                modules=self.sel_module(COPY=1),
-                bank3=next_bram,  # Input
-                address1=tmp,
-                bank4=curr_bram,  # Output
-                address2=z0,
-                element_count=element_count_log2,
-            )
+        # if n > 2:  # Replace last split with a copy
+        #     dprint(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
+        # else:
+        #     dprint(f"n={n},\tcopy_split2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
+        #     self.add_instruction(
+        #         modules=self.sel_module(COPY=1),
+        #         bank3=next_bram,  # Input
+        #         address1=tmp,
+        #         bank4=curr_bram,  # Output
+        #         address2=z0,
+        #         element_count=element_count_log2,
+        #     )
 
-        self.ffsampling(
-            N=N,
-            n=n // 2,
-            curr_bram=next_bram,
-            next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
-            t0=z0,
-            t1=z0 + n // 4,
-            tree=tree0,
-        )
+        # self.ffsampling(
+        #     N=N,
+        #     n=n // 2,
+        #     curr_bram=next_bram,
+        #     next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
+        #     t0=z0,
+        #     t1=z0 + n // 4,
+        #     tree=tree0,
+        # )
 
-        if n > 2:  # Replace last merge with a copy
-            dprint(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
-        else:
-            dprint(f"n={n},\tcopy_merge2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
-            self.add_instruction(
-                modules=self.sel_module(COPY=1),
-                bank3=next_bram,  # Input
-                address1=tmp,
-                bank4=curr_bram,  # Output
-                address2=z0,
-                element_count=element_count_log2,
-            )
+        # if n > 2:  # Replace last merge with a copy
+        #     dprint(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
+        # else:
+        #     dprint(f"n={n},\tcopy_merge2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
+        #     self.add_instruction(
+        #         modules=self.sel_module(COPY=1),
+        #         bank3=next_bram,  # Input
+        #         address1=tmp,
+        #         bank4=curr_bram,  # Output
+        #         address2=z0,
+        #         element_count=element_count_log2,
+            # )
 
     def sign512(self):
         N = 512
@@ -374,7 +374,7 @@ class InstructionGenerator:
             element_count=int(math.log2(N // 2)),
         )
 
-        # self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[256, 256, 256, 256], t0=0, t1=0, tree=0)
+        self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[256, 256, 256, 256], t0=0, t1=0, tree=0)
 
         generator.print_verilog(algorithm="sign")
 
@@ -382,5 +382,5 @@ class InstructionGenerator:
 if __name__ == "__main__":
 
     generator = InstructionGenerator()
-    generator.verify512()
-    # generator.sign512()
+    # generator.verify512()
+    generator.sign512()
