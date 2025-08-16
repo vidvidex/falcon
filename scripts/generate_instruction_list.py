@@ -1,10 +1,16 @@
 import math
 
 debug_prints = True
+sim_prints = False
 
 
 def dprint(*args, **kwargs):
     if debug_prints:
+        print(*args, **kwargs)
+
+
+def simprint(*args, **kwargs):
+    if sim_prints:
         print(*args, **kwargs)
 
 
@@ -25,8 +31,8 @@ class InstructionGenerator:
         bank4=0,
         bank5=0,
         bank6=0,
-        address1=0,
-        address2=0,
+        addr1=0,
+        addr2=0,
         mode=0,
         mul_const_selection=0,
         element_count=0,
@@ -39,8 +45,8 @@ class InstructionGenerator:
             ("element_count", 4, element_count),
             ("mul_const_selection", 1, mul_const_selection),
             ("mode", 1, mode),
-            ("address2", 13, address2),
-            ("address1", 13, address1),
+            ("addr2", 13, addr2),
+            ("addr1", 13, addr1),
             ("bank6", 3, bank6),
             ("bank5", 3, bank5),
             ("bank4", 3, bank4),
@@ -112,6 +118,7 @@ class InstructionGenerator:
         log2N = int(math.log2(N))
 
         # timestep 1: NTT, DECOMPRESS, HASH_TO_POINT
+        dprint("NTT DECOMPRESS HASH_TO_POINT")
         self.add_instruction(
             modules=self.sel_module(NTT_INTT=1, DECOMPRESS=1, HASH_TO_POINT=1),
             mode=0,  # NTT mode: NTT
@@ -125,6 +132,7 @@ class InstructionGenerator:
         )
 
         # timestep 2: NTT
+        dprint("NTT")
         self.add_instruction(
             modules=self.sel_module(NTT_INTT=1),
             mode=0,  # NTT mode: NTT
@@ -133,6 +141,7 @@ class InstructionGenerator:
         )
 
         # timestep 3: MOD_MULT_Q
+        dprint("MOD_MULT_Q")
         self.add_instruction(
             modules=self.sel_module(MOD_MULT_Q=1),
             bank1=1,  # MOD_MULT_Q input 1
@@ -142,6 +151,7 @@ class InstructionGenerator:
         )
 
         # timestep 4: INTT
+        dprint("INTT")
         self.add_instruction(
             modules=self.sel_module(NTT_INTT=1),
             mode=1,  # NTT mode: INTT
@@ -150,6 +160,7 @@ class InstructionGenerator:
         )
 
         # timestep 5: SUB_NORM_SQ
+        dprint("SUB_NORM_SQ")
         self.add_instruction(
             modules=self.sel_module(SUB_NORM_SQ=1),
             bank1=5,  # SUB_NORM_SQ input 1
@@ -177,30 +188,78 @@ class InstructionGenerator:
 
         if n == 1:
             dprint(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0}\ttree_bram={tree_bram},\ttree_addr={tree},\tout_bram={curr_bram},\tout_addr={z0}")
+            self.add_instruction(
+                modules=self.sel_module(COPY=1),
+                bank3=prev_bram,  # Input
+                addr1=t0,
+                bank4=curr_bram,  # Output
+                addr2=z0,
+                element_count=element_count_log2,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0010_0000_0000_0000; // copy (samplerz)
+    // bank3 = {prev_bram};
+    // addr1 = {t0};
+    // bank4 = {curr_bram};
+    // addr2 = {z0};
+    // element_count = {element_count_log2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
             return
 
         tree0 = tree + n // 2
         tree1 = tree0 + self.treesize(n // 2) // 2
 
-        if n > 2:  # Replace last split with a copy
+        if n > 2:
             dprint(f"n={n},\tsplit_fft1 \tin_bram={prev_bram},\tin_addr={t1},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={element_count_log2}")
             self.add_instruction(
                 modules=self.sel_module(SPLIT=1),
                 bank1=prev_bram,  # Input
-                address1=t1,
+                addr1=t1,
                 bank2=curr_bram,  # Output
-                address2=z1,
+                addr2=z1,
                 element_count=element_count_log2,
             )
-        else:
+            simprint(
+                f"""
+    // modules = 16'b0000_0000_0100_0000; // split_fft
+    // bank1 = {prev_bram};
+    // addr1 = {t1};
+    // bank2 = {curr_bram};
+    // addr2 = {z1};
+    // element_count = {element_count_log2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
+
+        else:  # Replace last split with a copy
             dprint(f"n={n},\tcopy_split1 \tin_bram={prev_bram},\tin_addr={t1},\tout_bram={curr_bram},\tout_addr={z1}")
             self.add_instruction(
                 modules=self.sel_module(COPY=1),
                 bank3=prev_bram,  # Input
-                address1=t1,
+                addr1=t1,
                 bank4=curr_bram,  # Output
-                address2=z1,
-                element_count=element_count_log2,
+                addr2=z1,
+                element_count=element_count_log2-1,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0010_0000_0000_0000; // copy (last split)
+    // bank3 = {prev_bram};
+    // addr1 = {t1};
+    // bank4 = {curr_bram};
+    // addr2 = {z1};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
             )
 
         self.ffsampling(
@@ -213,165 +272,393 @@ class InstructionGenerator:
             tree=tree1,
         )
 
-        # if n > 2:  # Replace last merge with a copy
-        #     dprint(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={element_count_log2}")
-        #     self.add_instruction(
-        #         modules=self.sel_module(MERGE=1),
-        #         bank1=next_bram,  # Input
-        #         address1=tmp,
-        #         bank2=curr_bram,  # Output
-        #         address2=z1,
-        #         element_count=element_count_log2,
-        #     )
-        # else:
-        #     dprint(f"n={n},\tcopy_merge1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}")
-        #     self.add_instruction(
-        #         modules=self.sel_module(COPY=1),
-        #         bank3=next_bram,  # Input
-        #         address1=tmp,
-        #         bank4=curr_bram,  # Output
-        #         address2=z1,
-        #         element_count=element_count_log2,
-        #     )
+        if n > 2:
+            dprint(f"n={n},\tmerge_fft1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}\tsm_size={element_count_log2}")
+            self.add_instruction(
+                modules=self.sel_module(MERGE=1),
+                bank1=next_bram,  # Input
+                addr1=tmp,
+                bank2=curr_bram,  # Output
+                addr2=z1,
+                element_count=element_count_log2,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0000_0000_0010_0000; // merge
+    // bank1 = {next_bram};
+    // addr1 = {tmp};
+    // bank2 = {curr_bram};
+    // addr2 = {z1};
+    // element_count = {element_count_log2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
+        else:  # Replace first merge with a copy
+            dprint(f"n={n},\tcopy_merge1 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z1}")
+            self.add_instruction(
+                modules=self.sel_module(COPY=1),
+                bank3=next_bram,  # Input
+                addr1=tmp,
+                bank4=curr_bram,  # Output
+                addr2=z1,
+                element_count=element_count_log2-1,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0010_0000_0000_0000; // copy (first merge)
+    // bank3 = {next_bram};
+    // addr1 = {tmp};
+    // bank4 = {curr_bram};
+    // addr2 = {z1};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
 
-        # dprint(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
-        # self.add_instruction(
-        #     modules=self.sel_module(COPY=1),
-        #     bank3=prev_bram,  # Input
-        #     address1=t1,
-        #     bank4=next_bram,  # Output
-        #     address2=tmp,
-        #     element_count=element_count_log2,
-        # )
+        dprint(f"n={n},\tcopy_t1\tin_bram={prev_bram}\tin_addr={t1}\tout_bram={next_bram}\tout_addr={tmp}")
+        self.add_instruction(
+            modules=self.sel_module(COPY=1),
+            bank3=prev_bram,  # Input
+            addr1=t1,
+            bank4=next_bram,  # Output
+            addr2=tmp,
+            element_count=element_count_log2-1,
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0000_0000_0000; // copy t1
+    // bank3 = {prev_bram};
+    // addr1 = {t1};
+    // bank4 = {next_bram};
+    // addr2 = {tmp};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
 
-        # dprint(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
-        # self.add_instruction(
-        #     modules=self.sel_module(ADD_SUB=1),
-        #     mode=1,  # Subtract mode
-        #     bank1=curr_bram,  # Input1
-        #     address1=z1,
-        #     bank2=next_bram,  # Input2, output
-        #     address2=tmp,
-        #     element_count=element_count_log2,
-        # )
+        dprint(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
+        self.add_instruction(
+            modules=self.sel_module(ADD_SUB=1),
+            mode=1,  # Subtract mode
+            bank1=curr_bram,  # Input1
+            addr1=z1,
+            bank2=next_bram,  # Input2, output
+            addr2=tmp,
+            element_count=element_count_log2-1,
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0000_0000_0001; // add_sub
+    // mode = 1;
+    // bank1 = {curr_bram};
+    // addr1 = {z1};
+    // bank2 = {next_bram};
+    // addr2 = {tmp};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
 
-        # dprint(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
-        # self.add_instruction(
-        #     modules=self.sel_module(COMPLEX_MUL=1),
-        #     mode=1,  # Subtract mode
-        #     bank1=next_bram,  # Input1, output
-        #     address1=tmp,
-        #     bank2=tree_bram,  # Input2
-        #     address2=tree,
-        #     element_count=element_count_log2,
-        # )
+        dprint(f"n={n},\tmul_tree\tin_bram={tree_bram}\tin_addr={tree}\tout_bram={next_bram}\tout_addr={tmp}")
+        self.add_instruction(
+            modules=self.sel_module(COMPLEX_MUL=1),
+            bank1=next_bram,  # Input1, output
+            addr1=tmp,
+            bank2=tree_bram,  # Input2
+            addr2=tree,
+            element_count=element_count_log2-1,
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0001_0000_0000; // complex_mul
+    // bank1 = {next_bram};
+    // addr1 = {tmp};
+    // bank2 = {tree_bram};
+    // addr2 = {tree};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
 
-        # dprint(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
-        # self.add_instruction(
-        #     modules=self.sel_module(ADD_SUB=1),
-        #     mode=0,  # Add mode
-        #     bank1=prev_bram,  # Input1
-        #     address1=t0,
-        #     bank2=next_bram,  # Input2, output
-        #     address2=tmp,
-        #     element_count=element_count_log2,
-        # )
+        dprint(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
+        self.add_instruction(
+            modules=self.sel_module(ADD_SUB=1),
+            mode=0,  # Add mode
+            bank1=prev_bram,  # Input1
+            addr1=t0,
+            bank2=next_bram,  # Input2, output
+            addr2=tmp,
+            element_count=element_count_log2-1,
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0000_0000_0001; // add_sub
+    // mode = 0;
+    // bank1 = {prev_bram};
+    // addr1 = {t0};
+    // bank2 = {next_bram};
+    // addr2 = {tmp};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
 
-        # if n > 2:  # Replace last split with a copy
-        #     dprint(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
-        # else:
-        #     dprint(f"n={n},\tcopy_split2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
-        #     self.add_instruction(
-        #         modules=self.sel_module(COPY=1),
-        #         bank3=next_bram,  # Input
-        #         address1=tmp,
-        #         bank4=curr_bram,  # Output
-        #         address2=z0,
-        #         element_count=element_count_log2,
-        #     )
+        if n > 2:
+            dprint(f"n={n},\tsplit_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
+            self.add_instruction(
+                modules=self.sel_module(SPLIT=1),
+                bank1=next_bram,  # Input
+                addr1=tmp,
+                bank2=curr_bram,  # Output
+                addr2=z0,
+                element_count=element_count_log2,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0000_0000_0100_0000; // split_fft
+    // bank1 = {next_bram};
+    // addr1 = {tmp};
+    // bank2 = {curr_bram};
+    // addr2 = {z0};
+    // element_count = {element_count_log2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
+        else:  # Replace last split with a copy
+            dprint(f"n={n},\tcopy_split2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
+            self.add_instruction(
+                modules=self.sel_module(COPY=1),
+                bank3=next_bram,  # Input
+                addr1=tmp,
+                bank4=curr_bram,  # Output
+                addr2=z0,
+                element_count=element_count_log2-1,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0010_0000_0000_0000; // copy last split
+    // bank3 = {next_bram};
+    // addr1 = {tmp};
+    // bank4 = {curr_bram};
+    // addr2 = {z0};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
 
-        # self.ffsampling(
-        #     N=N,
-        #     n=n // 2,
-        #     curr_bram=next_bram,
-        #     next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
-        #     t0=z0,
-        #     t1=z0 + n // 4,
-        #     tree=tree0,
-        # )
+        self.ffsampling(
+            N=N,
+            n=n // 2,
+            curr_bram=next_bram,
+            next_free_addr=[next_free_addr[0], next_free_addr[1], next_free_addr[2], next_free_addr[3]],
+            t0=z0,
+            t1=z0 + n // 4,
+            tree=tree0,
+        )
 
-        # if n > 2:  # Replace last merge with a copy
-        #     dprint(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
-        # else:
-        #     dprint(f"n={n},\tcopy_merge2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
-        #     self.add_instruction(
-        #         modules=self.sel_module(COPY=1),
-        #         bank3=next_bram,  # Input
-        #         address1=tmp,
-        #         bank4=curr_bram,  # Output
-        #         address2=z0,
-        #         element_count=element_count_log2,
-            # )
+        if n > 2:
+            dprint(f"n={n},\tmerge_fft2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}\tsm_size={element_count_log2}")
+            self.add_instruction(
+                modules=self.sel_module(MERGE=1),
+                bank1=next_bram,  # Input
+                addr1=tmp,
+                bank2=curr_bram,  # Output
+                addr2=z0,
+                element_count=element_count_log2,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0000_0000_0010_0000; // merge
+    // bank1 = {next_bram};
+    // addr1 = {tmp};
+    // bank2 = {curr_bram};
+    // addr2 = {z0};
+    // element_count = {element_count_log2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
+        else:  # Replace first merge with a copy
+            dprint(f"n={n},\tcopy_merge2 \tin_bram={next_bram},\tin_addr={tmp},\tout_bram={curr_bram},\tout_addr={z0}")
+            self.add_instruction(
+                modules=self.sel_module(COPY=1),
+                bank3=next_bram,  # Input
+                addr1=tmp,
+                bank4=curr_bram,  # Output
+                addr2=z0,
+                element_count=element_count_log2-1,
+            )
+            simprint(
+                f"""
+    // modules = 16'b0010_0000_0000_0000; // copy first merge
+    // bank3 = {next_bram};
+    // addr1 = {tmp};
+    // bank4 = {curr_bram};
+    // addr2 = {z0};
+    // element_count = {element_count_log2-1};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+            )
 
     def sign512(self):
         N = 512
         self.instructions = []
 
         # timestep 1: HASH_TO_POINT
+        dprint("HASH_TO_POINT")
         self.add_instruction(
             modules=self.sel_module(HASH_TO_POINT=1),
             bank3=4,  # HASH_TO_POINT input
             bank4=5,  # HASH_TO_POINT output
         )
+        simprint(
+            f"""
+    // modules = 16'b0001_0000_0000_0000; // hash_to_point
+    // bank3 = 4;
+    // bank4 = 5;
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000; 
+    // #10;"""
+        )
 
         # timestep 2: INT_TO_DOUBLE
+        dprint("INT_TO_DOUBLE")
         self.add_instruction(
             modules=self.sel_module(INT_TO_DOUBLE=1),
             bank1=5,  # INT_TO_DOUBLE input
             bank2=5,  # INT_TO_DOUBLE output
             element_count=int(math.log2(N // 2)),
         )
+        simprint(
+            f"""
+    // modules = 16'b0000_1000_0000_0000; // int to double
+    // bank1 = 5;
+    // bank2 = 5;
+    // element_count = $clog2(256);
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
 
         # timestep 3: FFT
+        dprint("FFT")
         self.add_instruction(
             modules=self.sel_module(FFT_IFFT=1),
             mode=0,  # FFT mode: FFT
             bank1=5,  # FFT bank1
             bank2=4,  # FFT bank2
         )
+        simprint(
+            f"""
+    // modules = 16'b0000_0100_0000_0000; // FFT
+    // bank1 = 5;
+    // bank2 = 4;
+    // mode = 0; // FFT
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000; 
+    // #10;"""
+        )
 
         # timestep 4: COPY, COMPLEX_MUL
+        dprint("COPY COMPLEX_MUL")
         self.add_instruction(
             modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
             bank1=5,  # COMPLEX_MUL input 1, output
             bank2=1,  # COMPLEX_MUL input 2
             bank3=5,  # COPY input
             bank4=4,  # COPY output
-            address1=0,  # Start offset for COPY and COMPLEX_MUL
-            address2=0,  # End offset for COPY and COMPLEX_MUL
+            addr1=0,  # Start offset for COPY and COMPLEX_MUL
+            addr2=0,  # End offset for COPY and COMPLEX_MUL
             element_count=int(math.log2(N // 2)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0001_0000_0000; // copy and complex mul
+    // bank1 = 5;  // complex mul 5 and 1, destination 5
+    // bank2 = 1;
+    // bank3 = 5;  // Copy from 5 to 4
+    // bank4 = 4;
+    // addr1 = 0;  // Offsets for copy and complex mul (same offsets for both modules)
+    // addr2 = 0;
+    // element_count = $clog2(256);
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
         )
 
         # timestep 5: COMPLEX_MUL, MUL_CONST
+        dprint("COMPLEX_MUL MUL_CONST")
         self.add_instruction(
             modules=self.sel_module(COMPLEX_MUL=1, MUL_CONST=1),
             bank1=4,  # COMPLEX_MUL input 1, output
             bank2=3,  # COMPLEX_MUL input 2
             bank3=5,  # MUL_CONST input
             bank4=5,  # MUL_CONST output
-            address1=0,  # Start offset for COMPLEX_MUL
-            address2=0,  # End offset for COMPLEX_MUL
+            addr1=0,  # Start offset for COMPLEX_MUL
+            addr2=0,  # End offset for COMPLEX_MUL
             mul_const_selection=1,  # Select constant for multiplication
             element_count=int(math.log2(N // 2)),
         )
+        simprint(
+            f"""
+    // modules = 16'b0000_0001_1000_0000; // complex mul and mul const
+    // bank1 = 4;  // complex mul 4 and 3, destination 4
+    // bank2 = 3;
+    // bank3 = 5;  // mul const 5, output to 5
+    // bank4 = 5;
+    // addr1 = 0;  // Offsets for complex mul
+    // addr2 = 0;
+    // element_count = $clog2(256);
+    // mul_const_selection = 1; // -1/12289
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
 
         # timestep 6: MUL_CONST
+        dprint("MUL_CONST")
         self.add_instruction(
             modules=self.sel_module(MUL_CONST=1),
             bank3=4,  # MUL_CONST input
             bank4=4,  # MUL_CONST output
             mul_const_selection=0,  # Select constant for multiplication
             element_count=int(math.log2(N // 2)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0000_1000_0000; // mul const
+    // bank3 = 4;  // mul const 4, output to 4
+    // bank4 = 4;
+    // mul_const_selection = 0; // 1/12289
+    // element_count = $clog2(256);
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
         )
 
         self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[256, 256, 256, 256], t0=0, t1=0, tree=0)
