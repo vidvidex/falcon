@@ -1106,7 +1106,7 @@ module control_unit#(
 
       if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
         bram_addr_a[bank1] = addr1 + pipelined_inst_index;
-        bram_addr_a[bank2] = addr1 + pipelined_inst_index;
+        bram_addr_a[bank2] = addr2 + pipelined_inst_index;
         complex_mul_a_real = bram_dout_a[bank1][127:64];
         complex_mul_a_imag = bram_dout_a[bank1][63:0];
         complex_mul_b_real = bram_dout_a[bank2][127:64];
@@ -1114,7 +1114,7 @@ module control_unit#(
         complex_mul_valid_in = pipelined_inst_valid;
         complex_mul_done = pipelined_inst_done;
 
-        complex_mul_dst_addr = addr2 + pipelined_inst_index;
+        complex_mul_dst_addr = addr1 + pipelined_inst_index;
         bram_addr_b[bank1] = complex_mul_dst_addr_delayed;
         bram_din_b[bank1] = {complex_mul_result_real, complex_mul_result_imag};
         bram_we_b[bank1] = complex_mul_valid_out;
