@@ -5,9 +5,10 @@
     package falconsoar_pkg;
         ///////////////////////////////////////////////////////////////////////////////////                  
         //here is about the memory banks
-        parameter int BANK_NUM = 4;
+        parameter int BANK_NUM   = 4;
         parameter     BANK_DEPTH = 13'd2048; //BRAM depth = 1024, 36Kb = 36b * 1024; dual-port
         parameter int BANK_WIDTH = 256;  //ceil((4*256)/36) =  ceil((1024)/36) = 29;
+        parameter WIDTH = 18;
 
         parameter int unsigned READLATENCY = 2; //This is read latency of BRAM 
         
@@ -22,7 +23,7 @@
 
         ///////////////////////////////////////////////////////////////////////////////////
         //float_module:
-        parameter  WR_DELAY = 12 + 4;
+        parameter  WR_DELAY = 12 + 4 ;
         parameter  FORMAT_TRANS_DELAY =  WR_DELAY - FPU_DELAY;
 
 
@@ -34,8 +35,7 @@
         typedef logic [VEC_BW-1:0] vect_t;
         typedef logic [VEC_PER_ROW-1:0][VEC_BW-1:0] row_data_pack_t;
 
-        parameter  SAMPLERZ_READ_DELAY =  4'd1;    // CHANGED BY VID FOR TESTBENCH
-        // parameter  SAMPLERZ_READ_DELAY =  4'd4;
+        parameter  SAMPLERZ_READ_DELAY =  4'd1 ;
 
         ///////////////////////////////////////////////////////////////////////////////////
         //here is about the architecture 
@@ -61,32 +61,32 @@
 
        
         //here is FPU task format
-        parameter BANK_SINGLE = 2'd0;
-        parameter BANK_DOUBLE = 2'd1;
-        parameter BANK_FOUR = 2'd2;
+        parameter BANK_SINGLE = 2'd0 ;
+        parameter BANK_DOUBLE = 2'd1 ;
+        parameter BANK_FOUR = 2'd2 ;
 
-        parameter OP_FFT = 2'd0;
-        parameter SUB_FFT = 3'd0;
-        parameter SUB_IFFT = 3'd1;
-        parameter SUB_SPLIT_512 = 3'd2; 
-        parameter SUB_MERGE_512 = 3'd3;
-        parameter SUB_SPLIT_1024 = 3'd4; 
-        parameter SUB_MERGE_1024 = 3'd5;
+        parameter OP_FFT = 2'd0 ;
+        parameter SUB_FFT  = 3'd0 ;
+        parameter SUB_IFFT = 3'd1 ;
+        parameter SUB_SPLIT_512 = 3'd2 ; 
+        parameter SUB_MERGE_512 = 3'd3 ;
+        parameter SUB_SPLIT_1024 = 3'd4 ; 
+        parameter SUB_MERGE_1024 = 3'd5 ;
 
-        parameter OP_FPR = 2'd1;
-        parameter OP_FPC = 2'd2;
-        parameter SUB_ADD = 3'd0;
-        parameter SUB_SUB = 3'd1; 
-        parameter SUB_MUL = 3'd2; 
-        parameter SUB_ADJ = 3'd3; 
-        parameter SUB_SQR = 3'd4;  
+        parameter OP_FPR = 2'd1 ;
+        parameter OP_FPC = 2'd2 ;
+        parameter SUB_ADD = 3'd0 ;
+        parameter SUB_SUB = 3'd1 ; 
+        parameter SUB_MUL = 3'd2 ; 
+        parameter SUB_ADJ = 3'd3 ; 
+        parameter SUB_SQR = 3'd4 ;  
 
-        parameter OP_FORMAL = 2'd3;
+        parameter OP_FORMAL = 2'd3 ;
 
         ///////////////////////////////////////////////////////////////////////////////////
-        parameter TASK_DUMMY = 13'd0;
-        parameter POS_SET = 1'd0;
-        parameter NEG_SET = 1'd1;
+        parameter TASK_DUMMY  = 13'd0;
+        parameter POS_SET     = 1'd0;
+        parameter NEG_SET     = 1'd1;
 
 
     endpackage
@@ -116,35 +116,35 @@
     interface mem_inst_if;
     
         import falconsoar_pkg::*;
-        logic       en;
-        mem_addr_t  addr;
-        mem_data_t  data;
+        logic       en      ;
+        mem_addr_t  addr    ;
+        mem_data_t  data    ;
 
         modport master_wr
         (
-            output en,
-            output addr,
+            output en   ,
+            output addr ,
             output data
         );
 
         modport master_rd
         (
-            output en,
-            output addr,
+            output en   ,
+            output addr ,
             input  data
         );
 
         modport slave_wr
         (
-            input en,
-            input addr,
+            input en    ,
+            input addr  ,
             input data
         );
 
         modport slave_rd
         (
-            input  en,
-            input  addr,
+            input  en   ,
+            input  addr ,
             output data
         );
 
