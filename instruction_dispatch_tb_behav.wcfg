@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="34,413.127 ns"></ZoomStartTime>
-      <ZoomEndTime time="34,799.375 ns"></ZoomEndTime>
-      <Cursor1Time time="34,560.000 ns"></Cursor1Time>
+      <ZoomStartTime time="640.611 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,071.878 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="122"></ValueColumnWidth>
+      <ValueColumnWidth column_width="118"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group148">
@@ -71,6 +71,24 @@
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/algorithm_select">
          <obj_property name="ElementShortName">algorithm_select</obj_property>
          <obj_property name="ObjectShortName">algorithm_select</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/enable_manual_instruction_index_incr">
+         <obj_property name="ElementShortName">enable_manual_instruction_index_incr</obj_property>
+         <obj_property name="ObjectShortName">enable_manual_instruction_index_incr</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/manual_instruction_index">
+         <obj_property name="ElementShortName">manual_instruction_index[15:0]</obj_property>
+         <obj_property name="ObjectShortName">manual_instruction_index[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/manual_instruction_index_valid">
+         <obj_property name="ElementShortName">manual_instruction_index_valid</obj_property>
+         <obj_property name="ObjectShortName">manual_instruction_index_valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/current_instruction_index">
+         <obj_property name="ElementShortName">current_instruction_index[15:0]</obj_property>
+         <obj_property name="ObjectShortName">current_instruction_index[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
@@ -134,8 +152,8 @@
          <obj_property name="ObjectShortName">verify_instructions[0:4][127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/sign_instructions">
-         <obj_property name="ElementShortName">sign_instructions[0:14][127:0]</obj_property>
-         <obj_property name="ObjectShortName">sign_instructions[0:14][127:0]</obj_property>
+         <obj_property name="ElementShortName">sign_instructions[0:4605][127:0]</obj_property>
+         <obj_property name="ObjectShortName">sign_instructions[0:4605][127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/instruction">
          <obj_property name="ElementShortName">instruction[127:0]</obj_property>
@@ -145,14 +163,18 @@
          <obj_property name="ElementShortName">instruction_done</obj_property>
          <obj_property name="ObjectShortName">instruction_done</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/running">
-         <obj_property name="ElementShortName">running</obj_property>
-         <obj_property name="ObjectShortName">running</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/instruction_index">
-         <obj_property name="ElementShortName">instruction_index[4:0]</obj_property>
-         <obj_property name="ObjectShortName">instruction_index[4:0]</obj_property>
+         <obj_property name="ElementShortName">instruction_index[13:0]</obj_property>
+         <obj_property name="ObjectShortName">instruction_index[13:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/state">
+         <obj_property name="ElementShortName">state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/next_state">
+         <obj_property name="ElementShortName">next_state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
@@ -252,10 +274,6 @@
          <obj_property name="ElementShortName">pipelined_inst_index[8:0]</obj_property>
          <obj_property name="ObjectShortName">pipelined_inst_index[8:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/pipelined_inst_last">
-         <obj_property name="ElementShortName">pipelined_inst_last</obj_property>
-         <obj_property name="ObjectShortName">pipelined_inst_last</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/pipelined_inst_valid">
          <obj_property name="ElementShortName">pipelined_inst_valid</obj_property>
