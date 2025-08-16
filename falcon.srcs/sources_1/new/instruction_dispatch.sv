@@ -15,11 +15,17 @@ module instruction_dispatch#(
     input logic rst_n,
 
     input logic start,
-    input logic algorithm_select, // 0 = signing, 1 = verification
+    input logic [1:0] algorithm_select, // 00 = signing, 01 = verification, 10 and 11 available for future expansion
 
     output logic done,
     output logic signature_accepted,
     output logic signature_rejected,
+
+    // Manual control of instruction index (for debugging)
+    input enable_manual_instruction_index_incr,
+    input logic [15:0] manual_instruction_index,
+    input logic manual_instruction_index_valid, // Should only be a pulse
+    output logic [15:0] current_instruction_index,
 
     // External BRAM interface
     input logic ext_bram_en, // Enable signal for external BRAM interface. When this is high, software has access to the BRAM
@@ -61,7 +67,6 @@ module instruction_dispatch#(
   logic [127:0] instruction;
   logic instruction_done;
 
-  logic running;
   localparam int MAX_INSTRUCTION_COUNT = (SIGN_INSTRUCTION_COUNT > VERIFY_INSTRUCTION_COUNT) ? SIGN_INSTRUCTION_COUNT : VERIFY_INSTRUCTION_COUNT;
   logic [$clog2(MAX_INSTRUCTION_COUNT):0] instruction_index;
 
@@ -86,33 +91,92 @@ module instruction_dispatch#(
                  .ext_bram_we(ext_bram_we)
                );
 
+  typedef enum logic [2:0] {
+            IDLE, // Waiting for start signal
+            INSTRUCTIONS_RUNNING,  // Instructions are running
+            INSTRUCTIONS_DONE, // Instruction done, sending NOP to control unit
+            WAIT_FOR_MANUAL_INDEX, // Waiting for manual instruction index increment
+            DONE  // All instructions done
+          } state_t;
+  state_t state, next_state;
+
+  always_comb begin
+    next_state = state;
+
+    case (state)
+      IDLE: begin
+        if (start == 1'b1)
+          next_state = INSTRUCTIONS_RUNNING;
+      end
+      INSTRUCTIONS_RUNNING: begin
+        if(instruction_done == 1'b1)
+          next_state = INSTRUCTIONS_DONE;
+      end
+      INSTRUCTIONS_DONE: begin
+        if (algorithm_select == 2'b00 && instruction_index == SIGN_INSTRUCTION_COUNT)
+          next_state = DONE;
+        else if (algorithm_select == 2'b01 && instruction_index == VERIFY_INSTRUCTION_COUNT)
+          next_state = DONE;
+        else if(enable_manual_instruction_index_incr == 1'b1)
+          next_state = WAIT_FOR_MANUAL_INDEX;
+        else
+          next_state = INSTRUCTIONS_RUNNING;
+      end
+      WAIT_FOR_MANUAL_INDEX: begin
+        if(manual_instruction_index_valid == 1'b1)
+          next_state = INSTRUCTIONS_RUNNING;
+      end
+      DONE: begin
+        next_state = DONE;
+      end
+      default: begin
+        next_state = IDLE;
+      end
+    endcase
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst_n == 1'b0)
+      state <= IDLE;
+    else
+      state <= next_state;
+  end
+
+  assign current_instruction_index = instruction_index;
+
+  assign done = (state == DONE);
+
+  always_comb begin
+    if(state == INSTRUCTIONS_RUNNING)
+      instruction = (algorithm_select == 2'b01) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
+    else
+      instruction = 128'b0;
+  end
+
   always_ff @(posedge clk) begin
     if (!rst_n) begin
-      running <= 1'b0;
       instruction_index <= 0;
-      done <= 1'b0;
     end
     else begin
 
-      if (start == 1'b1)
-        running <= 1'b1;
-
-      if(running) begin
-        if((algorithm_select == 1'b0 && instruction_index == SIGN_INSTRUCTION_COUNT) || (algorithm_select == 1'b1 && instruction_index == VERIFY_INSTRUCTION_COUNT)) begin
-          running <= 1'b0;
+      case (state)
+        IDLE: begin
+        end
+        INSTRUCTIONS_RUNNING: begin
+          // instruction_done being 1'b1 is also condition for going out of INSTRUCTIONS_RUNNING, which ensures this will be incremented only once per instruction_done pulse (even if not pulse)
+          if (instruction_done == 1'b1 && enable_manual_instruction_index_incr == 1'b0)
+            instruction_index <= instruction_index + 1;
+        end
+        INSTRUCTIONS_DONE: begin
+        end
+        WAIT_FOR_MANUAL_INDEX: begin
+          if (manual_instruction_index_valid == 1'b1)
+            instruction_index <= manual_instruction_index;
+        end
+        DONE: begin
           instruction_index <= 0;
-          instruction <= 128'b0;
-          done <= 1'b1;
         end
-        else if(instruction_done) begin
-          instruction_index <= instruction_index + 1;
-          instruction <= 128'b0;
-        end
-        else
-          instruction <= (algorithm_select == 1'b1) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
-      end
-      else
-        instruction <= 128'b0;
+      endcase
     end
   end
 

@@ -17,7 +17,12 @@ module instruction_dispatch_tb;
   logic signature_accepted;
   logic signature_rejected;
 
-  logic algorithm_select;
+  logic [1:0] algorithm_select;
+
+  logic enable_manual_instruction_index_incr;
+  logic [15:0] manual_instruction_index;
+  logic manual_instruction_index_valid;
+  logic [15:0] current_instruction_index;
 
   instruction_dispatch #(
                          .N(N)
@@ -30,6 +35,11 @@ module instruction_dispatch_tb;
                          .done(done),
                          .signature_accepted(signature_accepted),
                          .signature_rejected(signature_rejected),
+
+                         .enable_manual_instruction_index_incr(enable_manual_instruction_index_incr),
+                         .manual_instruction_index(manual_instruction_index),
+                         .manual_instruction_index_valid(manual_instruction_index_valid),
+                         .current_instruction_index(current_instruction_index),
 
                          .ext_bram_en(ext_bram_en),
                          .ext_bram_addr(ext_bram_addr),
@@ -53,10 +63,19 @@ module instruction_dispatch_tb;
 
     #20;
 
-    algorithm_select = 0;
+    algorithm_select = 2'b00;
     start = 1;
+    enable_manual_instruction_index_incr = 1;
+    manual_instruction_index = 0;
+    manual_instruction_index_valid = 0;
     #10;
     start = 0;
+
+    #100000;
+    manual_instruction_index = 1;
+    manual_instruction_index_valid = 1;
+    #10;
+    manual_instruction_index_valid = 0;
 
   end
 endmodule
