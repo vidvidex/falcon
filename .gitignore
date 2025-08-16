@@ -9,6 +9,7 @@ a.out
 
 # Personal testing file
 test.py
+output.csv
 
 # For syncthing
 .stfolder
