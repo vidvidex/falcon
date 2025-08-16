@@ -4,15 +4,21 @@
 //
 //  This module is an AXI-lite wrapper around the Falcon IP core.
 //
-//  - slv_reg0 is used to start the module. Any change in slv_reg0 will trigger start
-//  - slv_reg1 is used to select the algorithm (0 for signing, 1 for verification)
-//  - slv_reg2 can be used to poll whether the operation is done
-//        [0] = 1 ... verify: signature accepted
-//        [1] = 1 ... verify: signature rejected
-//        [2] = 1 ... signing: done
-//  - slv_reg3 is the enable signal for the external BRAM interface. When this is high, software has access to the BRAM. Normally ext_bram_en would be used for that but it doesn't seem to work.
+//  - slv_reg0 is control register:
+//        [0]   ... 1 = start algorithm
+//        [2:1] ... algorithm select (00 = sign, 01 = verify, 10 and 11 left free, can be used for keygen in the future)
+//        [31]  ... enable signal for external BRAM interface. When this is high, software has access to the BRAM. Normally ext_bram_en would be used for that but it doesn't seem to work.
+//  - slv_reg1 is output register
+//        [0] ... 1 = algorithm execution done
+//        [1] ... 1 = signature accepted
+//        [2] ... 1 = signature rejected
+//  - slv_reg2 is debug control register
+//        [0]     ... 1 = enable manual instruction index increment
+//        [1]     ... 1 = manual instruction index valid
+//        [31:16] ... manual instruction index
+//  - slv_reg3 is debug output register
+//        [15:0] is current instruction index
 //////////////////////////////////////////////////////////////////////////////////
-
 
 module axi_wrapper #
   (
@@ -102,11 +108,18 @@ module axi_wrapper #
   );
 
   // Falcon
-  logic start;
-  logic algorithm_select; // 0 = signing, 1 = verification
+  logic start, start_i;
+  logic [1:0] algorithm_select;
   logic signature_accepted;
   logic signature_rejected;
-  logic [C_S_AXI_DATA_WIDTH-1:0] slv_reg0_old;
+
+  logic ext_bram_en;
+
+  // Manual control of instruction index
+  logic enable_manual_instruction_index_incr;
+  logic [15:0] manual_instruction_index;
+  logic manual_instruction_index_valid, manual_instruction_index_valid_i;
+  logic [15:0] current_instruction_index;
 
   // AXI4LITE signals
   reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
@@ -237,7 +250,8 @@ module axi_wrapper #
     end
     else begin
 
-      slv_reg2 <= {29'b0, done, signature_rejected, signature_accepted};
+      slv_reg1 <= {29'b0, signature_rejected, signature_accepted, done};
+      slv_reg3 <= {16'b0, current_instruction_index};
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -248,32 +262,32 @@ module axi_wrapper #
                 // Slave register 0
                 slv_reg0[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
               end
-          2'h1:
-            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                // Respective byte enables are asserted as per write strobes
-                // Slave register 1
-                slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-              end
-          // 2'h2:
+          // 2'h1:
           //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
           //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
           //       // Respective byte enables are asserted as per write strobes
-          //       // Slave register 2
-          //       slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+          //       // Slave register 1
+          //       slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
           //     end
-          2'h3:
+          2'h2:
             for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
               if ( S_AXI_WSTRB[byte_index] == 1 ) begin
                 // Respective byte enables are asserted as per write strobes
-                // Slave register 3
-                slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+                // Slave register 2
+                slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
               end
+          // 2'h3:
+          //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+          //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+          //       // Respective byte enables are asserted as per write strobes
+          //       // Slave register 3
+          //       slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+          //     end
           default : begin
             slv_reg0 <= slv_reg0;
-            slv_reg1 <= slv_reg1;
-            // slv_reg2 <= slv_reg2;
-            slv_reg3 <= slv_reg3;
+            // slv_reg1 <= slv_reg1;
+            slv_reg2 <= slv_reg2;
+            // slv_reg3 <= slv_reg3;
           end
         endcase
       end
@@ -394,20 +408,33 @@ module axi_wrapper #
     end
   end
 
+  assign start = slv_reg0[0];
+  assign algorithm_select = slv_reg0[2:1];
+  assign ext_bram_en = slv_reg0[31];
+
+  assign enable_manual_instruction_index_incr = slv_reg2[0];
+  assign manual_instruction_index_valid = slv_reg2[1];
+  assign manual_instruction_index = slv_reg3[31:16];
+
   // Add user logic here
   instruction_dispatch #(
                          .N(N)
                        ) instruction_dispatch (
                          .clk(S_AXI_ACLK),
                          .rst_n(S_AXI_ARESETN),
-                         .start(start),
-                         .algorithm_select(slv_reg1[0]),
+                         .start(start == 1'b1 && start_i == 1'b0),
+                         .algorithm_select(algorithm_select),
 
                          .done(done),
                          .signature_accepted(signature_accepted),
                          .signature_rejected(signature_rejected),
 
-                         .ext_bram_en(slv_reg3[0]),
+                         .enable_manual_instruction_index_incr(enable_manual_instruction_index_incr),
+                         .manual_instruction_index(manual_instruction_index),
+                         .manual_instruction_index_valid(manual_instruction_index_valid == 1'b1 && manual_instruction_index_valid_i == 1'b1),
+                         .current_instruction_index(current_instruction_index),
+
+                         .ext_bram_en(ext_bram_en),
                          .ext_bram_addr(ext_bram_addr),
                          .ext_bram_din(ext_bram_din),
                          .ext_bram_dout(ext_bram_dout),
@@ -415,18 +442,14 @@ module axi_wrapper #
                        );
 
   always @( posedge S_AXI_ACLK ) begin
-    // When the value of slv_reg0 changes, start by setting start high for one clock cycle
     if(S_AXI_ARESETN == 1'b0) begin
-      slv_reg0_old <= 0;
+      start_i <= 0;
+      manual_instruction_index_valid_i <= 0;
     end
     else begin
-      if (slv_reg0 != slv_reg0_old)
-        start <= 1;
-      else
-        start <= 0;
+      start_i <= start;
+      manual_instruction_index_valid_i <= manual_instruction_index_valid;
     end
-
-    slv_reg0_old <= slv_reg0;
   end
 
   // User logic ends
