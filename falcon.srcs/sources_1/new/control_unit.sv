@@ -1233,7 +1233,7 @@ module control_unit#(
 
         fp_adder_valid_in = pipelined_inst_valid;
         fp_adder_done = pipelined_inst_done;
-        fp_adder_dst_addr = addr1 + pipelined_inst_index;
+        fp_adder_dst_addr = addr2 + pipelined_inst_index;
 
         bram_addr_b[bank2] = fp_adder_dst_addr_delayed;
         bram_din_b[bank2] = {fp_adder1_result, fp_adder2_result};
