@@ -389,12 +389,12 @@ class InstructionGenerator:
     // modules = 16'b0000_0000_0000_0000;
     // #10;"""
         )
-
-        dprint(f"n={n},\tadd_t0\tin_bram={prev_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
+        t0_bram = prev_bram if n < N else 4 # On top level of recursion this BRAM is different
+        dprint(f"n={n},\tadd_t0\tin_bram={t0_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
             mode=0,  # Add mode
-            bank1=prev_bram,  # Input1
+            bank1=t0_bram,  # Input1
             addr1=t0,
             bank2=next_bram,  # Input2, output
             addr2=tmp,
@@ -404,7 +404,7 @@ class InstructionGenerator:
             f"""
     // modules = 16'b0000_0000_0000_0001; // add_sub
     // mode = 0;
-    // bank1 = {prev_bram};
+    // bank1 = {t0_bram};
     // addr1 = {t0};
     // bank2 = {next_bram};
     // addr2 = {tmp};
