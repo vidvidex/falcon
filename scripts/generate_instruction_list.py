@@ -37,11 +37,13 @@ class InstructionGenerator:
         mul_const_selection=0,
         element_count=0,
         decompress_output2=0,
-        input_output_addr_same=0
+        input_output_addr_same=0,
+        add_sub_mode=0,
     ):
         fields = [
             ("modules", 16, modules),
-            ("empty", 59, 0),
+            ("empty", 57, 0),
+            ("add_sub_mode", 1, add_sub_mode),
             ("input_output_addr_same", 1, input_output_addr_same),
             ("decompress_output2", 3, decompress_output2),
             ("element_count", 4, element_count),
@@ -347,7 +349,7 @@ class InstructionGenerator:
         dprint(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
-            mode=1,  # Subtract mode
+            add_sub_mode=1,  # Subtract mode
             bank3=curr_bram,  # Input1
             addr1=z1,
             bank4=next_bram,  # Input2, output
@@ -357,7 +359,7 @@ class InstructionGenerator:
         simprint(
             f"""
     // modules = 16'b0000_0000_0000_0001; // add_sub
-    // mode = 1;
+    // add_sub_mode = 1;
     // bank3 = {curr_bram};
     // addr1 = {z1};
     // bank4 = {next_bram};
@@ -395,7 +397,7 @@ class InstructionGenerator:
         dprint(f"n={n},\tadd_t0\tin_bram={t0_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
-            mode=0,  # Add mode
+            add_sub_mode=0,  # Add mode
             bank3=t0_bram,  # Input1
             addr1=t0,
             bank4=next_bram,  # Input2, output
@@ -405,7 +407,7 @@ class InstructionGenerator:
         simprint(
             f"""
     // modules = 16'b0000_0000_0000_0001; // add_sub
-    // mode = 0;
+    // add_sub_mode = 0;
     // bank3 = {t0_bram};
     // addr1 = {t0};
     // bank4 = {next_bram};
@@ -556,7 +558,7 @@ class InstructionGenerator:
     // modules = 16'b0000_1000_0000_0000; // int to double
     // bank1 = 5;
     // bank2 = 5;
-    // element_count = $clog2(256);
+    // element_count = {int(math.log2(N // 2))};
     // while (instruction_done !== 1'b1)
     //   #10;
     // modules = 16'b0000_0000_0000_0000;
@@ -608,7 +610,7 @@ class InstructionGenerator:
     // bank4 = 4;
     // addr1 = 0;  // Offsets for copy and complex mul (same offsets for both modules)
     // addr2 = 0;
-    // element_count = $clog2(256);
+    // element_count = {int(math.log2(N // 2))};
     // while (instruction_done !== 1'b1)
     //   #10;
     // modules = 16'b0000_0000_0000_0000;
@@ -637,7 +639,7 @@ class InstructionGenerator:
     // bank4 = 5;
     // addr1 = 0;  // Offsets for complex mul
     // addr2 = 0;
-    // element_count = $clog2(256);
+    // element_count = {int(math.log2(N // 2))};
     // mul_const_selection = 1; // -1/12289
     // while (instruction_done !== 1'b1)
     //   #10;
@@ -660,7 +662,7 @@ class InstructionGenerator:
     // bank3 = 4;  // mul const 4, output to 4
     // bank4 = 4;
     // mul_const_selection = 0; // 1/12289
-    // element_count = $clog2(256);
+    // element_count = {int(math.log2(N // 2))};
     // while (instruction_done !== 1'b1)
     //   #10;
     // modules = 16'b0000_0000_0000_0000;
