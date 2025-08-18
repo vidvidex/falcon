@@ -1221,7 +1221,7 @@ module control_unit#(
       end
 
       if(instruction[127-15] == 1'b1) begin // ADD_SUB
-        fp_adder_mode = instruction[44];
+        fp_adder_mode = instruction[54];
 
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
         bram_addr_a[bank4] = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
