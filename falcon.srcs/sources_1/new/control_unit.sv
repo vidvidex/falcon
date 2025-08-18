@@ -197,7 +197,7 @@ module control_unit#(
   // Instruction done when no modules are running. Alternatively when we're using the debug read/write instructions
   assign instruction_done = modules_running == 0 && modules_running_i != 0 || (instruction[127-0] == 1'b1 || instruction[127-1] == 1'b1);
 
-  logic [$clog2(N)-1:0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
+  logic [$clog2(N):0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
   logic pipelined_inst_done; // Last/done signal for pipelined operations
   logic pipelined_inst_valid;
   logic [$clog2(N)-1:0] element_count;
@@ -767,7 +767,7 @@ module control_unit#(
     if(!rst_n || instruction_done)
       pipelined_inst_index <= -1;
     else
-      pipelined_inst_index <= pipelined_inst_index + 1;
+      pipelined_inst_index <= (pipelined_inst_index == N-1) ? pipelined_inst_index : pipelined_inst_index+1;
 
     if (!rst_n || instruction[127:127-INSTRUCTION_COUNT+1] == 0) begin
       htp_start <= 1'b0;
