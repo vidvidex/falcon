@@ -37,10 +37,12 @@ class InstructionGenerator:
         mul_const_selection=0,
         element_count=0,
         decompress_output2=0,
+        input_output_addr_same=0
     ):
         fields = [
             ("modules", 16, modules),
             ("empty", 59, 0),
+            ("input_output_addr_same", 1, input_output_addr_same),
             ("decompress_output2", 3, decompress_output2),
             ("element_count", 4, element_count),
             ("mul_const_selection", 1, mul_const_selection),

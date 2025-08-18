@@ -1033,7 +1033,7 @@ module control_unit#(
         copy_valid_in = pipelined_inst_valid;
         copy_done = pipelined_inst_done;
 
-        copy_dst_addr = addr2 + pipelined_inst_index;
+        copy_dst_addr = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
         bram_addr_b[bank4] = copy_dst_addr_delayed;
         bram_din_b[bank4] = bram_dout_a[bank3];
         bram_we_b[bank4] = copy_valid_out;
@@ -1224,7 +1224,7 @@ module control_unit#(
         fp_adder_mode = instruction[44];
 
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
-        bram_addr_a[bank4] = addr2 + pipelined_inst_index;
+        bram_addr_a[bank4] = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
 
         fp_adder1_a = bram_dout_a[bank3][127:64];
         fp_adder2_a = bram_dout_a[bank3][63:0];
@@ -1233,7 +1233,7 @@ module control_unit#(
 
         fp_adder_valid_in = pipelined_inst_valid;
         fp_adder_done = pipelined_inst_done;
-        fp_adder_dst_addr = addr2 + pipelined_inst_index;
+        fp_adder_dst_addr = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
 
         bram_addr_b[bank4] = fp_adder_dst_addr_delayed;
         bram_din_b[bank4] = {fp_adder1_result, fp_adder2_result};
