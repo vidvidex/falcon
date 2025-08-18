@@ -12,12 +12,8 @@
 //        [0] ... 1 = algorithm execution done
 //        [1] ... 1 = signature accepted
 //        [2] ... 1 = signature rejected
-//  - slv_reg2 is debug control register
-//        [0]     ... 1 = enable manual instruction index increment
-//        [1]     ... 1 = manual instruction index valid
-//        [31:16] ... manual instruction index
-//  - slv_reg3 is debug output register
-//        [15:0] is current instruction index
+//  - slv_reg2 is unused
+//  - slv_reg3 is unused
 //////////////////////////////////////////////////////////////////////////////////
 
 module axi_wrapper #
@@ -114,12 +110,6 @@ module axi_wrapper #
   logic signature_rejected;
 
   logic ext_bram_en;
-
-  // Manual control of instruction index
-  logic enable_manual_instruction_index_incr;
-  logic [15:0] manual_instruction_index;
-  logic manual_instruction_index_valid, manual_instruction_index_valid_i;
-  logic [15:0] current_instruction_index;
 
   // AXI4LITE signals
   reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
@@ -251,7 +241,6 @@ module axi_wrapper #
     else begin
 
       slv_reg1 <= {29'b0, signature_rejected, signature_accepted, done};
-      slv_reg3 <= {16'b0, current_instruction_index};
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -269,13 +258,13 @@ module axi_wrapper #
           //       // Slave register 1
           //       slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
           //     end
-          2'h2:
-            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                // Respective byte enables are asserted as per write strobes
-                // Slave register 2
-                slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-              end
+          // 2'h2:
+          //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+          //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+          //       // Respective byte enables are asserted as per write strobes
+          //       // Slave register 2
+          //       slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+          //     end
           // 2'h3:
           //   for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
           //     if ( S_AXI_WSTRB[byte_index] == 1 ) begin
@@ -286,7 +275,7 @@ module axi_wrapper #
           default : begin
             slv_reg0 <= slv_reg0;
             // slv_reg1 <= slv_reg1;
-            slv_reg2 <= slv_reg2;
+            // slv_reg2 <= slv_reg2;
             // slv_reg3 <= slv_reg3;
           end
         endcase
@@ -412,10 +401,6 @@ module axi_wrapper #
   assign algorithm_select = slv_reg0[2:1];
   assign ext_bram_en = slv_reg0[31];
 
-  assign enable_manual_instruction_index_incr = slv_reg2[0];
-  assign manual_instruction_index_valid = slv_reg2[1];
-  assign manual_instruction_index = slv_reg3[31:16];
-
   // Add user logic here
   instruction_dispatch #(
                          .N(N)
@@ -429,11 +414,6 @@ module axi_wrapper #
                          .signature_accepted(signature_accepted),
                          .signature_rejected(signature_rejected),
 
-                         .enable_manual_instruction_index_incr(enable_manual_instruction_index_incr),
-                         .manual_instruction_index(manual_instruction_index),
-                         .manual_instruction_index_valid(manual_instruction_index_valid == 1'b1 && manual_instruction_index_valid_i == 1'b1),
-                         .current_instruction_index(current_instruction_index),
-
                          .ext_bram_en(ext_bram_en),
                          .ext_bram_addr(ext_bram_addr),
                          .ext_bram_din(ext_bram_din),
@@ -442,14 +422,10 @@ module axi_wrapper #
                        );
 
   always @( posedge S_AXI_ACLK ) begin
-    if(S_AXI_ARESETN == 1'b0) begin
+    if(S_AXI_ARESETN == 1'b0)
       start_i <= 0;
-      manual_instruction_index_valid_i <= 0;
-    end
-    else begin
+    else
       start_i <= start;
-      manual_instruction_index_valid_i <= manual_instruction_index_valid;
-    end
   end
 
   // User logic ends
