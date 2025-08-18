@@ -1,6 +1,6 @@
 import math
 
-debug_prints = True
+debug_prints = False
 sim_prints = False
 
 
@@ -246,7 +246,7 @@ class InstructionGenerator:
                 addr1=t1,
                 bank4=curr_bram,  # Output
                 addr2=z1,
-                element_count=element_count_log2-1,
+                element_count=element_count_log2 - 1,
             )
             simprint(
                 f"""
@@ -303,7 +303,7 @@ class InstructionGenerator:
                 addr1=tmp,
                 bank4=curr_bram,  # Output
                 addr2=z1,
-                element_count=element_count_log2-1,
+                element_count=element_count_log2 - 1,
             )
             simprint(
                 f"""
@@ -326,7 +326,7 @@ class InstructionGenerator:
             addr1=t1,
             bank4=next_bram,  # Output
             addr2=tmp,
-            element_count=element_count_log2-1,
+            element_count=element_count_log2 - 1,
         )
         simprint(
             f"""
@@ -346,19 +346,19 @@ class InstructionGenerator:
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
             mode=1,  # Subtract mode
-            bank1=curr_bram,  # Input1
+            bank3=curr_bram,  # Input1
             addr1=z1,
-            bank2=next_bram,  # Input2, output
+            bank4=next_bram,  # Input2, output
             addr2=tmp,
-            element_count=element_count_log2-1,
+            element_count=element_count_log2 - 1,
         )
         simprint(
             f"""
     // modules = 16'b0000_0000_0000_0001; // add_sub
     // mode = 1;
-    // bank1 = {curr_bram};
+    // bank3 = {curr_bram};
     // addr1 = {z1};
-    // bank2 = {next_bram};
+    // bank4 = {next_bram};
     // addr2 = {tmp};
     // element_count = {element_count_log2-1};
     // while (instruction_done !== 1'b1)
@@ -374,7 +374,7 @@ class InstructionGenerator:
             addr1=tmp,
             bank2=tree_bram,  # Input2
             addr2=tree,
-            element_count=element_count_log2-1,
+            element_count=element_count_log2 - 1,
         )
         simprint(
             f"""
@@ -389,24 +389,24 @@ class InstructionGenerator:
     // modules = 16'b0000_0000_0000_0000;
     // #10;"""
         )
-        t0_bram = prev_bram if n < N else 4 # On top level of recursion this BRAM is different
+        t0_bram = prev_bram if n < N else 4  # On top level of recursion this BRAM is different
         dprint(f"n={n},\tadd_t0\tin_bram={t0_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
             mode=0,  # Add mode
-            bank1=t0_bram,  # Input1
+            bank3=t0_bram,  # Input1
             addr1=t0,
-            bank2=next_bram,  # Input2, output
+            bank4=next_bram,  # Input2, output
             addr2=tmp,
-            element_count=element_count_log2-1,
+            element_count=element_count_log2 - 1,
         )
         simprint(
             f"""
     // modules = 16'b0000_0000_0000_0001; // add_sub
     // mode = 0;
-    // bank1 = {t0_bram};
+    // bank3 = {t0_bram};
     // addr1 = {t0};
-    // bank2 = {next_bram};
+    // bank4 = {next_bram};
     // addr2 = {tmp};
     // element_count = {element_count_log2-1};
     // while (instruction_done !== 1'b1)
@@ -446,7 +446,7 @@ class InstructionGenerator:
                 addr1=tmp,
                 bank4=curr_bram,  # Output
                 addr2=z0,
-                element_count=element_count_log2-1,
+                element_count=element_count_log2 - 1,
             )
             simprint(
                 f"""
@@ -503,7 +503,7 @@ class InstructionGenerator:
                 addr1=tmp,
                 bank4=curr_bram,  # Output
                 addr2=z0,
-                element_count=element_count_log2-1,
+                element_count=element_count_log2 - 1,
             )
             simprint(
                 f"""
