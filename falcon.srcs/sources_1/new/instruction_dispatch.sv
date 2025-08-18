@@ -21,12 +21,6 @@ module instruction_dispatch#(
     output logic signature_accepted,
     output logic signature_rejected,
 
-    // Manual control of instruction index (for debugging)
-    input enable_manual_instruction_index_incr,
-    input logic [15:0] manual_instruction_index,
-    input logic manual_instruction_index_valid, // Should only be a pulse
-    output logic [15:0] current_instruction_index,
-
     // External BRAM interface
     input logic ext_bram_en, // Enable signal for external BRAM interface. When this is high, software has access to the BRAM
     input logic [19:0] ext_bram_addr, // Top 3 bits select BRAM bank, lower 13 bits are address in the bank
@@ -4686,7 +4680,6 @@ module instruction_dispatch#(
             IDLE, // Waiting for start signal
             INSTRUCTIONS_RUNNING,  // Instructions are running
             INSTRUCTIONS_DONE, // Instruction done, sending NOP to control unit
-            WAIT_FOR_MANUAL_INDEX, // Waiting for manual instruction index increment
             DONE  // All instructions done
           } state_t;
   state_t state, next_state;
@@ -4708,13 +4701,7 @@ module instruction_dispatch#(
           next_state = DONE;
         else if (algorithm_select == 2'b01 && instruction_index == VERIFY_INSTRUCTION_COUNT)
           next_state = DONE;
-        else if(enable_manual_instruction_index_incr == 1'b1)
-          next_state = WAIT_FOR_MANUAL_INDEX;
         else
-          next_state = INSTRUCTIONS_RUNNING;
-      end
-      WAIT_FOR_MANUAL_INDEX: begin
-        if(manual_instruction_index_valid == 1'b1)
           next_state = INSTRUCTIONS_RUNNING;
       end
       DONE: begin
@@ -4732,8 +4719,6 @@ module instruction_dispatch#(
     else
       state <= next_state;
   end
-
-  assign current_instruction_index = instruction_index;
 
   assign done = (state == DONE);
 
@@ -4755,14 +4740,10 @@ module instruction_dispatch#(
         end
         INSTRUCTIONS_RUNNING: begin
           // instruction_done being 1'b1 is also condition for going out of INSTRUCTIONS_RUNNING, which ensures this will be incremented only once per instruction_done pulse (even if not pulse)
-          if (instruction_done == 1'b1 && enable_manual_instruction_index_incr == 1'b0)
+          if (instruction_done == 1'b1)
             instruction_index <= instruction_index + 1;
         end
         INSTRUCTIONS_DONE: begin
-        end
-        WAIT_FOR_MANUAL_INDEX: begin
-          if (manual_instruction_index_valid == 1'b1)
-            instruction_index <= manual_instruction_index;
         end
         DONE: begin
           instruction_index <= 0;
