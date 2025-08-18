@@ -1223,21 +1223,21 @@ module control_unit#(
       if(instruction[127-15] == 1'b1) begin // ADD_SUB
         fp_adder_mode = instruction[44];
 
-        bram_addr_a[bank1] = addr1 + pipelined_inst_index;
-        bram_addr_a[bank2] = addr2 + pipelined_inst_index;
+        bram_addr_a[bank3] = addr1 + pipelined_inst_index;
+        bram_addr_a[bank4] = addr2 + pipelined_inst_index;
 
-        fp_adder1_a = bram_dout_a[bank1][127:64];
-        fp_adder2_a = bram_dout_a[bank1][63:0];
-        fp_adder1_b = bram_dout_a[bank2][127:64];
-        fp_adder2_b = bram_dout_a[bank2][63:0];
+        fp_adder1_a = bram_dout_a[bank3][127:64];
+        fp_adder2_a = bram_dout_a[bank3][63:0];
+        fp_adder1_b = bram_dout_a[bank4][127:64];
+        fp_adder2_b = bram_dout_a[bank4][63:0];
 
         fp_adder_valid_in = pipelined_inst_valid;
         fp_adder_done = pipelined_inst_done;
         fp_adder_dst_addr = addr2 + pipelined_inst_index;
 
-        bram_addr_b[bank2] = fp_adder_dst_addr_delayed;
-        bram_din_b[bank2] = {fp_adder1_result, fp_adder2_result};
-        bram_we_b[bank2] = fp_adder_valid_out;
+        bram_addr_b[bank4] = fp_adder_dst_addr_delayed;
+        bram_din_b[bank4] = {fp_adder1_result, fp_adder2_result};
+        bram_we_b[bank4] = fp_adder_valid_out;
       end
     end
   end

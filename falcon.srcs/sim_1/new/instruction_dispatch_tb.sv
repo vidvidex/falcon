@@ -60,22 +60,16 @@ module instruction_dispatch_tb;
     rst_n = 0;
     #10;
     rst_n = 1;
+    algorithm_select = 2'b00;
+    enable_manual_instruction_index_incr = 0;
+    manual_instruction_index = 0;
+    manual_instruction_index_valid = 0;
 
     #20;
 
-    algorithm_select = 2'b00;
     start = 1;
-    enable_manual_instruction_index_incr = 1;
-    manual_instruction_index = 0;
-    manual_instruction_index_valid = 0;
     #10;
     start = 0;
-
-    #100000;
-    manual_instruction_index = 1;
-    manual_instruction_index_valid = 1;
-    #10;
-    manual_instruction_index_valid = 0;
 
   end
 endmodule
