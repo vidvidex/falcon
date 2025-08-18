@@ -671,6 +671,221 @@ class InstructionGenerator:
 
         self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[256, 256, 256, 256], t0=0, t1=0, tree=0)
 
+        dprint("COPY b00")
+        self.add_instruction(
+            modules=self.sel_module(COPY=1),
+            bank3=0,  # COPY input
+            bank4=3,  # COPY output
+            addr1=0,  # COPY input offset
+            addr2=N // 2,  # COPY output offset
+            element_count=int(math.log2(N // 2)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0000_0000_0000; //  COPY
+    // bank3 = 0;  
+    // bank4 = 4;
+    // addr1 = {0}; 
+    // addr2 = {int(math.log2(N // 2))};
+    // element_count = {int(math.log2(N // 2))};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("COPY b10")
+        self.add_instruction(
+            modules=self.sel_module(COPY=1),
+            bank3=2,  # COPY input
+            bank4=2,  # COPY output
+            addr1=0,  # COPY input offset
+            addr2=N // 2,  # COPY output offset
+            element_count=int(math.log2(N // 2)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0000_0000_0000; //  COPY
+    // bank3 = 2;  
+    // bank4 = 2;
+    // addr1 = {0}; 
+    // addr2 = {N // 2};
+    // element_count = {int(math.log2(N // 2))};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("COMPLEX_MUL, COPY (1)")
+        self.add_instruction(
+            modules=self.sel_module(COMPLEX_MUL=1, COPY=1),
+            bank1=3,  # COMPLEX_MUL input1, output
+            bank2=0,  # COMPLEX_MUL input2
+            addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output, COPY input
+            addr2=N // 2,  # Offset for COMPLEX_MUL input2, COPY output
+            bank3=0,  # COPY input
+            bank4=4,  # COPY output
+            element_count=int(math.log2(N // 2)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0001_0000_0000; // COMPLEX_MUL, COPY
+    // bank1 = 3;
+    // bank2 = 0;
+    // bank3 = 0;  
+    // bank4 = 4;
+    // addr1 = {N // 2}; 
+    // addr2 = {N // 2};
+    // element_count = {int(math.log2(N // 2))};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("COMPLEX_MUL, COPY (2)")
+        self.add_instruction(
+            modules=self.sel_module(COMPLEX_MUL=1, COPY=1),
+            bank1=2,  # COMPLEX_MUL input1, output
+            bank2=0,  # COMPLEX_MUL input2
+            addr1=N//2,  # Offset for COMPLEX_MUL input1 and output, COPY input, output
+            addr2=N,  # Offset for COMPLEX_MUL input2
+            bank3=0,  # COPY input
+            bank4=5,  # COPY output
+            element_count=int(math.log2(N // 2)),
+            input_output_addr_same=1,  # Both inputs and output of COPY are addr1
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0001_0000_0000; // COMPLEX_MUL, COPY
+    // bank1 = 2;
+    // bank2 = 0;
+    // addr1 = {N};
+    // addr2 = {N // 2};
+    // bank3 = 0;
+    // bank4 = 5;
+    // element_count = {int(math.log2(N // 2))};
+    // input_output_addr_same = 1;
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("COMPLEX_MUL, ADD_SUB")
+        self.add_instruction(
+            modules=self.sel_module(COMPLEX_MUL=1, ADD_SUB=1),
+            add_sub_mode=0,  # Add mode
+            bank1=4,  # COMPLEX_MUL input1, output
+            bank2=1,  # COMPLEX_MUL input2
+            addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output, both inputs and output for ADD_SUB
+            addr2=0,  # Offset for COMPLEX_MUL input2
+            bank3=3,  # ADD_SUB input1
+            bank4=2,  # ADD_SUB input2, output
+            element_count=int(math.log2(N // 2)),
+            input_output_addr_same=1,  # Both inputs and output of ADD_SUB are addr1
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0001_0000_0001; // COMPLEX_MUL, ADD_SUB
+    // add_sub_mode = 0;
+    // bank1 = 4;
+    // bank2 = 1;
+    // addr1 = {N//2};
+    // addr2 = {0};
+    // bank3 = 3;
+    // bank4 = 2;
+    // element_count = {int(math.log2(N // 2))};
+    // input_output_addr_same = 1;
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("COMPLEX_MUL, COPY (3)")
+        self.add_instruction(
+            modules=self.sel_module(COMPLEX_MUL=1, COPY=1),
+            bank1=5,  # COMPLEX_MUL input1, output
+            bank2=3,  # COMPLEX_MUL input2
+            addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output, COPY input, output
+            addr2=0,  # Offset for COMPLEX_MUL input2
+            bank3=2,  # COPY input
+            bank4=0,  # COPY output
+            element_count=int(math.log2(N // 2)),
+            input_output_addr_same=1,  # Both inputs and output of COPY are addr1
+        )
+        simprint(
+            f"""
+    // modules = 16'b0010_0001_0000_0000; // COMPLEX_MUL, COPY
+    // bank1 = 2;
+    // bank2 = 0;
+    // addr1 = {N};
+    // addr2 = {N // 2};
+    // bank3 = 0;
+    // bank4 = 5;
+    // element_count = {int(math.log2(N // 2))};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("IFFT, ADD_SUB")
+        self.add_instruction(
+            modules=self.sel_module(FFT_IFFT=1, ADD_SUB=1),
+            mode=1,  # IFFT mode: IFFT
+            add_sub_mode=0,  # add
+            bank1=2,  # FFT bank1
+            bank2=3,  # FFT bank2
+            addr1=N // 2,  # Offset for FFT bank1, ADD_SUB input
+            addr2=N // 2,  # Offset for FFT bank2, ADD_SUB output
+            bank3=4,  # ADD_SUB input1
+            bank4=5,  # ADD_SUB input2, output
+            element_count=int(math.log2(N // 2)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0100_0000_0001; // IFFT, ADD_SUB
+    // mode = 1;
+    // add_sub_mode = 0;
+    // bank1 = 2;
+    // bank2 = 3;
+    // addr1 = {N//2};
+    // addr2 = {N//2};
+    // bank3 = 4;
+    // bank4 = 5;
+    // element_count = {int(math.log2(N // 2))};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("IFFT")
+        self.add_instruction(
+            modules=self.sel_module(FFT_IFFT=1),
+            mode=1,  # IFFT mode: IFFT
+            bank1=5,  # FFT bank1
+            bank2=4,  # FFT bank2
+            addr1=N // 2,  # Offset for FFT bank1, ADD_SUB input
+            addr2=N // 2,  # Offset for FFT bank2, ADD_SUB output
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0100_0000_0000; // IFFT
+    // mode = 1;
+    // bank1 = 5;
+    // bank2 = 4;
+    // addr1 = {N//2};
+    // addr2 = {N//2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
         generator.print_verilog(algorithm="sign")
 
 
