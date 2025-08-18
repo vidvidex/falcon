@@ -1065,19 +1065,19 @@ module control_unit#(
       end
 
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-        bram_addr_a[bank1] = fft_bram1_addr_a;
+        bram_addr_a[bank1] = addr1 + fft_bram1_addr_a;
         bram_din_a[bank1] = fft_bram1_din_a;
         bram_we_a[bank1] = fft_bram1_we_a;
-        bram_addr_b[bank1] = fft_bram1_addr_b;
+        bram_addr_b[bank1] = addr1 + fft_bram1_addr_b;
         bram_din_b[bank1] = fft_bram1_din_b;
         bram_we_b[bank1] = fft_bram1_we_b;
         fft_bram1_dout_a = bram_dout_a[bank1];
         fft_bram1_dout_b = bram_dout_b[bank1];
 
-        bram_addr_a[bank2] = fft_bram2_addr_a;
+        bram_addr_a[bank2] = addr2 + fft_bram2_addr_a;
         bram_din_a[bank2] = fft_bram2_din_a;
         bram_we_a[bank2] = fft_bram2_we_a;
-        bram_addr_b[bank2] = fft_bram2_addr_b;
+        bram_addr_b[bank2] = addr2 + fft_bram2_addr_b;
         bram_din_b[bank2] = fft_bram2_din_b;
         bram_we_b[bank2] = fft_bram2_we_b;
         fft_bram2_dout_a = bram_dout_a[bank2];

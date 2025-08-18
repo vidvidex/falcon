@@ -568,12 +568,16 @@ class InstructionGenerator:
             mode=0,  # FFT mode: FFT
             bank1=5,  # FFT bank1
             bank2=4,  # FFT bank2
+            addr1=0,  # Offset in bank1
+            addr2=0,  # Offset in bank2
         )
         simprint(
             f"""
     // modules = 16'b0000_0100_0000_0000; // FFT
     // bank1 = 5;
     // bank2 = 4;
+    // addr1 = 0;
+    // addr2 = 0;
     // mode = 0; // FFT
     // while (instruction_done !== 1'b1)
     //   #10;
