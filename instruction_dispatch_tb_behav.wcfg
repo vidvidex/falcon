@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="422,724.919 ns"></ZoomStartTime>
-      <ZoomEndTime time="423,055.409 ns"></ZoomEndTime>
-      <Cursor1Time time="422,806.420 ns"></Cursor1Time>
+      <ZoomStartTime time="818,766.967 ns"></ZoomStartTime>
+      <ZoomEndTime time="819,205.168 ns"></ZoomEndTime>
+      <Cursor1Time time="818,866.732 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="286"></NameColumnWidth>
-      <ValueColumnWidth column_width="126"></ValueColumnWidth>
+      <ValueColumnWidth column_width="122"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group822">
@@ -73,24 +73,6 @@
          <obj_property name="ElementShortName">algorithm_select[1:0]</obj_property>
          <obj_property name="ObjectShortName">algorithm_select[1:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/enable_manual_instruction_index_incr">
-         <obj_property name="ElementShortName">enable_manual_instruction_index_incr</obj_property>
-         <obj_property name="ObjectShortName">enable_manual_instruction_index_incr</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/manual_instruction_index">
-         <obj_property name="ElementShortName">manual_instruction_index[15:0]</obj_property>
-         <obj_property name="ObjectShortName">manual_instruction_index[15:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/manual_instruction_index_valid">
-         <obj_property name="ElementShortName">manual_instruction_index_valid</obj_property>
-         <obj_property name="ObjectShortName">manual_instruction_index_valid</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/current_instruction_index">
-         <obj_property name="ElementShortName">current_instruction_index[15:0]</obj_property>
-         <obj_property name="ObjectShortName">current_instruction_index[15:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
          <obj_property name="ObjectShortName">N[31:0]</obj_property>
@@ -127,24 +109,6 @@
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/signature_rejected">
          <obj_property name="ElementShortName">signature_rejected</obj_property>
          <obj_property name="ObjectShortName">signature_rejected</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/enable_manual_instruction_index_incr">
-         <obj_property name="ElementShortName">enable_manual_instruction_index_incr</obj_property>
-         <obj_property name="ObjectShortName">enable_manual_instruction_index_incr</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/manual_instruction_index">
-         <obj_property name="ElementShortName">manual_instruction_index[15:0]</obj_property>
-         <obj_property name="ObjectShortName">manual_instruction_index[15:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/manual_instruction_index_valid">
-         <obj_property name="ElementShortName">manual_instruction_index_valid</obj_property>
-         <obj_property name="ObjectShortName">manual_instruction_index_valid</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/current_instruction_index">
-         <obj_property name="ElementShortName">current_instruction_index[15:0]</obj_property>
-         <obj_property name="ObjectShortName">current_instruction_index[15:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/ext_bram_en">
          <obj_property name="ElementShortName">ext_bram_en</obj_property>
@@ -645,7 +609,6 @@
       <wvobject type="group" fp_name="group1317">
          <obj_property name="label">bram5</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/bram_addr_a[5]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[5][12:0]</obj_property>
@@ -1560,7 +1523,6 @@
       <wvobject type="group" fp_name="group1092">
          <obj_property name="label">fp_add_sub</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/fp_adder_mode">
             <obj_property name="ElementShortName">fp_adder_mode</obj_property>
             <obj_property name="ObjectShortName">fp_adder_mode</obj_property>
@@ -1746,6 +1708,7 @@
       <wvobject type="group" fp_name="group1144">
          <obj_property name="label">complex_mul</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/complex_mul_a_real">
             <obj_property name="ElementShortName">complex_mul_a_real[63:0]</obj_property>
             <obj_property name="ObjectShortName">complex_mul_a_real[63:0]</obj_property>
@@ -1777,10 +1740,6 @@
             <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
             <obj_property name="radix_fractionWidth">53</obj_property>
             <obj_property name="radix_otherWidth">11</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/complex_mul_valid_in">
-            <obj_property name="ElementShortName">complex_mul_valid_in</obj_property>
-            <obj_property name="ObjectShortName">complex_mul_valid_in</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/complex_mul_valid_in_delayed">
             <obj_property name="ElementShortName">complex_mul_valid_in_delayed</obj_property>
