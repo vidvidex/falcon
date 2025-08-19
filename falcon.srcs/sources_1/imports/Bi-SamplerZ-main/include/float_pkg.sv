@@ -19,7 +19,7 @@
 
         import float_pkg::*;
 
-        logic [3:0]  mode ;
+        logic [3:0]  mode;
         float_data_t d_i [3]; // write a is for external api to first fpu input
         float_data_t d_o [2]; // read a is for external api to first fpu result
 

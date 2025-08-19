@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module Fpr_adder (
     input  clk ,
     input logic valid,
@@ -135,16 +137,16 @@ module Fpr_adder (
 
   //Additon logics
   always_comb begin
-    a_fp64      = '0;
-    b_fp64      = '0;
+    a_fp64 = '0;
+    b_fp64 = '0;
     case (cnt)
       2'b10 : begin
-        a_fp64    = fpr_z0_l;
-        b_fp64    = int_mu_l;
+        a_fp64 = fpr_z0_l;
+        b_fp64 = int_mu_l;
       end
       2'b11 : begin
-        a_fp64    = fpr_z0_r;
-        b_fp64    = int_mu_r;
+        a_fp64 = fpr_z0_r;
+        b_fp64 = int_mu_r;
       end
     endcase
   end
