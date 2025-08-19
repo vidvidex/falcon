@@ -12,7 +12,7 @@ import falconsoar_pkg::*;
   mem_addr_t src0;
   mem_addr_t src1;
   mem_addr_t dst;
-  logic rst;
+  logic restart;
   logic [3:0] task_type;
 
   logic start;
@@ -29,6 +29,7 @@ import falconsoar_pkg::*;
                 .clk(clk),
                 .reset(rst_n),
                 .start(start),
+                .restart(restart),
                 .task_itf(task_itf),
                 .mem_rd(mem_rd),
                 .mem_wr(mem_wr),
@@ -59,23 +60,23 @@ import falconsoar_pkg::*;
     #20;
 
     // Set up a task
-    rst = 1;
+    restart <= 1;
     start <= 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
     #10;
-    rst = 0;
+    restart <= 0;
     start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
 
     #1000;
 
     start <= 1;
-    rst = 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    restart <= 1;
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
     #10;
-    rst = 0;
+    restart <= 0;
     start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
 
     while(done !== 1)
       #10;
