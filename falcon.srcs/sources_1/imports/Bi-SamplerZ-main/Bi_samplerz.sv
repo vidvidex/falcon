@@ -9,15 +9,16 @@ import falconsoar_pkg::*;
   (
     input clk,
     input reset,//Initial signal
-    input logic start,
+    input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
     //Task
-    exec_operator_if.slave task_itf,//start port gives a pulse, must come after at least 90 cycles when reset.
+    exec_operator_if.slave task_itf,
     //read
     mem_inst_if.master_rd  mem_rd,
     //write
-    mem_inst_if.master_wr  mem_wr
-
+    mem_inst_if.master_wr  mem_wr,
+    output logic done
   );
+
   //Control signals
   //Shaking signals
   //pre_samp state
@@ -307,7 +308,7 @@ import falconsoar_pkg::*;
   wire[MEM_ADDR_BITS - 1:0] dst_addr = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr
   wire[MEM_ADDR_BITS - 1:0] src1_addr = task_itf.input_task[TASK_REDUCE_BW - 1*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 2*MEM_ADDR_BITS];  // This is for sigma
   wire[MEM_ADDR_BITS - 1:0] src0_addr = task_itf.input_task[TASK_REDUCE_BW - 0*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 1*MEM_ADDR_BITS];  // This is for mu and random
-  assign task_itf.op_done = final_adder_done;
+  assign done = final_adder_done;
 
   wire[MEM_ADDR_BITS - 1:0] isigma_addr = src1_addr;
   wire[MEM_ADDR_BITS - 1:0] mu_addr = src0_addr;

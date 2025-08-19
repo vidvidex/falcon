@@ -16,6 +16,7 @@ import falconsoar_pkg::*;
   logic [3:0] task_type;
 
   logic start;
+  logic done;
 
   always #5 clk = ~clk;
 
@@ -30,7 +31,8 @@ import falconsoar_pkg::*;
                 .start(start),
                 .task_itf(task_itf),
                 .mem_rd(mem_rd),
-                .mem_wr(mem_wr)
+                .mem_wr(mem_wr),
+                .done(done)
               );
 
   bram_model bram_inst (
@@ -75,7 +77,7 @@ import falconsoar_pkg::*;
     start <= 0;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
 
-    while(task_itf.master.op_done !== 1)
+    while(done !== 1)
       #10;
 
   end
