@@ -15,6 +15,8 @@ import falconsoar_pkg::*;
   logic rst;
   logic [3:0] task_type;
 
+  logic start;
+
   always #5 clk = ~clk;
 
 
@@ -25,6 +27,7 @@ import falconsoar_pkg::*;
   Bi_samplerz #(.N(N))samplerz (
                 .clk(clk),
                 .reset(rst_n),
+                .start(start),
                 .task_itf(task_itf),
                 .mem_rd(mem_rd),
                 .mem_wr(mem_wr)
@@ -55,21 +58,21 @@ import falconsoar_pkg::*;
 
     // Set up a task
     rst = 1;
-    task_itf.master.start <= 1;
+    start <= 1;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
     #10;
     rst = 0;
-    task_itf.master.start <= 0;
+    start <= 0;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
 
     #1000;
 
-    task_itf.master.start <= 1;
+    start <= 1;
     rst = 1;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
     #10;
     rst = 0;
-    task_itf.master.start <= 0;
+    start <= 0;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
 
     while(task_itf.master.op_done !== 1)
