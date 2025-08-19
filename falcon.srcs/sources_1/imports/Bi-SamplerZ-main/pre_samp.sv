@@ -7,6 +7,7 @@ import sample_pkg::*;
 import falconsoar_pkg::*;
 module pre_samp
   #(
+     parameter N = 512,
      parameter MIN_SIGMA_1024 = 73'h14c5c19990c80000000,
      parameter MIN_SIGMA_512 = 73'h147201bf1f7a0000000//All with 2^72 Extension.
    )
@@ -14,7 +15,6 @@ module pre_samp
      input clk,
      input rst_n,
      input valid,
-     input logic [3:0] task_type,//0-falcon512;1-falcon1024. Specified because the coeffients differs from task type.
      //Receive the values directly.
      output r_en,
      output logic [ MEM_ADDR_BITS - 1:0]  r_addr,
@@ -122,7 +122,7 @@ module pre_samp
         MUL_data_in_b_l = {9'b0,isigma};
         MUL_data_valid_r = 'd1;
         MUL_data_in_a_r = {9'b0,isigma};
-        MUL_data_in_b_r = (task_type == 'd1)? {8'b0,MIN_SIGMA_512} : {8'b0,MIN_SIGMA_1024};
+        MUL_data_in_b_r = (N == 512) ? {8'b0,MIN_SIGMA_512} : {8'b0,MIN_SIGMA_1024};
       end
       default : begin
         MUL_data_valid_l = 'd0;
