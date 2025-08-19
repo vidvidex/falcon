@@ -3,6 +3,9 @@
 
 module Bi_samplerz
 import falconsoar_pkg::*;
+#(
+  parameter N = 512
+)
   (
     input clk,
     input reset,//Initial signal
@@ -14,8 +17,6 @@ import falconsoar_pkg::*;
     mem_inst_if.master_wr  mem_wr
 
   );
-  localparam bit[3:0] SAMPLERZ_512 = 4'd1;  // Normal sampling operation in Falcon-512
-  localparam bit[3:0] SAMPLERZ_1024 = 4'd2;  // Normal sampling operation in Falcon-1024
   //Control signals
   //Shaking signals
   //pre_samp state
@@ -300,10 +301,9 @@ import falconsoar_pkg::*;
   wire r_en_pre_samp;
   wire[MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
   logic rdm_init;
-  wire[3:0]  task_type = task_itf.input_task[14:11];  //
-  wire start = ((task_type == SAMPLERZ_512) | (task_type == SAMPLERZ_1024)  ) & task_itf.start;//Need to be a pulse
+  wire start = task_itf.start;//Need to be a pulse
   //task decoding
-  wire restart = task_itf.input_task[15]; 
+  wire restart = task_itf.input_task[15];
   wire[MEM_ADDR_BITS - 1:0] dst_addr = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr
   wire[MEM_ADDR_BITS - 1:0] src1_addr = task_itf.input_task[TASK_REDUCE_BW - 1*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 2*MEM_ADDR_BITS];  // This is for sigma
   wire[MEM_ADDR_BITS - 1:0] src0_addr = task_itf.input_task[TASK_REDUCE_BW - 0*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 1*MEM_ADDR_BITS];  // This is for mu and random
@@ -617,11 +617,12 @@ import falconsoar_pkg::*;
   end
 
 
-  pre_samp pre_samp_inst (
+  pre_samp #(
+             .N(N)
+           ) pre_samp_inst (
              .clk(clk),
              .rst_n(reset),
              .valid(pre_samp_valid),
-             .task_type(task_type),
              .r_en(r_en_pre_samp), //o
              .r_addr(r_addr_pre_samp), //o[  9:0]
              .r_data(mem_rd.data), //i[511:0]

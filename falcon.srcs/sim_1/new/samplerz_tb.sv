@@ -4,6 +4,8 @@ module samplerz_tb;
 
 import falconsoar_pkg::*;
 
+  parameter int N = 512;
+
   logic clk;
   logic rst_n;
 
@@ -20,13 +22,13 @@ import falconsoar_pkg::*;
   mem_inst_if mem_rd();
   mem_inst_if mem_wr();
 
-  Bi_samplerz samplerz (
-             .clk(clk),
-             .reset(rst_n),
-             .task_itf(task_itf),
-             .mem_rd(mem_rd),
-             .mem_wr(mem_wr)
-           );
+  Bi_samplerz #(.N(N))samplerz (
+                .clk(clk),
+                .reset(rst_n),
+                .task_itf(task_itf),
+                .mem_rd(mem_rd),
+                .mem_wr(mem_wr)
+              );
 
   bram_model bram_inst (
                .clk(clk),
@@ -46,7 +48,8 @@ import falconsoar_pkg::*;
     src0 = 32'h00000000; // Source 0 address (mu)
     src1 = 32'h00000001; // Source 1 address (inverse sigma)
     dst = 32'h00000002; // Destination address
-    task_type = 4'b0001; // 512 mode
+    // task_type = 4'b0001; // 512 mode
+    task_type = 4'b0;
 
     #20;
 
@@ -58,7 +61,7 @@ import falconsoar_pkg::*;
     rst = 0;
     task_itf.master.start <= 0;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, rst, task_type, 11'b0};
-    
+
     #1000;
 
     task_itf.master.start <= 1;
@@ -90,7 +93,7 @@ import falconsoar_pkg::*;
   initial begin
     mem[0] = { 128'b0, $realtobits(33.198144682236155), $realtobits(2.4235343345)};  // mu
     mem[1] = $realtobits(1/1.724965058508814);  // inverse sigma (I guess so we can use multiplication instead of division)
-    
+
     for (int i = 2; i < BANK_DEPTH; i++) begin
       mem[i] = i;
     end
