@@ -9,6 +9,7 @@ import falconsoar_pkg::*;
   (
     input clk,
     input reset,//Initial signal
+    input logic start,
     //Task
     exec_operator_if.slave task_itf,//start port gives a pulse, must come after at least 90 cycles when reset.
     //read
@@ -301,7 +302,6 @@ import falconsoar_pkg::*;
   wire r_en_pre_samp;
   wire[MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
   logic rdm_init;
-  wire start = task_itf.start;//Need to be a pulse
   //task decoding
   wire restart = task_itf.input_task[15];
   wire[MEM_ADDR_BITS - 1:0] dst_addr = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr

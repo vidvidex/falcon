@@ -94,19 +94,16 @@
     interface exec_operator_if;
     
         import falconsoar_pkg::*;
-        logic         start;
         task_reduce_t input_task;
         logic         op_done;
 
         modport master
         (
-            output start,
             output input_task,
             input  op_done
         );
         modport slave
         (
-            input  start,
             input  input_task,
             output op_done
         );
