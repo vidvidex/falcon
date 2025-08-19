@@ -95,17 +95,14 @@
     
         import falconsoar_pkg::*;
         task_reduce_t input_task;
-        logic         op_done;
 
         modport master
         (
-            output input_task,
-            input  op_done
+            output input_task
         );
         modport slave
         (
-            input  input_task,
-            output op_done
+            input  input_task
         );
 
     endinterface
