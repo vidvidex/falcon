@@ -545,19 +545,27 @@ class InstructionGenerator:
     // #10;"""
         )
 
-        # timestep 2: INT_TO_DOUBLE
-        dprint("INT_TO_DOUBLE")
+        # timestep 2: INT_TO_DOUBLE, COPY
+        dprint("INT_TO_DOUBLE, COPY")
         self.add_instruction(
-            modules=self.sel_module(INT_TO_DOUBLE=1),
+            modules=self.sel_module(INT_TO_DOUBLE=1, COPY=1),
             bank1=5,  # INT_TO_DOUBLE input
             bank2=5,  # INT_TO_DOUBLE output
+            bank3=5,  # COPY input
+            bank4=6,  # COPY output
+            addr1=0,  # COPY input offset
+            addr2=2560,  # COPY output offset
             element_count=int(math.log2(N // 2)),
         )
         simprint(
             f"""
-    // modules = 16'b0000_1000_0000_0000; // int to double
+    // modules = 16'b0010_1000_0000_0000; // int to double, copy
     // bank1 = 5;
     // bank2 = 5;
+    // bank3 = 5;
+    // bank4 = 6;
+    // addr1 = 0;
+    // addr2 = 2560;
     // element_count = {int(math.log2(N // 2))};
     // while (instruction_done !== 1'b1)
     //   #10;
@@ -749,7 +757,7 @@ class InstructionGenerator:
             modules=self.sel_module(COMPLEX_MUL=1, COPY=1),
             bank1=2,  # COMPLEX_MUL input1, output
             bank2=0,  # COMPLEX_MUL input2
-            addr1=N//2,  # Offset for COMPLEX_MUL input1 and output, COPY input, output
+            addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output, COPY input, output
             addr2=N,  # Offset for COMPLEX_MUL input2
             bank3=0,  # COPY input
             bank4=5,  # COPY output
@@ -804,27 +812,22 @@ class InstructionGenerator:
     // #10;"""
         )
 
-        dprint("COMPLEX_MUL, COPY (3)")
+        dprint("COMPLEX_MUL")
         self.add_instruction(
-            modules=self.sel_module(COMPLEX_MUL=1, COPY=1),
+            modules=self.sel_module(COMPLEX_MUL=1),
             bank1=5,  # COMPLEX_MUL input1, output
             bank2=3,  # COMPLEX_MUL input2
-            addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output, COPY input, output
+            addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output
             addr2=0,  # Offset for COMPLEX_MUL input2
-            bank3=2,  # COPY input
-            bank4=0,  # COPY output
             element_count=int(math.log2(N // 2)),
-            input_output_addr_same=1,  # Both inputs and output of COPY are addr1
         )
         simprint(
             f"""
-    // modules = 16'b0010_0001_0000_0000; // COMPLEX_MUL, COPY
+    // modules = 16'b0000_0001_0000_0000; // COMPLEX_MUL
     // bank1 = 2;
     // bank2 = 0;
     // addr1 = {N};
     // addr2 = {N // 2};
-    // bank3 = 0;
-    // bank4 = 5;
     // element_count = {int(math.log2(N // 2))};
     // while (instruction_done !== 1'b1)
     //   #10;
@@ -880,6 +883,33 @@ class InstructionGenerator:
     // bank2 = 4;
     // addr1 = {N//2};
     // addr2 = {N//2};
+    // while (instruction_done !== 1'b1)
+    //   #10;
+    // modules = 16'b0000_0000_0000_0000;
+    // #10;"""
+        )
+
+        dprint("compress")
+        self.add_instruction(
+            modules=self.sel_module(COMPRESS=1),
+            bank1=2,  # bank with t0
+            bank2=5,  # bank with t1
+            bank3=6,  # bank with hm
+            bank4=5,  # output bank
+            addr1=N // 2,  # Offset for bank1 (t0), bank2 (t1) and output
+            addr2=2560,  # Offset for bank3 (hm)
+            element_count=int(math.log2(N)),
+        )
+        simprint(
+            f"""
+    // modules = 16'b0000_0000_0000_0010; // COMPRESS
+    // bank1 = 2;
+    // bank2 = 5;
+    // bank3 = 6;
+    // bank4 = 5;
+    // addr1 = {N//2};
+    // addr2 = {2560};
+    // element_count = {int(math.log2(N))};
     // while (instruction_done !== 1'b1)
     //   #10;
     // modules = 16'b0000_0000_0000_0000;
