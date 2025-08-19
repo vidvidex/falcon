@@ -3,9 +3,11 @@
 // Implements conversion from double to an int.
 // Before conversion the double is rounded to the nearest integer.
 module double_to_int (
-    input  logic clk,
-    input  logic [63:0] double_in,
-    output logic signed [14:0] int_out
+    input logic clk,
+    input logic [63:0] double_in,
+    input logic valid_in,
+    output logic signed [14:0] int_out,
+    output logic valid_out
 );
 
   logic sign;
@@ -35,11 +37,11 @@ module double_to_int (
 
     if (exponent_unbiased < 52) begin
       // Right shift — add rounding before shift
-      int shift_amount = 52 - exponent_unbiased;
+      automatic int shift_amount = 52 - exponent_unbiased;
 
       if (shift_amount < 64) begin
         // Round to nearest (add 1 at bit position shift_amount-1)
-        logic [63:0] rounding_add = 64'd1 << (shift_amount - 1);
+        automatic logic [63:0] rounding_add = 64'd1 << (shift_amount - 1);
         shifted_mantissa = mantissa_with_hidden_bit + rounding_add;
         shifted_mantissa = shifted_mantissa >> shift_amount;
       end else begin
@@ -61,6 +63,7 @@ module double_to_int (
   // Register the output
   always_ff @(posedge clk) begin
     int_out <= int_out_i;
+    valid_out <= valid_in;
   end
 
 endmodule
