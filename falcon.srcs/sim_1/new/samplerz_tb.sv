@@ -13,7 +13,6 @@ import falconsoar_pkg::*;
   mem_addr_t src1;
   mem_addr_t dst;
   logic restart;
-  logic [3:0] task_type;
 
   logic start;
   logic done;
@@ -54,29 +53,26 @@ import falconsoar_pkg::*;
     src0 = 32'h00000000; // Source 0 address (mu)
     src1 = 32'h00000001; // Source 1 address (inverse sigma)
     dst = 32'h00000002; // Destination address
-    // task_type = 4'b0001; // 512 mode
-    task_type = 4'b0;
 
     #20;
 
-    // Set up a task
     restart <= 1;
     start <= 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
     #10;
     restart <= 0;
     start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
 
     #1000;
 
     start <= 1;
     restart <= 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
     #10;
     restart <= 0;
     start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, restart, task_type, 11'b0};
+    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
 
     while(done !== 1)
       #10;
