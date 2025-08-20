@@ -12,12 +12,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="10,080.174 ns"></ZoomStartTime>
-      <ZoomEndTime time="10,403.966 ns"></ZoomEndTime>
-      <Cursor1Time time="10,350.000 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="420.554 ns"></ZoomEndTime>
+      <Cursor1Time time="308.337 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="211"></NameColumnWidth>
+      <NameColumnWidth column_width="203"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="14" />
@@ -71,16 +71,15 @@
          <obj_property name="ObjectShortName">mu_addr[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/random_addr">
-         <obj_property name="ElementShortName">random_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">random_addr[12:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/seed_addr">
+         <obj_property name="ElementShortName">seed_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_addr[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group5205">
       <obj_property name="label">samplerz</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -107,10 +106,9 @@
          <obj_property name="ObjectShortName">mu_addr[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/random_addr">
-         <obj_property name="ElementShortName">random_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">random_addr[12:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/seed_addr">
+         <obj_property name="ElementShortName">seed_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_addr[12:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/sampled1">
          <obj_property name="ElementShortName">sampled1[63:0]</obj_property>
@@ -604,18 +602,18 @@
          <obj_property name="ElementShortName">smp_r[63:0]</obj_property>
          <obj_property name="ObjectShortName">smp_r[63:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/mem_rd_chacha20_en">
-         <obj_property name="ElementShortName">mem_rd_chacha20_en</obj_property>
-         <obj_property name="ObjectShortName">mem_rd_chacha20_en</obj_property>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/seed_read_bram_en">
+         <obj_property name="ElementShortName">seed_read_bram_en</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_en</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/mem_rd_chacha20_addr">
-         <obj_property name="ElementShortName">mem_rd_chacha20_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">mem_rd_chacha20_addr[12:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/seed_read_bram_addr">
+         <obj_property name="ElementShortName">seed_read_bram_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_addr[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/mem_rd_chacha20_data">
-         <obj_property name="ElementShortName">mem_rd_chacha20_data[255:0]</obj_property>
-         <obj_property name="ObjectShortName">mem_rd_chacha20_data[255:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/seed_read_bram_dout">
+         <obj_property name="ElementShortName">seed_read_bram_dout[255:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_dout[255:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/r_en_pre_samp">
          <obj_property name="ElementShortName">r_en_pre_samp</obj_property>
@@ -644,10 +642,6 @@
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/mu_addr">
          <obj_property name="ElementShortName">mu_addr[12:0]</obj_property>
          <obj_property name="ObjectShortName">mu_addr[12:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/random_addr">
-         <obj_property name="ElementShortName">random_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">random_addr[12:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/state">
          <obj_property name="ElementShortName">state[7:0]</obj_property>
@@ -1317,21 +1311,23 @@
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/src_addr">
-         <obj_property name="ElementShortName">src_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">src_addr[12:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/seed_addr">
+         <obj_property name="ElementShortName">seed_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_addr[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/chacha20_inst/mem_rd_chacha20_en">
-         <obj_property name="ElementShortName">mem_rd_chacha20_en</obj_property>
-         <obj_property name="ObjectShortName">mem_rd_chacha20_en</obj_property>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/chacha20_inst/seed_read_bram_en">
+         <obj_property name="ElementShortName">seed_read_bram_en</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_en</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/mem_rd_chacha20_addr">
-         <obj_property name="ElementShortName">mem_rd_chacha20_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">mem_rd_chacha20_addr[12:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/seed_read_bram_addr">
+         <obj_property name="ElementShortName">seed_read_bram_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_addr[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/mem_rd_chacha20_data">
-         <obj_property name="ElementShortName">mem_rd_chacha20_data[255:0]</obj_property>
-         <obj_property name="ObjectShortName">mem_rd_chacha20_data[255:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/seed_read_bram_dout">
+         <obj_property name="ElementShortName">seed_read_bram_dout[255:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_dout[255:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/data_o">
          <obj_property name="ElementShortName">data_o[1023:0]</obj_property>
@@ -1352,10 +1348,6 @@
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/cnt">
          <obj_property name="ElementShortName">cnt[7:0]</obj_property>
          <obj_property name="ObjectShortName">cnt[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/src">
-         <obj_property name="ElementShortName">src[12:0]</obj_property>
-         <obj_property name="ObjectShortName">src[12:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/chacha20_inst/cc">
          <obj_property name="ElementShortName">cc[0:1][63:0]</obj_property>

@@ -19,7 +19,7 @@ import falconsoar_pkg::*;
 
   logic [MEM_ADDR_BITS - 1:0] isigma_addr;
   logic [MEM_ADDR_BITS - 1:0] mu_addr;
-  logic [MEM_ADDR_BITS - 1:0] random_addr;
+  logic [MEM_ADDR_BITS - 1:0] seed_addr;
 
   always #5 clk = ~clk;
 
@@ -35,7 +35,7 @@ import falconsoar_pkg::*;
                 .sampled2(sampled2),
                 .isigma_addr(isigma_addr),
                 .mu_addr(mu_addr),
-                .random_addr(random_addr),
+                .seed_addr(seed_addr),
                 .sampled_valid(sampled_valid)
               );
 
@@ -53,10 +53,9 @@ import falconsoar_pkg::*;
     #20;
     rst_n = 1;
 
-    mu_addr = 32'h00000000; // Source 0 address (mu)
-    isigma_addr = 32'h00000001; // Source 1 address (inverse sigma)
-    random_addr = 13'd130;
-
+    mu_addr = 13'd0;
+    isigma_addr = 13'd1;
+    seed_addr = 13'd130;
     #20;
 
     restart <= 1;
@@ -75,6 +74,24 @@ import falconsoar_pkg::*;
 
     while(sampled_valid !== 1)
       #10;
+
+    start <= 1;
+    #10;
+    start <= 0;
+
+    while(sampled_valid !== 1)
+      #10;
+
+    start <= 1;
+    #10;
+    start <= 0;
+
+    while(sampled_valid !== 1)
+      #10;
+
+    start <= 1;
+    #10;
+    start <= 0;
 
   end
 
@@ -97,6 +114,10 @@ import falconsoar_pkg::*;
     for (int i = 2; i < BANK_DEPTH; i++) begin
       mem[i] = i;
     end
+
+    // Seed is 384 bits (256 + top 128 of second part). We'll read read this via 2 ports in our 128 bit BRAM
+    mem[130] = 256'h0000000011111111_2222222233333333_4444444455555555_6666666677777777;
+    mem[131] = 256'h8888888899999999_aaaaaaaabbbbbbbb_ccccccccdddddddd_eeeeeeeeffffffff;
   end
 
   // Read logic
