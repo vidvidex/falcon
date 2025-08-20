@@ -15,14 +15,15 @@ import falconsoar_pkg::*;
   logic restart;
 
   logic start;
-  logic done;
+
+  logic [63:0] sampled1;
+  logic [63:0] sampled2;
+  logic sampled_valid;
 
   always #5 clk = ~clk;
 
-
   exec_operator_if task_itf();
   mem_inst_if mem_rd();
-  mem_inst_if mem_wr();
 
   Bi_samplerz #(.N(N))samplerz (
                 .clk(clk),
@@ -31,15 +32,15 @@ import falconsoar_pkg::*;
                 .restart(restart),
                 .task_itf(task_itf),
                 .mem_rd(mem_rd),
-                .mem_wr(mem_wr),
-                .done(done)
+                .sampled1(sampled1),
+                .sampled2(sampled2),
+                .sampled_valid(sampled_valid)
               );
 
   bram_model bram_inst (
                .clk(clk),
                .rst_n(rst_n),
-               .mem_rd(mem_rd.slave_rd),
-               .mem_wr(mem_wr.slave_wr)
+               .mem_rd(mem_rd.slave_rd)
              );
 
   initial begin
@@ -74,7 +75,7 @@ import falconsoar_pkg::*;
     start <= 0;
     task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
 
-    while(done !== 1)
+    while(sampled_valid !== 1)
       #10;
 
   end
@@ -86,8 +87,7 @@ import falconsoar_pkg::*;
  (
     input logic clk,
     input logic rst_n,
-    mem_inst_if.slave_rd mem_rd,
-    mem_inst_if.slave_wr mem_wr
+    mem_inst_if.slave_rd mem_rd
   );
 
   logic [255:0] mem [BANK_DEPTH];
@@ -99,12 +99,6 @@ import falconsoar_pkg::*;
     for (int i = 2; i < BANK_DEPTH; i++) begin
       mem[i] = i;
     end
-  end
-
-  // Write logic
-  always_ff @(posedge clk) begin
-    if (mem_wr.en)
-      mem[mem_wr.addr] <= mem_wr.data;
   end
 
   // Read logic
