@@ -1,10 +1,6 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
-`include "sample_pkg.sv"
-`include "falconsoar_pkg.sv"
-
-import sample_pkg::*;
-import falconsoar_pkg::*;
 module pre_samp
   #(
      parameter N = 512,
@@ -17,10 +13,10 @@ module pre_samp
      input valid,
      //Receive the values directly.
      output r_en,
-     output logic [ MEM_ADDR_BITS - 1:0]  r_addr,
+     output logic [`BRAM_ADDR_WIDTH - 1:0]  r_addr,
      input [127:0] r_data,
-     input [ MEM_ADDR_BITS - 1:0] mu_addr,
-     input [ MEM_ADDR_BITS - 1:0] isigma_addr,//The addr of 4 consecutive isigma are the same.
+     input [`BRAM_ADDR_WIDTH - 1:0] mu_addr,
+     input [`BRAM_ADDR_WIDTH - 1:0] isigma_addr,//The addr of 4 consecutive isigma are the same.
 
      output logic [62:0] ccs_63,
      output logic [71:0] r_l,
@@ -54,7 +50,7 @@ module pre_samp
       cnt <='d0;
     end
     else if (valid) begin
-      cnt <= (cnt < 'd6 + SAMPLERZ_READ_DELAY)? cnt + 'd1 : cnt;
+      cnt <= (cnt < 'd6 + `SAMPLERZ_READ_DELAY)? cnt + 'd1 : cnt;
     end
     else begin
       cnt <= 'd0;
@@ -73,9 +69,9 @@ module pre_samp
     endcase
   end
 
-  always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY))
+  always_ff @(posedge clk) if(cnt == (`SAMPLERZ_READ_DELAY))
       {fpr_mu_r,fpr_mu_l} <= r_data;
-  always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 1))
+  always_ff @(posedge clk) if(cnt == (`SAMPLERZ_READ_DELAY + 1))
       fpr_isigma <= r_data[63:0];
 
   //Done logics
@@ -83,7 +79,7 @@ module pre_samp
     if (!rst_n) begin
       done <= 'b0;
     end
-    else if (cnt == 'd4 + SAMPLERZ_READ_DELAY) begin
+    else if (cnt == 'd4 + `SAMPLERZ_READ_DELAY) begin
       done <= 'b1;
     end
     else begin
@@ -96,7 +92,7 @@ module pre_samp
     if (!rst_n) begin
       flt272int_valid <= 'd0;
     end
-    else if (valid && (cnt > 'd1 + SAMPLERZ_READ_DELAY && cnt < 'd4 + SAMPLERZ_READ_DELAY)) begin         // From the read done to 2 cycles later.
+    else if (valid && (cnt > 'd1 + `SAMPLERZ_READ_DELAY && cnt < 'd4 + `SAMPLERZ_READ_DELAY)) begin         // From the read done to 2 cycles later.
       flt272int_valid <= 'd1;
     end
     else begin
@@ -108,7 +104,7 @@ module pre_samp
   //Multiplier Strobe Logics
   always_comb begin
     case(cnt)
-      'd4+SAMPLERZ_READ_DELAY : begin
+      'd4+`SAMPLERZ_READ_DELAY : begin
         MUL_data_valid_l = 'd1;
         MUL_data_in_a_l = {9'b0,isigma};
         MUL_data_in_b_l = {9'b0,isigma};
@@ -132,7 +128,7 @@ module pre_samp
       sqr2_isigma <= 'd0;
       ccs_72 <= 'd0;
     end
-    else if (cnt == 'd4 + SAMPLERZ_READ_DELAY) begin
+    else if (cnt == 'd4 + `SAMPLERZ_READ_DELAY) begin
       sqr2_isigma <= {1'b0,MUL_data_out_l[71:1]};
       ccs_72 <= MUL_data_out_r[71:0];
     end

@@ -1,8 +1,7 @@
 `timescale 1ns / 1ps
-`include "falconsoar_pkg.sv"
+`include "common_definitions.vh"
 
 module refill_control
-import falconsoar_pkg::*;
   (
     input clk,
     input rst_n,

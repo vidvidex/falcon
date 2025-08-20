@@ -2,8 +2,6 @@
 
 module samplerz_tb;
 
-import falconsoar_pkg::*;
-
   parameter int N = 512;
 
   logic clk;
@@ -13,10 +11,10 @@ import falconsoar_pkg::*;
   logic start;
   logic done;
 
-  logic [MEM_ADDR_BITS - 1:0] isigma_addr;
-  logic [MEM_ADDR_BITS - 1:0] mu_addr;
-  logic [MEM_ADDR_BITS - 1:0] seed_addr;
-  logic [MEM_ADDR_BITS - 1:0] sample_addr;
+  logic [`BRAM_ADDR_WIDTH - 1:0] isigma_addr;
+  logic [`BRAM_ADDR_WIDTH - 1:0] mu_addr;
+  logic [`BRAM_ADDR_WIDTH - 1:0] seed_addr;
+  logic [`BRAM_ADDR_WIDTH - 1:0] sample_addr;
 
   always #5 clk = ~clk;
 

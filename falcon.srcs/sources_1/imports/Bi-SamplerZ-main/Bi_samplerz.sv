@@ -1,9 +1,7 @@
 `timescale 1ns / 1ps
-`include "falconsoar_pkg.sv"
 `include "common_definitions.vh"
 
 module Bi_samplerz
-import falconsoar_pkg::*;
   #(
      parameter N = 512
    )
@@ -13,10 +11,10 @@ import falconsoar_pkg::*;
      input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
      input logic restart,
 
-     input logic [MEM_ADDR_BITS - 1:0] isigma_addr,
-     input logic [MEM_ADDR_BITS - 1:0] mu_addr,
-     input logic [MEM_ADDR_BITS - 1:0] seed_addr,
-     input logic [MEM_ADDR_BITS - 1:0] sample_addr,
+     input logic [`BRAM_ADDR_WIDTH - 1:0] isigma_addr,
+     input logic [`BRAM_ADDR_WIDTH - 1:0] mu_addr,
+     input logic [`BRAM_ADDR_WIDTH - 1:0] seed_addr,
+     input logic [`BRAM_ADDR_WIDTH - 1:0] sample_addr,
 
      output logic bram_en,
 
@@ -311,10 +309,10 @@ import falconsoar_pkg::*;
   logic [63:0] smp_l;
   logic [63:0] smp_r;
   wire seed_read_bram_en; //
-  wire [MEM_ADDR_BITS - 1:0] seed_read_bram_addr;
-  logic [BANK_WIDTH - 1:0] seed_read_bram_dout;
+  wire [`BRAM_ADDR_WIDTH - 1:0] seed_read_bram_addr;
+  logic [255:0] seed_read_bram_dout;
   wire r_en_pre_samp;
-  wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
+  wire [`BRAM_ADDR_WIDTH - 1:0] r_addr_pre_samp;
   logic rdm_init;
 
   always_ff @(posedge clk) begin
@@ -333,6 +331,9 @@ import falconsoar_pkg::*;
       bram_addr_a = sample_addr;
       bram_din_a = {smp_l, smp_r};
       bram_we_a = final_adder_done;
+      bram_en = 0;
+      bram_addr_b = 0;
+      bram_we_b = 0;
     end
     else begin
       bram_en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
