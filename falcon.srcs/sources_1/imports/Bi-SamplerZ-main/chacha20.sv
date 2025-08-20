@@ -1,9 +1,7 @@
 `timescale 1ns / 1ps
-`include "falconsoar_pkg.sv"
-`include "sample_pkg.sv"
+`include "common_definitions.vh"
 
 module chacha20
-import falconsoar_pkg::*;
 (
     input clk,
     input rst_n,
@@ -12,10 +10,10 @@ import falconsoar_pkg::*;
     input sign_init,//this is a continued signal
     input fetch_en,
     output done,  //generate PRNG data done!
-    input [MEM_ADDR_BITS - 1:0] seed_addr,
+    input [`BRAM_ADDR_WIDTH - 1:0] seed_addr,
     output seed_read_bram_en,
-    output [MEM_ADDR_BITS - 1:0] seed_read_bram_addr, 
-    input [BANK_WIDTH - 1:0] seed_read_bram_dout,
+    output [`BRAM_ADDR_WIDTH - 1:0] seed_read_bram_addr, 
+    input [255:0] seed_read_bram_dout,
     output [1023:0] data_o                  //PRNG data (2*512bits) output
   );
 
@@ -61,26 +59,26 @@ import falconsoar_pkg::*;
   pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start), .pulse_out(seed_read_bram_en)); //extend one cycle pulse to two cycle pulse
   assign seed_read_bram_addr = seed_addr + cnt[1];
 
-  assign round_done = (cnt == 'd23 + SAMPLERZ_READ_DELAY) | (cnt == 'd43 + SAMPLERZ_READ_DELAY) | (cnt == 'd63 + SAMPLERZ_READ_DELAY) | (cnt == 'd83 + SAMPLERZ_READ_DELAY);
+  assign round_done = (cnt == 'd23 + `SAMPLERZ_READ_DELAY) | (cnt == 'd43 + `SAMPLERZ_READ_DELAY) | (cnt == 'd63 + `SAMPLERZ_READ_DELAY) | (cnt == 'd83 + `SAMPLERZ_READ_DELAY);
 
   //2 stages ti read whole 384 bits data
-  always_ff @(posedge clk) if(cnt == 'd1 + SAMPLERZ_READ_DELAY)
+  always_ff @(posedge clk) if(cnt == 'd1 + `SAMPLERZ_READ_DELAY)
     init_state[255:0] <= seed_read_bram_dout;
-  always_ff @(posedge clk) if(cnt == 'd2 + SAMPLERZ_READ_DELAY)
+  always_ff @(posedge clk) if(cnt == 'd2 + `SAMPLERZ_READ_DELAY)
     init_state[383:256] <= seed_read_bram_dout[383 - 256 : 0];
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // state permute
-  row_data_pack_t state_parallel[2];
-  row_data_pack_t result[2];
-  row_data_pack_t state_i[2];
-  row_data_pack_t state_o[2];
+  logic [15:0][31:0] state_parallel[2];
+  logic [15:0][31:0] result[2];
+  logic [15:0][31:0] state_i[2];
+  logic [15:0][31:0] state_o[2];
 
   for(genvar i=0; i<2; i++) begin:gen_bank
     assign cc_nxt[i] = cc[i] + 'd2;
 
     always @(posedge clk) begin
-      if (cnt == 'd2 + SAMPLERZ_READ_DELAY)
+      if (cnt == 'd2 + `SAMPLERZ_READ_DELAY)
         cc[i] <= seed_read_bram_dout[447 - 256:384 - 256] + i[0];
       else if(round_done)
         cc[i] <= cc_nxt[i];
@@ -102,10 +100,10 @@ import falconsoar_pkg::*;
     assign result[i][15] = state_parallel[i][15] + (init_state[32*11+:32] ^ cc[i][32*1+:32]);
 
     always_comb begin
-      if ((cnt <= 'd3 + SAMPLERZ_READ_DELAY) | (cnt >= 'd84 + SAMPLERZ_READ_DELAY)) begin
+      if ((cnt <= 'd3 + `SAMPLERZ_READ_DELAY) | (cnt >= 'd84 + `SAMPLERZ_READ_DELAY)) begin
         state_i[i] = {(init_state[32*10+:64] ^ cc[i]), init_state[0+:32*10],CW[3],CW[2],CW[1],CW[0]};
       end
-      else if ((cnt == 'd23 + SAMPLERZ_READ_DELAY) | (cnt == 'd43 + SAMPLERZ_READ_DELAY) | (cnt == 'd63 + SAMPLERZ_READ_DELAY) | (cnt == 'd83 + SAMPLERZ_READ_DELAY)) begin
+      else if ((cnt == 'd23 + `SAMPLERZ_READ_DELAY) | (cnt == 'd43 + `SAMPLERZ_READ_DELAY) | (cnt == 'd63 + `SAMPLERZ_READ_DELAY) | (cnt == 'd83 + `SAMPLERZ_READ_DELAY)) begin
         state_i[i] = {(init_state[32*10+:64] ^ cc_nxt[i]),init_state[0+:32*10],CW[3],CW[2],CW[1],CW[0]};
       end
       else begin
@@ -119,14 +117,14 @@ import falconsoar_pkg::*;
 
 
   for(genvar j=0; j<16; j++) begin : L1
-    assign buff_update[(256*j+32*0)+:32] = (cnt == 'd23 + SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*0)+:32];
-    assign buff_update[(256*j+32*1)+:32] = (cnt == 'd23 + SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*1)+:32];
-    assign buff_update[(256*j+32*2)+:32] = (cnt == 'd43 + SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*2)+:32];
-    assign buff_update[(256*j+32*3)+:32] = (cnt == 'd43 + SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*3)+:32];
-    assign buff_update[(256*j+32*4)+:32] = (cnt == 'd63 + SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*4)+:32];
-    assign buff_update[(256*j+32*5)+:32] = (cnt == 'd63 + SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*5)+:32];
-    assign buff_update[(256*j+32*6)+:32] = (cnt == 'd83 + SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*6)+:32];
-    assign buff_update[(256*j+32*7)+:32] = (cnt == 'd83 + SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*7)+:32];
+    assign buff_update[(256*j+32*0)+:32] = (cnt == 'd23 + `SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*0)+:32];
+    assign buff_update[(256*j+32*1)+:32] = (cnt == 'd23 + `SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*1)+:32];
+    assign buff_update[(256*j+32*2)+:32] = (cnt == 'd43 + `SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*2)+:32];
+    assign buff_update[(256*j+32*3)+:32] = (cnt == 'd43 + `SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*3)+:32];
+    assign buff_update[(256*j+32*4)+:32] = (cnt == 'd63 + `SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*4)+:32];
+    assign buff_update[(256*j+32*5)+:32] = (cnt == 'd63 + `SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*5)+:32];
+    assign buff_update[(256*j+32*6)+:32] = (cnt == 'd83 + `SAMPLERZ_READ_DELAY)? result[0][j] : buff[(256*j+32*6)+:32];
+    assign buff_update[(256*j+32*7)+:32] = (cnt == 'd83 + `SAMPLERZ_READ_DELAY)? result[1][j] : buff[(256*j+32*7)+:32];
   end
 
   always_ff @(posedge clk) if(round_done)
@@ -145,17 +143,15 @@ import falconsoar_pkg::*;
 
 endmodule
 
-import falconsoar_pkg::*;
-import sample_pkg::*;
 module chacha20_round_2stage (
     input clk,
-    input row_data_pack_t data_i,
-    output row_data_pack_t data_o
+    input logic [15:0][31:0] data_i,
+    output logic [15:0][31:0] data_o
   );
 
-  vect_t state_0[16];
+  logic [31:0] state_0[16];
 
-  vect_t state_0_r[16];
+  logic [31:0] state_0_r[16];
 
   qround i_qround_1 (
            data_i[0],
@@ -246,25 +242,23 @@ module chacha20_round_2stage (
 
 endmodule
 
-import falconsoar_pkg::*;
-import sample_pkg::*;
 module qround
 
   (
-    input vect_t a_i,
-    input vect_t b_i,
-    input vect_t c_i,
-    input vect_t d_i,
-    output vect_t a_o,
-    output vect_t b_o,
-    output vect_t c_o,
-    output vect_t d_o
+    input logic [31:0] a_i,
+    input logic [31:0] b_i,
+    input logic [31:0] c_i,
+    input logic [31:0] d_i,
+    output logic [31:0] a_o,
+    output logic [31:0] b_o,
+    output logic [31:0] c_o,
+    output logic [31:0] d_o
   );
 
-  vect_t a_0, a_2;
-  vect_t b_1, b_3, b_shift_1, b_shift_3;
-  vect_t c_1, c_3;
-  vect_t d_0, d_2, d_shift_0, d_shift_2;
+  logic [31:0] a_0, a_2;
+  logic [31:0] b_1, b_3, b_shift_1, b_shift_3;
+  logic [31:0] c_1, c_3;
+  logic [31:0] d_0, d_2, d_shift_0, d_shift_2;
 
   assign a_0 = a_i + b_i;
   assign d_0 = d_i ^ a_0;

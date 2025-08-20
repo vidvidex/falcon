@@ -5,7 +5,6 @@
    <db_ref_list>
       <db_ref path="samplerz_tb_behav.wdb" id="1">
          <top_modules>
-            <top_module name="falconsoar_pkg" />
             <top_module name="glbl" />
             <top_module name="samplerz_tb" />
          </top_modules>
