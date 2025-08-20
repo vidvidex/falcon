@@ -18,7 +18,7 @@ module pre_samp
      //Receive the values directly.
      output r_en,
      output logic [ MEM_ADDR_BITS - 1:0]  r_addr,
-     input [255:0]  r_data,
+     input [127:0] r_data,
      input [ MEM_ADDR_BITS - 1:0] mu_addr,
      input [ MEM_ADDR_BITS - 1:0] isigma_addr,//The addr of 4 consecutive isigma are the same.
 
@@ -48,7 +48,6 @@ module pre_samp
   logic [63:0] fpr_isigma;
   logic [63:0] fpr_mu_l;
   logic [63:0] fpr_mu_r;
-  logic [ 1:0] isigma_index;
   //cnt logics
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
@@ -74,17 +73,10 @@ module pre_samp
     endcase
   end
 
-  always_ff @(posedge clk, negedge rst_n) begin
-    if (!rst_n)
-      isigma_index <= 'd0;
-    else if (cnt == (SAMPLERZ_READ_DELAY + 1))
-      isigma_index <= isigma_index + 'd1;
-  end
-
   always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY))
-      {fpr_mu_r,fpr_mu_l} <= r_data[127:0];
+      {fpr_mu_r,fpr_mu_l} <= r_data;
   always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 1))
-      fpr_isigma <= r_data[64*isigma_index+:64];
+      fpr_isigma <= r_data[63:0];
 
   //Done logics
   always_ff @(posedge clk or negedge rst_n) begin
