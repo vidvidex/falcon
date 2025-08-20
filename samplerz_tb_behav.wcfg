@@ -12,9 +12,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="10,151.199 ns"></ZoomStartTime>
-      <ZoomEndTime time="10,389.761 ns"></ZoomEndTime>
-      <Cursor1Time time="10,356.465 ns"></Cursor1Time>
+      <ZoomStartTime time="801.199 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,039.761 ns"></ZoomEndTime>
+      <Cursor1Time time="877.745 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="211"></NameColumnWidth>
@@ -53,15 +53,30 @@
          <obj_property name="ElementShortName">restart</obj_property>
          <obj_property name="ObjectShortName">restart</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/done">
-         <obj_property name="ElementShortName">done</obj_property>
-         <obj_property name="ObjectShortName">done</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/sampled1">
+         <obj_property name="ElementShortName">sampled1[63:0]</obj_property>
+         <obj_property name="ObjectShortName">sampled1[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/sampled2">
+         <obj_property name="ElementShortName">sampled2[63:0]</obj_property>
+         <obj_property name="ObjectShortName">sampled2[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/sampled_valid">
+         <obj_property name="ElementShortName">sampled_valid</obj_property>
+         <obj_property name="ObjectShortName">sampled_valid</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group5205">
       <obj_property name="label">samplerz</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -78,9 +93,25 @@
          <obj_property name="ElementShortName">restart</obj_property>
          <obj_property name="ObjectShortName">restart</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/done">
-         <obj_property name="ElementShortName">done</obj_property>
-         <obj_property name="ObjectShortName">done</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sampled1">
+         <obj_property name="ElementShortName">sampled1[63:0]</obj_property>
+         <obj_property name="ObjectShortName">sampled1[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sampled2">
+         <obj_property name="ElementShortName">sampled2[63:0]</obj_property>
+         <obj_property name="ObjectShortName">sampled2[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/sampled_valid">
+         <obj_property name="ElementShortName">sampled_valid</obj_property>
+         <obj_property name="ObjectShortName">sampled_valid</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_samp_valid">
          <obj_property name="ElementShortName">pre_samp_valid</obj_property>
@@ -651,19 +682,6 @@
    <wvobject type="group" fp_name="group5348">
       <obj_property name="label">mem_wr</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/samplerz_tb/mem_wr/en">
-         <obj_property name="ElementShortName">en</obj_property>
-         <obj_property name="ObjectShortName">en</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/mem_wr/addr">
-         <obj_property name="ElementShortName">addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">addr[12:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/mem_wr/data">
-         <obj_property name="ElementShortName">data[255:0]</obj_property>
-         <obj_property name="ObjectShortName">data[255:0]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group5349">
       <obj_property name="label">bram_inst</obj_property>

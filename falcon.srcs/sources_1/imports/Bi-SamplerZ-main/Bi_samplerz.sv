@@ -15,9 +15,10 @@ import falconsoar_pkg::*;
     exec_operator_if.slave task_itf,
     //read
     mem_inst_if.master_rd  mem_rd,
-    //write
-    mem_inst_if.master_wr  mem_wr,
-    output logic done
+
+    output logic [63:0] sampled1,
+    output logic [63:0] sampled2,
+    output logic sampled_valid
   );
 
   //Control signals
@@ -308,7 +309,6 @@ import falconsoar_pkg::*;
   wire[MEM_ADDR_BITS - 1:0] dst_addr = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr
   wire[MEM_ADDR_BITS - 1:0] src1_addr = task_itf.input_task[TASK_REDUCE_BW - 1*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 2*MEM_ADDR_BITS];  // This is for sigma
   wire[MEM_ADDR_BITS - 1:0] src0_addr = task_itf.input_task[TASK_REDUCE_BW - 0*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 1*MEM_ADDR_BITS];  // This is for mu and random
-  assign done = final_adder_done;
 
   wire[MEM_ADDR_BITS - 1:0] isigma_addr = src1_addr;
   wire[MEM_ADDR_BITS - 1:0] mu_addr = src0_addr;
@@ -327,9 +327,9 @@ import falconsoar_pkg::*;
   assign mem_rd.addr = (rdm_init || ~reset)  ?  mem_rd_chacha20_addr:r_addr_pre_samp;
   assign mem_rd_chacha20_data = mem_rd.data;
 
-  assign mem_wr.en = final_adder_done;
-  assign mem_wr.addr = dst_addr;
-  assign mem_wr.data = {128'h0,smp_l,smp_r};
+  assign sampled1 = smp_l;
+  assign sampled2 = smp_r;
+  assign sampled_valid = final_adder_done;
   // FSM
   typedef enum logic [7:0] {
             INIT = 'b00000001, // To generate two z0 and activate the chacha20 to fill the rdm buffer when reset.
