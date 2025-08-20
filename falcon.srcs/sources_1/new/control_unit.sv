@@ -200,7 +200,7 @@ module control_unit#(
   logic [$clog2(N):0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
   logic pipelined_inst_done; // Last/done signal for pipelined operations
   logic pipelined_inst_valid;
-  logic [$clog2(N)-1:0] element_count;
+  logic [$clog2(N):0] element_count;
 
   logic htp_start, htp_start_i;
   logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
@@ -464,7 +464,7 @@ module control_unit#(
       btf_tw_addr = fft_btf_tw_addr;
 
       fft_btf_a_out_real = btf_a_out_real;
-      fft_btf_a_out_imag =  btf_a_out_imag;
+      fft_btf_a_out_imag = btf_a_out_imag;
       fft_btf_b_out_real = btf_b_out_real;
       fft_btf_b_out_imag = btf_b_out_imag;
       fft_btf_valid_out = btf_valid_out;
@@ -497,7 +497,7 @@ module control_unit#(
       split_btf_valid_out = btf_valid_out;
 
       fft_btf_a_out_real = 0;
-      fft_btf_a_out_imag =  0;
+      fft_btf_a_out_imag = 0;
       fft_btf_b_out_real = 0;
       fft_btf_b_out_imag = 0;
       fft_btf_valid_out = 0;
@@ -524,7 +524,7 @@ module control_unit#(
       merge_btf_valid_out = btf_valid_out;
 
       fft_btf_a_out_real = 0;
-      fft_btf_a_out_imag =  0;
+      fft_btf_a_out_imag = 0;
       fft_btf_b_out_real = 0;
       fft_btf_b_out_imag = 0;
       fft_btf_valid_out = 0;
@@ -752,6 +752,43 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(15)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
 
+  logic [`BRAM_DATA_WIDTH-1:0] compress_t0;
+  logic [`BRAM_DATA_WIDTH-1:0] compress_t1;
+  logic [`BRAM_DATA_WIDTH-1:0] compress_hm;
+  logic compress_lower_half, compress_lower_half_delayed;
+  logic compress_valid, compress_valid_delayed;
+  logic compress_last, compress_last_delayed;
+  logic compress_done, compress_done_delayed;
+  logic [`BRAM_ADDR_WIDTH-1:0] compress_bram_addr;
+  logic [`BRAM_DATA_WIDTH-1:0] compress_bram_data;
+  logic compress_bram_we;
+  logic compress_accept;
+  logic compress_reject;
+  compress #(
+             .N(N)
+           )compress(
+             .clk(clk),
+             .rst_n(rst_n),
+
+             .t0(compress_t0),
+             .t1(compress_t1),
+             .hm(compress_hm),
+             .lower_half(compress_lower_half),
+             .valid(compress_valid_delayed),
+             .last(compress_last_delayed),
+
+             .output_addr(compress_bram_addr),
+             .output_data(compress_bram_data),
+             .output_we(compress_bram_we),
+
+             .accept(compress_accept),
+             .reject(compress_reject)
+           );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) compress_last_delay(.clk(clk), .in(compress_last), .out(compress_last_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_done_delay(.clk(clk), .in(compress_done), .out(compress_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_valid_delay(.clk(clk), .in(compress_valid), .out(compress_valid_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_lower_half_delay(.clk(clk), .in(compress_lower_half), .out(compress_lower_half_delayed));
+
   assign element_count = (1 << instruction[49:46]);
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
   assign pipelined_inst_done = pipelined_inst_index > element_count-1 ? 1'b1 : 1'b0;
@@ -908,7 +945,10 @@ module control_unit#(
       end
 
       if(instruction[127-14] == 1'b1) begin // COMPRESS
-
+        if(compress_done_delayed)
+          modules_running[INSTRUCTION_COUNT-14] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-14] <= 1'b1;
       end
 
       if(instruction[127-15] == 1'b1) begin // ADD_SUB
@@ -1217,7 +1257,21 @@ module control_unit#(
       end
 
       if(instruction[127-14] == 1'b1) begin // COMPRESS
+        bram_addr_a[bank1] = addr1 + (pipelined_inst_index % (N/2));
+        bram_addr_a[bank2] = addr1 + (pipelined_inst_index % (N/2));
+        bram_addr_a[bank3] = addr2 + (pipelined_inst_index % (N/2));
 
+        compress_t0 = bram_dout_a[bank1];
+        compress_t1 = bram_dout_a[bank2];
+        compress_hm = bram_dout_a[bank3];
+        compress_valid = pipelined_inst_valid;
+        compress_done = pipelined_inst_done;
+        compress_last = pipelined_inst_done;
+        compress_lower_half = pipelined_inst_index >= (N/2) ? 1'b1 : 1'b0;
+
+        bram_addr_b[bank4] = addr1 + compress_bram_addr;
+        bram_we_b[bank4] = compress_bram_we;
+        bram_din_b[bank4] = compress_bram_data;
       end
 
       if(instruction[127-15] == 1'b1) begin // ADD_SUB
