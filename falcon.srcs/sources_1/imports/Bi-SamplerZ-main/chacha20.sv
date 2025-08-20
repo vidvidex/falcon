@@ -4,7 +4,7 @@
 
 module chacha20
 import falconsoar_pkg::*;
-  (
+(
     input clk,
     input rst_n,
     input start,  //start signal in init state
@@ -12,17 +12,14 @@ import falconsoar_pkg::*;
     input sign_init,//this is a continued signal
     input fetch_en,
     output done,  //generate PRNG data done!
-    input [MEM_ADDR_BITS - 1:0] src_addr,  //the addr to fetch the PRNG seed
-    output mem_rd_chacha20_en,  //
-    output [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr,  //
-    input [BANK_WIDTH - 1:0] mem_rd_chacha20_data,  //
+    input [MEM_ADDR_BITS - 1:0] seed_addr,
+    output seed_read_bram_en,
+    output [MEM_ADDR_BITS - 1:0] seed_read_bram_addr, 
+    input [BANK_WIDTH - 1:0] seed_read_bram_dout,
     output [1023:0] data_o                  //PRNG data (2*512bits) output
   );
 
-  localparam int unsigned CW[4] = '{32'h61707865,
-                                     32'h3320646e,
-                                     32'h79622d32,
-                                     32'h6b206574};
+  localparam int unsigned CW[4] = '{32'h61707865, 32'h3320646e, 32'h79622d32, 32'h6b206574};
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,12 +27,6 @@ import falconsoar_pkg::*;
   logic [4095:0] buff, buff_update;
   logic [4:0] buff_idx;//How many 128 bits data has been fetched(We have 32 blocks in total).
   logic [7:0] cnt;
-
-  ////////////////////////////////////////////////////////////////////////////////////////
-
-
-  mem_addr_t src;
-  assign src = src_addr;
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // control signal
@@ -67,17 +58,16 @@ import falconsoar_pkg::*;
   logic round_done;
   logic [383:0] init_state;  //32 * 12
 
-  pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start), .pulse_out(mem_rd_chacha20_en)); //extend one cycle pulse to two cycle pulse
-  assign mem_rd_chacha20_addr = src + cnt[1];
+  pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start), .pulse_out(seed_read_bram_en)); //extend one cycle pulse to two cycle pulse
+  assign seed_read_bram_addr = seed_addr + cnt[1];
 
   assign round_done = (cnt == 'd23 + SAMPLERZ_READ_DELAY) | (cnt == 'd43 + SAMPLERZ_READ_DELAY) | (cnt == 'd63 + SAMPLERZ_READ_DELAY) | (cnt == 'd83 + SAMPLERZ_READ_DELAY);
 
   //2 stages ti read whole 384 bits data
   always_ff @(posedge clk) if(cnt == 'd1 + SAMPLERZ_READ_DELAY)
-      init_state[255:0] <= mem_rd_chacha20_data;
+    init_state[255:0] <= seed_read_bram_dout;
   always_ff @(posedge clk) if(cnt == 'd2 + SAMPLERZ_READ_DELAY)
-      init_state[383:256] <= mem_rd_chacha20_data[383 - 256 : 0];
-
+    init_state[383:256] <= seed_read_bram_dout[383 - 256 : 0];
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // state permute
@@ -90,8 +80,8 @@ import falconsoar_pkg::*;
     assign cc_nxt[i] = cc[i] + 'd2;
 
     always @(posedge clk) begin
-      if     (cnt == 'd2 + SAMPLERZ_READ_DELAY)
-        cc[i] <= mem_rd_chacha20_data[447 - 256:384 - 256] + i[0];
+      if (cnt == 'd2 + SAMPLERZ_READ_DELAY)
+        cc[i] <= seed_read_bram_dout[447 - 256:384 - 256] + i[0];
       else if(round_done)
         cc[i] <= cc_nxt[i];
     end

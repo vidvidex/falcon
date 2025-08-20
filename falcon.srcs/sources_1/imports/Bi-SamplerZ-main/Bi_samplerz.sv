@@ -13,7 +13,7 @@ import falconsoar_pkg::*;
     input logic restart,
     input logic [MEM_ADDR_BITS - 1:0] isigma_addr,
     input logic [MEM_ADDR_BITS - 1:0] mu_addr,
-    input logic [MEM_ADDR_BITS - 1:0] random_addr,
+    input logic [MEM_ADDR_BITS - 1:0] seed_addr,
     //read
     mem_inst_if.master_rd  mem_rd,
 
@@ -300,9 +300,9 @@ import falconsoar_pkg::*;
   //R/W logic
   logic [63:0] smp_l;
   logic [63:0] smp_r;
-  wire mem_rd_chacha20_en; //
-  wire [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr; //
-  wire [BANK_WIDTH - 1:0] mem_rd_chacha20_data;
+  wire seed_read_bram_en; //
+  wire [MEM_ADDR_BITS - 1:0] seed_read_bram_addr;
+  wire [BANK_WIDTH - 1:0] seed_read_bram_dout;
   wire r_en_pre_samp;
   wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
   logic rdm_init;
@@ -316,9 +316,9 @@ import falconsoar_pkg::*;
       rdm_init <= 'd0;
   end
 
-  assign mem_rd.en = (rdm_init || ~reset) ? mem_rd_chacha20_en : r_en_pre_samp;
-  assign mem_rd.addr = (rdm_init || ~reset) ? mem_rd_chacha20_addr : r_addr_pre_samp;
-  assign mem_rd_chacha20_data = mem_rd.data;
+  assign mem_rd.en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
+  assign mem_rd.addr = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
+  assign seed_read_bram_dout = mem_rd.data;
 
   assign sampled1 = smp_l;
   assign sampled2 = smp_r;
@@ -819,12 +819,11 @@ import falconsoar_pkg::*;
              .sign_init(state == INIT),  // Sample initialization flag
              .fetch_en(fetch_en),  // Fetch enable
              .done(chacha20_done),  // Done signal output
-             .src_addr(random_addr),  // Source address for PRNG seed
-             .mem_rd_chacha20_en(mem_rd_chacha20_en),  // Read enable to memory
-             .mem_rd_chacha20_addr(mem_rd_chacha20_addr),  // Read address for memory
-             .mem_rd_chacha20_data(mem_rd_chacha20_data),  // Read data from memory
+             .seed_addr(seed_addr),
+             .seed_read_bram_en(seed_read_bram_en),  // Read enable to memory
+             .seed_read_bram_addr(seed_read_bram_addr),  // Read address for memory
+             .seed_read_bram_dout(seed_read_bram_dout),  // Read data from memory
              .data_o(prng_data)   // Output 512 bits random data
            );
-
 
 endmodule
