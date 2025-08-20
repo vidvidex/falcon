@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
 `include "falconsoar_pkg.sv"
+`include "common_definitions.vh"
 
 module Bi_samplerz
 import falconsoar_pkg::*;
@@ -14,7 +15,19 @@ import falconsoar_pkg::*;
     input logic [MEM_ADDR_BITS - 1:0] isigma_addr,
     input logic [MEM_ADDR_BITS - 1:0] mu_addr,
     input logic [MEM_ADDR_BITS - 1:0] seed_addr,
-    //read
+
+    output logic bram_en,
+
+    output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_a,
+    input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_a,
+    output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_a,
+    output logic bram_we_a,
+
+    output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_b,
+    input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_b,
+    output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_b,
+    output logic bram_we_b,
+
     mem_inst_if.master_rd  mem_rd,
 
     output logic [63:0] sampled1,
@@ -303,6 +316,7 @@ import falconsoar_pkg::*;
   wire seed_read_bram_en; //
   wire [MEM_ADDR_BITS - 1:0] seed_read_bram_addr;
   wire [BANK_WIDTH - 1:0] seed_read_bram_dout;
+  wire [BANK_WIDTH - 1:0] seed_read_bram_dout2;
   wire r_en_pre_samp;
   wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
   logic rdm_init;
@@ -318,7 +332,21 @@ import falconsoar_pkg::*;
 
   assign mem_rd.en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
   assign mem_rd.addr = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
-  assign seed_read_bram_dout = mem_rd.data;
+  assign seed_read_bram_dout2 = mem_rd.data;
+
+  assign bram_en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
+  assign bram_addr_a = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
+  assign bram_addr_b = (rdm_init || ~reset) ? seed_read_bram_addr + 2 : r_addr_pre_samp;
+  assign bram_we_a = 0;
+  assign bram_we_b = 0;
+  assign seed_read_bram_dout = {bram_dout_a, bram_dout_b};
+
+
+  // TODO address where to write each of the sampled values (are they even at the same address?)
+  // assign bram_din_a = smp_l;
+  // assign bram_din_b = smp_r;
+  // assign bram_we_a = final_adder_done;
+  // assign bram_we_b = final_adder_done;
 
   assign sampled1 = smp_l;
   assign sampled2 = smp_r;
@@ -620,6 +648,7 @@ import falconsoar_pkg::*;
              .r_en(r_en_pre_samp), //o
              .r_addr(r_addr_pre_samp), //o[  9:0]
              .r_data(mem_rd.data), //i[511:0]
+            //  .r_data({bram_dout_a, bram_dout_b}), //i[511:0]
              .mu_addr(mu_addr), //i[  9:0]
              .isigma_addr(isigma_addr),
              .ccs_63(ccs_63),

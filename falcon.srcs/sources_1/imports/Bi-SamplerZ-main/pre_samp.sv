@@ -84,7 +84,7 @@ module pre_samp
   always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY))
       {fpr_mu_r,fpr_mu_l} <= r_data[127:0];
   always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 1))
-      fpr_isigma          <= r_data[64*isigma_index+:64];
+      fpr_isigma <= r_data[64*isigma_index+:64];
 
   //Done logics
   always_ff @(posedge clk or negedge rst_n) begin
@@ -116,7 +116,7 @@ module pre_samp
   //Multiplier Strobe Logics
   always_comb begin
     case(cnt)
-      'd4+SAMPLERZ_READ_DELAY      : begin
+      'd4+SAMPLERZ_READ_DELAY : begin
         MUL_data_valid_l = 'd1;
         MUL_data_in_a_l = {9'b0,isigma};
         MUL_data_in_b_l = {9'b0,isigma};
