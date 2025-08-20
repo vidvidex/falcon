@@ -11,8 +11,9 @@ import falconsoar_pkg::*;
     input reset,//Initial signal
     input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
     input logic restart,
-    //Task
-    exec_operator_if.slave task_itf,
+    input logic [MEM_ADDR_BITS - 1:0] isigma_addr,
+    input logic [MEM_ADDR_BITS - 1:0] mu_addr,
+    input logic [MEM_ADDR_BITS - 1:0] random_addr,
     //read
     mem_inst_if.master_rd  mem_rd,
 
@@ -300,19 +301,11 @@ import falconsoar_pkg::*;
   logic [63:0] smp_l;
   logic [63:0] smp_r;
   wire mem_rd_chacha20_en; //
-  wire[MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr; //
-  wire[   BANK_WIDTH - 1:0] mem_rd_chacha20_data;
+  wire [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr; //
+  wire [BANK_WIDTH - 1:0] mem_rd_chacha20_data;
   wire r_en_pre_samp;
-  wire[MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
+  wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
   logic rdm_init;
-  //task decoding
-  wire[MEM_ADDR_BITS - 1:0] dst_addr = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr
-  wire[MEM_ADDR_BITS - 1:0] src1_addr = task_itf.input_task[TASK_REDUCE_BW - 1*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 2*MEM_ADDR_BITS];  // This is for sigma
-  wire[MEM_ADDR_BITS - 1:0] src0_addr = task_itf.input_task[TASK_REDUCE_BW - 0*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 1*MEM_ADDR_BITS];  // This is for mu and random
-
-  wire[MEM_ADDR_BITS - 1:0] isigma_addr = src1_addr;
-  wire[MEM_ADDR_BITS - 1:0] mu_addr = src0_addr;
-  wire[MEM_ADDR_BITS - 1:0] random_addr = 13'd130;
 
   always_ff @(posedge clk) begin
     if(~reset)
@@ -323,8 +316,8 @@ import falconsoar_pkg::*;
       rdm_init <= 'd0;
   end
 
-  assign mem_rd.en = (rdm_init || ~reset)  ?  mem_rd_chacha20_en  :r_en_pre_samp;
-  assign mem_rd.addr = (rdm_init || ~reset)  ?  mem_rd_chacha20_addr:r_addr_pre_samp;
+  assign mem_rd.en = (rdm_init || ~reset) ? mem_rd_chacha20_en : r_en_pre_samp;
+  assign mem_rd.addr = (rdm_init || ~reset) ? mem_rd_chacha20_addr : r_addr_pre_samp;
   assign mem_rd_chacha20_data = mem_rd.data;
 
   assign sampled1 = smp_l;
