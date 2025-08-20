@@ -9,9 +9,6 @@ import falconsoar_pkg::*;
   logic clk;
   logic rst_n;
 
-  mem_addr_t src0;
-  mem_addr_t src1;
-  mem_addr_t dst;
   logic restart;
 
   logic start;
@@ -20,9 +17,12 @@ import falconsoar_pkg::*;
   logic [63:0] sampled2;
   logic sampled_valid;
 
+  logic [MEM_ADDR_BITS - 1:0] isigma_addr;
+  logic [MEM_ADDR_BITS - 1:0] mu_addr;
+  logic [MEM_ADDR_BITS - 1:0] random_addr;
+
   always #5 clk = ~clk;
 
-  exec_operator_if task_itf();
   mem_inst_if mem_rd();
 
   Bi_samplerz #(.N(N))samplerz (
@@ -30,10 +30,12 @@ import falconsoar_pkg::*;
                 .reset(rst_n),
                 .start(start),
                 .restart(restart),
-                .task_itf(task_itf),
                 .mem_rd(mem_rd),
                 .sampled1(sampled1),
                 .sampled2(sampled2),
+                .isigma_addr(isigma_addr),
+                .mu_addr(mu_addr),
+                .random_addr(random_addr),
                 .sampled_valid(sampled_valid)
               );
 
@@ -51,29 +53,25 @@ import falconsoar_pkg::*;
     #20;
     rst_n = 1;
 
-    src0 = 32'h00000000; // Source 0 address (mu)
-    src1 = 32'h00000001; // Source 1 address (inverse sigma)
-    dst = 32'h00000002; // Destination address
+    mu_addr = 32'h00000000; // Source 0 address (mu)
+    isigma_addr = 32'h00000001; // Source 1 address (inverse sigma)
+    random_addr = 13'd130;
 
     #20;
 
     restart <= 1;
     start <= 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
     #10;
     restart <= 0;
     start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
 
     #1000;
 
     start <= 1;
     restart <= 1;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
     #10;
     restart <= 0;
     start <= 0;
-    task_itf.master.input_task <= {src0, src1, dst, 13'b0, 1'b0, 4'b0, 11'b0};
 
     while(sampled_valid !== 1)
       #10;

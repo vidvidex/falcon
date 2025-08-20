@@ -91,22 +91,6 @@
 
     endpackage
 
-    interface exec_operator_if;
-    
-        import falconsoar_pkg::*;
-        task_reduce_t input_task;
-
-        modport master
-        (
-            output input_task
-        );
-        modport slave
-        (
-            input  input_task
-        );
-
-    endinterface
-
     interface mem_inst_if;
     
         import falconsoar_pkg::*;
