@@ -12,12 +12,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="420.554 ns"></ZoomEndTime>
-      <Cursor1Time time="308.337 ns"></Cursor1Time>
+      <ZoomStartTime time="1,013.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,213.401 ns"></ZoomEndTime>
+      <Cursor1Time time="1,120.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="203"></NameColumnWidth>
+      <NameColumnWidth column_width="195"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="14" />
@@ -76,10 +76,130 @@
          <obj_property name="ObjectShortName">seed_addr[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/bram_toggle">
+         <obj_property name="ElementShortName">bram_toggle</obj_property>
+         <obj_property name="ObjectShortName">bram_toggle</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group2168">
+         <obj_property name="label">BRAM</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_addr_a">
+            <obj_property name="ElementShortName">bram_addr_a[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_addr_a[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_din_a">
+            <obj_property name="ElementShortName">bram_din_a[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_din_a[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_dout_a">
+            <obj_property name="ElementShortName">bram_dout_a[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_dout_a[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/samplerz_tb/bram_we_a">
+            <obj_property name="ElementShortName">bram_we_a</obj_property>
+            <obj_property name="ObjectShortName">bram_we_a</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_addr_b">
+            <obj_property name="ElementShortName">bram_addr_b[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_addr_b[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_din_b">
+            <obj_property name="ElementShortName">bram_din_b[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_din_b[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_dout_b">
+            <obj_property name="ElementShortName">bram_dout_b[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_dout_b[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/samplerz_tb/bram_we_b">
+            <obj_property name="ElementShortName">bram_we_b</obj_property>
+            <obj_property name="ObjectShortName">bram_we_b</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group2169">
+         <obj_property name="label">BRAM - samplerz</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_addr_a_samp">
+            <obj_property name="ElementShortName">bram_addr_a_samp[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_addr_a_samp[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_din_a_samp">
+            <obj_property name="ElementShortName">bram_din_a_samp[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_din_a_samp[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_dout_a_samp">
+            <obj_property name="ElementShortName">bram_dout_a_samp[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_dout_a_samp[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/samplerz_tb/bram_we_a_samp">
+            <obj_property name="ElementShortName">bram_we_a_samp</obj_property>
+            <obj_property name="ObjectShortName">bram_we_a_samp</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_addr_b_samp">
+            <obj_property name="ElementShortName">bram_addr_b_samp[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_addr_b_samp[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_din_b_samp">
+            <obj_property name="ElementShortName">bram_din_b_samp[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_din_b_samp[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_dout_b_samp">
+            <obj_property name="ElementShortName">bram_dout_b_samp[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_dout_b_samp[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/samplerz_tb/bram_we_b_samp">
+            <obj_property name="ElementShortName">bram_we_b_samp</obj_property>
+            <obj_property name="ObjectShortName">bram_we_b_samp</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="group" fp_name="group2167">
+         <obj_property name="label">BRAM - tb</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_addr_a_tb">
+            <obj_property name="ElementShortName">bram_addr_a_tb[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_addr_a_tb[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_din_a_tb">
+            <obj_property name="ElementShortName">bram_din_a_tb[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_din_a_tb[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_dout_a_tb">
+            <obj_property name="ElementShortName">bram_dout_a_tb[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_dout_a_tb[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/samplerz_tb/bram_we_a_tb">
+            <obj_property name="ElementShortName">bram_we_a_tb</obj_property>
+            <obj_property name="ObjectShortName">bram_we_a_tb</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_addr_b_tb">
+            <obj_property name="ElementShortName">bram_addr_b_tb[12:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_addr_b_tb[12:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_din_b_tb">
+            <obj_property name="ElementShortName">bram_din_b_tb[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_din_b_tb[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/samplerz_tb/bram_dout_b_tb">
+            <obj_property name="ElementShortName">bram_dout_b_tb[127:0]</obj_property>
+            <obj_property name="ObjectShortName">bram_dout_b_tb[127:0]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/samplerz_tb/bram_we_b_tb">
+            <obj_property name="ElementShortName">bram_we_b_tb</obj_property>
+            <obj_property name="ObjectShortName">bram_we_b_tb</obj_property>
+         </wvobject>
+      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group5205">
       <obj_property name="label">samplerz</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -126,433 +246,43 @@
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/sampled_valid">
-         <obj_property name="ElementShortName">sampled_valid</obj_property>
-         <obj_property name="ObjectShortName">sampled_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_samp_valid">
-         <obj_property name="ElementShortName">pre_samp_valid</obj_property>
-         <obj_property name="ObjectShortName">pre_samp_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_samp_done">
-         <obj_property name="ElementShortName">pre_samp_done</obj_property>
-         <obj_property name="ObjectShortName">pre_samp_done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/basesampler_valid">
-         <obj_property name="ElementShortName">basesampler_valid</obj_property>
-         <obj_property name="ObjectShortName">basesampler_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/basesampler_done">
-         <obj_property name="ElementShortName">basesampler_done</obj_property>
-         <obj_property name="ObjectShortName">basesampler_done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bef_loop_valid_l">
-         <obj_property name="ElementShortName">bef_loop_valid_l</obj_property>
-         <obj_property name="ObjectShortName">bef_loop_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bef_loop_done_l">
-         <obj_property name="ElementShortName">bef_loop_done_l</obj_property>
-         <obj_property name="ObjectShortName">bef_loop_done_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bef_loop_valid_r">
-         <obj_property name="ElementShortName">bef_loop_valid_r</obj_property>
-         <obj_property name="ObjectShortName">bef_loop_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bef_loop_done_r">
-         <obj_property name="ElementShortName">bef_loop_done_r</obj_property>
-         <obj_property name="ObjectShortName">bef_loop_done_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/for_loop_valid_l">
-         <obj_property name="ElementShortName">for_loop_valid_l</obj_property>
-         <obj_property name="ObjectShortName">for_loop_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/for_loop_done_l">
-         <obj_property name="ElementShortName">for_loop_done_l</obj_property>
-         <obj_property name="ObjectShortName">for_loop_done_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/for_loop_valid_r">
-         <obj_property name="ElementShortName">for_loop_valid_r</obj_property>
-         <obj_property name="ObjectShortName">for_loop_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/for_loop_done_r">
-         <obj_property name="ElementShortName">for_loop_done_r</obj_property>
-         <obj_property name="ObjectShortName">for_loop_done_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_valid_l">
-         <obj_property name="ElementShortName">cmp_valid_l</obj_property>
-         <obj_property name="ObjectShortName">cmp_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_done_l">
-         <obj_property name="ElementShortName">cmp_done_l</obj_property>
-         <obj_property name="ObjectShortName">cmp_done_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_valid_r">
-         <obj_property name="ElementShortName">cmp_valid_r</obj_property>
-         <obj_property name="ObjectShortName">cmp_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_done_r">
-         <obj_property name="ElementShortName">cmp_done_r</obj_property>
-         <obj_property name="ObjectShortName">cmp_done_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/final_adder_valid">
-         <obj_property name="ElementShortName">final_adder_valid</obj_property>
-         <obj_property name="ObjectShortName">final_adder_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/final_adder_done">
-         <obj_property name="ElementShortName">final_adder_done</obj_property>
-         <obj_property name="ObjectShortName">final_adder_done</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/assist_l">
-         <obj_property name="ElementShortName">assist_l</obj_property>
-         <obj_property name="ObjectShortName">assist_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/assist_r">
-         <obj_property name="ElementShortName">assist_r</obj_property>
-         <obj_property name="ObjectShortName">assist_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/status_l">
-         <obj_property name="ElementShortName">status_l</obj_property>
-         <obj_property name="ObjectShortName">status_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/status_r">
-         <obj_property name="ElementShortName">status_r</obj_property>
-         <obj_property name="ObjectShortName">status_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/ccs_63">
-         <obj_property name="ElementShortName">ccs_63[62:0]</obj_property>
-         <obj_property name="ObjectShortName">ccs_63[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/r_l">
-         <obj_property name="ElementShortName">r_l[71:0]</obj_property>
-         <obj_property name="ObjectShortName">r_l[71:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/r_r">
-         <obj_property name="ElementShortName">r_r[71:0]</obj_property>
-         <obj_property name="ObjectShortName">r_r[71:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sqr2_isigma">
-         <obj_property name="ElementShortName">sqr2_isigma[71:0]</obj_property>
-         <obj_property name="ObjectShortName">sqr2_isigma[71:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/int_mu_l">
-         <obj_property name="ElementShortName">int_mu_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">int_mu_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/int_mu_r">
-         <obj_property name="ElementShortName">int_mu_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">int_mu_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z0_l">
-         <obj_property name="ElementShortName">z0_l[4:0]</obj_property>
-         <obj_property name="ObjectShortName">z0_l[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z0_l_reg">
-         <obj_property name="ElementShortName">z0_l_reg[4:0]</obj_property>
-         <obj_property name="ObjectShortName">z0_l_reg[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z_63_l_reg">
-         <obj_property name="ElementShortName">z_63_l_reg[62:0]</obj_property>
-         <obj_property name="ObjectShortName">z_63_l_reg[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/s_6_l_reg">
-         <obj_property name="ElementShortName">s_6_l_reg[5:0]</obj_property>
-         <obj_property name="ObjectShortName">s_6_l_reg[5:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z0_r">
-         <obj_property name="ElementShortName">z0_r[4:0]</obj_property>
-         <obj_property name="ObjectShortName">z0_r[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z0_r_reg">
-         <obj_property name="ElementShortName">z0_r_reg[4:0]</obj_property>
-         <obj_property name="ObjectShortName">z0_r_reg[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z_63_r_reg">
-         <obj_property name="ElementShortName">z_63_r_reg[62:0]</obj_property>
-         <obj_property name="ObjectShortName">z_63_r_reg[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/s_6_r_reg">
-         <obj_property name="ElementShortName">s_6_r_reg[5:0]</obj_property>
-         <obj_property name="ObjectShortName">s_6_r_reg[5:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/y_63_l">
-         <obj_property name="ElementShortName">y_63_l[62:0]</obj_property>
-         <obj_property name="ObjectShortName">y_63_l[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z_63_l">
-         <obj_property name="ElementShortName">z_63_l[62:0]</obj_property>
-         <obj_property name="ObjectShortName">z_63_l[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/s_6_l">
-         <obj_property name="ElementShortName">s_6_l[5:0]</obj_property>
-         <obj_property name="ObjectShortName">s_6_l[5:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/y_63_r">
-         <obj_property name="ElementShortName">y_63_r[62:0]</obj_property>
-         <obj_property name="ObjectShortName">y_63_r[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/z_63_r">
-         <obj_property name="ElementShortName">z_63_r[62:0]</obj_property>
-         <obj_property name="ObjectShortName">z_63_r[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/s_6_r">
-         <obj_property name="ElementShortName">s_6_r[5:0]</obj_property>
-         <obj_property name="ObjectShortName">s_6_r[5:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_rlt_r">
-         <obj_property name="ElementShortName">cmp_rlt_r</obj_property>
-         <obj_property name="ObjectShortName">cmp_rlt_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_rlt_l">
-         <obj_property name="ElementShortName">cmp_rlt_l</obj_property>
-         <obj_property name="ObjectShortName">cmp_rlt_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sub_data_in_a_l">
-         <obj_property name="ElementShortName">sub_data_in_a_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">sub_data_in_a_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sub_data_in_b_l">
-         <obj_property name="ElementShortName">sub_data_in_b_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">sub_data_in_b_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sub_data_out_l">
-         <obj_property name="ElementShortName">sub_data_out_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">sub_data_out_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/sub_data_valid_l">
-         <obj_property name="ElementShortName">sub_data_valid_l</obj_property>
-         <obj_property name="ObjectShortName">sub_data_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sub_data_in_a_r">
-         <obj_property name="ElementShortName">sub_data_in_a_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">sub_data_in_a_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sub_data_in_b_r">
-         <obj_property name="ElementShortName">sub_data_in_b_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">sub_data_in_b_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/sub_data_out_r">
-         <obj_property name="ElementShortName">sub_data_out_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">sub_data_out_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/sub_data_valid_r">
-         <obj_property name="ElementShortName">sub_data_valid_r</obj_property>
-         <obj_property name="ObjectShortName">sub_data_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/for_sub_data_out_l">
-         <obj_property name="ElementShortName">for_sub_data_out_l[62:0]</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_out_l[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/for_sub_data_in_a_l">
-         <obj_property name="ElementShortName">for_sub_data_in_a_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_in_a_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/for_sub_data_in_b_l">
-         <obj_property name="ElementShortName">for_sub_data_in_b_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_in_b_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/for_sub_data_valid_l">
-         <obj_property name="ElementShortName">for_sub_data_valid_l</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/for_sub_data_out_r">
-         <obj_property name="ElementShortName">for_sub_data_out_r[62:0]</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_out_r[62:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/for_sub_data_in_a_r">
-         <obj_property name="ElementShortName">for_sub_data_in_a_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_in_a_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/for_sub_data_in_b_r">
-         <obj_property name="ElementShortName">for_sub_data_in_b_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_in_b_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/for_sub_data_valid_r">
-         <obj_property name="ElementShortName">for_sub_data_valid_r</obj_property>
-         <obj_property name="ObjectShortName">for_sub_data_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_sub_data_in_a_l">
-         <obj_property name="ElementShortName">cmp_sub_data_in_a_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_in_a_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_sub_data_in_b_l">
-         <obj_property name="ElementShortName">cmp_sub_data_in_b_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_in_b_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_sub_data_out_l">
-         <obj_property name="ElementShortName">cmp_sub_data_out_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_out_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_sub_data_valid_l">
-         <obj_property name="ElementShortName">cmp_sub_data_valid_l</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_sub_data_in_a_r">
-         <obj_property name="ElementShortName">cmp_sub_data_in_a_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_in_a_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_sub_data_in_b_r">
-         <obj_property name="ElementShortName">cmp_sub_data_in_b_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_in_b_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_sub_data_out_r">
-         <obj_property name="ElementShortName">cmp_sub_data_out_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_out_r[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_sub_data_valid_r">
-         <obj_property name="ElementShortName">cmp_sub_data_valid_r</obj_property>
-         <obj_property name="ObjectShortName">cmp_sub_data_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/MUL_data_in_a_l">
-         <obj_property name="ElementShortName">MUL_data_in_a_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_in_a_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/MUL_data_in_b_l">
-         <obj_property name="ElementShortName">MUL_data_in_b_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_in_b_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/MUL_data_out_l">
-         <obj_property name="ElementShortName">MUL_data_out_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_out_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/MUL_data_valid_l">
-         <obj_property name="ElementShortName">MUL_data_valid_l</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/MUL_data_in_a_r">
-         <obj_property name="ElementShortName">MUL_data_in_a_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_in_a_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/MUL_data_in_b_r">
-         <obj_property name="ElementShortName">MUL_data_in_b_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_in_b_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/MUL_data_out_r">
-         <obj_property name="ElementShortName">MUL_data_out_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_out_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/MUL_data_valid_r">
-         <obj_property name="ElementShortName">MUL_data_valid_r</obj_property>
-         <obj_property name="ObjectShortName">MUL_data_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_MUL_data_in_a_l">
-         <obj_property name="ElementShortName">pre_MUL_data_in_a_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_MUL_data_in_a_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_MUL_data_in_b_l">
-         <obj_property name="ElementShortName">pre_MUL_data_in_b_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_MUL_data_in_b_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_data_out_l">
-         <obj_property name="ElementShortName">pre_data_out_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_data_out_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_MUL_data_valid_l">
-         <obj_property name="ElementShortName">pre_MUL_data_valid_l</obj_property>
-         <obj_property name="ObjectShortName">pre_MUL_data_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_MUL_data_in_a_r">
-         <obj_property name="ElementShortName">pre_MUL_data_in_a_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_MUL_data_in_a_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_MUL_data_in_b_r">
-         <obj_property name="ElementShortName">pre_MUL_data_in_b_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_MUL_data_in_b_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_data_out_r">
-         <obj_property name="ElementShortName">pre_data_out_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_data_out_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_MUL_data_valid_r">
-         <obj_property name="ElementShortName">pre_MUL_data_valid_r</obj_property>
-         <obj_property name="ObjectShortName">pre_MUL_data_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_MUL_data_in_a_l">
-         <obj_property name="ElementShortName">bef_MUL_data_in_a_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_in_a_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_MUL_data_in_b_l">
-         <obj_property name="ElementShortName">bef_MUL_data_in_b_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_in_b_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_MUL_data_out_l">
-         <obj_property name="ElementShortName">bef_MUL_data_out_l[80:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_out_l[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bef_MUL_data_valid_l">
-         <obj_property name="ElementShortName">bef_MUL_data_valid_l</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_valid_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_MUL_data_in_a_r">
-         <obj_property name="ElementShortName">bef_MUL_data_in_a_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_in_a_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_MUL_data_in_b_r">
-         <obj_property name="ElementShortName">bef_MUL_data_in_b_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_in_b_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_MUL_data_out_r">
-         <obj_property name="ElementShortName">bef_MUL_data_out_r[80:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_out_r[80:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bef_MUL_data_valid_r">
-         <obj_property name="ElementShortName">bef_MUL_data_valid_r</obj_property>
-         <obj_property name="ObjectShortName">bef_MUL_data_valid_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/refill_control_done_l">
-         <obj_property name="ElementShortName">refill_control_done_l</obj_property>
-         <obj_property name="ObjectShortName">refill_control_done_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/refill_rdm10_req_l">
-         <obj_property name="ElementShortName">refill_rdm10_req_l</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm10_req_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/refill_rdm1_req_l">
-         <obj_property name="ElementShortName">refill_rdm1_req_l</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm1_req_l</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/refill_rdm10_l">
-         <obj_property name="ElementShortName">refill_rdm10_l[79:0]</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm10_l[79:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/refill_rdm1_l">
-         <obj_property name="ElementShortName">refill_rdm1_l[7:0]</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm1_l[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/refill_control_done_r">
-         <obj_property name="ElementShortName">refill_control_done_r</obj_property>
-         <obj_property name="ObjectShortName">refill_control_done_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/refill_rdm10_req_r">
-         <obj_property name="ElementShortName">refill_rdm10_req_r</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm10_req_r</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/refill_rdm1_req_r">
-         <obj_property name="ElementShortName">refill_rdm1_req_r</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm1_req_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/refill_rdm10_r">
-         <obj_property name="ElementShortName">refill_rdm10_r[79:0]</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm10_r[79:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/refill_rdm1_r">
-         <obj_property name="ElementShortName">refill_rdm1_r[7:0]</obj_property>
-         <obj_property name="ObjectShortName">refill_rdm1_r[7:0]</obj_property>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bram_addr_a">
+         <obj_property name="ElementShortName">bram_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram_addr_a[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bram_dout_a">
+         <obj_property name="ElementShortName">bram_dout_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram_dout_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bram_din_a">
+         <obj_property name="ElementShortName">bram_din_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram_din_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bram_we_a">
+         <obj_property name="ElementShortName">bram_we_a</obj_property>
+         <obj_property name="ObjectShortName">bram_we_a</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bram_addr_b">
+         <obj_property name="ElementShortName">bram_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram_addr_b[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bram_dout_b">
+         <obj_property name="ElementShortName">bram_dout_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram_dout_b[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bram_din_b">
+         <obj_property name="ElementShortName">bram_din_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram_din_b[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/bram_we_b">
+         <obj_property name="ElementShortName">bram_we_b</obj_property>
+         <obj_property name="ObjectShortName">bram_we_b</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/restart_chacha20">
          <obj_property name="ElementShortName">restart_chacha20</obj_property>
          <obj_property name="ObjectShortName">restart_chacha20</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/fetch_en">
-         <obj_property name="ElementShortName">fetch_en</obj_property>
-         <obj_property name="ObjectShortName">fetch_en</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/fetch_en_l">
-         <obj_property name="ElementShortName">fetch_en_l</obj_property>
-         <obj_property name="ObjectShortName">fetch_en_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/fetch_en_r">
-         <obj_property name="ElementShortName">fetch_en_r</obj_property>
-         <obj_property name="ObjectShortName">fetch_en_r</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/chacha20_done">
          <obj_property name="ElementShortName">chacha20_done</obj_property>
@@ -561,46 +291,6 @@
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/prng_data">
          <obj_property name="ElementShortName">prng_data[1023:0]</obj_property>
          <obj_property name="ObjectShortName">prng_data[1023:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/base_rdm_req">
-         <obj_property name="ElementShortName">base_rdm_req</obj_property>
-         <obj_property name="ObjectShortName">base_rdm_req</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_rdm_req_l">
-         <obj_property name="ElementShortName">cmp_rdm_req_l</obj_property>
-         <obj_property name="ObjectShortName">cmp_rdm_req_l</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_rdm_req_r">
-         <obj_property name="ElementShortName">cmp_rdm_req_r</obj_property>
-         <obj_property name="ObjectShortName">cmp_rdm_req_r</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/base_rdm144">
-         <obj_property name="ElementShortName">base_rdm144[143:0]</obj_property>
-         <obj_property name="ObjectShortName">base_rdm144[143:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_rdm8_l">
-         <obj_property name="ElementShortName">cmp_rdm8_l[7:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_rdm8_l[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/cmp_rdm8_r">
-         <obj_property name="ElementShortName">cmp_rdm8_r[7:0]</obj_property>
-         <obj_property name="ObjectShortName">cmp_rdm8_r[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_rdm8_l">
-         <obj_property name="ElementShortName">bef_rdm8_l[7:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_rdm8_l[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/bef_rdm8_r">
-         <obj_property name="ElementShortName">bef_rdm8_r[7:0]</obj_property>
-         <obj_property name="ObjectShortName">bef_rdm8_r[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/smp_l">
-         <obj_property name="ElementShortName">smp_l[63:0]</obj_property>
-         <obj_property name="ObjectShortName">smp_l[63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/smp_r">
-         <obj_property name="ElementShortName">smp_r[63:0]</obj_property>
-         <obj_property name="ObjectShortName">smp_r[63:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/seed_read_bram_en">
          <obj_property name="ElementShortName">seed_read_bram_en</obj_property>
@@ -614,6 +304,10 @@
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/seed_read_bram_dout">
          <obj_property name="ElementShortName">seed_read_bram_dout[255:0]</obj_property>
          <obj_property name="ObjectShortName">seed_read_bram_dout[255:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/seed_read_bram_dout2">
+         <obj_property name="ElementShortName">seed_read_bram_dout2[255:0]</obj_property>
+         <obj_property name="ObjectShortName">seed_read_bram_dout2[255:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/r_en_pre_samp">
          <obj_property name="ElementShortName">r_en_pre_samp</obj_property>
@@ -647,18 +341,11 @@
          <obj_property name="ElementShortName">state[7:0]</obj_property>
          <obj_property name="ObjectShortName">state[7:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/next_state">
-         <obj_property name="ElementShortName">next_state[7:0]</obj_property>
-         <obj_property name="ObjectShortName">next_state[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_state">
-         <obj_property name="ElementShortName">pre_state[7:0]</obj_property>
-         <obj_property name="ObjectShortName">pre_state[7:0]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group5347">
       <obj_property name="label">mem_rd</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/mem_rd/en">
          <obj_property name="ElementShortName">en</obj_property>
          <obj_property name="ObjectShortName">en</obj_property>
