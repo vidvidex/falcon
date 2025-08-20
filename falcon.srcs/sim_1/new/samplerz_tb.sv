@@ -10,20 +10,15 @@ import falconsoar_pkg::*;
   logic rst_n;
 
   logic restart;
-
   logic start;
-
-  logic [63:0] sampled1;
-  logic [63:0] sampled2;
-  logic sampled_valid;
+  logic done;
 
   logic [MEM_ADDR_BITS - 1:0] isigma_addr;
   logic [MEM_ADDR_BITS - 1:0] mu_addr;
   logic [MEM_ADDR_BITS - 1:0] seed_addr;
+  logic [MEM_ADDR_BITS - 1:0] sample_addr;
 
   always #5 clk = ~clk;
-
-  mem_inst_if mem_rd();
 
   logic bram_en;
 
@@ -67,7 +62,6 @@ import falconsoar_pkg::*;
                 .reset(rst_n),
                 .start(start),
                 .restart(restart),
-                .mem_rd(mem_rd),
 
                 .bram_en(bram_en),
 
@@ -81,20 +75,13 @@ import falconsoar_pkg::*;
                 .bram_we_b(bram_we_b_samp),
                 .bram_dout_b(bram_dout_b_samp),
 
-                .sampled1(sampled1),
-                .sampled2(sampled2),
-                .sampled_valid(sampled_valid),
+                .done(done),
 
                 .isigma_addr(isigma_addr),
                 .mu_addr(mu_addr),
-                .seed_addr(seed_addr)
+                .seed_addr(seed_addr),
+                .sample_addr(sample_addr)
               );
-
-  bram_model bram_inst (
-               .clk(clk),
-               .rst_n(rst_n),
-               .mem_rd(mem_rd.slave_rd)
-             );
 
   always_comb begin
     if(bram_toggle == 1'b0) begin
@@ -130,15 +117,16 @@ import falconsoar_pkg::*;
     mu_addr = 13'd0;
     isigma_addr = 13'd1;
     seed_addr = 13'd130;
+    sample_addr = 13'd2;
     #30;
 
     // Populate BRAM
     bram_toggle = 1;
     bram_addr_a_tb <= 0; // Mu
-    bram_din_a_tb <= {$realtobits(33.198144682236155), $realtobits(2.4235343345)};
+    bram_din_a_tb <= {$realtobits(12.888762307754956), $realtobits(5.920009764830345)};
     bram_we_a_tb <= 1;
     bram_addr_b_tb <= 1; // Inverse sigma
-    bram_din_b_tb <= {64'b0, $realtobits(1/1.724965058508814)};
+    bram_din_b_tb <= {64'b0, $realtobits(1/1.2778336969128337)};
     bram_we_b_tb <= 1;
     #10;
 
@@ -172,22 +160,52 @@ import falconsoar_pkg::*;
     restart <= 0;
     start <= 0;
 
-    while(sampled_valid !== 1)
+    while(done !== 1)
       #10;
+
+    bram_toggle = 1;
+    bram_addr_a_tb <= 0; // Mu
+    bram_din_a_tb <= {$realtobits(56.95491949528823), $realtobits(6.458067295424501)};
+    bram_we_a_tb <= 1;
+    bram_addr_b_tb <= 1; // Inverse sigma
+    bram_din_b_tb <= {64'b0, $realtobits(1/1.7410445103037335)};
+    bram_we_b_tb <= 1;
+    #10;
+    bram_toggle = 0;
 
     start <= 1;
     #10;
     start <= 0;
 
-    while(sampled_valid !== 1)
+    while(done !== 1)
       #10;
+
+    bram_toggle = 1;
+    bram_addr_a_tb <= 0; // Mu
+    bram_din_a_tb <= {$realtobits(-11.662806799958712), $realtobits(39.64107628004665)};
+    bram_we_a_tb <= 1;
+    bram_addr_b_tb <= 1; // Inverse sigma
+    bram_din_b_tb <= {64'b0, $realtobits(1/1.714965058508814)};
+    bram_we_b_tb <= 1;
+    #10;
+    bram_toggle = 0;
 
     start <= 1;
     #10;
     start <= 0;
 
-    while(sampled_valid !== 1)
+    while(done !== 1)
       #10;
+
+    bram_toggle = 1;
+    bram_addr_a_tb <= 0; // Mu
+    bram_din_a_tb <= {$realtobits(83.89098065383646), $realtobits(-11.706270418552691)};
+    bram_we_a_tb <= 1;
+    bram_addr_b_tb <= 1; // Inverse sigma
+    bram_din_b_tb <= {64'b0, $realtobits(1/1.732882618121838)};
+    bram_we_b_tb <= 1;
+    #10;
+    bram_toggle = 0;
 
     start <= 1;
     #10;
@@ -197,33 +215,3 @@ import falconsoar_pkg::*;
 
 endmodule
 
-module bram_model 
-import falconsoar_pkg::*;
- (
-    input logic clk,
-    input logic rst_n,
-    mem_inst_if.slave_rd mem_rd
-  );
-
-  logic [255:0] mem [BANK_DEPTH];
-  logic [255:0] data_i;
-
-  initial begin
-    mem[0] = { 128'b0, $realtobits(33.198144682236155), $realtobits(2.4235343345)};  // mu
-    mem[1] = $realtobits(1/1.724965058508814);  // inverse sigma (I guess so we can use multiplication instead of division)
-
-    for (int i = 2; i < BANK_DEPTH; i++) begin
-      mem[i] = i;
-    end
-  end
-
-  // Read logic
-  always_ff @(posedge clk) begin
-    if (mem_rd.en)
-      data_i <= mem[mem_rd.addr];
-  end
-
-  always_ff @(posedge clk) begin
-      mem_rd.data <= data_i;
-  end
-endmodule

@@ -4,36 +4,34 @@
 
 module Bi_samplerz
 import falconsoar_pkg::*;
-#(
-  parameter N = 512
-)
-  (
-    input clk,
-    input reset,//Initial signal
-    input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
-    input logic restart,
-    input logic [MEM_ADDR_BITS - 1:0] isigma_addr,
-    input logic [MEM_ADDR_BITS - 1:0] mu_addr,
-    input logic [MEM_ADDR_BITS - 1:0] seed_addr,
+  #(
+     parameter N = 512
+   )
+   (
+     input clk,
+     input reset,//Initial signal
+     input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
+     input logic restart,
 
-    output logic bram_en,
+     input logic [MEM_ADDR_BITS - 1:0] isigma_addr,
+     input logic [MEM_ADDR_BITS - 1:0] mu_addr,
+     input logic [MEM_ADDR_BITS - 1:0] seed_addr,
+     input logic [MEM_ADDR_BITS - 1:0] sample_addr,
 
-    output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_a,
-    input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_a,
-    output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_a,
-    output logic bram_we_a,
+     output logic bram_en,
 
-    output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_b,
-    input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_b,
-    output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_b,
-    output logic bram_we_b,
+     output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_a,
+     input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_a,
+     output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_a,
+     output logic bram_we_a,
 
-    mem_inst_if.master_rd  mem_rd,
+     output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_b,
+     input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_b,
+     output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_b,
+     output logic bram_we_b,
 
-    output logic [63:0] sampled1,
-    output logic [63:0] sampled2,
-    output logic sampled_valid
-  );
+     output logic done
+   );
 
   //Control signals
   //Shaking signals
@@ -278,7 +276,6 @@ import falconsoar_pkg::*;
   logic [79:0] refill_rdm10_r;
   logic [7:0] refill_rdm1_r;
   //chacha20
-  logic restart_chacha20;
   logic fetch_en, fetch_en_l, fetch_en_r;
   logic chacha20_done;
   logic [1023:0] prng_data;
@@ -315,8 +312,7 @@ import falconsoar_pkg::*;
   logic [63:0] smp_r;
   wire seed_read_bram_en; //
   wire [MEM_ADDR_BITS - 1:0] seed_read_bram_addr;
-  wire [BANK_WIDTH - 1:0] seed_read_bram_dout;
-  wire [BANK_WIDTH - 1:0] seed_read_bram_dout2;
+  logic [BANK_WIDTH - 1:0] seed_read_bram_dout;
   wire r_en_pre_samp;
   wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp;
   logic rdm_init;
@@ -330,27 +326,26 @@ import falconsoar_pkg::*;
       rdm_init <= 'd0;
   end
 
-  assign mem_rd.en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
-  assign mem_rd.addr = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
-  assign seed_read_bram_dout2 = mem_rd.data;
+  always_comb begin
+    seed_read_bram_dout = 0;
 
-  assign bram_en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
-  assign bram_addr_a = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
-  assign bram_addr_b = (rdm_init || ~reset) ? seed_read_bram_addr + 2 : r_addr_pre_samp;
-  assign bram_we_a = 0;
-  assign bram_we_b = 0;
-  assign seed_read_bram_dout = {bram_dout_a, bram_dout_b};
+    if(final_adder_done == 1'b1) begin
+      bram_addr_a = sample_addr;
+      bram_din_a = {smp_l, smp_r};
+      bram_we_a = final_adder_done;
+    end
+    else begin
+      bram_en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
+      bram_addr_a = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
+      bram_addr_b = (rdm_init || ~reset) ? seed_read_bram_addr + 2 : r_addr_pre_samp;
+      bram_we_a = 0;
+      bram_we_b = 0;
+      seed_read_bram_dout = {bram_dout_a, bram_dout_b};
+    end
+  end
 
+  assign done = final_adder_done;
 
-  // TODO address where to write each of the sampled values (are they even at the same address?)
-  // assign bram_din_a = smp_l;
-  // assign bram_din_b = smp_r;
-  // assign bram_we_a = final_adder_done;
-  // assign bram_we_b = final_adder_done;
-
-  assign sampled1 = smp_l;
-  assign sampled2 = smp_r;
-  assign sampled_valid = final_adder_done;
   // FSM
   typedef enum logic [7:0] {
             INIT = 'b00000001, // To generate two z0 and activate the chacha20 to fill the rdm buffer when reset.
@@ -647,8 +642,7 @@ import falconsoar_pkg::*;
              .valid(pre_samp_valid),
              .r_en(r_en_pre_samp), //o
              .r_addr(r_addr_pre_samp), //o[  9:0]
-             .r_data(mem_rd.data), //i[511:0]
-            //  .r_data({bram_dout_a, bram_dout_b}), //i[511:0]
+             .r_data(bram_dout_a),
              .mu_addr(mu_addr), //i[  9:0]
              .isigma_addr(isigma_addr),
              .ccs_63(ccs_63),
