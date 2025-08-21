@@ -26,9 +26,11 @@ module samplerz_tb;
   logic [1:0] seed_offset_a;
   logic [1:0] seed_offset_b;
 
-  Bi_samplerz #(.N(N))samplerz (
+  // Bi_samplerz #(.N(N))samplerz (
+  samplerz #(.N(N))samplerz (
                 .clk(clk),
-                .reset(rst_n),
+                // .reset(rst_n),
+                .rst_n(rst_n),
                 .start(start),
                 .restart(restart),
 

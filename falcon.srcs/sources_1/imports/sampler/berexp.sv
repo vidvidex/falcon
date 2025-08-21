@@ -1,8 +1,6 @@
-`include "sample_pkg.sv"
-`include "falconsoar_pkg.sv"
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
 module berexp
-    import sample_pkg::*;
-    import falconsoar_pkg::*;
 (
     input             clk           ,
     input             rst_n         ,
@@ -15,6 +13,23 @@ module berexp
     output logic      samp_again    ,
     output logic      done
 );
+
+            localparam bit [63:0] LN2                 = 64'd0460_4418_5343_1344_1775;
+        localparam bit [63:0] ILN2                = 64'd0460_9176_1400_2120_3710;
+        localparam bit [63:0] C_TABLE [13] = '{64'h0000_0004_7411_83A3,
+                                              64'h0000_0036_548C_FC06,
+                                              64'h0000_024F_DCBF_140A,
+                                              64'h0000_171D_939D_E045,
+                                              64'h0000_D00C_F58F_6F84,
+                                              64'h0006_8068_1CF7_96E3,
+                                              64'h002D_82D8_305B_0FEA,
+                                              64'h0111_1111_0E06_6FD0,
+                                              64'h0555_5555_5507_0F00,
+                                              64'h1555_5555_5581_FF00,
+                                              64'h4000_0000_0002_B400,
+                                              64'h7FFF_FFFF_FFFF_4800,
+                                              64'h8000_0000_0000_0000};
+        localparam bit [63:0] TWOPOW63            = 64'd0489_0909_1953_2435_8656;
 
     logic [5:0] cnt; //up to 47
 
@@ -142,7 +157,7 @@ module berexp
 // compute flt2i int64
     fp_flt2i_int64_s u_fp_flt2i_int64_s (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(fp_flt2i_data_in),              // input wire [63 : 0] s_axis_a_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(fp_flt2i_data_out)    // output wire [63 : 0] m_axis_result_tdata
@@ -150,7 +165,7 @@ module berexp
 // compute fpr(s) = fpr(a) * fpr(b)
     fp_i2flt_int64_s u_fp_i2flt_int64_s (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(fp_i2flt_data_in),              // input wire [63 : 0] s_axis_a_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(fp_i2flt_data_out)    // output wire [63 : 0] m_axis_result_tdata
@@ -158,9 +173,9 @@ module berexp
 // compute fpr(s) = fpr(a) - fpr(b)
     fp_sub_s u_fp_sub_s (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(fp_sub_data_in_0),              // input wire [63 : 0] s_axis_a_tdata
-        .s_axis_b_tvalid(1),            // input wire s_axis_b_tvalid
+        .s_axis_b_tvalid(1'b1),            // input wire s_axis_b_tvalid
         .s_axis_b_tdata(fp_sub_data_in_1),              // input wire [63 : 0] s_axis_b_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(fp_sub_data_out)    // output wire [63 : 0] m_axis_result_tdata
@@ -274,26 +289,3 @@ module berexp
     end
 
 endmodule
-
-
-/*
-module mulllllllllllllllllt(
-    input[63:0] a ,
-    input[63:0] b ,
-    input[63:0] c ,
-    output[63:0] d 
-);
-    wire [63:0] tmp0 = a[63:32] * b[63:32];
-    wire [63:0] tmp1 = a[63:32] * b[31: 0];
-    wire [63:0] tmp2 = a[31: 0] * b[63:32];
-    wire [63:0] tmp3 = a[31: 0] * b[31: 0];
-
-    wire [63:0] result0 = c - tmp0 - tmp1[63:32] - tmp2[63:32];
-    wire [63:0] result1 = c - tmp0 - tmp1[63:32] - tmp2[63:32] - 1;
-    wire [63:0] result2 = c - tmp0 - tmp1[63:32] - tmp2[63:32] - 2;
-    wire [63:0] flag = tmp3[63:32] + tmp2[31: 0] + tmp1[31: 0] ;
-
-    assign d = flag[33] ? result2 : (flag[32] ? result1 : result0) ;
-
-endmodule
-*/

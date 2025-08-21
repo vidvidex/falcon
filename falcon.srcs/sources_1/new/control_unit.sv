@@ -909,11 +909,11 @@ module control_unit#(
   logic [`BRAM_DATA_WIDTH-1:0] samplerz_seed_b;
   logic [63:0] samplerz_result1, samplerz_result2;
   logic samplerz_done;
-  Bi_samplerz #(
+  samplerz #(
                 .N(N)
               )samplerz (
                 .clk(clk),
-                .reset(rst_n),
+                .rst_n(rst_n),
                 .start(samplerz_start == 1'b1 && samplerz_start_i == 1'b0),
                 .restart(samplerz_restart == 1'b1 && samplerz_restart_i == 1'b0),
 

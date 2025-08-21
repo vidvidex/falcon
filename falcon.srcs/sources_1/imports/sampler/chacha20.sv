@@ -1,8 +1,7 @@
-`include "falconsoar_pkg.sv"
-`include "sample_pkg.sv"
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module chacha20
-    import falconsoar_pkg::*;
 (
     input                                 clk                  ,
     input                                 rst_n                ,
@@ -11,10 +10,8 @@ module chacha20
     input                                 sample_init          ,
     input                                 fetch_en             ,
     output                                done                 ,  //generate PRNG data done!
-    input           [MEM_ADDR_BITS - 1:0] src_addr             ,  //the addr to fetch the PRNG seed
-    output                                mem_rd_chacha20_en   ,  //
-    output          [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr ,  //
-    input           [   BANK_WIDTH - 1:0] mem_rd_chacha20_data ,  //
+    output          [1:0] seed_read_bram_addr , 
+    input           [255:0] seed_read_bram_dout , 
     output          [              511:0] data_o                  //PRNG data (512bits) output
 );
 
@@ -22,10 +19,7 @@ module chacha20
                                        32'h3320646e,
                                        32'h79622d32,
                                        32'h6b206574};
-
-////////////////////////////////////////////////////////////////////////////////////////
-
-    mem_addr_t src; assign src = src_addr;
+  localparam int SAMPLERZ_READ_DELAY = 2;
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // control signal
@@ -52,27 +46,26 @@ module chacha20
     logic         round_done;
     logic [383:0] init_state;  //32 * 12
 
-    pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start & restart), .pulse_out(mem_rd_chacha20_en)); //extend one cycle pulse to two cycle pulse
-    assign mem_rd_chacha20_addr = src + cnt[1];
+    assign seed_read_bram_addr = cnt[0];
 
     assign round_done = (cnt == 'd23 + SAMPLERZ_READ_DELAY) | (cnt == 'd43 + SAMPLERZ_READ_DELAY) | (cnt == 'd63 + SAMPLERZ_READ_DELAY) | (cnt == 'd83 + SAMPLERZ_READ_DELAY);
 
-    always_ff @(posedge clk) if(cnt == 'd1 + SAMPLERZ_READ_DELAY) init_state[255:0] <= mem_rd_chacha20_data;
-    always_ff @(posedge clk) if(cnt == 'd2 + SAMPLERZ_READ_DELAY) init_state[383:256] <= mem_rd_chacha20_data[383 - 256 : 0];
+    always_ff @(posedge clk) if(cnt == 'd1 + SAMPLERZ_READ_DELAY) init_state[255:0] <= seed_read_bram_dout;
+    always_ff @(posedge clk) if(cnt == 'd2 + SAMPLERZ_READ_DELAY) init_state[383:256] <= seed_read_bram_dout[383 - 256 : 0];
 
 
     ////////////////////////////////////////////////////////////////////////////////////////
     // state permute
-    row_data_pack_t state_parallel [2];
-    row_data_pack_t result         [2];
-    row_data_pack_t state_i        [2];
-    row_data_pack_t state_o        [2];
+    logic [15:0][31:0]  state_parallel [2];
+    logic [15:0][31:0]  result         [2];
+    logic [15:0][31:0]  state_i        [2];
+    logic [15:0][31:0]  state_o        [2];
 
     for(genvar i=0; i<2; i++) begin:gen_bank
         assign cc_nxt[i] = cc[i] + 'd2;
 
         always @(posedge clk) begin
-            if     (cnt == 'd2 + SAMPLERZ_READ_DELAY)   cc[i] <= mem_rd_chacha20_data[447 - 256:384 - 256] + i[0];
+            if     (cnt == 'd2 + SAMPLERZ_READ_DELAY)   cc[i] <= seed_read_bram_dout[447 - 256:384 - 256] + i[0];
             else if(round_done)                         cc[i] <= cc_nxt[i];
         end
 
@@ -130,17 +123,15 @@ module chacha20
 endmodule
 
 module chacha20_round_2stage
-    import falconsoar_pkg::*;
-    import sample_pkg::*;
 (
     input  clk,
-    input  row_data_pack_t data_i   ,
-    output row_data_pack_t data_o
+    input  logic [15:0][31:0]  data_i   ,
+    output logic [15:0][31:0]  data_o
 );
 
-    vect_t state_0 [16];
+    logic [31:0] state_0 [16];
 
-    vect_t state_0_r [16];
+    logic [31:0] state_0_r [16];
 
     qround i_qround_1 (
         data_i  [ 0],
@@ -232,23 +223,21 @@ module chacha20_round_2stage
 endmodule
 
 module qround
-    import falconsoar_pkg::*;
-    import sample_pkg::*;
 (
-    input  vect_t a_i   ,
-    input  vect_t b_i   ,
-    input  vect_t c_i   ,
-    input  vect_t d_i   ,
-    output vect_t a_o   ,
-    output vect_t b_o   ,
-    output vect_t c_o   ,
-    output vect_t d_o
+    input  logic [31:0] a_i   ,
+    input  logic [31:0] b_i   ,
+    input  logic [31:0] c_i   ,
+    input  logic [31:0] d_i   ,
+    output logic [31:0] a_o   ,
+    output logic [31:0] b_o   ,
+    output logic [31:0] c_o   ,
+    output logic [31:0] d_o
 );
 
-    vect_t a_0, a_2;
-    vect_t b_1, b_3, b_shift_1, b_shift_3;
-    vect_t c_1, c_3;
-    vect_t d_0, d_2, d_shift_0, d_shift_2;
+    logic [31:0] a_0, a_2;
+    logic [31:0] b_1, b_3, b_shift_1, b_shift_3;
+    logic [31:0] c_1, c_3;
+    logic [31:0] d_0, d_2, d_shift_0, d_shift_2;
 
     assign a_0       = a_i + b_i;
     assign d_0       = d_i ^ a_0;
@@ -267,26 +256,5 @@ module qround
     assign b_o       = b_shift_3;
     assign c_o       = c_3;
     assign d_o       = d_shift_2;
-
-endmodule
-
-module pulse_extender (
-    input  logic clk,       // Clock signal
-    input  logic pulse_in,  // Input pulse signal
-    output logic pulse_out // Extended pulse output
-);
-
-    logic pulse_delayed[1:0]; // Register to hold the delayed pulse
-
-    // On every clock edge, capture the current pulse and delay it by one cycle
-    always_ff @(posedge clk) begin
-        pulse_delayed[0] <= pulse_in; // Delay the pulse by one cycle
-        pulse_delayed[1] <= pulse_delayed[0]; // Delay the pulse by one cycle
-    end
-
-    // Output is high for two cycles when pulse_in is high
-    // First cycle: when pulse_in is high
-    // Second cycle: when pulse_delayed is high
-    assign pulse_out = pulse_delayed[0] | pulse_delayed[1];
 
 endmodule
