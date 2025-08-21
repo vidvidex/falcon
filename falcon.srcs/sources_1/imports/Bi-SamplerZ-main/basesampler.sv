@@ -16,7 +16,7 @@ module basesampler (
   logic cmp [18:0];
   logic sel [18:0];
   logic [71:0] rdm72;
-  tri [4:0] z;
+  logic [4:0] z;
   logic [2:0] cnt;
 
   assign rdm72 = (cnt == 2) ? rdm144[143:72] : ((cnt == 3) ? rdm144[71:0] : 72'b0);
@@ -64,13 +64,15 @@ module basesampler (
       sel[j+1] = cmp[j] & (~cmp[j+1]);
     end
   end
-  //Generate tri-state net
-  genvar k;
-  generate
-    for (k = 0; k < (18 +1); k++) begin : tri_driver
-      assign z = sel[k]? k : 'bz;
+  //Priority encoder to find the position of the first '1' in sel
+  always_comb begin
+    z = 5'b0; // Default value
+    for (int k = 18; k >= 0; k--) begin
+      if (sel[k]) begin
+        z = k[4:0];
+      end
     end
-  endgenerate
+  end
   //Generate z0 siganl
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
