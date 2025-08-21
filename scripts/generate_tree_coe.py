@@ -7961,7 +7961,7 @@ mul_tree_indices = [
 ]
 
 rows = []
-for i in range(0, len(tree) // 2, 2):
+for i in range(0, len(tree), 2):
     tree1 = tree[i] if i in mul_tree_indices else 1 / tree[i]
     tree2 = tree[i + 1] if i + 1 in mul_tree_indices else 1 / tree[i + 1]
 
