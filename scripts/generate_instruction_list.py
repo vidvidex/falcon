@@ -1,12 +1,13 @@
 import math
 
-debug_prints = False
-sim_prints = False
+debug_prints = True
+tree_index_print = True
 
 
 def dprint(*args, **kwargs):
     if debug_prints:
         print(*args, **kwargs)
+
 
 class InstructionGenerator:
 
@@ -190,10 +191,7 @@ class InstructionGenerator:
                 modules=self.sel_module(COPY=1),
                 bank3=prev_bram,  # Input
                 addr1=t0,
-                bank4=curr_bram,  # Output
-                addr2=z0,
-                element_count=element_count_log2,
-            )
+            self.samplerz_tree_addrs.append(tree)
             return
 
         tree0 = tree + n // 2
@@ -282,6 +280,8 @@ class InstructionGenerator:
             addr2=tree,
             element_count=element_count_log2 - 1,
         )
+        for i in range(tree, tree + n // 2):
+            self.mul_tree_addrs.append(i)
 
         t0_bram = prev_bram if n < N else 4  # On top level of recursion this BRAM is different
         dprint(f"n={n},\tadd_t0\tin_bram={t0_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
@@ -352,6 +352,8 @@ class InstructionGenerator:
     def sign512(self):
         N = 512
         self.instructions = []
+        self.samplerz_tree_addrs = []  # Addresses of tree where samplerz will access
+        self.mul_tree_addrs = []  # Addresses of tree where mul with tree will access
 
         # timestep 1: HASH_TO_POINT
         dprint("HASH_TO_POINT")
@@ -397,7 +399,6 @@ class InstructionGenerator:
             addr2=0,  # End offset for COPY and COMPLEX_MUL
             element_count=int(math.log2(N // 2)),
         )
-
 
         # timestep 5: COMPLEX_MUL, MUL_CONST
         dprint("COMPLEX_MUL MUL_CONST")
@@ -532,6 +533,13 @@ class InstructionGenerator:
         )
 
         generator.print_verilog(algorithm="sign")
+
+        if tree_index_print:
+            print(f"Indices where samplerz will read tree:")
+            print(self.samplerz_tree_addrs)
+
+            print(f"Indices where mul with tree will read tree:")
+            print(self.mul_tree_addrs)
 
 
 if __name__ == "__main__":
