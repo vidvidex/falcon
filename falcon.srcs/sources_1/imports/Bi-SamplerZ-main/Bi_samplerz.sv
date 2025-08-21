@@ -310,8 +310,8 @@ module Bi_samplerz
   assign seed_offset_b = seed_read_bram_addr + 2;
   assign seed_read_bram_dout = {seed_bram_dout_a, seed_bram_dout_b};
 
-  assign result1 = smp_l;
-  assign result2 = smp_r;
+  assign result1 = {mu1[63], smp_r[62:0]};
+  assign result2 = {mu2[63], smp_l[62:0]};
   assign done = final_adder_done;
 
   // FSM
