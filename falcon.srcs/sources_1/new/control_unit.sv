@@ -1103,6 +1103,10 @@ module control_unit#(
     copy_done = 1'b0;
     complex_mul_valid_in = 1'b0;
     complex_mul_done = 1'b0;
+    compress_valid = 1'b0;
+    compress_last = 1'b0;
+    compress_done = 1'b0;
+    compress_lower_half = 1'b0;
 
     bram_dout = 0;
     copy_dst_addr = 0;
@@ -1151,6 +1155,9 @@ module control_unit#(
     fp_adder2_a = 0;
     fp_adder2_b = 0;
     fp_adder_dst_addr = 0;
+    compress_t0 = 0;
+    compress_t1 = 0;
+    compress_hm = 0;
     ext_bram_dout = 0;
 
     if(ext_bram_en == 1'b1) begin     // Software has BRAM access

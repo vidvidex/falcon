@@ -341,6 +341,7 @@ module Bi_samplerz
       bram_addr_b = (rdm_init || ~reset) ? seed_read_bram_addr + 2 : r_addr_pre_samp;
       bram_we_a = 0;
       bram_we_b = 0;
+      bram_din_a = 0;
       seed_read_bram_dout = {bram_dout_a, bram_dout_b};
     end
   end
