@@ -11,22 +11,17 @@ module Bi_samplerz
      input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
      input logic restart,
 
-     input logic [`BRAM_ADDR_WIDTH - 1:0] isigma_addr,
-     input logic [`BRAM_ADDR_WIDTH - 1:0] mu_addr,
-     input logic [`BRAM_ADDR_WIDTH - 1:0] seed_addr,
-     input logic [`BRAM_ADDR_WIDTH - 1:0] sample_addr,
+     input logic [63:0] mu1,
+     input logic [63:0] mu2,
+     input logic [63:0] isigma,
 
-     output logic bram_en,
+     output logic [1:0] seed_offset_a,
+     input logic [`BRAM_DATA_WIDTH - 1:0] seed_bram_dout_a,
+     output logic [1:0] seed_offset_b,
+     input logic [`BRAM_DATA_WIDTH - 1:0] seed_bram_dout_b,
 
-     output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_a,
-     input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_a,
-     output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_a,
-     output logic bram_we_a,
-
-     output logic [`BRAM_ADDR_WIDTH - 1:0] bram_addr_b,
-     input logic [`BRAM_DATA_WIDTH - 1:0] bram_dout_b,
-     output logic [`BRAM_DATA_WIDTH - 1:0] bram_din_b,
-     output logic bram_we_b,
+     output logic [63:0] result1,
+     output logic [63:0] result2,
 
      output logic done
    );
@@ -308,44 +303,15 @@ module Bi_samplerz
   //R/W logic
   logic [63:0] smp_l;
   logic [63:0] smp_r;
-  wire seed_read_bram_en; //
-  wire [`BRAM_ADDR_WIDTH - 1:0] seed_read_bram_addr;
+  logic [1:0] seed_read_bram_addr;
   logic [255:0] seed_read_bram_dout;
-  wire r_en_pre_samp;
-  wire [`BRAM_ADDR_WIDTH - 1:0] r_addr_pre_samp;
-  logic rdm_init;
 
-  always_ff @(posedge clk) begin
-    if(~reset)
-      rdm_init <= 'd0;
-    else if(start & restart)
-      rdm_init <= 'd1;
-    else if(refill_control_done_l & refill_control_done_r)
-      rdm_init <= 'd0;
-  end
+  assign seed_offset_a = seed_read_bram_addr;
+  assign seed_offset_b = seed_read_bram_addr + 2;
+  assign seed_read_bram_dout = {seed_bram_dout_a, seed_bram_dout_b};
 
-  always_comb begin
-    seed_read_bram_dout = 0;
-
-    if(final_adder_done == 1'b1) begin
-      bram_addr_a = sample_addr;
-      bram_din_a = {smp_l, smp_r};
-      bram_we_a = final_adder_done;
-      bram_en = 0;
-      bram_addr_b = 0;
-      bram_we_b = 0;
-    end
-    else begin
-      bram_en = (rdm_init || ~reset) ? seed_read_bram_en : r_en_pre_samp;
-      bram_addr_a = (rdm_init || ~reset) ? seed_read_bram_addr : r_addr_pre_samp;
-      bram_addr_b = (rdm_init || ~reset) ? seed_read_bram_addr + 2 : r_addr_pre_samp;
-      bram_we_a = 0;
-      bram_we_b = 0;
-      bram_din_a = 0;
-      seed_read_bram_dout = {bram_dout_a, bram_dout_b};
-    end
-  end
-
+  assign result1 = smp_l;
+  assign result2 = smp_r;
   assign done = final_adder_done;
 
   // FSM
@@ -642,11 +608,9 @@ module Bi_samplerz
              .clk(clk),
              .rst_n(reset),
              .valid(pre_samp_valid),
-             .r_en(r_en_pre_samp), //o
-             .r_addr(r_addr_pre_samp), //o[  9:0]
-             .r_data(bram_dout_a),
-             .mu_addr(mu_addr), //i[  9:0]
-             .isigma_addr(isigma_addr),
+             .input_mu1(mu1),
+             .input_mu2(mu2),
+             .input_isigma(isigma),
              .ccs_63(ccs_63),
              .r_l(r_l),
              .r_r(r_r),
@@ -844,8 +808,6 @@ module Bi_samplerz
              .sign_init(state == INIT),  // Sample initialization flag
              .fetch_en(fetch_en),  // Fetch enable
              .done(chacha20_done),  // Done signal output
-             .seed_addr(seed_addr),
-             .seed_read_bram_en(seed_read_bram_en),  // Read enable to memory
              .seed_read_bram_addr(seed_read_bram_addr),  // Read address for memory
              .seed_read_bram_dout(seed_read_bram_dout),  // Read data from memory
              .data_o(prng_data)   // Output 512 bits random data

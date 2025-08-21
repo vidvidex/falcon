@@ -11,12 +11,10 @@ module pre_samp
      input clk,
      input rst_n,
      input valid,
-     //Receive the values directly.
-     output r_en,
-     output logic [`BRAM_ADDR_WIDTH - 1:0]  r_addr,
-     input [127:0] r_data,
-     input [`BRAM_ADDR_WIDTH - 1:0] mu_addr,
-     input [`BRAM_ADDR_WIDTH - 1:0] isigma_addr,//The addr of 4 consecutive isigma are the same.
+
+     input logic [63:0] input_mu1,
+     input logic [63:0] input_mu2,
+     input logic [63:0] input_isigma,
 
      output logic [62:0] ccs_63,
      output logic [71:0] r_l,
@@ -57,22 +55,12 @@ module pre_samp
     end
   end
 
-  assign r_en = ((cnt == 'd0) & valid) | (cnt == 'd1);
-
-  always_comb begin
-    r_addr = 'x;
-    case(cnt)
-      'd0:
-        r_addr = mu_addr;
-      'd1:
-        r_addr = isigma_addr;
-    endcase
-  end
-
   always_ff @(posedge clk) if(cnt == (`SAMPLERZ_READ_DELAY))
-      {fpr_mu_r,fpr_mu_l} <= r_data;
+      fpr_mu_r <= input_mu1;
+  always_ff @(posedge clk) if(cnt == (`SAMPLERZ_READ_DELAY))
+      fpr_mu_l <= input_mu2;
   always_ff @(posedge clk) if(cnt == (`SAMPLERZ_READ_DELAY + 1))
-      fpr_isigma <= r_data[63:0];
+      fpr_isigma <= input_isigma;
 
   //Done logics
   always_ff @(posedge clk or negedge rst_n) begin
