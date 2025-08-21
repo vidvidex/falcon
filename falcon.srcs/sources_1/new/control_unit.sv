@@ -94,7 +94,23 @@ module control_unit#(
 
   logic [`BRAM3072_ADDR_WIDTH-1:0] bram3072_addr_a [BRAM3072_COUNT];
   logic [`BRAM3072_ADDR_WIDTH-1:0] bram3072_addr_b [BRAM3072_COUNT];
+
+`ifdef DEBUG_BRAMS
+  bram0 bram0 (
+          .addra(bram3072_addr_a[0]),
+          .clka(clk),
+          .dina(bram_din_a[0]),
+          .douta(bram_dout_a[0]),
+          .wea(bram_we_a[0]),
+
+          .addrb(bram3072_addr_b[0]),
+          .clkb(clk),
+          .dinb(bram_din_b[0]),
+          .doutb(bram_dout_b[0]),
+          .web(bram_we_b[0])
+        );
   genvar i_bram3072;
+`else
   generate
     for (i_bram3072 = 0; i_bram3072 < BRAM3072_COUNT; i_bram3072++) begin : bram3072_bank
       bram_3072x128 bram_3072x128_inst (
@@ -112,9 +128,40 @@ module control_unit#(
                     );
     end
   endgenerate
+`endif
+
 
   logic [`BRAM2048_ADDR_WIDTH-1:0] bram2048_addr_a [BRAM2048_COUNT];
   logic [`BRAM2048_ADDR_WIDTH-1:0] bram2048_addr_b [BRAM2048_COUNT];
+`ifdef DEBUG_BRAMS
+
+  bram1 bram1 (
+          .addra(bram2048_addr_a[0]),
+          .clka(clk),
+          .dina(bram_din_a[1]),
+          .douta(bram_dout_a[1]),
+          .wea(bram_we_a[1]),
+
+          .addrb(bram2048_addr_b[0]),
+          .clkb(clk),
+          .dinb(bram_din_b[1]),
+          .doutb(bram_dout_b[1]),
+          .web(bram_we_b[1])
+        );
+  bram2 bram2 (
+          .addra(bram2048_addr_a[1]),
+          .clka(clk),
+          .dina(bram_din_a[2]),
+          .douta(bram_dout_a[2]),
+          .wea(bram_we_a[2]),
+
+          .addrb(bram2048_addr_b[1]),
+          .clkb(clk),
+          .dinb(bram_din_b[2]),
+          .doutb(bram_dout_b[2]),
+          .web(bram_we_b[2])
+        );
+`else
   genvar i_bram2048;
   generate
     for (i_bram2048 = BRAM3072_COUNT; i_bram2048 < BRAM2048_COUNT + BRAM3072_COUNT; i_bram2048++) begin : bram2048_bank
@@ -133,9 +180,52 @@ module control_unit#(
                     );
     end
   endgenerate
+`endif
 
   logic [`BRAM1024_ADDR_WIDTH-1:0] bram1024_addr_a [BRAM1024_COUNT];
   logic [`BRAM1024_ADDR_WIDTH-1:0] bram1024_addr_b [BRAM1024_COUNT];
+`ifdef DEBUG_BRAMS
+
+  bram3 bram3 (
+          .addra(bram1024_addr_a[0]),
+          .clka(clk),
+          .dina(bram_din_a[3]),
+          .douta(bram_dout_a[3]),
+          .wea(bram_we_a[3]),
+
+          .addrb(bram1024_addr_b[0]),
+          .clkb(clk),
+          .dinb(bram_din_b[3]),
+          .doutb(bram_dout_b[3]),
+          .web(bram_we_b[3])
+        );
+  bram4 bram4 (
+          .addra(bram1024_addr_a[1]),
+          .clka(clk),
+          .dina(bram_din_a[4]),
+          .douta(bram_dout_a[4]),
+          .wea(bram_we_a[4]),
+
+          .addrb(bram1024_addr_b[1]),
+          .clkb(clk),
+          .dinb(bram_din_b[4]),
+          .doutb(bram_dout_b[4]),
+          .web(bram_we_b[4])
+        );
+  bram5 bram5 (
+          .addra(bram1024_addr_a[2]),
+          .clka(clk),
+          .dina(bram_din_a[5]),
+          .douta(bram_dout_a[5]),
+          .wea(bram_we_a[5]),
+
+          .addrb(bram1024_addr_b[2]),
+          .clkb(clk),
+          .dinb(bram_din_b[5]),
+          .doutb(bram_dout_b[5]),
+          .web(bram_we_b[5])
+        );
+`else
   genvar i_bram1024;
   generate
     for (i_bram1024 = BRAM2048_COUNT+BRAM3072_COUNT; i_bram1024 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT; i_bram1024++) begin : bram1024_bank
@@ -154,7 +244,24 @@ module control_unit#(
                     );
     end
   endgenerate
+`endif
 
+`ifdef DEBUG_BRAMS
+
+  bram6 bram6 (
+          .addra(bram_addr_a[6]),
+          .clka(clk),
+          .dina(bram_din_a[6]),
+          .douta(bram_dout_a[6]),
+          .wea(bram_we_a[6]),
+
+          .addrb(bram_addr_b[6]),
+          .clkb(clk),
+          .dinb(bram_din_b[6]),
+          .doutb(bram_dout_b[6]),
+          .web(bram_we_b[6])
+        );
+`else
   genvar i_bram6144;
   generate
     for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
@@ -173,6 +280,7 @@ module control_unit#(
                     );
     end
   endgenerate
+`endif
 
   // Route from bram signals with widths specific to each BRAM type to the common bram signals
   always_comb begin
