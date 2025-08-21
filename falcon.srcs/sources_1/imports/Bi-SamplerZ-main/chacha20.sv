@@ -10,9 +10,7 @@ module chacha20
     input sign_init,//this is a continued signal
     input fetch_en,
     output done,  //generate PRNG data done!
-    input [`BRAM_ADDR_WIDTH - 1:0] seed_addr,
-    output seed_read_bram_en,
-    output [`BRAM_ADDR_WIDTH - 1:0] seed_read_bram_addr, 
+    output [1:0] seed_read_bram_addr, 
     input [255:0] seed_read_bram_dout,
     output [1023:0] data_o                  //PRNG data (2*512bits) output
   );
@@ -56,8 +54,7 @@ module chacha20
   logic round_done;
   logic [383:0] init_state;  //32 * 12
 
-  pulse_extender i_pulse_extender(.clk(clk), .pulse_in(start), .pulse_out(seed_read_bram_en)); //extend one cycle pulse to two cycle pulse
-  assign seed_read_bram_addr = seed_addr + cnt[1];
+  assign seed_read_bram_addr = cnt[0];
 
   assign round_done = (cnt == 'd23 + `SAMPLERZ_READ_DELAY) | (cnt == 'd43 + `SAMPLERZ_READ_DELAY) | (cnt == 'd63 + `SAMPLERZ_READ_DELAY) | (cnt == 'd83 + `SAMPLERZ_READ_DELAY);
 
@@ -277,26 +274,5 @@ module qround
   assign b_o = b_shift_3;
   assign c_o = c_3;
   assign d_o = d_shift_2;
-
-endmodule
-
-module pulse_extender (
-    input logic clk,       // Clock signal
-    input logic pulse_in,  // input pulse signal
-    output logic pulse_out // Extended pulse output
-  );
-
-  logic pulse_delayed[1:0]; // Register to hold the delayed pulse
-
-  // On every clock edge, capture the current pulse and delay it by one cycle
-  always_ff @(posedge clk) begin
-    pulse_delayed[0] <= pulse_in; // Delay the pulse by one cycle
-    pulse_delayed[1] <= pulse_delayed[0]; // Delay the pulse by one cycle
-  end
-
-  // output is high for two cycles when pulse_in is high
-  // First cycle: when pulse_in is high
-  // Second cycle: when pulse_delayed is high
-  assign pulse_out = pulse_delayed[0] | pulse_delayed[1];
 
 endmodule
