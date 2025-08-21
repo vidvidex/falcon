@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="13,674.726 ns"></ZoomStartTime>
-      <ZoomEndTime time="14,245.055 ns"></ZoomEndTime>
-      <Cursor1Time time="14,150.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,000,721.666 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,001,055.667 ns"></ZoomEndTime>
+      <Cursor1Time time="1,001,000.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="171"></NameColumnWidth>
+      <NameColumnWidth column_width="167"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="12" />
+   <WVObjectSize size="13" />
    <wvobject type="group" fp_name="group5204">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -686,6 +686,7 @@
    <wvobject type="group" fp_name="group5458">
       <obj_property name="label">pre_samp</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_samp_inst/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -702,9 +703,9 @@
          <obj_property name="ElementShortName">isigma[71:0]</obj_property>
          <obj_property name="ObjectShortName">isigma[71:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/ccs_63">
          <obj_property name="ElementShortName">ccs_63[62:0]</obj_property>
@@ -713,14 +714,26 @@
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/r_l">
          <obj_property name="ElementShortName">r_l[71:0]</obj_property>
          <obj_property name="ObjectShortName">r_l[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/r_r">
          <obj_property name="ElementShortName">r_r[71:0]</obj_property>
          <obj_property name="ObjectShortName">r_r[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/sqr2_isigma">
          <obj_property name="ElementShortName">sqr2_isigma[71:0]</obj_property>
          <obj_property name="ObjectShortName">sqr2_isigma[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/int_mu_l">
          <obj_property name="ElementShortName">int_mu_l[63:0]</obj_property>
@@ -753,18 +766,34 @@
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/ccs_72">
          <obj_property name="ElementShortName">ccs_72[71:0]</obj_property>
          <obj_property name="ObjectShortName">ccs_72[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/fpr_isigma">
          <obj_property name="ElementShortName">fpr_isigma[63:0]</obj_property>
          <obj_property name="ObjectShortName">fpr_isigma[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/fpr_mu_l">
          <obj_property name="ElementShortName">fpr_mu_l[63:0]</obj_property>
          <obj_property name="ObjectShortName">fpr_mu_l[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/fpr_mu_r">
          <obj_property name="ElementShortName">fpr_mu_r[63:0]</obj_property>
          <obj_property name="ObjectShortName">fpr_mu_r[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
@@ -1593,6 +1622,136 @@
       <wvobject type="logic" fp_name="/samplerz_tb/samplerz/cmp_r/w_equal">
          <obj_property name="ElementShortName">w_equal</obj_property>
          <obj_property name="ObjectShortName">w_equal</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group7020">
+      <obj_property name="label">double to 72 bit int</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/valid">
+         <obj_property name="ElementShortName">valid</obj_property>
+         <obj_property name="ObjectShortName">valid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/fpr_mu_l">
+         <obj_property name="ElementShortName">fpr_mu_l[63:0]</obj_property>
+         <obj_property name="ObjectShortName">fpr_mu_l[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/fpr_mu_r">
+         <obj_property name="ElementShortName">fpr_mu_r[63:0]</obj_property>
+         <obj_property name="ObjectShortName">fpr_mu_r[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/fpr_isigma">
+         <obj_property name="ElementShortName">fpr_isigma[63:0]</obj_property>
+         <obj_property name="ObjectShortName">fpr_isigma[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/r_l">
+         <obj_property name="ElementShortName">r_l[71:0]</obj_property>
+         <obj_property name="ObjectShortName">r_l[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/r_r">
+         <obj_property name="ElementShortName">r_r[71:0]</obj_property>
+         <obj_property name="ObjectShortName">r_r[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/isigma">
+         <obj_property name="ElementShortName">isigma[71:0]</obj_property>
+         <obj_property name="ObjectShortName">isigma[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/int_mu_l">
+         <obj_property name="ElementShortName">int_mu_l[63:0]</obj_property>
+         <obj_property name="ObjectShortName">int_mu_l[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/int_mu_r">
+         <obj_property name="ElementShortName">int_mu_r[63:0]</obj_property>
+         <obj_property name="ObjectShortName">int_mu_r[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mu_l_frn">
+         <obj_property name="ElementShortName">mu_l_frn[51:0]</obj_property>
+         <obj_property name="ObjectShortName">mu_l_frn[51:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mu_r_frn">
+         <obj_property name="ElementShortName">mu_r_frn[51:0]</obj_property>
+         <obj_property name="ObjectShortName">mu_r_frn[51:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/isigma_frn">
+         <obj_property name="ElementShortName">isigma_frn[51:0]</obj_property>
+         <obj_property name="ObjectShortName">isigma_frn[51:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mu_l_exp">
+         <obj_property name="ElementShortName">mu_l_exp[10:0]</obj_property>
+         <obj_property name="ObjectShortName">mu_l_exp[10:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mu_r_exp">
+         <obj_property name="ElementShortName">mu_r_exp[10:0]</obj_property>
+         <obj_property name="ObjectShortName">mu_r_exp[10:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/isigma_exp">
+         <obj_property name="ElementShortName">isigma_exp[10:0]</obj_property>
+         <obj_property name="ObjectShortName">isigma_exp[10:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/isigma_cmp">
+         <obj_property name="ElementShortName">isigma_cmp[71:0]</obj_property>
+         <obj_property name="ObjectShortName">isigma_cmp[71:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">UNSIGNEDFIXEDPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">72</obj_property>
+         <obj_property name="radix_otherWidth">0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/cnt">
+         <obj_property name="ElementShortName">cnt[1:0]</obj_property>
+         <obj_property name="ObjectShortName">cnt[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mu_l_tmp">
+         <obj_property name="ElementShortName">mu_l_tmp[51:0]</obj_property>
+         <obj_property name="ObjectShortName">mu_l_tmp[51:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mu_r_tmp">
+         <obj_property name="ElementShortName">mu_r_tmp[51:0]</obj_property>
+         <obj_property name="ObjectShortName">mu_r_tmp[51:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mul_tmp">
+         <obj_property name="ElementShortName">mul_tmp[51:0]</obj_property>
+         <obj_property name="ObjectShortName">mul_tmp[51:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/samplerz_tb/samplerz/pre_samp_inst/u_flt272int/mur_tmp">
+         <obj_property name="ElementShortName">mur_tmp[51:0]</obj_property>
+         <obj_property name="ObjectShortName">mur_tmp[51:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

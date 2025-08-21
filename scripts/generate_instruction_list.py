@@ -36,7 +36,7 @@ class InstructionGenerator:
     ):
         fields = [
             ("modules", 16, modules),
-            ("empty", 57, 0),
+            ("empty", 56, 0),
             ("add_sub_mode", 1, add_sub_mode),
             ("input_output_addr_same", 1, input_output_addr_same),
             ("decompress_output2", 3, decompress_output2),
@@ -72,24 +72,26 @@ class InstructionGenerator:
         DECOMPRESS=0,
         COMPRESS=0,
         ADD_SUB=0,
+        SAMPLERZ=0,
     ):
         modules = (
-            (BRAM_READ << 15)
-            | (BRAM_WRITE << 14)
-            | (COPY << 13)
-            | (HASH_TO_POINT << 12)
-            | (INT_TO_DOUBLE << 11)
-            | (FFT_IFFT << 10)
-            | (NTT_INTT << 9)
-            | (COMPLEX_MUL << 8)
-            | (MUL_CONST << 7)
-            | (SPLIT << 6)
-            | (MERGE << 5)
-            | (MOD_MULT_Q << 4)
-            | (SUB_NORM_SQ << 3)
-            | (DECOMPRESS << 2)
-            | (COMPRESS << 1)
-            | (ADD_SUB << 0)
+            (BRAM_READ << 16)
+            | (BRAM_WRITE << 15)
+            | (COPY << 14)
+            | (HASH_TO_POINT << 13)
+            | (INT_TO_DOUBLE << 12)
+            | (FFT_IFFT << 11)
+            | (NTT_INTT << 10)
+            | (COMPLEX_MUL << 9)
+            | (MUL_CONST << 8)
+            | (SPLIT << 7)
+            | (MERGE << 6)
+            | (MOD_MULT_Q << 5)
+            | (SUB_NORM_SQ << 4)
+            | (DECOMPRESS << 3)
+            | (COMPRESS << 2)
+            | (ADD_SUB << 1)
+            | (SAMPLERZ << 0)
         )
         return modules
 
@@ -187,10 +189,16 @@ class InstructionGenerator:
         if n == 1:
             dprint(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0}\ttree_bram={tree_bram},\ttree_addr={tree},\tout_bram={curr_bram},\tout_addr={z0}")
             self.add_instruction(
-                modules=self.sel_module(COPY=1),
-                bank3=prev_bram,  # Input
+                modules=self.sel_module(SAMPLERZ=1),
+                mode=1 if self.first_samplerz_call else 0,
+                bank1=prev_bram,  # Input
                 addr1=t0,
-            self.samplerz_tree_addrs.append(tree)
+                bank2=tree_bram,  # Tree
+                addr2=tree,
+                bank3=curr_bram,  # Output
+                bank4=2,  # Seed
+            )
+            self.first_samplerz_call = False
             return
 
         tree0 = tree + n // 2

@@ -39,7 +39,7 @@ module control_unit#(
   localparam int BRAM3072_COUNT = 1; // Number of 3072x128 BRAM banks
   localparam int BRAM6144_COUNT = 1; // Number of 6144x128 BRAM banks
   localparam int BRAM_BANK_COUNT = BRAM3072_COUNT + BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT;
-  localparam int INSTRUCTION_COUNT = 16;
+  localparam int INSTRUCTION_COUNT = 17;
 
   logic debug_BRAM_READ;
   logic debug_BRAM_WRITE;
@@ -57,6 +57,7 @@ module control_unit#(
   logic debug_DECOMPRESS;
   logic debug_COMPRESS;
   logic debug_ADD_SUB;
+  logic debug_SAMPLERZ;
   always_comb begin
     debug_BRAM_READ = instruction[127-0];
     debug_BRAM_WRITE = instruction[127-1];
@@ -74,6 +75,7 @@ module control_unit#(
     debug_DECOMPRESS = instruction[127-13];
     debug_COMPRESS = instruction[127-14];
     debug_ADD_SUB = instruction[127-15];
+    debug_SAMPLERZ = instruction[127-16];
   end
 
   logic [2:0] ext_bram_bank;
@@ -96,6 +98,7 @@ module control_unit#(
   logic [`BRAM3072_ADDR_WIDTH-1:0] bram3072_addr_b [BRAM3072_COUNT];
 
 `ifdef DEBUG_BRAMS
+
   bram0 bram0 (
           .addra(bram3072_addr_a[0]),
           .clka(clk),
@@ -897,6 +900,37 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_valid_delay(.clk(clk), .in(compress_valid), .out(compress_valid_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_lower_half_delay(.clk(clk), .in(compress_lower_half), .out(compress_lower_half_delayed));
 
+  logic samplerz_start, samplerz_start_i;
+  logic samplerz_restart, samplerz_restart_i;
+  logic [63:0] samplerz_mu1, samplerz_mu2, samplerz_isigma;
+  logic [1:0] samplerz_seed_offset_a;
+  logic [`BRAM_DATA_WIDTH-1:0] samplerz_seed_a;
+  logic [1:0] samplerz_seed_offset_b;
+  logic [`BRAM_DATA_WIDTH-1:0] samplerz_seed_b;
+  logic [63:0] samplerz_result1, samplerz_result2;
+  logic samplerz_done;
+  Bi_samplerz #(
+                .N(N)
+              )samplerz (
+                .clk(clk),
+                .reset(rst_n),
+                .start(samplerz_start == 1'b1 && samplerz_start_i == 1'b0),
+                .restart(samplerz_restart == 1'b1 && samplerz_restart_i == 1'b0),
+
+                .mu1(samplerz_mu1),
+                .mu2(samplerz_mu2),
+                .isigma(samplerz_isigma),
+
+                .seed_offset_a(samplerz_seed_offset_a),
+                .seed_bram_dout_a(samplerz_seed_a),
+                .seed_offset_b(samplerz_seed_offset_b),
+                .seed_bram_dout_b(samplerz_seed_b),
+
+                .result1(samplerz_result1),
+                .result2(samplerz_result2),
+                .done(samplerz_done)
+              );
+
   assign element_count = (1 << instruction[49:46]);
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
   assign pipelined_inst_done = pipelined_inst_index > element_count-1 ? 1'b1 : 1'b0;
@@ -932,6 +966,11 @@ module control_unit#(
 
       ntt_start <= 1'b0;
       ntt_start_i <= 1'b0;
+
+      samplerz_start <= 1'b0;
+      samplerz_start_i <= 1'b0;
+      samplerz_restart <= 1'b0;
+      samplerz_restart_i <= 1'b0;
     end
     else if (!instruction_done) begin
       htp_start_i <= htp_start;
@@ -940,6 +979,8 @@ module control_unit#(
       merge_start_i <= merge_start;
       decompress_start_i <= decompress_start;
       ntt_start_i <= ntt_start;
+      samplerz_start_i <= samplerz_start;
+      samplerz_restart_i <= samplerz_restart;
 
       if(instruction[127-0] == 1'b1) begin // BRAM_READ
         // Empty
@@ -1064,6 +1105,15 @@ module control_unit#(
           modules_running[INSTRUCTION_COUNT-15] <= 1'b0;
         else
           modules_running[INSTRUCTION_COUNT-15] <= 1'b1;
+      end
+
+      if(instruction[127-16] == 1'b1) begin // SAMPLERZ
+        samplerz_start <= 1'b1;
+        samplerz_restart <= instruction[44];
+        if(samplerz_done)
+          modules_running[INSTRUCTION_COUNT-16] <= 1'b0;
+        else
+          modules_running[INSTRUCTION_COUNT-16] <= 1'b1;
       end
     end
   end
@@ -1407,6 +1457,29 @@ module control_unit#(
         bram_addr_b[bank4] = fp_adder_dst_addr_delayed;
         bram_din_b[bank4] = {fp_adder1_result, fp_adder2_result};
         bram_we_b[bank4] = fp_adder_valid_out;
+      end
+
+      if(instruction[127-16] == 1'b1) begin // SAMPLERZ
+        // mu
+        bram_addr_a[bank1] = addr1;
+        {samplerz_mu1, samplerz_mu2} = bram_dout_a[bank1];
+
+        // isigma
+        bram_addr_a[bank2] = addr2;
+        samplerz_isigma = bram_dout_a[bank2];
+
+        // result
+        bram_addr_a[bank3] = (N == 512) ? 528 : 784;
+        bram_din_a[bank3] = {samplerz_result1, samplerz_result2};
+        bram_we_a[bank3] = samplerz_done;
+
+        // seed
+        bram_addr_a[bank4] = ((N == 512) ? 802 : 1604) + samplerz_seed_offset_a;
+        bram_addr_b[bank4] = ((N == 512) ? 802 : 1604) + samplerz_seed_offset_b;
+        // samplerz_seed_a = bram_din_a[bank4];
+        // samplerz_seed_b = bram_din_b[bank4];
+        samplerz_seed_a = 128'h00112233445566778899aabbccddeeff;
+        samplerz_seed_b = 128'h00112233445566778899aabbccddeeff;
       end
     end
   end
