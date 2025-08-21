@@ -1,33 +1,34 @@
-`include "falconsoar_pkg.sv"
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module samplerz
-    import falconsoar_pkg::*;
-(
+  #(
+     parameter N = 512
+   )
+   (
     input                  clk              ,
     input                  rst_n            ,
-    exec_operator_if.slave task_itf         ,
-    mem_inst_if.master_rd  mem_rd           ,
-    mem_inst_if.master_wr  mem_wr           
+     input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
+     input logic restart,
+
+     input logic [63:0] mu1,
+     input logic [63:0] mu2,
+     input logic [63:0] isigma,
+
+     output logic [1:0] seed_offset_a,
+     input logic [`BRAM_DATA_WIDTH - 1:0] seed_bram_dout_a,
+     output logic [1:0] seed_offset_b,
+     input logic [`BRAM_DATA_WIDTH - 1:0] seed_bram_dout_b,
+
+     output logic [63:0] result1,
+     output logic [63:0] result2,
+
+     output logic done
 );
 
-//////////////////////////////////////////////////////////////////////////////////
-//task code
-    localparam bit [3:0] SAMPLERZ_INITI = 4'd0;  // Initial Task is to generate first  Blocks PRNG data 
-                                                      // to fill buffers in refill_control module
-    localparam bit [3:0] SAMPLERZ_512   = 4'd1;  // Normal sampling operation in Falcon-512
-    localparam bit [3:0] SAMPLERZ_1024  = 4'd2;  // Normal sampling operation in Falcon-1024
-
-    wire [3:0]  task_type  = task_itf.input_task[14:11];  //
-    wire        restart    = task_itf.input_task[15   ];  //
-    wire [MEM_ADDR_BITS - 1:0] dst_addr   = task_itf.input_task[TASK_REDUCE_BW - 2*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 3*MEM_ADDR_BITS];  // This is for write dstination addr
-    wire [MEM_ADDR_BITS - 1:0] src1_addr  = task_itf.input_task[TASK_REDUCE_BW - 1*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 2*MEM_ADDR_BITS];  // This is for sigma
-    wire [MEM_ADDR_BITS - 1:0] src0_addr  = task_itf.input_task[TASK_REDUCE_BW - 0*MEM_ADDR_BITS - 1:TASK_REDUCE_BW - 1*MEM_ADDR_BITS];  // This is for mu and random
 
 //////////////////////////////////////////////////////////////////////////////////
 //generate start signal
-
-    wire start = ((task_type == SAMPLERZ_512)   |
-                  (task_type == SAMPLERZ_1024)  ) & task_itf.start;
 
     logic samp_again         ;
     logic done_refill_control; //This done is used only in SAMPLERZ_INITI
@@ -46,21 +47,14 @@ module samplerz
         else if(start && restart)    sample_init <= 'd1 ; 
         else if(done_refill_control) sample_init <= 'd0 ; 
     end
-    //wire sample_start         = ((task_type == SAMPLERZ_512) | (task_type == SAMPLERZ_1024));  
     wire fetch_en;
     wire start_chacha20       = ((start & restart));
     wire start_refill_control = (sample_init & done_chacha20); // After chacha20 generate first blocks,
                                                                // it should start the refill_control module to fill its' buffer firetly
-    wire start_pre_samp       = (start & (~sample_init) & ((task_type == SAMPLERZ_512) | (task_type == SAMPLERZ_1024))) |  (done_refill_control & sample_init);
+    wire start_pre_samp       = (start & (~sample_init)) |  (done_refill_control & sample_init);
     wire start_samp_loop      = done_pre_samp | samp_again | (done_berexp & ~cnt);
     wire start_berexp         = done_samp_loop;
-    wire done_samplerz        = (done_berexp & cnt) ;
-
-    assign task_itf.op_done = done_samplerz;
-
-    wire [MEM_ADDR_BITS - 1:0] isigma_addr = src1_addr;
-    wire [MEM_ADDR_BITS - 1:0] mu_addr     = src0_addr;
-    wire [MEM_ADDR_BITS - 1:0] random_addr = 12'd130;
+    wire done_samplerz = (done_berexp & cnt) ;
 
 //////////////////////////////////////////////////////////////////////////////////
 //nets
@@ -70,10 +64,6 @@ module samplerz
     wire        part_en         ;
 
     wire read_10byte = start_samp_loop ;
-
-    //wire [MEM_ADDR_BITS - 1:0] r_addr_refill_control ;
-    wire        r_en_pre_samp   ;
-    wire [MEM_ADDR_BITS - 1:0] r_addr_pre_samp ;
 
     wire [63:0] pre_samp2cal_0     ;
     wire [63:0] pre_samp2cal_1     ;
@@ -99,11 +89,11 @@ module samplerz
     reg  [63:0] sample_value ;
     wire [63:0] fpr_sample_value ;
 
-    wire                       mem_rd_chacha20_en   ; //
-    wire [MEM_ADDR_BITS - 1:0] mem_rd_chacha20_addr ; //
-    wire [   BANK_WIDTH - 1:0] mem_rd_chacha20_data ; //
-
     wire [511:0] prng_data;  // This data is the prng data used bu samplerZ ,from chacha20 
+
+    logic [1:0] seed_read_bram_addr;
+    logic [255:0] seed_read_bram_dout;
+
 
     always_ff @(posedge clk) if((done_berexp) & (cnt == 0)) sample_value <= fpr_sample_value;
 
@@ -111,13 +101,13 @@ module samplerz
     assign fpr_r = cnt ? fpr_r_r : fpr_r_l;
     assign int_mu_floor = cnt ? int_mu_floor_r : int_mu_floor_l;
 
-    assign mem_rd.en   = sample_init & (~start_pre_samp) ?  mem_rd_chacha20_en  :r_en_pre_samp;
-    assign mem_rd.addr = sample_init & (~start_pre_samp) ?  mem_rd_chacha20_addr:r_addr_pre_samp;
-    assign mem_rd_chacha20_data = mem_rd.data; 
+    assign seed_offset_a = seed_read_bram_addr;
+    assign seed_offset_b = seed_read_bram_addr + 2;
+    assign seed_read_bram_dout = {seed_bram_dout_a, seed_bram_dout_b};
 
-    assign mem_wr.en   = (done_samplerz & cnt);
-    assign mem_wr.addr = dst_addr ;
-    assign mem_wr.data = {128'h0,fpr_sample_value,sample_value};  
+    assign result1 = fpr_sample_value;
+    assign result2 = sample_value;
+    assign done = done_samplerz & cnt;
 
 //////////////////////////////////////////////////////////////////////////////////
 //instance
@@ -142,12 +132,9 @@ module samplerz
         .clk            (   clk                 ), //i
         .rst_n          (   rst_n               ), //i
         .start          (   start_pre_samp      ), //i start pre_samp
-        .task_type      (   task_type           ), //i [  4:0]
-        .r_en           (   r_en_pre_samp       ), //o
-        .r_addr         (   r_addr_pre_samp     ), //o [  9:0]
-        .r_data         (   mem_rd.data         ), //i [511:0]
-        .mu_addr        (   mu_addr             ), //i [  9:0]
-        .isigma_addr    (   isigma_addr         ), //i [  9:0]
+        .input_mu1(mu1),
+        .input_mu2(mu2),
+        .input_isigma(isigma),
         .cal2pre_samp   (   cal_out             ), //i [ 63:0]
         .dout2cal_0     (   pre_samp2cal_0      ), //o [ 63:0]
         .dout2cal_1     (   pre_samp2cal_1      ), //o [ 63:0]
@@ -206,11 +193,11 @@ module samplerz
     );
 
     // USED TO BE: fp_i2flt_int32 fp_i2flt_U0 (
-    fp_i2flt_int32_s fp_i2flt_U0 (
+    fp_i2flt_int32 fp_i2flt_U0 (
         .aclk(clk),                               // input wire aclk
-        .s_axis_a_tvalid(1),                      // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),                      // input wire s_axis_a_tvalid
         .s_axis_a_tdata(int_sample_value),        // input wire [15 : 0] s_axis_a_tdata
-        .m_axis_result_tready(1),                 // input wire m_axis_result_tready
+        .m_axis_result_tready(1'b1),                 // input wire m_axis_result_tready
         .m_axis_result_tdata(fpr_sample_value)    // output wire [63 : 0] m_axis_result_tdata
     );
 
@@ -223,10 +210,8 @@ module samplerz
         .sample_init         (  sample_init         ),
         .fetch_en            (  fetch_en            ),
         .done                (  done_chacha20       ),  //generate PRNG data done!
-        .src_addr            (  random_addr         ),  //the addr to fetch the PRNG seed
-        .mem_rd_chacha20_en  ( mem_rd_chacha20_en   ),
-        .mem_rd_chacha20_addr( mem_rd_chacha20_addr ),  
-        .mem_rd_chacha20_data( mem_rd_chacha20_data ),   
+        .seed_read_bram_addr(seed_read_bram_addr),
+        .seed_read_bram_dout(seed_read_bram_dout),
         .data_o              (  prng_data           )   //PRNG data (512bits) output
     );
 endmodule

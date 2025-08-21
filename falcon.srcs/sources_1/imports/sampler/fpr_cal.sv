@@ -1,3 +1,6 @@
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
+
 module fpr_cal
 (   
     input                clk        ,

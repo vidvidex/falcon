@@ -1,9 +1,7 @@
-`include "sample_pkg.sv"
-`include "falconsoar_pkg.sv"
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module samp_loop
-    import sample_pkg::*;
-    import falconsoar_pkg::*;
 (
     input              clk              ,
     input              rst_n            ,
@@ -20,6 +18,28 @@ module samp_loop
     output reg [31:0]  int_z            , //signed 32bits
     output             done
 );
+
+        localparam bit [71:0] RCDT [18] = '{72'd30_2468_6241_1230_0491_3666,
+                                           72'd15_6474_2784_4800_9195_4050,
+                                           72'd06_3625_4429_4620_8089_7535,
+                                           72'd01_9956_0484_6450_2648_2916,
+                                           72'd00_4766_7343_8546_5728_1903,
+                                           72'd00_0859_5902_0063_6504_4063,
+                                           72'd00_0116_3297_9573_4466_8388,
+                                           72'd00_0011_7656_3873_5209_3658,
+                                           72'd00_0000_8867_3918_0266_3976,
+                                           72'd00_0000_0496_9693_5746_2633,
+                                           72'd00_0000_0020_6808_8515_4299,
+                                           72'd00_0000_0000_6383_3184_8991,
+                                           72'd00_0000_0000_0146_0231_6184,
+                                           72'd00_0000_0000_0002_4742_6747,
+                                           72'd00_0000_0000_0000_0310_4126,
+                                           72'd00_0000_0000_0000_0002_8824,
+                                           72'd00_0000_0000_0000_0000_0198,
+                                           72'd00_0000_0000_0000_0000_0001};
+        localparam bit [63:0] FPR_HALF            = 64'd0460_2678_8191_7264_6912;
+        localparam bit [63:0] HALF_ISIGMA_MAX_SQR = 64'd0459_4603_5065_1372_2306;
+
 
     logic [ 4:0] cnt                 ;
     logic [79:0] random_bytes_reg    ;
@@ -81,7 +101,7 @@ module samp_loop
 
     fp_i2flt_int32_s u_fp_i2flt_int32_s_0 (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(int_z),              // input wire [31 : 0] s_axis_a_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(result_i2flt_0)    // output wire [63 : 0] m_axis_result_tdata
@@ -89,7 +109,7 @@ module samp_loop
 
     fp_i2flt_int32_s u_fp_i2flt_int32_s_1 (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(int_z0_sqr),              // input wire [31 : 0] s_axis_a_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(result_i2flt_1)    // output wire [63 : 0] m_axis_result_tdata
@@ -97,9 +117,9 @@ module samp_loop
 
     fp_sub_s u_fp_sub_s (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(fp_sub_data_in_0),              // input wire [63 : 0] s_axis_a_tdata
-        .s_axis_b_tvalid(1),            // input wire s_axis_b_tvalid
+        .s_axis_b_tvalid(1'b1),            // input wire s_axis_b_tvalid
         .s_axis_b_tdata(fp_sub_data_in_1),              // input wire [63 : 0] s_axis_b_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(fp_sub_data_out_pre)    // output wire [63 : 0] m_axis_result_tdata

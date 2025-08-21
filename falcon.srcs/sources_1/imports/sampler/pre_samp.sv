@@ -1,19 +1,19 @@
-`include "sample_pkg.sv"
-`include "falconsoar_pkg.sv"
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module pre_samp
-    import sample_pkg::*;
-    import falconsoar_pkg::*;
-(
+  #(
+     parameter N = 512
+   )
+   (
     input                 clk               ,
     input                 rst_n             ,
     input                 start             , //start pre_samp
-    input        [  3:0]  task_type         ,
-    output                r_en              ,
-    output logic [ MEM_ADDR_BITS - 1:0]  r_addr            ,
-    input        [255:0]  r_data            , 
-    input        [ MEM_ADDR_BITS - 1:0]  mu_addr           ,
-    input        [ MEM_ADDR_BITS - 1:0]  isigma_addr       ,
+
+    input logic [63:0] input_mu1,
+     input logic [63:0] input_mu2,
+     input logic [63:0] input_isigma,
+
     input        [ 63:0]  cal2pre_samp      ,
     output logic [ 63:0]  dout2cal_0        ,
     output logic [ 63:0]  dout2cal_1        ,
@@ -26,6 +26,11 @@ module pre_samp
     output logic [ 31:0]  int_mu_floor_r    , //signed , imag part
     output                done
 );
+
+    localparam bit [63:0] SIGMA_MIN_512       = 64'd0460_8433_6705_3390_5013;
+    localparam bit [63:0] SIGMA_MIN_1024      = 64'd0460_8525_7540_0262_2308;
+    localparam int SAMPLERZ_READ_DELAY = 2;
+
     logic [ 1:0] isigma_index ;
     logic [ 3:0] cnt          ;
     logic [63:0] fpr_mu_r     ;
@@ -52,26 +57,16 @@ module pre_samp
     end
 
     assign done = (cnt == 9) ;
-    assign fpr_sigma_min = (task_type == SAMPLERZ_512) ? SIGMA_MIN_512: SIGMA_MIN_1024;
-//////////////////////////////////////////////////////////////////////////////////
-//generate r_en and r_addr in cycle 0 - 1
-    assign r_en = ((cnt == 'd0) & start) | (cnt == 'd1);
+    assign fpr_sigma_min = (N == 512) ? SIGMA_MIN_512: SIGMA_MIN_1024;
 
-    always_comb begin
-        r_addr = 'x;
-        case(cnt)
-        3'd0: r_addr = mu_addr;
-        3'd1: r_addr = isigma_addr;
-        endcase
-    end
-//////////////////////////////////////////////////////////////////////////////////
     always_ff @(posedge clk, negedge rst_n) begin
         if      (!rst_n)                           isigma_index <= 'd0                ;
         else if (cnt == (SAMPLERZ_READ_DELAY + 1)) isigma_index <= isigma_index + 'd1 ;
     end
 //////////////////////////////////////////////////////////////////////////////////
-    always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY))       {fpr_mu_r,fpr_mu_l} <= r_data[127:0];
-    always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 1))   fpr_isigma          <= r_data[64*isigma_index+:64];
+    always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY))       {fpr_mu_r} <= input_mu1;
+    always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY))       {fpr_mu_l} <= input_mu2;
+    always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 1))   fpr_isigma <= input_isigma;
     always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 4))   fpr_r_l             <= (result_fp_sub[63] == 1'd1)? result_fp_sub_redundancy : result_fp_sub ;
     always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 5))   fpr_r_r             <= (result_fp_sub[63] == 1'd1)? result_fp_sub_redundancy : result_fp_sub ;
     always_ff @(posedge clk) if(cnt == (SAMPLERZ_READ_DELAY + 5))   fpr_ccs             <= cal2pre_samp ;
@@ -91,7 +86,7 @@ module pre_samp
     always_comb begin
         fpr_mu_sel = 'x;
         case(cnt)
-        (SAMPLERZ_READ_DELAY + 0):fpr_mu_sel = r_data[0+:64];
+        (SAMPLERZ_READ_DELAY + 0):fpr_mu_sel = input_mu2;
         (SAMPLERZ_READ_DELAY + 1):fpr_mu_sel = fpr_mu_r;
         (SAMPLERZ_READ_DELAY + 2):fpr_mu_sel = fpr_mu_l;
         (SAMPLERZ_READ_DELAY + 3):fpr_mu_sel = fpr_mu_r;
@@ -126,7 +121,7 @@ module pre_samp
     // i2flt int floor mu 2 fpr floor mu
     fp_i2flt_int32_s u_fp_i2flt_int32_s_0 (
         .aclk(clk),                                   // input wire aclk
-        .s_axis_a_tvalid(1),                          // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),                          // input wire s_axis_a_tvalid
         .s_axis_a_tdata(result_flt2i),              // input wire [31 : 0] s_axis_a_tdata
         .m_axis_result_tvalid(  ),                    // output wire m_axis_result_tvalid
         .m_axis_result_tdata(fpr_mu_floor)     // output wire [63 : 0] m_axis_result_tdata
@@ -136,7 +131,7 @@ module pre_samp
     always_comb result_flt2i_redundancy = result_flt2i + 32'hFFFF_FFFF ;//FIXME
     fp_i2flt_int32_s u_fp_i2flt_int32_s_1 (
         .aclk(clk),                                   // input wire aclk
-        .s_axis_a_tvalid(1),                          // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),                          // input wire s_axis_a_tvalid
         .s_axis_a_tdata(result_flt2i_redundancy),              // input wire [31 : 0] s_axis_a_tdata
         .m_axis_result_tvalid(  ),                    // output wire m_axis_result_tvalid
         .m_axis_result_tdata(fpr_mu_floor_redundancy)     // output wire [63 : 0] m_axis_result_tdata
@@ -144,9 +139,9 @@ module pre_samp
     // mu - fpr floor mu
     fp_sub_s u_fp_sub_s_0 (
         .aclk(clk),                                   // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(fpr_mu_sel),              // input wire [63 : 0] s_axis_a_tdata
-        .s_axis_b_tvalid(1),            // input wire s_axis_b_tvalid
+        .s_axis_b_tvalid(1'b1),            // input wire s_axis_b_tvalid
         .s_axis_b_tdata(fpr_mu_floor),              // input wire [63 : 0] s_axis_b_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(result_fp_sub)    // output wire [63 : 0] m_axis_result_tdata
@@ -154,9 +149,9 @@ module pre_samp
     // mu - fpr floor mu in redundancy
     fp_sub_s u_fp_sub_s_1 (
         .aclk(clk),                                  // input wire aclk
-        .s_axis_a_tvalid(1),            // input wire s_axis_a_tvalid
+        .s_axis_a_tvalid(1'b1),            // input wire s_axis_a_tvalid
         .s_axis_a_tdata(fpr_mu_sel),              // input wire [63 : 0] s_axis_a_tdata
-        .s_axis_b_tvalid(1),            // input wire s_axis_b_tvalid
+        .s_axis_b_tvalid(1'b1),            // input wire s_axis_b_tvalid
         .s_axis_b_tdata(fpr_mu_floor_redundancy),              // input wire [63 : 0] s_axis_b_tdata
         .m_axis_result_tvalid(),  // output wire m_axis_result_tvalid
         .m_axis_result_tdata(result_fp_sub_redundancy)    // output wire [63 : 0] m_axis_result_tdata
