@@ -204,7 +204,8 @@ module Fpr_adder (
                 .s_axis_a_tvalid(1'b1),
                 .s_axis_b_tdata(b_fp64),
                 .s_axis_b_tvalid(1'b1),
-                .m_axis_result_tdata(z_fp64)
+                .m_axis_result_tdata(z_fp64),
+                .m_axis_result_tvalid()
               );
 
 endmodule
