@@ -946,7 +946,7 @@ module control_unit#(
     if(!rst_n || instruction_done)
       pipelined_inst_index <= -1;
     else
-      pipelined_inst_index <= (pipelined_inst_index == N-1) ? pipelined_inst_index : pipelined_inst_index+1;
+      pipelined_inst_index <= (pipelined_inst_index == N) ? pipelined_inst_index : pipelined_inst_index+1;
 
     if (!rst_n || instruction[127:127-INSTRUCTION_COUNT+1] == 0) begin
       htp_start <= 1'b0;
@@ -1464,9 +1464,9 @@ module control_unit#(
         bram_addr_a[bank1] = addr1;
         {samplerz_mu1, samplerz_mu2} = bram_dout_a[bank1];
 
-        // isigma
+        // isigma. Take either high 64 bits or low 64 bits
         bram_addr_a[bank2] = addr2;
-        samplerz_isigma = bram_dout_a[bank2];
+        samplerz_isigma = instruction[54] ? bram_dout_a[bank2][63:0] : bram_dout_a[bank2][127:64];
 
         // result
         bram_addr_a[bank3] = (N == 512) ? 528 : 784;
@@ -1478,8 +1478,8 @@ module control_unit#(
         bram_addr_b[bank4] = ((N == 512) ? 802 : 1604) + samplerz_seed_offset_b;
         // samplerz_seed_a = bram_din_a[bank4];
         // samplerz_seed_b = bram_din_b[bank4];
-        samplerz_seed_a = 128'h00112233445566778899aabbccddeeff;
-        samplerz_seed_b = 128'h00112233445566778899aabbccddeeff;
+        samplerz_seed_a = 128'h11111111111111111111111111111111;
+        samplerz_seed_b = 128'h11111111111111111111111111111111;
       end
     end
   end
