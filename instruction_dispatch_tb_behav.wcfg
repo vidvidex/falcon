@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1,875,880.860 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,876,281.829 ns"></ZoomEndTime>
-      <Cursor1Time time="1,876,080.259 ns"></Cursor1Time>
+      <ZoomStartTime time="1,917,309.669 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,917,610.187 ns"></ZoomEndTime>
+      <Cursor1Time time="1,917,325.838 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="286"></NameColumnWidth>
-      <ValueColumnWidth column_width="86"></ValueColumnWidth>
+      <ValueColumnWidth column_width="78"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group822">
@@ -302,6 +302,7 @@
       <wvobject type="group" fp_name="group868">
          <obj_property name="label">debug</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/debug_BRAM_READ">
             <obj_property name="ElementShortName">debug_BRAM_READ</obj_property>
             <obj_property name="ObjectShortName">debug_BRAM_READ</obj_property>
@@ -1108,6 +1109,7 @@
       <wvobject type="group" fp_name="group943">
          <obj_property name="label">fft</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/fft_mode">
             <obj_property name="ElementShortName">fft_mode</obj_property>
             <obj_property name="ObjectShortName">fft_mode</obj_property>
@@ -2088,6 +2090,7 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/uncompressed_coefficient">
          <obj_property name="ElementShortName">uncompressed_coefficient[14:0]</obj_property>
          <obj_property name="ObjectShortName">uncompressed_coefficient[14:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/uncompressed_coefficient_valid">
          <obj_property name="ElementShortName">uncompressed_coefficient_valid</obj_property>

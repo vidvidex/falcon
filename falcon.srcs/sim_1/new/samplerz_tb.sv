@@ -66,7 +66,7 @@ module samplerz_tb;
 
     mu1 = $realtobits(-2.98266742615349);
     mu2 = $realtobits(-110.482952233705);
-    isigma = $realtobits(1.7237520213066);
+    isigma = $realtobits(0.58012984909627585);
 
     #1000;
 
