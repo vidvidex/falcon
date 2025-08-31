@@ -13,11 +13,17 @@ module samplerz_tb;
 
   logic [127:0] seed_a;
   logic [127:0] seed_b;
+  // logic [127:0] seed [4] = '{
+  //         128'h0000000011111111_2222222233333333,
+  //         128'h8888888899999999_aaaaaaaabbbbbbbb,
+  //         128'h4444444455555555_6666666677777777,
+  //         128'hccccccccdddddddd_eeeeeeeeffffffff
+  //       };
   logic [127:0] seed [4] = '{
-          128'h0000000011111111_2222222233333333,
-          128'h8888888899999999_aaaaaaaabbbbbbbb,
-          128'h4444444455555555_6666666677777777,
-          128'hccccccccdddddddd_eeeeeeeeffffffff
+          128'h11111111111111111111111111111111,
+          128'h11111111111111111111111111111111,
+          128'h11111111111111111111111111111111,
+          128'h11111111111111111111111111111111
         };
 
   logic [63:0] mu1, mu2, isigma;
@@ -64,9 +70,9 @@ module samplerz_tb;
 
     #30;
 
-    mu1 = $realtobits(-2.98266742615349);
-    mu2 = $realtobits(-110.482952233705);
-    isigma = $realtobits(0.58012984909627585);
+    mu1 = $realtobits(-1.0);
+    mu2 = $realtobits(-1.0);
+    isigma = $realtobits(10/17.0);
 
     #1000;
 
@@ -80,9 +86,9 @@ module samplerz_tb;
     while(done !== 1)
       #10;
 
-    mu1 = $realtobits(56.95491949528823);
-    mu2 = $realtobits(6.458067295424501);
-    isigma = $realtobits(1/1.7410445103037335);
+    // mu1 = $realtobits(56.95491949528823);
+    // mu2 = $realtobits(6.458067295424501);
+    // isigma = $realtobits(1/1.7410445103037335);
 
 
     start <= 1;
@@ -92,9 +98,9 @@ module samplerz_tb;
     while(done !== 1)
       #10;
 
-    mu1 = $realtobits(-11.662806799958712);
-    mu2 = $realtobits(39.64107628004665);
-    isigma = $realtobits(1/1.714965058508814);
+    // mu1 = $realtobits(-11.662806799958712);
+    // mu2 = $realtobits(39.64107628004665);
+    // isigma = $realtobits(1/1.714965058508814);
 
 
     start <= 1;
@@ -104,9 +110,9 @@ module samplerz_tb;
     while(done !== 1)
       #10;
 
-    mu1 = $realtobits(83.89098065383646);
-    mu2 = $realtobits(-11.706270418552691);
-    isigma = $realtobits(1/1.732882618121838);
+    // mu1 = $realtobits(83.89098065383646);
+    // mu2 = $realtobits(-11.706270418552691);
+    // isigma = $realtobits(1/1.732882618121838);
 
 
     start <= 1;
