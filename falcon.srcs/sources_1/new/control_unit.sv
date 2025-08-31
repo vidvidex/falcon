@@ -910,26 +910,26 @@ module control_unit#(
   logic [63:0] samplerz_result1, samplerz_result2;
   logic samplerz_done;
   samplerz #(
-                .N(N)
-              )samplerz (
-                .clk(clk),
-                .rst_n(rst_n),
-                .start(samplerz_start == 1'b1 && samplerz_start_i == 1'b0),
-                .restart(samplerz_restart == 1'b1 && samplerz_restart_i == 1'b0),
+             .N(N)
+           )samplerz (
+             .clk(clk),
+             .rst_n(rst_n),
+             .start(samplerz_start == 1'b1 && samplerz_start_i == 1'b0),
+             .restart(samplerz_restart == 1'b1 && samplerz_restart_i == 1'b0),
 
-                .mu1(samplerz_mu1),
-                .mu2(samplerz_mu2),
-                .isigma(samplerz_isigma),
+             .mu1(samplerz_mu1),
+             .mu2(samplerz_mu2),
+             .isigma(samplerz_isigma),
 
-                .seed_offset_a(samplerz_seed_offset_a),
-                .seed_bram_dout_a(samplerz_seed_a),
-                .seed_offset_b(samplerz_seed_offset_b),
-                .seed_bram_dout_b(samplerz_seed_b),
+             .seed_offset_a(samplerz_seed_offset_a),
+             .seed_bram_dout_a(samplerz_seed_a),
+             .seed_offset_b(samplerz_seed_offset_b),
+             .seed_bram_dout_b(samplerz_seed_b),
 
-                .result1(samplerz_result1),
-                .result2(samplerz_result2),
-                .done(samplerz_done)
-              );
+             .result1(samplerz_result1),
+             .result2(samplerz_result2),
+             .done(samplerz_done)
+           );
 
   assign element_count = (1 << instruction[49:46]);
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
