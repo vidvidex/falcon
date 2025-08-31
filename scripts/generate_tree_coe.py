@@ -1,7 +1,12 @@
+# This script can take the tree values from C implementation and generates a .coe file for the FPGA implementation.
+# Values that are used in the "multiply with tmp" step are reordered in the way we need them on FPGA (real and imag part in the same memory location)
+# Input tree values can be extracted from C implementation by dumpling the tree before first ffSampling_fft call.
+
 import struct
+import math
 
 
-def generate_coe_file(rows, filename):
+def write_coe_file(rows, filename):
     with open(filename, "w") as f:
         f.write(f"memory_initialization_radix=16;\n")
         f.write("memory_initialization_vector=\n")
@@ -10,7 +15,30 @@ def generate_coe_file(rows, filename):
             f.write(f"{row}{sep}\n")
 
 
-tree = [
+def format_for_coe(value1, value2):
+    value1 = struct.pack(">d", value1).hex()
+    value2 = struct.pack(">d", value2).hex()
+
+    # Padd with zeros
+    if len(value1) < 16:
+        value1 = "0" * (16 - len(value1)) + value1
+    if len(value2) < 16:
+        value2 = "0" * (16 - len(value2)) + value2
+
+    return f"{value1}{value2}"
+
+def generate_rows(values):
+    rows = []
+    for i in range(0, len(values), 2):
+        rows.append(format_for_coe(values[i], values[i + 1]))
+    return rows
+
+def treesize(n):
+    logn = int(math.log2(n))
+    return (logn + 1) << logn
+
+
+tree_values = [
     -5.439508405878996,
     4.023591126237180,
     -3.025627021860480,
@@ -5133,21 +5161,29 @@ tree = [
     0.580129849096276,
 ]
 
+def order_for_FPGA(n, tree_addr):
 
-rows = []
-for i in range(0, len(tree), 2):
-    tree1 = tree[i]
-    tree2 = tree[i + 1]
+    if n == 1:
+        print(f"{tree_addr}\t\tsamplerz:\t{tree_values[tree_addr]}")
+        reordered_values[tree_addr] = tree_values[tree_addr]
+        return
 
-    tree1 = struct.pack(">d", tree1).hex()
-    tree2 = struct.pack(">d", tree2).hex()
+    tree_addr0 = tree_addr + n
+    tree_addr1 = tree_addr0 + treesize(n // 2)
 
-    # Padd with zeros
-    if len(tree1) < 16:
-        tree1 = "0" * (16 - len(tree1)) + tree1
-    if len(tree2) < 16:
-        tree2 = "0" * (16 - len(tree2)) + tree2
+    order_for_FPGA(n=n // 2, tree_addr=tree_addr1)
 
-    rows.append(f"{tree1}{tree2}")
+    for i in range(n // 2):
+        print(f"{tree_addr+2*i} {tree_addr + 2*i+1}\tmul:\t\t{tree_values[tree_addr + i]}\t{tree_values[tree_addr + n // 2 + i]}")
+        reordered_values[tree_addr+2*i] = tree_values[tree_addr + i]
+        reordered_values[tree_addr + 2*i+1] = tree_values[tree_addr + n // 2 + i]
 
-generate_coe_file(rows, filename=f"tree.coe")
+    order_for_FPGA(n=n // 2, tree_addr=tree_addr0)
+
+
+reordered_values=[None]*treesize(512)
+order_for_FPGA(512, tree_addr=0)
+
+rows = generate_rows(reordered_values)
+
+write_coe_file(rows=rows, filename=f"tree_FPGA.coe")
