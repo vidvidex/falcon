@@ -1212,6 +1212,11 @@ module control_unit#(
     compress_t1 = 0;
     compress_hm = 0;
     ext_bram_dout = 0;
+    samplerz_mu1 = 0;
+    samplerz_mu2 = 0;
+    samplerz_isigma = 0;
+    samplerz_seed_a = 0;
+    samplerz_seed_b = 0;
 
     if(ext_bram_en == 1'b1) begin     // Software has BRAM access
 
