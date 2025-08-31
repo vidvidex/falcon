@@ -1445,10 +1445,10 @@ module control_unit#(
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
         bram_addr_a[bank4] = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
 
-        fp_adder1_a = bram_dout_a[bank3][127:64];
-        fp_adder2_a = bram_dout_a[bank3][63:0];
-        fp_adder1_b = bram_dout_a[bank4][127:64];
-        fp_adder2_b = bram_dout_a[bank4][63:0];
+        fp_adder1_a = bram_dout_a[bank4][127:64];
+        fp_adder2_a = bram_dout_a[bank4][63:0];
+        fp_adder1_b = bram_dout_a[bank3][127:64];
+        fp_adder2_b = bram_dout_a[bank3][63:0];
 
         fp_adder_valid_in = pipelined_inst_valid;
         fp_adder_done = pipelined_inst_done;
