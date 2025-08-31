@@ -896,7 +896,7 @@ module control_unit#(
              .reject(compress_reject)
            );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) compress_last_delay(.clk(clk), .in(compress_last), .out(compress_last_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_done_delay(.clk(clk), .in(compress_done), .out(compress_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) compress_done_delay(.clk(clk), .in(compress_done), .out(compress_done_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_valid_delay(.clk(clk), .in(compress_valid), .out(compress_valid_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_lower_half_delay(.clk(clk), .in(compress_lower_half), .out(compress_lower_half_delayed));
 
@@ -1094,8 +1094,11 @@ module control_unit#(
       end
 
       if(instruction[127-14] == 1'b1) begin // COMPRESS
-        if(compress_done_delayed)
+        if(compress_done_delayed) begin
           modules_running[INSTRUCTION_COUNT-14] <= 1'b0;
+          signature_accepted <= compress_accept;
+          signature_rejected <= compress_reject;
+        end
         else
           modules_running[INSTRUCTION_COUNT-14] <= 1'b1;
       end

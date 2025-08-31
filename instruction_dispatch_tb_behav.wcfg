@@ -11,9 +11,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="397.160 ns"></ZoomEndTime>
-      <Cursor1Time time="0.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,903,839.034 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,904,236.194 ns"></ZoomEndTime>
+      <Cursor1Time time="1,904,170.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="286"></NameColumnWidth>
@@ -2038,6 +2038,7 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/compressed_signature_length">
          <obj_property name="ElementShortName">compressed_signature_length[14:0]</obj_property>
          <obj_property name="ObjectShortName">compressed_signature_length[14:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/double_to_int_valid_in">
          <obj_property name="ElementShortName">double_to_int_valid_in</obj_property>

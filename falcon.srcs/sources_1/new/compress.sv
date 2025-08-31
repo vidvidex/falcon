@@ -153,7 +153,7 @@ module compress#(
       reject_i <= 0;
     end
     else begin
-      if(last_delayed == 1'b1) begin
+      if(last_delayed == 1'b1 && accept_i == 1'b0 && reject_i == 1'b0) begin
         if(over_bound == 1 || squared_norm > bound2 || compressed_signature_length > slen*8)
           reject_i <= 1;
         else
