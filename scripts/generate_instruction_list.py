@@ -539,7 +539,7 @@ class InstructionGenerator:
             bank1=2,  # bank with t0
             bank2=5,  # bank with t1
             bank3=6,  # bank with hm
-            bank4=5,  # output bank
+            bank4=0,  # output bank
             addr1=N // 2,  # Offset for bank1 (t0), bank2 (t1) and output
             addr2=2560,  # Offset for bank3 (hm)
             element_count=int(math.log2(N)),
