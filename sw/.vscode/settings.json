@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "platform.h": "c",
+        "constants.h": "c",
+        "main.h": "c",
+        "compare": "c"
+    }
+}
