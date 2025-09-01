@@ -1,17 +1,17 @@
 {
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
-    "xci_name": "falcon_falcon_0_0",
+    "xci_name": "falcon_falcon_0_1",
     "cell_name": "falcon_0",
     "component_reference": "user.org:user:falcon:1.0",
-    "ip_revision": "3",
-    "gen_directory": "../../../../../../falcon_bd.gen/sources_1/bd/falcon/ip/falcon_falcon_0_0",
+    "ip_revision": "1",
+    "gen_directory": "../../../../../../falcon_bd.gen/sources_1/bd/falcon/ip/falcon_falcon_0_1",
     "parameters": {
       "component_parameters": {
         "N": [ { "value": "512", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "C_S_AXI_DATA_WIDTH": [ { "value": "32", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "C_S_AXI_ADDR_WIDTH": [ { "value": "4", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "Component_Name": [ { "value": "falcon_falcon_0_0", "resolve_type": "user", "usage": "all" } ]
+        "Component_Name": [ { "value": "falcon_falcon_0_1", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
         "N": [ { "value": "512", "resolve_type": "generated", "format": "long", "usage": "all" } ],
@@ -33,9 +33,9 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "3" } ],
+        "IPREVISION": [ { "value": "1" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../falcon_bd.gen/sources_1/bd/falcon/ip/falcon_falcon_0_0" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../falcon_bd.gen/sources_1/bd/falcon/ip/falcon_falcon_0_1" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2023.1" } ],

@@ -1482,12 +1482,10 @@ module control_unit#(
         bram_we_a[bank3] = samplerz_done;
 
         // seed
-        bram_addr_a[bank4] = ((N == 512) ? 802 : 1604) + samplerz_seed_offset_a;
-        bram_addr_b[bank4] = ((N == 512) ? 802 : 1604) + samplerz_seed_offset_b;
-        // samplerz_seed_a = bram_din_a[bank4];
-        // samplerz_seed_b = bram_din_b[bank4];
-        samplerz_seed_a = 128'h11111111111111111111111111111111;
-        samplerz_seed_b = 128'h11111111111111111111111111111111;
+        bram_addr_a[bank4] = `SEED_BASE_ADDR + samplerz_seed_offset_a;
+        bram_addr_b[bank4] = `SEED_BASE_ADDR + samplerz_seed_offset_b;
+        samplerz_seed_a = bram_dout_a[bank4];
+        samplerz_seed_b = bram_dout_b[bank4];
       end
     end
   end

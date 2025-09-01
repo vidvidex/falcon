@@ -27,6 +27,8 @@
 
 typedef unsigned __int128 uint128_t;
 
+#define SEED_BASE_ADDR (N == 512) ? 802 : 1604
+
 /*
  * Maximum signature size (in bytes) when using the COMPRESSED format.
  * In practice, the signature will be shorter.
