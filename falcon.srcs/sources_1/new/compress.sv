@@ -12,6 +12,9 @@
 // We compute and compress the signature while checking if it's valid because it will
 // be valid in most cases and we can save a few cycles.
 //
+// The compressed signature is written to BRAM via "output_*" signals.
+// First memory location will contain the bitlength of compressed signature.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
@@ -167,6 +170,7 @@ module compress#(
   logic [6:0] bits_that_fit;
   logic [6:0] remaining_bits;
   logic output_final_zeros;
+  logic output_signature_bitlength;
   logic signature_output_done;
 
   assign accept = signature_output_done ? accept_i : 0;
@@ -174,13 +178,14 @@ module compress#(
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
-      output_addr <= -1;
+      output_addr <= 0;
       output_data <= 0;
       output_we <= 0;
       buffer <= 0;
       buffer_valid_bits <= 0;
       compressed_signature_length <= 0;
       output_final_zeros = 0;
+      output_signature_bitlength = 0;
       signature_output_done = 0;
     end
     else begin
@@ -217,7 +222,7 @@ module compress#(
       end
 
       // Final flush on last signal
-      if (last_delayed) begin
+      if (last_delayed && !signature_output_done) begin
         output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
         output_we <= 1;
         output_addr <= output_addr + 1;
@@ -229,7 +234,7 @@ module compress#(
         if(compressed_signature_length < slen*8)
           output_final_zeros <= 1;
         else
-          signature_output_done <= 1;
+          output_signature_bitlength <= 1;
       end
 
       if(output_final_zeros == 1'b1) begin
@@ -240,8 +245,17 @@ module compress#(
 
         if(compressed_signature_length >= slen*8) begin
           output_final_zeros <= 0; // Stop outputting zeros after reaching the expected length
-          signature_output_done <= 1;
+          output_signature_bitlength <= 1;
         end
+      end
+
+      if(output_signature_bitlength == 1'b1) begin
+        output_data <= compressed_signature_length;
+        output_we <= 1;
+        output_addr <= 0;
+
+        output_signature_bitlength <= 0;
+        signature_output_done <= 1;
       end
     end
   end

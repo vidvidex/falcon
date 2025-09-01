@@ -896,7 +896,7 @@ module control_unit#(
              .reject(compress_reject)
            );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) compress_last_delay(.clk(clk), .in(compress_last), .out(compress_last_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) compress_done_delay(.clk(clk), .in(compress_done), .out(compress_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(8)) compress_done_delay(.clk(clk), .in(compress_done), .out(compress_done_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_valid_delay(.clk(clk), .in(compress_valid), .out(compress_valid_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) compress_lower_half_delay(.clk(clk), .in(compress_lower_half), .out(compress_lower_half_delayed));
 
