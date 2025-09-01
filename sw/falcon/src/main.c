@@ -38,7 +38,6 @@
 #include "xil_printf.h"
 #include <stdio.h>
 
-// Loads the public key
 void load_public_key(unsigned int bram_id) {
     for (unsigned int i = 0; i < N / 2; i++) {
         uint128_t temp = createUint128_t(public_key[i], public_key[i + N / 2]);
@@ -46,7 +45,6 @@ void load_public_key(unsigned int bram_id) {
     }
 }
 
-// Loads the message
 void load_message(unsigned int bram_id) {
     for (unsigned int i = 0; i < MESSAGE_BLOCK_COUNT; i++) {
         uint128_t temp = createUint128_t(0, message_blocks[i]);
@@ -54,12 +52,16 @@ void load_message(unsigned int bram_id) {
     }
 }
 
-// Loads the signature
 void load_signature(unsigned int bram_id) {
     for (unsigned int i = 0; i < SIGNATURE_BLOCK_COUNT / 2; i++) {
         uint128_t temp = createUint128_t(signature_blocks[i * 2], signature_blocks[i * 2 + 1]);
         bram_write(&temp, bram_id, i, 1);
     }
+}
+
+// Loads seed into BRAM. Seed is 4x128 bit, loaded to bram_addr, bram_addr+1, +2, +3
+void load_seed(uint128_t* seed) {
+    bram_write(seed, BRAM2, SEED_BASE_ADDR, 4);
 }
 
 void load_into_bram(uint64_t *src, unsigned int bram_id, unsigned int start_addr, unsigned int count) {
@@ -101,7 +103,15 @@ void sign() {
     load_message(BRAM4);
     load_into_bram(tree, BRAM6, 0, TREE_SIZE);
 
-    print("b00, b01, b10, b11 and tree loaded.\n");
+    uint128_t seed[4] = {
+        createUint128_t(0x1111111111111111, 0x1111111111111111),
+        createUint128_t(0x1111111111111111, 0x1111111111111111),
+        createUint128_t(0x1111111111111111, 0x1111111111111111),
+        createUint128_t(0x1111111111111111, 0x1111111111111111)
+    };
+    load_seed(seed);
+
+    print("b00, b01, b10, b11, tree and seed loaded.\n");
 
     print("Starting signing...\n");
 

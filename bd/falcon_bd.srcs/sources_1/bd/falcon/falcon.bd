@@ -1111,8 +1111,8 @@
       },
       "falcon_0": {
         "vlnv": "user.org:user:falcon:1.0",
-        "xci_name": "falcon_falcon_0_0",
-        "xci_path": "ip/falcon_falcon_0_0/falcon_falcon_0_0.xci",
+        "xci_name": "falcon_falcon_0_1",
+        "xci_path": "ip/falcon_falcon_0_1/falcon_falcon_0_1.xci",
         "inst_hier_path": "falcon_0",
         "interface_ports": {
           "S_AXI": {

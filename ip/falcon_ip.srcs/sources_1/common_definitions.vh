@@ -15,6 +15,9 @@
 `define SIGNIFICANT_BITS 52
 `define EXPONENT_BITS 11
 
+// Memory locations
+`define SEED_BASE_ADDR (N == 512) ? 802 : 1604
+
 // Debugging
 
 // Uncomment this to use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
