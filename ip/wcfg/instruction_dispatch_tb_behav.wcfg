@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1,904,045.540 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,904,552.301 ns"></ZoomEndTime>
-      <Cursor1Time time="1,904,145.982 ns"></Cursor1Time>
+      <ZoomStartTime time="1,902,179.651 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,902,516.190 ns"></ZoomEndTime>
+      <Cursor1Time time="1,902,372.915 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="268"></NameColumnWidth>
-      <ValueColumnWidth column_width="60"></ValueColumnWidth>
+      <NameColumnWidth column_width="243"></NameColumnWidth>
+      <ValueColumnWidth column_width="146"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group822">
@@ -302,6 +302,7 @@
       <wvobject type="group" fp_name="group868">
          <obj_property name="label">debug</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/debug_BRAM_READ">
             <obj_property name="ElementShortName">debug_BRAM_READ</obj_property>
             <obj_property name="ObjectShortName">debug_BRAM_READ</obj_property>
@@ -1108,6 +1109,7 @@
       <wvobject type="group" fp_name="group943">
          <obj_property name="label">fft</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/fft_mode">
             <obj_property name="ElementShortName">fft_mode</obj_property>
             <obj_property name="ObjectShortName">fft_mode</obj_property>
@@ -2010,10 +2012,6 @@
          <obj_property name="ElementShortName">reject</obj_property>
          <obj_property name="ObjectShortName">reject</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/bound2">
-         <obj_property name="ElementShortName">bound2[26:0]</obj_property>
-         <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/accept_i">
          <obj_property name="ElementShortName">accept_i</obj_property>
          <obj_property name="ObjectShortName">accept_i</obj_property>
@@ -2025,10 +2023,17 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/squared">
          <obj_property name="ElementShortName">squared[27:0]</obj_property>
          <obj_property name="ObjectShortName">squared[27:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/squared_norm">
          <obj_property name="ElementShortName">squared_norm[29:0]</obj_property>
          <obj_property name="ObjectShortName">squared_norm[29:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/bound2">
+         <obj_property name="ElementShortName">bound2[26:0]</obj_property>
+         <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/over_bound">
          <obj_property name="ElementShortName">over_bound</obj_property>
@@ -2049,10 +2054,15 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/t0_double">
          <obj_property name="ElementShortName">t0_double[63:0]</obj_property>
          <obj_property name="ObjectShortName">t0_double[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/t0_int">
          <obj_property name="ElementShortName">t0_int[14:0]</obj_property>
          <obj_property name="ObjectShortName">t0_int[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/t1_double">
          <obj_property name="ElementShortName">t1_double[63:0]</obj_property>
@@ -2061,18 +2071,22 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/t1_int">
          <obj_property name="ElementShortName">t1_int[14:0]</obj_property>
          <obj_property name="ObjectShortName">t1_int[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/hm_delayed">
          <obj_property name="ElementShortName">hm_delayed[14:0]</obj_property>
          <obj_property name="ObjectShortName">hm_delayed[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/hm_delayed_i">
          <obj_property name="ElementShortName">hm_delayed_i[14:0]</obj_property>
          <obj_property name="ObjectShortName">hm_delayed_i[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/uncompressed_coefficient">
          <obj_property name="ElementShortName">uncompressed_coefficient[14:0]</obj_property>
          <obj_property name="ObjectShortName">uncompressed_coefficient[14:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/uncompressed_coefficient_valid">
          <obj_property name="ElementShortName">uncompressed_coefficient_valid</obj_property>
