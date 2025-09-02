@@ -1,5 +1,5 @@
-#include "xil_io.h"
 #include "main.h"
+#include "xil_io.h"
 
 typedef enum { SIGN = 0b00, VERIFY = 0b01 } algorithm_t;
 
@@ -93,4 +93,13 @@ int get_status() {
         return 1;
 
     return -1;
+}
+
+// Prints array as hex bytes.
+// size corresponds to the number of bytes in the array
+void print_array(uint8_t *array, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        xil_printf("%02x", array[i]);
+    }
+    xil_printf("\n");
 }
