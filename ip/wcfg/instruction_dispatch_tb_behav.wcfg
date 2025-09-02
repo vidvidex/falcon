@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1,899,058.951 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,899,425.246 ns"></ZoomEndTime>
-      <Cursor1Time time="1,899,150.000 ns"></Cursor1Time>
+      <ZoomStartTime time="1,904,045.540 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,904,552.301 ns"></ZoomEndTime>
+      <Cursor1Time time="1,904,145.982 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="276"></NameColumnWidth>
+      <NameColumnWidth column_width="268"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="4" />
@@ -1956,6 +1956,7 @@
    <wvobject type="group" fp_name="group661">
       <obj_property name="label">New Group 38</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -1991,6 +1992,7 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/output_addr">
          <obj_property name="ElementShortName">output_addr[12:0]</obj_property>
          <obj_property name="ObjectShortName">output_addr[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/output_data">
          <obj_property name="ElementShortName">output_data[127:0]</obj_property>
@@ -2108,10 +2110,6 @@
          <obj_property name="ElementShortName">output_final_zeros</obj_property>
          <obj_property name="ObjectShortName">output_final_zeros</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/output_signature_bitlength">
-         <obj_property name="ElementShortName">output_signature_bitlength</obj_property>
-         <obj_property name="ObjectShortName">output_signature_bitlength</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/signature_output_done">
          <obj_property name="ElementShortName">signature_output_done</obj_property>
          <obj_property name="ObjectShortName">signature_output_done</obj_property>
@@ -2119,10 +2117,6 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
          <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/compress/slen">
-         <obj_property name="ElementShortName">slen[31:0]</obj_property>
-         <obj_property name="ObjectShortName">slen[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

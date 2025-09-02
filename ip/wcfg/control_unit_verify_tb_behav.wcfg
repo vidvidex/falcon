@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3,021.302 ns"></ZoomStartTime>
-      <ZoomEndTime time="3,433.496 ns"></ZoomEndTime>
-      <Cursor1Time time="3,090.000 ns"></Cursor1Time>
+      <ZoomStartTime time="26,714.687 ns"></ZoomStartTime>
+      <ZoomEndTime time="27,166.569 ns"></ZoomEndTime>
+      <Cursor1Time time="26,790.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="146"></ValueColumnWidth>
+      <ValueColumnWidth column_width="142"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="2" />
+   <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group175">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -170,28 +170,24 @@
          <obj_property name="ObjectShortName">bram_dout[127:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/modules_running">
-         <obj_property name="ElementShortName">modules_running[15:0]</obj_property>
-         <obj_property name="ObjectShortName">modules_running[15:0]</obj_property>
+         <obj_property name="ElementShortName">modules_running[16:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running[16:0]</obj_property>
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/modules_running_i">
-         <obj_property name="ElementShortName">modules_running_i[15:0]</obj_property>
-         <obj_property name="ObjectShortName">modules_running_i[15:0]</obj_property>
+         <obj_property name="ElementShortName">modules_running_i[16:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running_i[16:0]</obj_property>
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/element_count">
-         <obj_property name="ElementShortName">element_count[8:0]</obj_property>
-         <obj_property name="ObjectShortName">element_count[8:0]</obj_property>
+         <obj_property name="ElementShortName">element_count[9:0]</obj_property>
+         <obj_property name="ObjectShortName">element_count[9:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify_tb/control_unit/pipelined_inst_index">
-         <obj_property name="ElementShortName">pipelined_inst_index[8:0]</obj_property>
-         <obj_property name="ObjectShortName">pipelined_inst_index[8:0]</obj_property>
+         <obj_property name="ElementShortName">pipelined_inst_index[9:0]</obj_property>
+         <obj_property name="ObjectShortName">pipelined_inst_index[9:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/pipelined_inst_last">
-         <obj_property name="ElementShortName">pipelined_inst_last</obj_property>
-         <obj_property name="ObjectShortName">pipelined_inst_last</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/pipelined_inst_valid">
          <obj_property name="ElementShortName">pipelined_inst_valid</obj_property>
@@ -200,7 +196,6 @@
       <wvobject type="group" fp_name="group15795">
          <obj_property name="label">debug</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/debug_BRAM_READ">
             <obj_property name="ElementShortName">debug_BRAM_READ</obj_property>
             <obj_property name="ObjectShortName">debug_BRAM_READ</obj_property>
@@ -260,10 +255,6 @@
          <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/debug_COMPRESS">
             <obj_property name="ElementShortName">debug_COMPRESS</obj_property>
             <obj_property name="ObjectShortName">debug_COMPRESS</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/DEBUG_ADD_SUB">
-            <obj_property name="ElementShortName">DEBUG_ADD_SUB</obj_property>
-            <obj_property name="ObjectShortName">DEBUG_ADD_SUB</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group15727">
@@ -906,10 +897,6 @@
          <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_valid_delayed">
             <obj_property name="ElementShortName">sub_normalize_squared_norm_valid_delayed</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_valid_delayed</obj_property>
-         </wvobject>
-         <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_last">
-            <obj_property name="ElementShortName">sub_normalize_squared_norm_last</obj_property>
-            <obj_property name="ObjectShortName">sub_normalize_squared_norm_last</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/control_unit_verify_tb/control_unit/sub_normalize_squared_norm_last_delayed">
             <obj_property name="ElementShortName">sub_normalize_squared_norm_last_delayed</obj_property>

@@ -28,6 +28,7 @@ uint64_t public_key[N] = {
     2865,  12070, 9897,  9950,  12195, 194};
 uint64_t message_blocks[MESSAGE_BLOCK_COUNT] = {
     40 + 12, 0x837e8bcfb23c5981, 0x41d5b10176855b9a, 0x92208190cdfbc47f, 0x92e859a168bea29f, 0xa335ead74efe6969, 0x6f57206f6c6c6548, 0x0000000021646c72};
+
 uint64_t signature_blocks[SIGNATURE_BLOCK_COUNT] = {0,
                                                     5000,
                                                     0xa0419223bd4a6372,
