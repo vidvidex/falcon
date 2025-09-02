@@ -8,17 +8,16 @@ module double_to_int (
     input logic valid_in,
     output logic signed [14:0] int_out,
     output logic valid_out
-);
+  );
 
   logic sign;
   logic [10:0] exponent;
   logic [51:0] fraction;
-  logic signed [31:0] int_out_i;
+  logic signed [14:0] int_out_i;
 
   logic [52:0] mantissa_with_hidden_bit;
   logic [63:0] shifted_mantissa;
-  logic [11:0] exponent_unbiased;
-  logic [31:0] result_unsigned;
+  logic signed [11:0] exponent_unbiased;
 
   always_comb begin
     sign = double_in[63];
@@ -29,22 +28,25 @@ module double_to_int (
     mantissa_with_hidden_bit = (exponent == 0) ? {1'b0, fraction} : {1'b1, fraction};
 
     // Unbias exponent (bias = 1023)
-    exponent_unbiased = exponent - 11'd1023;
+    exponent_unbiased = $signed(exponent) - 12'd1023;
 
-    // Default output
-    result_unsigned = 32'd0;
     shifted_mantissa = 64'd0;
 
     if (exponent_unbiased < 52) begin
       // Right shift — add rounding before shift
       automatic int shift_amount = 52 - exponent_unbiased;
 
-      if (shift_amount < 64) begin
-        // Round to nearest (add 1 at bit position shift_amount-1)
+      if (shift_amount < 64 && shift_amount > 0) begin
+        automatic logic [63:0] extended_mantissa = {11'b0, mantissa_with_hidden_bit};
         automatic logic [63:0] rounding_add = 64'd1 << (shift_amount - 1);
-        shifted_mantissa = mantissa_with_hidden_bit + rounding_add;
-        shifted_mantissa = shifted_mantissa >> shift_amount;
-      end else begin
+        automatic logic [63:0] rounded_mantissa = extended_mantissa + rounding_add;
+        shifted_mantissa = rounded_mantissa >> shift_amount;
+      end
+      else if (shift_amount <= 0) begin
+        // No shift needed or left shift needed
+        shifted_mantissa = mantissa_with_hidden_bit;
+      end
+      else begin
         shifted_mantissa = 0; // too small, rounds to zero
       end
     end
@@ -53,11 +55,8 @@ module double_to_int (
       shifted_mantissa = mantissa_with_hidden_bit << (exponent_unbiased - 52);
     end
 
-    // Truncate to 14 bits
-    result_unsigned = shifted_mantissa[14:0];
-
-    // Apply sign
-    int_out_i = sign ? -result_unsigned : result_unsigned;
+    // Apply sign and truncate to 15 bits
+    int_out_i = sign ? -$signed(shifted_mantissa[14:0]) : $signed(shifted_mantissa[14:0]);
   end
 
   // Register the output
