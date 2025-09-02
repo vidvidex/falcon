@@ -884,7 +884,7 @@ module control_unit#(
              .t0(compress_t0),
              .t1(compress_t1),
              .hm(compress_hm),
-             .lower_half(compress_lower_half),
+             .lower_half(compress_lower_half_delayed),
              .valid(compress_valid_delayed),
              .last(compress_last_delayed),
 
