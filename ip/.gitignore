@@ -3,6 +3,7 @@
 falcon_ip.sim/
 falcon_ip.runs/
 falcon.gen/
+falcon_ip.gen/
 # a.out is outputted by one of the VSCode extensions I am using for Verilog but I am not sure which one and why
 a.out
 .vscode/

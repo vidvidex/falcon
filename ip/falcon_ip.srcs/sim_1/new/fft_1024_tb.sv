@@ -9,11 +9,13 @@ module fft_1024_tb;
   logic start;
   logic done;
 
-  logic [$clog2(N)-2:0] bram1_addr_a, bram1_addr_b;
-  logic [127:0] bram1_din_a, bram1_din_b;
-  logic [127:0] bram1_dout_a, bram1_dout_b;
-  logic bram1_we_a, bram1_we_b;
-  bram_512x128_preinit_for_fft_tb bram_512x128_preinit_for_fft_tb_1 (
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_dout_a;
+  logic bram1_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram1_din_b, bram1_dout_b;
+  logic bram1_we_b;
+  bram_6144x128_preinit_for_fft1024_tb bram_6144x128_preinit_for_fft_tb_1 (
                                  .addra(bram1_addr_a),
                                  .clka(clk),
                                  .dina(bram1_din_a),
@@ -27,11 +29,13 @@ module fft_1024_tb;
                                  .web(bram1_we_b)
                                );
 
-  logic [$clog2(N)-2:0] bram2_addr_a, bram2_addr_b;
-  logic [127:0] bram2_din_a, bram2_din_b;
-  logic [127:0] bram2_dout_a, bram2_dout_b;
-  logic bram2_we_a, bram2_we_b;
-  bram_512x128_preinit_for_fft_tb bram_512x128_preinit_for_fft_tb_2 (
+  logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_dout_a;
+  logic bram2_we_a;
+  logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b;
+  logic [`BRAM_DATA_WIDTH-1:0] bram2_din_b, bram2_dout_b;
+  logic bram2_we_b;
+  bram_6144x128_preinit_for_fft1024_tb bram_6144x128_preinit_for_fft_tb_2 (
                                  .addra(bram2_addr_a),
                                  .clka(clk),
                                  .dina(bram2_din_a),
