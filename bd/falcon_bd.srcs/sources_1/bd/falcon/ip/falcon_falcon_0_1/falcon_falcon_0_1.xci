@@ -4,7 +4,7 @@
     "xci_name": "falcon_falcon_0_1",
     "cell_name": "falcon_0",
     "component_reference": "user.org:user:falcon:1.0",
-    "ip_revision": "1",
+    "ip_revision": "3",
     "gen_directory": "../../../../../../falcon_bd.gen/sources_1/bd/falcon/ip/falcon_falcon_0_1",
     "parameters": {
       "component_parameters": {
@@ -33,7 +33,7 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "1" } ],
+        "IPREVISION": [ { "value": "3" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../falcon_bd.gen/sources_1/bd/falcon/ip/falcon_falcon_0_1" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],

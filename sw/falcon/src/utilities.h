@@ -44,6 +44,12 @@ void bram_read(unsigned int bram_id, unsigned int bram_addr, uint128_t *dest, un
 
 // Starts selected algorithm
 void start_algorithm(algorithm_t algorithm) {
+
+    if (algorithm == SIGN)
+        print("Starting signing...\n");
+    else if (algorithm == VERIFY)
+        print("Starting verification...\n");
+
     // CONTROL_REG[2:1] controls algorithm selection
     *((int *)CONTROL_REG) &= ~(0b11 << 1);     // Clear bits 2:1
     *((int *)CONTROL_REG) |= (algorithm << 1); // Set algorithm
@@ -52,6 +58,15 @@ void start_algorithm(algorithm_t algorithm) {
     // Write 1 into it to start the algorithm and then immediately clear it
     *((int *)CONTROL_REG) |= (1 << 0);
     *((int *)CONTROL_REG) &= ~(1 << 0);
+}
+
+// Resets hardware
+void reset_algorithm() {
+    print("Resetting algorithm...\n");
+    // CONTROL_REG[3] controls algorithm reset
+    // Write 1 into it to reset the algorithm and then immediately clear it
+    *((int *)CONTROL_REG) |= (1 << 3);
+    *((int *)CONTROL_REG) &= ~(1 << 3);
 }
 
 // Waits until algorithm execution is done

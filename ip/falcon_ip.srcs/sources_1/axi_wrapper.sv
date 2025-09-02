@@ -7,6 +7,7 @@
 //  - slv_reg0 is control register:
 //        [0]   ... 1 = start algorithm
 //        [2:1] ... algorithm select (00 = sign, 01 = verify, 10 and 11 left free, can be used for keygen in the future)
+//        [3]   ... 1 = reset
 //        [31]  ... enable signal for external BRAM interface. When this is high, software has access to the BRAM. Normally ext_bram_en would be used for that but it doesn't seem to work.
 //  - slv_reg1 is output register
 //        [0] ... 1 = algorithm execution done
@@ -105,6 +106,7 @@ module axi_wrapper #
 
   // Falcon
   logic start, start_i;
+  logic reset;
   logic [1:0] algorithm_select;
   logic signature_accepted;
   logic signature_rejected;
@@ -398,6 +400,7 @@ module axi_wrapper #
   end
 
   assign start = slv_reg0[0];
+  assign reset = slv_reg0[3];
   assign algorithm_select = slv_reg0[2:1];
   assign ext_bram_en = slv_reg0[31];
 
@@ -406,7 +409,7 @@ module axi_wrapper #
                          .N(N)
                        ) instruction_dispatch (
                          .clk(S_AXI_ACLK),
-                         .rst_n(S_AXI_ARESETN),
+                         .rst_n(S_AXI_ARESETN && !reset),
                          .start(start == 1'b1 && start_i == 1'b0),
                          .algorithm_select(algorithm_select),
 
