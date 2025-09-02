@@ -39,11 +39,6 @@ module compress#(
     output logic reject   // Signature is invalid
   );
 
-  // Expected (max) signature length in bytes, sbytelen(depends on N) - HEAD_LEN(1) - SALT_LEN(40)
-  localparam int slen = N == 8 ? 52-1-40 :
-             N == 512 ? 666-1-40 :
-             N == 1024 ? 1280-1-40 : 0;
-
   logic [26:0] bound2; // The bound squared
   generate
     if (N == 8)
@@ -157,7 +152,7 @@ module compress#(
     end
     else begin
       if(last_delayed == 1'b1 && accept_i == 1'b0 && reject_i == 1'b0) begin
-        if(over_bound == 1 || squared_norm > bound2 || compressed_signature_length > slen*8)
+        if(over_bound == 1 || squared_norm > bound2 || compressed_signature_length > `SLEN*8)
           reject_i <= 1;
         else
           accept_i <= 1;
@@ -170,7 +165,6 @@ module compress#(
   logic [6:0] bits_that_fit;
   logic [6:0] remaining_bits;
   logic output_final_zeros;
-  logic output_signature_bitlength;
   logic signature_output_done;
 
   assign accept = signature_output_done ? accept_i : 0;
@@ -178,14 +172,13 @@ module compress#(
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
-      output_addr <= 0;
+      output_addr <= -1;
       output_data <= 0;
       output_we <= 0;
       buffer <= 0;
       buffer_valid_bits <= 0;
       compressed_signature_length <= 0;
       output_final_zeros = 0;
-      output_signature_bitlength = 0;
       signature_output_done = 0;
     end
     else begin
@@ -231,10 +224,10 @@ module compress#(
 
         // After the signature is sent we might have to output some zeros to clear anything that was in BRAM before
         compressed_signature_length <= compressed_signature_length + 128;
-        if(compressed_signature_length < slen*8)
+        if(compressed_signature_length < `SLEN*8)
           output_final_zeros <= 1;
         else
-          output_signature_bitlength <= 1;
+          signature_output_done <= 1;
       end
 
       if(output_final_zeros == 1'b1) begin
@@ -243,20 +236,15 @@ module compress#(
         output_addr <= output_addr + 1;
         compressed_signature_length <= compressed_signature_length + 128;
 
-        if(compressed_signature_length >= slen*8) begin
+        if(compressed_signature_length >= `SLEN*8) begin
           output_final_zeros <= 0; // Stop outputting zeros after reaching the expected length
-          output_signature_bitlength <= 1;
+          signature_output_done <= 1;
         end
       end
+    end
 
-      if(output_signature_bitlength == 1'b1) begin
-        output_data <= compressed_signature_length;
-        output_we <= 1;
-        output_addr <= 0;
-
-        output_signature_bitlength <= 0;
-        signature_output_done <= 1;
-      end
+    if(output_we) begin
+      $display("output_data at %d:%h", output_addr, output_data);
     end
   end
 

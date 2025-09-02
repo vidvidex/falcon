@@ -66,9 +66,6 @@ module decompress #(
 
   logic decompress_coefficient_rst_n;
 
-  logic [1:0] read_signature_length_counter; // Counter for how many cycles we've been in the READ_SIGNATURE_LENGTH state
-  logic [13:0] signature_length_bits;
-
   logic input_bram_data_valid, input_bram_data_valid_delayed;
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) input_bram_data_valid_delay(.clk(clk), .in(input_bram_data_valid), .out(input_bram_data_valid_delayed));
 
@@ -107,14 +104,13 @@ module decompress #(
 
   typedef enum logic [2:0] {
             IDLE,   // Waiting for start signal
-            READ_SIGNATURE_LENGTH, // Reading signature length from the first BRAM cell
             DECOMPRESS_START,  // Waiting for valid bits of the compressed signature and start decompression
             DECOMPRESSING,  // Decompressing the current coefficient
             DONE  // Output "done" pulse
           } state_t;
   state_t state, next_state;
 
-  assign decompress_coefficient_rst_n = rst_n && !(state == READ_SIGNATURE_LENGTH || state == DECOMPRESS_START || state == DONE || state == DECOMPRESSING && coefficient_valid == 1'b1);
+  assign decompress_coefficient_rst_n = rst_n && !(state == DECOMPRESS_START || state == DONE || state == DECOMPRESSING && coefficient_valid == 1'b1);
 
   // State machine state changes
   always_comb begin
@@ -123,10 +119,6 @@ module decompress #(
     case (state)
       IDLE: begin
         if (start == 1'b1)
-          next_state = READ_SIGNATURE_LENGTH;
-      end
-      READ_SIGNATURE_LENGTH: begin
-        if(read_signature_length_counter == 2)
           next_state = DECOMPRESS_START;
       end
       DECOMPRESS_START: begin
@@ -187,20 +179,13 @@ module decompress #(
   // Reading from BRAM
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0 || state == IDLE) begin
-      input_bram_addr <= 0;
+      input_bram_addr <= -1;
       input_bram_data_valid <= 1'b0;
-      read_signature_length_counter <= 0;
       buffer_valid_bits <= 0;
       buffer <= 0;
       waiting_for_input_data <= 1'b0;
     end
     else begin
-
-      if(state == READ_SIGNATURE_LENGTH)
-        read_signature_length_counter <= read_signature_length_counter + 1;
-
-      if(read_signature_length_counter == 2)
-        signature_length_bits <= input_bram_data;
 
       if(input_bram_data_valid_delayed == 1'b1 && coefficient_valid == 1'b1) begin
         // We read next block of data and we have a valid coefficient.
@@ -245,7 +230,7 @@ module decompress #(
     output_we = coefficient_valid; // Write only when we have a valid coefficient
   end
 
-  assign valid_bits = (signature_length_bits < 105) ? signature_length_bits : 105;
+  assign valid_bits = (buffer_valid_bits < 105) ? buffer_valid_bits : 105;
 
   assign remaining_bits_not_zeros_error = (state == DONE && buffer[2*128-1:2*128-7] != 0);
   assign done = state == DONE;

@@ -10,7 +10,7 @@
 
 #define N 512
 #define MESSAGE_BLOCK_COUNT (1 + 7)
-#define SIGNATURE_BLOCK_COUNT (2 + 79)
+#define SIGNATURE_BLOCK_COUNT (40*2)	// Enough for 666-1-40 bytes split into 8 byte blocks
 #define TREE_SIZE 5120
 
 #define BRAM0 0

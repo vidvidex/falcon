@@ -38,6 +38,9 @@
 #include "xil_printf.h"
 #include <stdio.h>
 
+uint128_t signature128[SIGNATURE_BLOCK_COUNT / 2];
+uint8_t *signature8 = (uint8_t *)signature128;
+
 void load_public_key(unsigned int bram_id) {
     for (unsigned int i = 0; i < N / 2; i++) {
         uint128_t temp = createUint128_t(public_key[i], public_key[i + N / 2]);
@@ -52,17 +55,17 @@ void load_message(unsigned int bram_id) {
     }
 }
 
-void load_signature(unsigned int bram_id) {
+void load_signature_const(unsigned int bram_id) {
     for (unsigned int i = 0; i < SIGNATURE_BLOCK_COUNT / 2; i++) {
         uint128_t temp = createUint128_t(signature_blocks[i * 2], signature_blocks[i * 2 + 1]);
         bram_write(&temp, bram_id, i, 1);
     }
 }
 
+void load_signature(unsigned int bram_id, uint128_t *signature, unsigned int count) { bram_write(signature, bram_id, 0, count); }
+
 // Loads seed into BRAM. Seed is 4x128 bit, loaded to bram_addr, bram_addr+1, +2, +3
-void load_seed(uint128_t* seed) {
-    bram_write(seed, BRAM2, SEED_BASE_ADDR, 4);
-}
+void load_seed(uint128_t *seed) { bram_write(seed, BRAM2, SEED_BASE_ADDR, 4); }
 
 void load_into_bram(uint64_t *src, unsigned int bram_id, unsigned int start_addr, unsigned int count) {
     for (unsigned int i = 0; i < count / 2; i++) {
@@ -72,14 +75,15 @@ void load_into_bram(uint64_t *src, unsigned int bram_id, unsigned int start_addr
 }
 
 void verify() {
-    print("Starting verification...\n");
+    print("Preparing for verification...\n");
     print("Loading keys, signature, and message...\n");
     load_public_key(BRAM0);
-    load_signature(BRAM1);
+    load_signature_const(BRAM1);
+    // load_signature(BRAM1, signature128, SIGNATURE_BLOCK_COUNT/2);
     load_message(BRAM6);
     print("Keys, signature, and message loaded.\n");
 
-    print("Starting verification...\n");
+    enable_bram_access();
 
     start_algorithm(VERIFY);
     wait_until_done();
@@ -94,8 +98,8 @@ void verify() {
 }
 
 void sign() {
-    print("Starting signing...\n");
-    print("Loading b00, b01, b10, b11 and tree...\n");
+    print("Preparing for signing...\n");
+    print("Loading b00, b01, b10, b11, tree and seed...\n");
     load_into_bram(b00, BRAM0, 0, N);
     load_into_bram(b01, BRAM1, 0, N);
     load_into_bram(b10, BRAM2, 0, N);
@@ -103,12 +107,8 @@ void sign() {
     load_message(BRAM4);
     load_into_bram(tree, BRAM6, 0, TREE_SIZE);
 
-    uint128_t seed[4] = {
-        createUint128_t(0x1111111111111111, 0x1111111111111111),
-        createUint128_t(0x1111111111111111, 0x1111111111111111),
-        createUint128_t(0x1111111111111111, 0x1111111111111111),
-        createUint128_t(0x1111111111111111, 0x1111111111111111)
-    };
+    uint128_t seed[4] = {createUint128_t(0x1111111111111111, 0x1111111111111111), createUint128_t(0x1111111111111111, 0x1111111111111111),
+                         createUint128_t(0x1111111111111111, 0x1111111111111111), createUint128_t(0x1111111111111111, 0x1111111111111111)};
     load_seed(seed);
 
     print("b00, b01, b10, b11, tree and seed loaded.\n");
@@ -116,22 +116,13 @@ void sign() {
     start_algorithm(SIGN);
     wait_until_done();
 
-    const int max_bytes = FALCON_SIG_COMPRESSED_MAXSIZE(9);
-
-    // Space for max_bytes of signature + padding to be able to use 128 bit BRAM read operation + 16B (1 block) for signature bitlength
-    const int signature_blocks = (max_bytes + 16 - 1) / 16 + 1;
-    uint128_t signature128[signature_blocks];
-    uint8_t *signature8 = (uint8_t *)signature128;
-
-    bram_read(BRAM0, 256, signature128, signature_blocks);
+    bram_read(BRAM0, 256, signature128, SIGNATURE_BLOCK_COUNT / 2);
 
     int status = get_status();
     if (status == 0) {
-        // First block (128 bit) contain signature bitlength. It is never anywhere close to using all 128 bit.
-        uint16_t signature_bitlength = ((uint16_t *)signature128)[0];
 
-        xil_printf("Generated signature accepted. Signature length is %d, Signature is hex ", signature_bitlength);
-        for (int block = 1; block < signature_blocks; block++)
+        print("Generated signature accepted. Signature is hex ");
+        for (int block = 0; block < SIGNATURE_BLOCK_COUNT / 2; block++)
             for (int byte = 0; byte < 16; byte++)
                 xil_printf("%02x", signature8[block * 16 + byte]);
         print("\n");
