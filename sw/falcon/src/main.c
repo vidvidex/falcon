@@ -113,8 +113,6 @@ void sign() {
 
     print("b00, b01, b10, b11, tree and seed loaded.\n");
 
-    print("Starting signing...\n");
-
     start_algorithm(SIGN);
     wait_until_done();
 
@@ -149,9 +147,8 @@ int main() {
     print("Starting Falcon\n");
 
     sign();
-    // verify();
-
-    enable_bram_access();
+    reset_algorithm();
+    verify();
 
     print("Done\n");
 
