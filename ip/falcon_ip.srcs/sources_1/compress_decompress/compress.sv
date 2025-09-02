@@ -129,6 +129,8 @@ module compress#(
       uncompressed_coefficient <= -t1_int;
       uncompressed_coefficient_valid <= 1;
     end
+    else
+      uncompressed_coefficient_valid <= 0;
   end
 
   // Step 3: Compute sum of squares
@@ -241,10 +243,6 @@ module compress#(
           signature_output_done <= 1;
         end
       end
-    end
-
-    if(output_we) begin
-      $display("output_data at %d:%h", output_addr, output_data);
     end
   end
 
