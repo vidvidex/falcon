@@ -38,8 +38,7 @@
 #include "xil_printf.h"
 #include <stdio.h>
 
-uint128_t signature128[SIGNATURE_BLOCK_COUNT / 2];
-uint8_t *signature8 = (uint8_t *)signature128;
+uint128_t signature[SIGNATURE_BLOCK_COUNT];
 
 void load_public_key(unsigned int bram_id) {
     for (unsigned int i = 0; i < N / 2; i++) {
@@ -55,15 +54,6 @@ void load_message(unsigned int bram_id) {
     }
 }
 
-void load_signature_const(unsigned int bram_id) {
-    for (unsigned int i = 0; i < SIGNATURE_BLOCK_COUNT / 2; i++) {
-        uint128_t temp = createUint128_t(signature_blocks[i * 2], signature_blocks[i * 2 + 1]);
-        bram_write(&temp, bram_id, i, 1);
-    }
-}
-
-void load_signature(unsigned int bram_id, uint128_t *signature, unsigned int count) { bram_write(signature, bram_id, 0, count); }
-
 // Loads seed into BRAM. Seed is 4x128 bit, loaded to bram_addr, bram_addr+1, +2, +3
 void load_seed(uint128_t *seed) { bram_write(seed, BRAM2, SEED_BASE_ADDR, 4); }
 
@@ -78,12 +68,9 @@ void verify() {
     print("Preparing for verification...\n");
     print("Loading keys, signature, and message...\n");
     load_public_key(BRAM0);
-    load_signature_const(BRAM1);
-    // load_signature(BRAM1, signature128, SIGNATURE_BLOCK_COUNT/2);
+    bram_write(signature, BRAM1, 0, SIGNATURE_BLOCK_COUNT);
     load_message(BRAM6);
     print("Keys, signature, and message loaded.\n");
-
-    enable_bram_access();
 
     start_algorithm(VERIFY);
     wait_until_done();
@@ -116,16 +103,12 @@ void sign() {
     start_algorithm(SIGN);
     wait_until_done();
 
-    bram_read(BRAM0, 256, signature128, SIGNATURE_BLOCK_COUNT / 2);
+    bram_read(BRAM0, GENERATED_SIGNATURE_ADDR, signature, SIGNATURE_BLOCK_COUNT);
 
     int status = get_status();
     if (status == 0) {
-
         print("Generated signature accepted. Signature is hex ");
-        for (int block = 0; block < SIGNATURE_BLOCK_COUNT / 2; block++)
-            for (int byte = 0; byte < 16; byte++)
-                xil_printf("%02x", signature8[block * 16 + byte]);
-        print("\n");
+        print_array((uint8_t *)signature, SIGNATURE_BLOCK_COUNT * sizeof(uint128_t));
     } else if (status == 1)
         print("Signature rejected\n");
     else

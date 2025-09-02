@@ -10,7 +10,8 @@
 
 #define N 512
 #define MESSAGE_BLOCK_COUNT (1 + 7)
-#define SIGNATURE_BLOCK_COUNT (40*2)	// Enough for 666-1-40 bytes split into 8 byte blocks
+#define SIGNATURE_BLOCK_COUNT 40	// Enough for 666-1-40 bytes split into 16 byte blocks
+#define SIGNATURE_HALF_BLOCK_COUNT (SIGNATURE_BLOCK_COUNT*2)	// Enough for 666-1-40 bytes split into 8 byte blocks
 #define TREE_SIZE 5120
 
 #define BRAM0 0
@@ -28,13 +29,5 @@
 typedef unsigned __int128 uint128_t;
 
 #define SEED_BASE_ADDR (N == 512) ? 802 : 1604
-
-/*
- * Maximum signature size (in bytes) when using the COMPRESSED format.
- * In practice, the signature will be shorter.
- * 
- * Taken from reference C implementation of Falcon
- */
-#define FALCON_SIG_COMPRESSED_MAXSIZE(logn) \
-	(((((11u << (logn)) + (101u >> (10 - (logn)))) \
-	+ 7) >> 3) + 41)
+#define GENERATED_SIGNATURE_ADDR 256
+ 
