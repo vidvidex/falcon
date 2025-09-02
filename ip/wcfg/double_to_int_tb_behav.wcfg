@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="253.801 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="135.085 ns"></ZoomStartTime>
+      <ZoomEndTime time="416.983 ns"></ZoomEndTime>
+      <Cursor1Time time="370.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="286"></NameColumnWidth>
-      <ValueColumnWidth column_width="110"></ValueColumnWidth>
+      <ValueColumnWidth column_width="106"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group1530">
@@ -92,8 +92,8 @@
          <obj_property name="ObjectShortName">fraction[51:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/double_to_int_tb/double_to_int/int_out_i">
-         <obj_property name="ElementShortName">int_out_i[31:0]</obj_property>
-         <obj_property name="ObjectShortName">int_out_i[31:0]</obj_property>
+         <obj_property name="ElementShortName">int_out_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">int_out_i[14:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/double_to_int_tb/double_to_int/mantissa_with_hidden_bit">
@@ -107,10 +107,6 @@
       <wvobject type="array" fp_name="/double_to_int_tb/double_to_int/exponent_unbiased">
          <obj_property name="ElementShortName">exponent_unbiased[11:0]</obj_property>
          <obj_property name="ObjectShortName">exponent_unbiased[11:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/double_to_int_tb/double_to_int/result_unsigned">
-         <obj_property name="ElementShortName">result_unsigned[31:0]</obj_property>
-         <obj_property name="ObjectShortName">result_unsigned[31:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
    </wvobject>

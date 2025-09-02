@@ -58,5 +58,12 @@ module double_to_int_tb;
     end
     valid_in <= 0;
 
+    #10;
+
+    double_in <= 64'h3feffffffffd0500;
+    valid_in <= 1;
+    #10;
+    valid_out <= 0;
+
   end
 endmodule
