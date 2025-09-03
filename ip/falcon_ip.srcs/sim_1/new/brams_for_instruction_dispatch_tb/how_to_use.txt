@@ -1,0 +1,7 @@
+Subfolders of current folder contain the .coe files that should be loaded into the BRAMs
+in order to run dispatch_unit_tb.
+
+The easiest way to load the data is by copying the contents of each .coe file into the
+corresponding BRAM initialization file, which are located in the /ip/falcon_ip.srcs/sources_1/coefficients/ directory (bramX.coe files).
+After this you should right click on the BRAM ip in the Design sources and click "Reset Output Products"
+and then "Generate Output Products".

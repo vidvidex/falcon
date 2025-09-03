@@ -50,13 +50,25 @@ module instruction_dispatch_tb;
     rst_n = 0;
     #10;
     rst_n = 1;
-    algorithm_select = 2'b00;
+    // algorithm_select = 2'b00; // sign
+    algorithm_select = 2'b01; // verify
 
     #20;
 
     start = 1;
     #10;
     start = 0;
+
+    while (done === 1'b0)
+      #10;
+
+    if(signature_accepted == 1'b1 && signature_rejected == 1'b0)
+      $display("Signature accepted");
+    else if(signature_accepted == 1'b0 && signature_rejected == 1'b1)
+      $display("Signature rejected");
+    else
+      $display("Unknown status");
+    $finish;
 
   end
 endmodule
