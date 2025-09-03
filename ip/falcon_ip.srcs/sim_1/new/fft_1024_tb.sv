@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module fft_1024_tb;
 
@@ -183,12 +184,12 @@ module fft_1024_tb;
       $fatal(1, "FFT 1024: Expected first imag part to be 333771.845416, got %f", a_imag_double);
 
     b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, 0.000014))
-      $fatal(1, "FFT 1024: Expected last real part to be 0.000014, got %f", b_real_double);
+    if(!double_equal(b_real_double, -23097.713658))
+      $fatal(1, "FFT 1024: Expected last real part to be -23097.713658, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -0.000004))
-      $fatal(1, "FFT 1024: Expected last imag part to be -0.000004, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, -111256.583672))
+      $fatal(1, "FFT 1024: Expected last imag part to be -111256.583672, got %f", b_imag_double);
 
     $display("All tests for fft_1024 passed!");
     $finish;

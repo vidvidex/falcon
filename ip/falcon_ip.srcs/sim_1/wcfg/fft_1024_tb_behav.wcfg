@@ -11,12 +11,12 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="25,070.400 ns"></ZoomStartTime>
-      <ZoomEndTime time="25,278.001 ns"></ZoomEndTime>
-      <Cursor1Time time="25,165.000 ns"></Cursor1Time>
+      <ZoomStartTime time="25,192.018 ns"></ZoomStartTime>
+      <ZoomEndTime time="25,471.597 ns"></ZoomEndTime>
+      <Cursor1Time time="25,417.613 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="163"></NameColumnWidth>
+      <NameColumnWidth column_width="159"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="2" />
@@ -45,168 +45,220 @@
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram1_din_a">
+         <obj_property name="ElementShortName">bram1_din_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_din_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram1_dout_a">
+         <obj_property name="ElementShortName">bram1_dout_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_dout_a[127:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/bram1_we_a">
          <obj_property name="ElementShortName">bram1_we_a</obj_property>
          <obj_property name="ObjectShortName">bram1_we_a</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram1_addr_b">
+         <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram1_din_b">
+         <obj_property name="ElementShortName">bram1_din_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_din_b[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram1_dout_b">
+         <obj_property name="ElementShortName">bram1_dout_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_dout_b[127:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/bram1_we_b">
          <obj_property name="ElementShortName">bram1_we_b</obj_property>
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram2_din_a">
+         <obj_property name="ElementShortName">bram2_din_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_din_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram2_dout_a">
+         <obj_property name="ElementShortName">bram2_dout_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_dout_a[127:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/bram2_we_a">
          <obj_property name="ElementShortName">bram2_we_a</obj_property>
          <obj_property name="ObjectShortName">bram2_we_a</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram2_addr_b">
+         <obj_property name="ElementShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram2_din_b">
+         <obj_property name="ElementShortName">bram2_din_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_din_b[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram2_dout_b">
+         <obj_property name="ElementShortName">bram2_dout_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_dout_b[127:0]</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/bram2_we_b">
          <obj_property name="ElementShortName">bram2_we_b</obj_property>
          <obj_property name="ObjectShortName">bram2_we_b</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/bram1_out_a_real">
-         <obj_property name="ElementShortName">bram1_out_a_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_out_a_real[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_a_in_real">
+         <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_real[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_a_in_imag">
+         <obj_property name="ElementShortName">btf_a_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_b_in_real">
+         <obj_property name="ElementShortName">btf_b_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_b_in_imag">
+         <obj_property name="ElementShortName">btf_b_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_a_out_real">
+         <obj_property name="ElementShortName">btf_a_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_a_out_imag">
+         <obj_property name="ElementShortName">btf_a_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_b_out_real">
+         <obj_property name="ElementShortName">btf_b_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_real[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_b_out_imag">
+         <obj_property name="ElementShortName">btf_b_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_imag[63:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">53</obj_property>
+         <obj_property name="radix_otherWidth">11</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/fft_1024_tb/btf_mode">
+         <obj_property name="ElementShortName">btf_mode</obj_property>
+         <obj_property name="ObjectShortName">btf_mode</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_scale_factor">
+         <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/btf_tw_addr">
+         <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/fft_1024_tb/btf_valid_in">
+         <obj_property name="ElementShortName">btf_valid_in</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_in</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/fft_1024_tb/btf_valid_out">
+         <obj_property name="ElementShortName">btf_valid_out</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_out</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/bram1_out_a_real">
+         <obj_property name="ElementShortName">bram1_out_a_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_out_a_real[63:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_out_a_imag">
          <obj_property name="ElementShortName">bram1_out_a_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_out_a_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_out_b_real">
          <obj_property name="ElementShortName">bram1_out_b_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_out_b_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_out_b_imag">
          <obj_property name="ElementShortName">bram1_out_b_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_out_b_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_out_a_real">
          <obj_property name="ElementShortName">bram2_out_a_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_out_a_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_out_a_imag">
          <obj_property name="ElementShortName">bram2_out_a_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_out_a_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_out_b_real">
          <obj_property name="ElementShortName">bram2_out_b_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_out_b_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_out_b_imag">
          <obj_property name="ElementShortName">bram2_out_b_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_out_b_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_in_a_real">
          <obj_property name="ElementShortName">bram1_in_a_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_in_a_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_in_a_imag">
          <obj_property name="ElementShortName">bram1_in_a_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_in_a_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_in_b_real">
          <obj_property name="ElementShortName">bram1_in_b_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_in_b_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram1_in_b_imag">
          <obj_property name="ElementShortName">bram1_in_b_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram1_in_b_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_in_a_real">
          <obj_property name="ElementShortName">bram2_in_a_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_in_a_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_in_a_imag">
          <obj_property name="ElementShortName">bram2_in_a_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_in_a_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_in_b_real">
          <obj_property name="ElementShortName">bram2_in_b_real[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_in_b_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/bram2_in_b_imag">
          <obj_property name="ElementShortName">bram2_in_b_imag[63:0]</obj_property>
          <obj_property name="ObjectShortName">bram2_in_b_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
       <wvobject type="other" fp_name="/fft_1024_tb/a_real_double">
          <obj_property name="ElementShortName">a_real_double</obj_property>
@@ -250,14 +302,30 @@
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/fft/bram1_addr_a">
-         <obj_property name="ElementShortName">bram1_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/fft/bram1_addr_b">
-         <obj_property name="ElementShortName">bram1_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram1_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram1_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram1_din_a">
+         <obj_property name="ElementShortName">bram1_din_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_din_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram1_din_b">
+         <obj_property name="ElementShortName">bram1_din_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_din_b[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram1_dout_a">
+         <obj_property name="ElementShortName">bram1_dout_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_dout_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram1_dout_b">
+         <obj_property name="ElementShortName">bram1_dout_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram1_dout_b[127:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/fft/bram1_we_a">
          <obj_property name="ElementShortName">bram1_we_a</obj_property>
@@ -268,14 +336,30 @@
          <obj_property name="ObjectShortName">bram1_we_b</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/fft/bram2_addr_a">
-         <obj_property name="ElementShortName">bram2_addr_a[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_a[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_a[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_a[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/fft/bram2_addr_b">
-         <obj_property name="ElementShortName">bram2_addr_b[8:0]</obj_property>
-         <obj_property name="ObjectShortName">bram2_addr_b[8:0]</obj_property>
+         <obj_property name="ElementShortName">bram2_addr_b[12:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_addr_b[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram2_din_a">
+         <obj_property name="ElementShortName">bram2_din_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_din_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram2_din_b">
+         <obj_property name="ElementShortName">bram2_din_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_din_b[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram2_dout_a">
+         <obj_property name="ElementShortName">bram2_dout_a[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_dout_a[127:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/bram2_dout_b">
+         <obj_property name="ElementShortName">bram2_dout_b[127:0]</obj_property>
+         <obj_property name="ObjectShortName">bram2_dout_b[127:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/fft/bram2_we_a">
          <obj_property name="ElementShortName">bram2_we_a</obj_property>
@@ -289,89 +373,121 @@
          <obj_property name="ElementShortName">done</obj_property>
          <obj_property name="ObjectShortName">done</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/tw_real">
-         <obj_property name="ElementShortName">tw_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_real[63:0]</obj_property>
+      <wvobject type="logic" fp_name="/fft_1024_tb/fft/btf_mode">
+         <obj_property name="ElementShortName">btf_mode</obj_property>
+         <obj_property name="ObjectShortName">btf_mode</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/fft_1024_tb/fft/btf_valid_in">
+         <obj_property name="ElementShortName">btf_valid_in</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_in</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_a_in_real">
+         <obj_property name="ElementShortName">btf_a_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_real[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/tw_imag">
-         <obj_property name="ElementShortName">tw_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_imag[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_a_in_imag">
+         <obj_property name="ElementShortName">btf_a_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_in_imag[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/a_in_real">
-         <obj_property name="ElementShortName">a_in_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_real[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_b_in_real">
+         <obj_property name="ElementShortName">btf_b_in_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_real[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/a_in_imag">
-         <obj_property name="ElementShortName">a_in_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_in_imag[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_b_in_imag">
+         <obj_property name="ElementShortName">btf_b_in_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_in_imag[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/b_in_real">
-         <obj_property name="ElementShortName">b_in_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_in_real[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_scale_factor">
+         <obj_property name="ElementShortName">btf_scale_factor[4:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_scale_factor[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_tw_addr">
+         <obj_property name="ElementShortName">btf_tw_addr[9:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_tw_addr[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_a_out_real">
+         <obj_property name="ElementShortName">btf_a_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_real[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/b_in_imag">
-         <obj_property name="ElementShortName">b_in_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_in_imag[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_a_out_imag">
+         <obj_property name="ElementShortName">btf_a_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_a_out_imag[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/a_out_real">
-         <obj_property name="ElementShortName">a_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_out_real[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_b_out_real">
+         <obj_property name="ElementShortName">btf_b_out_real[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_real[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/a_out_imag">
-         <obj_property name="ElementShortName">a_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">a_out_imag[63:0]</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/btf_b_out_imag">
+         <obj_property name="ElementShortName">btf_b_out_imag[63:0]</obj_property>
+         <obj_property name="ObjectShortName">btf_b_out_imag[63:0]</obj_property>
          <obj_property name="Radix">REALRADIX</obj_property>
          <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
          <obj_property name="radix_fractionWidth">53</obj_property>
          <obj_property name="radix_otherWidth">11</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/b_out_real">
-         <obj_property name="ElementShortName">b_out_real[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_real[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
+      <wvobject type="logic" fp_name="/fft_1024_tb/fft/btf_valid_out">
+         <obj_property name="ElementShortName">btf_valid_out</obj_property>
+         <obj_property name="ObjectShortName">btf_valid_out</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/b_out_imag">
-         <obj_property name="ElementShortName">b_out_imag[63:0]</obj_property>
-         <obj_property name="ObjectShortName">b_out_imag[63:0]</obj_property>
-         <obj_property name="Radix">REALRADIX</obj_property>
-         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-         <obj_property name="radix_fractionWidth">53</obj_property>
-         <obj_property name="radix_otherWidth">11</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/u">
+         <obj_property name="ElementShortName">u[3:0]</obj_property>
+         <obj_property name="ObjectShortName">u[3:0]</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/fft_1024_tb/fft/butterfly_output_valid">
-         <obj_property name="ElementShortName">butterfly_output_valid</obj_property>
-         <obj_property name="ObjectShortName">butterfly_output_valid</obj_property>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/u_2DP">
+         <obj_property name="ElementShortName">u_2DP[3:0]</obj_property>
+         <obj_property name="ObjectShortName">u_2DP[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/t">
+         <obj_property name="ElementShortName">t[9:0]</obj_property>
+         <obj_property name="ObjectShortName">t[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/m">
+         <obj_property name="ElementShortName">m[10:0]</obj_property>
+         <obj_property name="ObjectShortName">m[10:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/i1">
+         <obj_property name="ElementShortName">i1[9:0]</obj_property>
+         <obj_property name="ObjectShortName">i1[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/j1">
+         <obj_property name="ElementShortName">j1[9:0]</obj_property>
+         <obj_property name="ObjectShortName">j1[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/j">
+         <obj_property name="ElementShortName">j[9:0]</obj_property>
+         <obj_property name="ObjectShortName">j[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/fft_1024_tb/fft/j2">
+         <obj_property name="ElementShortName">j2[9:0]</obj_property>
+         <obj_property name="ObjectShortName">j2[9:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/fft_1024_tb/fft/butterfly_paused">
          <obj_property name="ElementShortName">butterfly_paused</obj_property>
@@ -381,55 +497,6 @@
          <obj_property name="ElementShortName">butterfly_input_valid</obj_property>
          <obj_property name="ObjectShortName">butterfly_input_valid</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/fft_1024_tb/fft/butterfly_input_valid_2DP">
-         <obj_property name="ElementShortName">butterfly_input_valid_2DP</obj_property>
-         <obj_property name="ObjectShortName">butterfly_input_valid_2DP</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/u">
-         <obj_property name="ElementShortName">u[3:0]</obj_property>
-         <obj_property name="ObjectShortName">u[3:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/u_2DP">
-         <obj_property name="ElementShortName">u_2DP[3:0]</obj_property>
-         <obj_property name="ObjectShortName">u_2DP[3:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/t">
-         <obj_property name="ElementShortName">t[10:0]</obj_property>
-         <obj_property name="ObjectShortName">t[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/m">
-         <obj_property name="ElementShortName">m[10:0]</obj_property>
-         <obj_property name="ObjectShortName">m[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/i1">
-         <obj_property name="ElementShortName">i1[10:0]</obj_property>
-         <obj_property name="ObjectShortName">i1[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/j1">
-         <obj_property name="ElementShortName">j1[10:0]</obj_property>
-         <obj_property name="ObjectShortName">j1[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/j">
-         <obj_property name="ElementShortName">j[10:0]</obj_property>
-         <obj_property name="ObjectShortName">j[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/j2">
-         <obj_property name="ElementShortName">j2[10:0]</obj_property>
-         <obj_property name="ObjectShortName">j2[10:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/scale_factor">
-         <obj_property name="ElementShortName">scale_factor[4:0]</obj_property>
-         <obj_property name="ObjectShortName">scale_factor[4:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/fft/state">
          <obj_property name="ElementShortName">state[2:0]</obj_property>
          <obj_property name="ObjectShortName">state[2:0]</obj_property>
@@ -437,16 +504,6 @@
       <wvobject type="array" fp_name="/fft_1024_tb/fft/next_state">
          <obj_property name="ElementShortName">next_state[2:0]</obj_property>
          <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/tw_addr">
-         <obj_property name="ElementShortName">tw_addr[9:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_addr[9:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/fft_1024_tb/fft/tw_addr_delayed">
-         <obj_property name="ElementShortName">tw_addr_delayed[9:0]</obj_property>
-         <obj_property name="ObjectShortName">tw_addr_delayed[9:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/fft_1024_tb/fft/write_addr1">
          <obj_property name="ElementShortName">write_addr1[9:0]</obj_property>
