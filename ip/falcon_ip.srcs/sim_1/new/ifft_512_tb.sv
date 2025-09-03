@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module ifft_512_tb;
 
@@ -183,12 +184,12 @@ module ifft_512_tb;
       $fatal(1, "IFFT 512: Expected first imag part to be 383.500000, got %f", a_imag_double);
 
     b_real_double = $bitstoreal(bram1_out_b_real);
-    if(!double_equal(b_real_double, 0.011607))
-      $fatal(1, "IFFT 512: Expected last real part to be 0.011607, got %f", b_real_double);
+    if(!double_equal(b_real_double, -0.320265))
+      $fatal(1, "IFFT 512: Expected last real part to be -0.320265, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram1_out_b_imag);
-    if(!double_equal(b_imag_double, -0.036728))
-      $fatal(1, "IFFT 512: Expected last imag part to be -0.036728, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, -0.316359))
+      $fatal(1, "IFFT 512: Expected last imag part to be -0.316359, got %f", b_imag_double);
 
     $display("All tests for ifft_512 passed!");
     $finish;

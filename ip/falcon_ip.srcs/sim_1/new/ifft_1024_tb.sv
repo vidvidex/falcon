@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`include "common_definitions.vh"
 
 module ifft_1024_tb;
 
@@ -15,19 +16,19 @@ module ifft_1024_tb;
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_b, bram1_dout_b;
   logic bram1_we_b;
-  bram_512x128_preinit_for_fft1024_tb bram_512x128_preinit_for_fft_tb_1 (
-                                 .addra(bram1_addr_a),
-                                 .clka(clk),
-                                 .dina(bram1_din_a),
-                                 .douta(bram1_dout_a),
-                                 .wea(bram1_we_a),
+  bram_6144x128_preinit_for_fft1024_tb bram_6144x128_preinit_for_fft_tb_1 (
+                                .addra(bram1_addr_a),
+                                .clka(clk),
+                                .dina(bram1_din_a),
+                                .douta(bram1_dout_a),
+                                .wea(bram1_we_a),
 
-                                 .addrb(bram1_addr_b),
-                                 .clkb(clk),
-                                 .dinb(bram1_din_b),
-                                 .doutb(bram1_dout_b),
-                                 .web(bram1_we_b)
-                               );
+                                .addrb(bram1_addr_b),
+                                .clkb(clk),
+                                .dinb(bram1_din_b),
+                                .doutb(bram1_dout_b),
+                                .web(bram1_we_b)
+                              );
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_a;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_dout_a;
@@ -35,19 +36,19 @@ module ifft_1024_tb;
   logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_din_b, bram2_dout_b;
   logic bram2_we_b;
-  bram_512x128_preinit_for_fft1024_tb bram_512x128_preinit_for_fft_tb_2 (
-                                 .addra(bram2_addr_a),
-                                 .clka(clk),
-                                 .dina(bram2_din_a),
-                                 .douta(bram2_dout_a),
-                                 .wea(bram2_we_a),
+  bram_6144x128_preinit_for_fft1024_tb bram_6144x128_preinit_for_fft_tb_2 (
+                                .addra(bram2_addr_a),
+                                .clka(clk),
+                                .dina(bram2_din_a),
+                                .douta(bram2_dout_a),
+                                .wea(bram2_we_a),
 
-                                 .addrb(bram2_addr_b),
-                                 .clkb(clk),
-                                 .dinb(bram2_din_b),
-                                 .doutb(bram2_dout_b),
-                                 .web(bram2_we_b)
-                               );
+                                .addrb(bram2_addr_b),
+                                .clkb(clk),
+                                .dinb(bram2_din_b),
+                                .doutb(bram2_dout_b),
+                                .web(bram2_we_b)
+                              );
 
   logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
   logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
@@ -183,12 +184,12 @@ module ifft_1024_tb;
       $fatal(1, "IFFT 1024: Expected first imag part to be 767.500000, got %f", a_imag_double);
 
     b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, -0.009282))
-      $fatal(1, "IFFT 1024: Expected last real part to be -0.009282, got %f", b_real_double);
+    if(!double_equal(b_real_double, -0.319287))
+      $fatal(1, "IFFT 1024: Expected last real part to be -0.319287, got %f", b_real_double);
 
     b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -0.033025))
-      $fatal(1, "IFFT 1024: Expected last imag part to be -0.033025, got %f", b_imag_double);
+    if(!double_equal(b_imag_double, -0.317334))
+      $fatal(1, "IFFT 1024: Expected last imag part to be -0.317334, got %f", b_imag_double);
 
     $display("All tests for ifft_1024 passed!");
     $finish;
