@@ -50,8 +50,8 @@ module instruction_dispatch_tb;
     rst_n = 0;
     #10;
     rst_n = 1;
-    // algorithm_select = 2'b00; // sign
-    algorithm_select = 2'b01; // verify
+    algorithm_select = 2'b00; // sign
+    // algorithm_select = 2'b01; // verify
 
     #20;
 
