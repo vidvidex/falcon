@@ -112,8 +112,8 @@ module control_unit#(
           .doutb(bram_dout_b[0]),
           .web(bram_we_b[0])
         );
-  genvar i_bram3072;
 `else
+  genvar i_bram3072;
   generate
     for (i_bram3072 = 0; i_bram3072 < BRAM3072_COUNT; i_bram3072++) begin : bram3072_bank
       bram_3072x128 bram_3072x128_inst (
