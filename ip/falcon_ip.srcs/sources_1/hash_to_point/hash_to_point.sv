@@ -56,7 +56,6 @@ module hash_to_point#(
             ABSORB,
             WAIT_FOR_SQUEEZE,
             WAIT_FOR_SQUEEZE_END,
-            WAIT_FOR_BRAM_WRITE,
             FINISH
           } state_t;
   state_t state, next_state;
@@ -153,13 +152,10 @@ module hash_to_point#(
           next_state = WAIT_FOR_SQUEEZE_END;
       end
       WAIT_FOR_SQUEEZE_END: begin  // Wait for the shake256 to finish outputting the hash (valid goes low) or to output all coefficients.
-        if(coefficient_index == N-1) // If we have all coefficients we can go to WAIT_FOR_BRAM_WRITE
-          next_state = WAIT_FOR_BRAM_WRITE;
+        if(coefficient_index == N-1) // If we have all coefficients we can go to FINISH
+          next_state = FINISH;
         else if (!valid_out)  // Go to WAIT_FOR_SQUEEZE and wait for more data
           next_state = WAIT_FOR_SQUEEZE;
-      end
-      WAIT_FOR_BRAM_WRITE: begin
-        next_state = FINISH;
       end
       FINISH: begin  // Wait forever
         next_state = FINISH;
@@ -196,10 +192,6 @@ module hash_to_point#(
       WAIT_FOR_SQUEEZE_END: begin
         valid_in = 0;
         shake256_reset = 0;
-      end
-      WAIT_FOR_BRAM_WRITE: begin
-        valid_in = 0;
-        shake256_reset = 1;
       end
       FINISH: begin
         valid_in = 0;
