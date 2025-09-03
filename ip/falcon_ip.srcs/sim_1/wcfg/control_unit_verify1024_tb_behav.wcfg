@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="control_unit_verify_tb_behav.wdb" id="1">
+      <db_ref path="control_unit_verify1024_tb_behav.wdb" id="1">
          <top_modules>
             <top_module name="control_unit_verify1024_tb" />
             <top_module name="glbl" />
@@ -11,30 +11,22 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="78,998.225 ns"></ZoomStartTime>
-      <ZoomEndTime time="79,660.355 ns"></ZoomEndTime>
-      <Cursor1Time time="79,550.000 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="263.601 ns"></ZoomEndTime>
+      <Cursor1Time time="335.538 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="225"></NameColumnWidth>
-      <ValueColumnWidth column_width="126"></ValueColumnWidth>
+      <ValueColumnWidth column_width="122"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="4" />
+   <WVObjectSize size="2" />
    <wvobject type="group" fp_name="group175">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/public_key">
-         <obj_property name="ElementShortName">public_key[0:511][14:0]</obj_property>
-         <obj_property name="ObjectShortName">public_key[0:511][14:0]</obj_property>
-      </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify1024_tb/message_blocks">
          <obj_property name="ElementShortName">message_blocks[0:7][63:0]</obj_property>
          <obj_property name="ObjectShortName">message_blocks[0:7][63:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/signature_blocks">
-         <obj_property name="ElementShortName">signature_blocks[0:39][127:0]</obj_property>
-         <obj_property name="ObjectShortName">signature_blocks[0:39][127:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/control_unit_verify1024_tb/clk">
          <obj_property name="ElementShortName">clk</obj_property>
@@ -180,13 +172,13 @@
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/element_count">
-         <obj_property name="ElementShortName">element_count[9:0]</obj_property>
-         <obj_property name="ObjectShortName">element_count[9:0]</obj_property>
+         <obj_property name="ElementShortName">element_count[10:0]</obj_property>
+         <obj_property name="ObjectShortName">element_count[10:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/pipelined_inst_index">
-         <obj_property name="ElementShortName">pipelined_inst_index[9:0]</obj_property>
-         <obj_property name="ObjectShortName">pipelined_inst_index[9:0]</obj_property>
+         <obj_property name="ElementShortName">pipelined_inst_index[10:0]</obj_property>
+         <obj_property name="ObjectShortName">pipelined_inst_index[10:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/pipelined_inst_valid">
@@ -915,277 +907,6 @@
             <obj_property name="ElementShortName">sub_normalize_squared_norm_done_delayed</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_done_delayed</obj_property>
          </wvobject>
-      </wvobject>
-   </wvobject>
-   <wvobject type="group" fp_name="group9211">
-      <obj_property name="label">New Group 520</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/start">
-         <obj_property name="ElementShortName">start</obj_property>
-         <obj_property name="ObjectShortName">start</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/input_bram_addr">
-         <obj_property name="ElementShortName">input_bram_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">input_bram_addr[12:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/input_bram_data">
-         <obj_property name="ElementShortName">input_bram_data[127:0]</obj_property>
-         <obj_property name="ObjectShortName">input_bram_data[127:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/output_bram1_addr">
-         <obj_property name="ElementShortName">output_bram1_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">output_bram1_addr[12:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/output_bram1_data">
-         <obj_property name="ElementShortName">output_bram1_data[127:0]</obj_property>
-         <obj_property name="ObjectShortName">output_bram1_data[127:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/output_bram1_we">
-         <obj_property name="ElementShortName">output_bram1_we</obj_property>
-         <obj_property name="ObjectShortName">output_bram1_we</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/output_bram2_addr">
-         <obj_property name="ElementShortName">output_bram2_addr[12:0]</obj_property>
-         <obj_property name="ObjectShortName">output_bram2_addr[12:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/output_bram2_data">
-         <obj_property name="ElementShortName">output_bram2_data[127:0]</obj_property>
-         <obj_property name="ObjectShortName">output_bram2_data[127:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/signature_error">
-         <obj_property name="ElementShortName">signature_error</obj_property>
-         <obj_property name="ObjectShortName">signature_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/done">
-         <obj_property name="ElementShortName">done</obj_property>
-         <obj_property name="ObjectShortName">done</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/coefficient_index">
-         <obj_property name="ElementShortName">coefficient_index[9:0]</obj_property>
-         <obj_property name="ObjectShortName">coefficient_index[9:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/coefficient_valid">
-         <obj_property name="ElementShortName">coefficient_valid</obj_property>
-         <obj_property name="ObjectShortName">coefficient_valid</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/bits_used">
-         <obj_property name="ElementShortName">bits_used[6:0]</obj_property>
-         <obj_property name="ObjectShortName">bits_used[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/total_bits_used">
-         <obj_property name="ElementShortName">total_bits_used[13:0]</obj_property>
-         <obj_property name="ObjectShortName">total_bits_used[13:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/invalid_bits_used_error">
-         <obj_property name="ElementShortName">invalid_bits_used_error</obj_property>
-         <obj_property name="ObjectShortName">invalid_bits_used_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/cannot_find_high_error">
-         <obj_property name="ElementShortName">cannot_find_high_error</obj_property>
-         <obj_property name="ObjectShortName">cannot_find_high_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/used_bit_count_error">
-         <obj_property name="ElementShortName">used_bit_count_error</obj_property>
-         <obj_property name="ObjectShortName">used_bit_count_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/remaining_bits_not_zeros_error">
-         <obj_property name="ElementShortName">remaining_bits_not_zeros_error</obj_property>
-         <obj_property name="ObjectShortName">remaining_bits_not_zeros_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/invalid_zero_representation_error">
-         <obj_property name="ElementShortName">invalid_zero_representation_error</obj_property>
-         <obj_property name="ObjectShortName">invalid_zero_representation_error</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/decompress_coefficient_rst_n">
-         <obj_property name="ElementShortName">decompress_coefficient_rst_n</obj_property>
-         <obj_property name="ObjectShortName">decompress_coefficient_rst_n</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/input_bram_data_valid">
-         <obj_property name="ElementShortName">input_bram_data_valid</obj_property>
-         <obj_property name="ObjectShortName">input_bram_data_valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/input_bram_data_valid_delayed">
-         <obj_property name="ElementShortName">input_bram_data_valid_delayed</obj_property>
-         <obj_property name="ObjectShortName">input_bram_data_valid_delayed</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/second_half">
-         <obj_property name="ElementShortName">second_half</obj_property>
-         <obj_property name="ObjectShortName">second_half</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/second_half_delayed">
-         <obj_property name="ElementShortName">second_half_delayed</obj_property>
-         <obj_property name="ObjectShortName">second_half_delayed</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/coefficient">
-         <obj_property name="ElementShortName">coefficient[14:0]</obj_property>
-         <obj_property name="ObjectShortName">coefficient[14:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/coefficient_delayed">
-         <obj_property name="ElementShortName">coefficient_delayed[14:0]</obj_property>
-         <obj_property name="ObjectShortName">coefficient_delayed[14:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/output_we">
-         <obj_property name="ElementShortName">output_we</obj_property>
-         <obj_property name="ObjectShortName">output_we</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/buffer">
-         <obj_property name="ElementShortName">buffer[255:0]</obj_property>
-         <obj_property name="ObjectShortName">buffer[255:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/buffer_tmp">
-         <obj_property name="ElementShortName">buffer_tmp[255:0]</obj_property>
-         <obj_property name="ObjectShortName">buffer_tmp[255:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/buffer_valid_bits">
-         <obj_property name="ElementShortName">buffer_valid_bits[8:0]</obj_property>
-         <obj_property name="ObjectShortName">buffer_valid_bits[8:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/valid_bits">
-         <obj_property name="ElementShortName">valid_bits[7:0]</obj_property>
-         <obj_property name="ObjectShortName">valid_bits[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/decompress/waiting_for_input_data">
-         <obj_property name="ElementShortName">waiting_for_input_data</obj_property>
-         <obj_property name="ObjectShortName">waiting_for_input_data</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/state">
-         <obj_property name="ElementShortName">state[2:0]</obj_property>
-         <obj_property name="ObjectShortName">state[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/next_state">
-         <obj_property name="ElementShortName">next_state[2:0]</obj_property>
-         <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/decompress/slen">
-         <obj_property name="ElementShortName">slen[31:0]</obj_property>
-         <obj_property name="ObjectShortName">slen[31:0]</obj_property>
-      </wvobject>
-   </wvobject>
-   <wvobject type="group" fp_name="group12343">
-      <obj_property name="label">New Group 713</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/rst_n">
-         <obj_property name="ElementShortName">rst_n</obj_property>
-         <obj_property name="ObjectShortName">rst_n</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/a">
-         <obj_property name="ElementShortName">a[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">a[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/b">
-         <obj_property name="ElementShortName">b[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">b[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/c">
-         <obj_property name="ElementShortName">c[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">c[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/valid">
-         <obj_property name="ElementShortName">valid</obj_property>
-         <obj_property name="ObjectShortName">valid</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/last">
-         <obj_property name="ElementShortName">last</obj_property>
-         <obj_property name="ObjectShortName">last</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/accept">
-         <obj_property name="ElementShortName">accept</obj_property>
-         <obj_property name="ObjectShortName">accept</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/reject">
-         <obj_property name="ElementShortName">reject</obj_property>
-         <obj_property name="ObjectShortName">reject</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/difference">
-         <obj_property name="ElementShortName">difference[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">difference[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/difference_normalized">
-         <obj_property name="ElementShortName">difference_normalized[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">difference_normalized[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/difference_normalized_squared">
-         <obj_property name="ElementShortName">difference_normalized_squared[0:1][28:0]</obj_property>
-         <obj_property name="ObjectShortName">difference_normalized_squared[0:1][28:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/c_squared">
-         <obj_property name="ElementShortName">c_squared[0:1][28:0]</obj_property>
-         <obj_property name="ObjectShortName">c_squared[0:1][28:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/elementwise_sum">
-         <obj_property name="ElementShortName">elementwise_sum[0:1][30:0]</obj_property>
-         <obj_property name="ObjectShortName">elementwise_sum[0:1][30:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/c1">
-         <obj_property name="ElementShortName">c1[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">c1[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/c2">
-         <obj_property name="ElementShortName">c2[0:1][14:0]</obj_property>
-         <obj_property name="ObjectShortName">c2[0:1][14:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/squared_norm">
-         <obj_property name="ElementShortName">squared_norm[30:0]</obj_property>
-         <obj_property name="ObjectShortName">squared_norm[30:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/over_bound">
-         <obj_property name="ElementShortName">over_bound</obj_property>
-         <obj_property name="ObjectShortName">over_bound</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/last1">
-         <obj_property name="ElementShortName">last1</obj_property>
-         <obj_property name="ObjectShortName">last1</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/last2">
-         <obj_property name="ElementShortName">last2</obj_property>
-         <obj_property name="ObjectShortName">last2</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/last3">
-         <obj_property name="ElementShortName">last3</obj_property>
-         <obj_property name="ObjectShortName">last3</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/last4">
-         <obj_property name="ElementShortName">last4</obj_property>
-         <obj_property name="ObjectShortName">last4</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/last5">
-         <obj_property name="ElementShortName">last5</obj_property>
-         <obj_property name="ObjectShortName">last5</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/temp_sum">
-         <obj_property name="ElementShortName">temp_sum[30:0]</obj_property>
-         <obj_property name="ObjectShortName">temp_sum[30:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/bound2">
-         <obj_property name="ElementShortName">bound2[26:0]</obj_property>
-         <obj_property name="ObjectShortName">bound2[26:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/N">
-         <obj_property name="ElementShortName">N[31:0]</obj_property>
-         <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/control_unit_verify1024_tb/control_unit/sub_normalize_squared_norm/PARALLEL_OPS_COUNT">
-         <obj_property name="ElementShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
-         <obj_property name="ObjectShortName">PARALLEL_OPS_COUNT[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
