@@ -85,6 +85,13 @@ module control_unit#(
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
   logic [12:0] addr1, addr2;
 
+  logic add_sub_mode;
+  logic input_output_addr_same;
+  logic [2:0] decompress_output2;
+  logic [$clog2(N):0] element_count;
+  logic mul_const_constant;
+  logic mode;
+
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a [BRAM_BANK_COUNT];
   logic [`BRAM_DATA_WIDTH-1:0] bram_din_a [BRAM_BANK_COUNT];
@@ -311,7 +318,6 @@ module control_unit#(
   logic [$clog2(N):0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
   logic pipelined_inst_done; // Last/done signal for pipelined operations
   logic pipelined_inst_valid;
-  logic [$clog2(N):0] element_count;
 
   logic htp_start, htp_start_i;
   logic [`BRAM_ADDR_WIDTH-1:0] htp_input_bram_addr;
@@ -931,6 +937,20 @@ module control_unit#(
              .done(samplerz_done)
            );
 
+  assign bank1 = instruction[2:0];
+  assign bank2 = instruction[5:3];
+  assign bank3 = instruction[8:6];
+  assign bank4 = instruction[11:9];
+  assign bank5 = instruction[14:12];
+  assign bank6 = instruction[17:15];
+  assign addr1 = instruction[30:18];
+  assign addr2 = instruction[43:31];
+
+  assign add_sub_mode = instruction[54];
+  assign input_output_addr_same = instruction[53];
+  assign decompress_output2 = instruction[52:50];
+  assign mul_const_constant = instruction[45];
+  assign mode = instruction[44];
   assign element_count = (1 << instruction[49:46]);
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
   assign pipelined_inst_done = pipelined_inst_index > element_count-1 ? 1'b1 : 1'b0;
@@ -1013,7 +1033,7 @@ module control_unit#(
       end
 
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-        fft_mode <= instruction[44];
+        fft_mode <= mode;
         fft_start <= 1'b1;
         if(fft_done)
           modules_running[INSTRUCTION_COUNT-5] <= 1'b0;
@@ -1022,7 +1042,7 @@ module control_unit#(
       end
 
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
-        ntt_mode <= instruction[44];
+        ntt_mode <= mode;
         ntt_start <= 1'b1;
         if(ntt_done)
           modules_running[INSTRUCTION_COUNT-6] <= 1'b0;
@@ -1112,7 +1132,7 @@ module control_unit#(
 
       if(instruction[127-16] == 1'b1) begin // SAMPLERZ
         samplerz_start <= 1'b1;
-        samplerz_restart <= instruction[44];
+        samplerz_restart <= mode;
         if(samplerz_done)
           modules_running[INSTRUCTION_COUNT-16] <= 1'b0;
         else
@@ -1122,15 +1142,6 @@ module control_unit#(
   end
 
   always_comb begin
-
-    bank1 = instruction[2:0];
-    bank2 = instruction[5:3];
-    bank3 = instruction[8:6];
-    bank4 = instruction[11:9];
-    bank5 = instruction[14:12];
-    bank6 = instruction[17:15];
-    addr1 = instruction[30:18];
-    addr2 = instruction[43:31];
 
     // If not specified otherwise set BRAM signals to 0 (this includes WE, which will turn off writing)
     for(int i = 0; i < BRAM_BANK_COUNT; i++) begin
@@ -1246,7 +1257,7 @@ module control_unit#(
         copy_valid_in = pipelined_inst_valid;
         copy_done = pipelined_inst_done;
 
-        copy_dst_addr = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
+        copy_dst_addr = (input_output_addr_same ? addr1 : addr2) + pipelined_inst_index;
         bram_addr_b[bank4] = copy_dst_addr_delayed;
         bram_din_b[bank4] = bram_dout_a[bank3];
         bram_we_b[bank4] = copy_valid_out;
@@ -1338,8 +1349,8 @@ module control_unit#(
         fp_mul1_a = bram_dout_a[bank3][127:64];
         fp_mul2_a = bram_dout_a[bank3][63:0];
 
-        fp_mul1_b = instruction[45] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-        fp_mul2_b = instruction[45] ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul1_b = mul_const_constant ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul2_b = mul_const_constant ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
         fp_mul_valid_in = pipelined_inst_valid;
         fp_mul_done = pipelined_inst_done;
         fp_mul_dst_addr = pipelined_inst_index;
@@ -1421,9 +1432,9 @@ module control_unit#(
         bram_din_a[bank6] = decompress_output_bram1_data;
         bram_we_a[bank6] = decompress_output_bram1_we;
 
-        bram_addr_a[instruction[52:50]] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
-        bram_din_a[instruction[52:50]] = decompress_output_bram1_data;
-        bram_we_a[instruction[52:50]] = decompress_output_bram1_we;
+        bram_addr_a[decompress_output2] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
+        bram_din_a[decompress_output2] = decompress_output_bram1_data;
+        bram_we_a[decompress_output2] = decompress_output_bram1_we;
 
         bram_addr_b[bank6] = decompress_output_bram2_addr;
         decompress_output_bram2_data = bram_dout_b[bank6];
@@ -1448,10 +1459,10 @@ module control_unit#(
       end
 
       if(instruction[127-15] == 1'b1) begin // ADD_SUB
-        fp_adder_mode = instruction[54];
+        fp_adder_mode = add_sub_mode;
 
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
-        bram_addr_a[bank4] = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
+        bram_addr_a[bank4] = (input_output_addr_same ? addr1 : addr2) + pipelined_inst_index;
 
         fp_adder1_a = bram_dout_a[bank4][127:64];
         fp_adder2_a = bram_dout_a[bank4][63:0];
@@ -1460,7 +1471,7 @@ module control_unit#(
 
         fp_adder_valid_in = pipelined_inst_valid;
         fp_adder_done = pipelined_inst_done;
-        fp_adder_dst_addr = (instruction[53] ? addr1 : addr2) + pipelined_inst_index;
+        fp_adder_dst_addr = (input_output_addr_same ? addr1 : addr2) + pipelined_inst_index;
 
         bram_addr_b[bank4] = fp_adder_dst_addr_delayed;
         bram_din_b[bank4] = {fp_adder1_result, fp_adder2_result};
@@ -1474,7 +1485,7 @@ module control_unit#(
 
         // isigma. Take either high 64 bits or low 64 bits
         bram_addr_a[bank2] = addr2;
-        samplerz_isigma = instruction[54] ? bram_dout_a[bank2][63:0] : bram_dout_a[bank2][127:64];
+        samplerz_isigma = add_sub_mode ? bram_dout_a[bank2][63:0] : bram_dout_a[bank2][127:64];
 
         // result
         bram_addr_a[bank3] = (N == 512) ? 528 : 784;
