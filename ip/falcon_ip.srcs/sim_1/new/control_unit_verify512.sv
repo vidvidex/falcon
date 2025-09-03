@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-module control_unit_verify_tb;
+module control_unit_verify512_tb;
 
   parameter int N = 512;
   parameter int MESSAGE_BLOCKS = 1+7; // First block is the length (in bytes)
@@ -108,9 +108,9 @@ module control_unit_verify_tb;
     mode = 1'b0; // NTT
     bank1 = 0;
     bank2 = 2;
-    bank3 = 6; // hash_to_point from bank6 to bank5
+    bank3 = 6; // hash_to_point
     bank4 = 5;
-    bank5 = 1;  // decompress from bank1 to bank2
+    bank5 = 1;  // decompress
     bank6 = 4;
     decompress_output2 = 3;
     #10;
@@ -134,7 +134,7 @@ module control_unit_verify_tb;
     modules = 16'b0000_0000_0001_0000; // mod_mult_q
     bank1 = 1;
     bank2 = 2;
-    bank3 = 4;
+    bank3 = 6;
     element_count = $clog2(256);
     while (instruction_done !== 1'b1)
       #10;
@@ -144,8 +144,8 @@ module control_unit_verify_tb;
     // Run INTT
     modules = 16'b0000_0010_0000_0000; // NTT
     mode = 1'b1; // INTT
-    bank1 = 4;
-    bank2 = 1;
+    bank1 = 6;
+    bank2 = 4;
     #10;
     while (instruction_done !== 1'b1)
       #10;
@@ -155,7 +155,7 @@ module control_unit_verify_tb;
     // Run sub_normalize_squared_norm pipeline on the output of INTT
     modules = 16'b0000_0000_0000_1000; // sub_normalize_squared_norm
     bank1 = 5;
-    bank2 = 1;
+    bank2 = 4;
     bank3 = 3;
     element_count = $clog2(256);
     while (instruction_done !== 1'b1)

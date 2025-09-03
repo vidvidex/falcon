@@ -109,13 +109,12 @@ class InstructionGenerator:
         formatted_instructions = [f"128'h{instruction:032x}" for instruction in self.instructions]
 
         print(f"localparam int {algorithm.upper()}_INSTRUCTION_COUNT = {len(formatted_instructions)};")
-        print(f"logic [127:0] {algorithm}_instructions[{algorithm.upper()}_INSTRUCTION_COUNT] = '{{")
+        print(f"assign {algorithm}_instructions = '{{")
         print(",\n".join(formatted_instructions))
         print("};")
 
-    def verify512(self):
+    def verify(self, N):
         self.instructions = []
-        N = 512
         log2N = int(math.log2(N))
 
         # timestep 1: NTT, DECOMPRESS, HASH_TO_POINT
@@ -143,11 +142,13 @@ class InstructionGenerator:
 
         # timestep 3: MOD_MULT_Q
         dprint("MOD_MULT_Q")
+        mod_mult_q_ntt_input1 = 1 if N == 512 else 4
+        mod_mult_q_ntt_input2 = 2 if N == 512 else 0
         self.add_instruction(
             modules=self.sel_module(MOD_MULT_Q=1),
-            bank1=1,  # MOD_MULT_Q input 1
-            bank2=2,  # MOD_MULT_Q input 2
-            bank3=4,  # MOD_MULT_Q output
+            bank1=mod_mult_q_ntt_input1,  # MOD_MULT_Q input 1
+            bank2=mod_mult_q_ntt_input2,  # MOD_MULT_Q input 2
+            bank3=6,  # MOD_MULT_Q output
             element_count=log2N - 1,
         )
 
@@ -156,16 +157,17 @@ class InstructionGenerator:
         self.add_instruction(
             modules=self.sel_module(NTT_INTT=1),
             mode=1,  # NTT mode: INTT
-            bank1=4,  # NTT bank1
-            bank2=1,  # NTT bank2
+            bank1=6,  # NTT bank1
+            bank2=4,  # NTT bank2
         )
 
         # timestep 5: SUB_NORM_SQ
+        sub_norm_sq_intt_input = 4 if N == 512 else 6
         dprint("SUB_NORM_SQ")
         self.add_instruction(
             modules=self.sel_module(SUB_NORM_SQ=1),
             bank1=5,  # SUB_NORM_SQ input 1
-            bank2=1,  # SUB_NORM_SQ input 2
+            bank2=sub_norm_sq_intt_input,  # SUB_NORM_SQ input 2
             bank3=3,  # SUB_NORM_SQ input 3
             element_count=log2N - 1,
         )
@@ -190,7 +192,9 @@ class InstructionGenerator:
         if n == 1:
 
             # tree // 2 here because "tree" refers to the address in original array (1 element per row), but our BRAM has 2 per row
-            dprint(f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0}\ttree_bram={tree_bram},\ttree_addr={tree//2},{'high' if tree % 2 == 0 else 'low'},\tout_bram={curr_bram},\tout_addr={z0}")
+            dprint(
+                f"n={n},\tsamplerz\tin_bram={prev_bram},\tin_addr={t0}\ttree_bram={tree_bram},\ttree_addr={tree//2},{'high' if tree % 2 == 0 else 'low'},\tout_bram={curr_bram},\tout_addr={z0}"
+            )
             self.add_instruction(
                 modules=self.sel_module(SAMPLERZ=1),
                 mode=1 if self.first_samplerz_call else 0,
@@ -362,8 +366,7 @@ class InstructionGenerator:
                 element_count=element_count_log2 - 1,
             )
 
-    def sign512(self):
-        N = 512
+    def sign(self, N):
         self.instructions = []
         self.samplerz_tree_addrs = []  # Addresses of tree where samplerz will access
         self.mul_tree_addrs = []  # Addresses of tree where mul with tree will access
@@ -378,6 +381,7 @@ class InstructionGenerator:
 
         # timestep 2: INT_TO_DOUBLE, COPY
         dprint("INT_TO_DOUBLE, COPY")
+        saved_hm_address = 2560 if N==512 else 5632
         self.add_instruction(
             modules=self.sel_module(INT_TO_DOUBLE=1, COPY=1),
             bank1=5,  # INT_TO_DOUBLE input
@@ -385,7 +389,7 @@ class InstructionGenerator:
             bank3=5,  # COPY input
             bank4=6,  # COPY output
             addr1=0,  # COPY input offset
-            addr2=2560,  # COPY output offset
+            addr2=saved_hm_address,  # COPY output offset
             element_count=int(math.log2(N // 2)),
         )
 
@@ -402,17 +406,30 @@ class InstructionGenerator:
 
         # timestep 4: COPY, COMPLEX_MUL
         dprint("COPY COMPLEX_MUL")
-        self.add_instruction(
-            modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
-            bank1=5,  # COMPLEX_MUL input 1, output
-            bank2=1,  # COMPLEX_MUL input 2
-            bank3=5,  # COPY input
-            bank4=4,  # COPY output
-            addr1=0,  # Start offset for COPY and COMPLEX_MUL
-            addr2=0,  # End offset for COPY and COMPLEX_MUL
-            element_count=int(math.log2(N // 2)),
-        )
-
+        # We swap BRAM4 and BRAM5 between N=512 and N=1024
+        if N == 512:
+            self.add_instruction(
+                modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
+                bank1=5,  # COMPLEX_MUL input 1, output
+                bank2=1,  # COMPLEX_MUL input 2
+                bank3=5,  # COPY input
+                bank4=4,  # COPY output
+                addr1=0,  # Start offset for COPY and COMPLEX_MUL
+                addr2=0,  # End offset for COPY and COMPLEX_MUL
+                element_count=int(math.log2(N // 2)),
+            )
+        else:
+           self.add_instruction(
+                modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
+                bank1=4,  # COMPLEX_MUL input 1, output
+                bank2=1,  # COMPLEX_MUL input 2
+                bank3=4,  # COPY input
+                bank4=5,  # COPY output
+                addr1=0,  # Start offset for COPY and COMPLEX_MUL
+                addr2=0,  # End offset for COPY and COMPLEX_MUL
+                element_count=int(math.log2(N // 2)),
+            )
+           
         # timestep 5: COMPLEX_MUL, MUL_CONST
         dprint("COMPLEX_MUL MUL_CONST")
         self.add_instruction(
@@ -438,7 +455,7 @@ class InstructionGenerator:
         )
 
         self.first_samplerz_call = True
-        self.ffsampling(N=512, n=512, curr_bram=0, next_free_addr=[256, 256, 256, 256], t0=0, t1=0, tree=0)
+        self.ffsampling(N=N, n=N, curr_bram=0, next_free_addr=[N//2, N//2, N//2, N//2], t0=0, t1=0, tree=0)
 
         dprint("COPY b00")
         self.add_instruction(
@@ -534,14 +551,16 @@ class InstructionGenerator:
         )
 
         dprint("compress")
+        compress_t0_bank = 2 if N==512 else 3
+        compress_t1_bank = 5 if N==512 else 4
         self.add_instruction(
             modules=self.sel_module(COMPRESS=1),
-            bank1=2,  # bank with t0
-            bank2=5,  # bank with t1
+            bank1=compress_t0_bank,  # bank with t0
+            bank2=compress_t1_bank,  # bank with t1
             bank3=6,  # bank with hm
             bank4=0,  # output bank
             addr1=N // 2,  # Offset for bank1 (t0), bank2 (t1) and output
-            addr2=2560,  # Offset for bank3 (hm)
+            addr2=saved_hm_address,  # Offset for bank3 (hm)
             element_count=int(math.log2(N)),
         )
 
@@ -558,5 +577,5 @@ class InstructionGenerator:
 if __name__ == "__main__":
 
     generator = InstructionGenerator()
-    # generator.verify512()
-    generator.sign512()
+    # generator.verify(1024)
+    generator.sign(512)
