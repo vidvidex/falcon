@@ -590,5 +590,5 @@ class InstructionGenerator:
 if __name__ == "__main__":
 
     generator = InstructionGenerator()
-    # generator.verify(1024)
-    generator.sign(1024)
+    generator.verify(1024)
+    # generator.sign(1024)
