@@ -18,10 +18,10 @@
 // Inverse NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
 //
 // The module is based on the reference C implementation via a modified Python version to allow for easier implementing
-// See also scripts/ntt_from_reference_C.py and scripts/ntt_from_reference_C_for_FPGA.py
+// See also utilities/ntt_from_reference_C.py and utilities/ntt_from_reference_C_for_FPGA.py
 //
 // This module uses Montgomery reduction to optimize calculation of a*b mod q. Should you not want to use it you have to compute different twiddle factors (with R=1).
-// They are computed with scripts/NTT_negative_compute_twiddle_factors.py (supports both with and without Montgomery reduction)
+// They are computed with utilities/NTT_negative_compute_twiddle_factors.py (supports both with and without Montgomery reduction)
 //
 //////////////////////////////////////////////////////////////////////////////////
 

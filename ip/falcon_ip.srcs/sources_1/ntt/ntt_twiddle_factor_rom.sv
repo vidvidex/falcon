@@ -3,7 +3,7 @@
 //
 // Read only memory used to store pre-computed twiddle factors for ntt.
 //
-// The twiddle factors were computed using the scripts/NTT_negative_compute_twiddle_factors.py script
+// The twiddle factors were computed using the utilities/NTT_negative_compute_twiddle_factors.py script
 //
 //////////////////////////////////////////////////////////////////////////////////
 
