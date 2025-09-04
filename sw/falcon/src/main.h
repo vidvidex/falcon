@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define N 512
+#define N 1024
 
 // Base address for AXI-lite control
 #define AXI_LITE_BASE 0xA0000000
@@ -28,6 +28,6 @@
 #define SIGNATURE_REJECTED_MASK 0b100
 
 #define SEED_BASE_ADDR (N == 512) ? 324 : 648
-#define GENERATED_SIGNATURE_ADDR 256
+#define GENERATED_SIGNATURE_ADDR (N == 512) ? 256 : 512
 
 typedef unsigned __int128 uint128_t;
