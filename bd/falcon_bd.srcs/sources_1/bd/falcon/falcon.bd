@@ -12,10 +12,10 @@
     },
     "design_tree": {
       "zynq_ultra_ps_e_0": "",
-      "falcon_0": "",
       "axi_bram_ctrl_0": "",
       "axi_smc": "",
-      "rst_ps8_0_100M": ""
+      "rst_ps8_0_100M": "",
+      "falcon_0": ""
     },
     "components": {
       "zynq_ultra_ps_e_0": {
@@ -974,19 +974,6 @@
           }
         }
       },
-      "falcon_0": {
-        "vlnv": "user.org:user:falcon:1.0",
-        "xci_name": "falcon_falcon_0_0",
-        "xci_path": "ip/falcon_falcon_0_0/falcon_falcon_0_0.xci",
-        "inst_hier_path": "falcon_0",
-        "interface_ports": {
-          "S_AXI": {
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "mode": "Slave",
-            "memory_map_ref": "S_AXI"
-          }
-        }
-      },
       "axi_bram_ctrl_0": {
         "vlnv": "xilinx.com:ip:axi_bram_ctrl:4.1",
         "xci_name": "falcon_axi_bram_ctrl_0_0",
@@ -1121,6 +1108,24 @@
         "xci_name": "falcon_rst_ps8_0_100M_0",
         "xci_path": "ip/falcon_rst_ps8_0_100M_0/falcon_rst_ps8_0_100M_0.xci",
         "inst_hier_path": "rst_ps8_0_100M"
+      },
+      "falcon_0": {
+        "vlnv": "user.org:user:falcon:1.0",
+        "xci_name": "falcon_falcon_0_0",
+        "xci_path": "ip/falcon_falcon_0_0/falcon_falcon_0_0.xci",
+        "inst_hier_path": "falcon_0",
+        "parameters": {
+          "N": {
+            "value": "512"
+          }
+        },
+        "interface_ports": {
+          "S_AXI": {
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "mode": "Slave",
+            "memory_map_ref": "S_AXI"
+          }
+        }
       }
     },
     "interface_nets": {
@@ -1189,8 +1194,8 @@
           "axi_smc/aclk",
           "axi_bram_ctrl_0/s_axi_aclk",
           "rst_ps8_0_100M/slowest_sync_clk",
-          "falcon_0/S_AXI_ACLK",
-          "zynq_ultra_ps_e_0/maxihpm1_fpd_aclk"
+          "zynq_ultra_ps_e_0/maxihpm1_fpd_aclk",
+          "falcon_0/S_AXI_ACLK"
         ]
       },
       "zynq_ultra_ps_e_0_pl_resetn0": {
