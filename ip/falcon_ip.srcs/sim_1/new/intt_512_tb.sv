@@ -23,7 +23,7 @@ module intt_512_tb;
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_b, bram1_dout_b;
   logic bram1_we_b;
-  bram_6144x128_preinit_for_ntt_tb bram1 (
+  bram_6144x128_preinit_for_ntt512_tb bram1 (
                                      .clka(clk),
                                      .addra(bram1_addr_a),
                                      .dina(bram1_din_a),
