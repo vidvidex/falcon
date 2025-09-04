@@ -34,8 +34,8 @@ module control_unit#(
     output logic [127:0] ext_bram_dout // Data read from BRAM
   );
 
-  localparam int BRAM1024_COUNT = 3; // Number of 1024x128 BRAM banks
-  localparam int BRAM2048_COUNT = 2; // Number of 2048x128 BRAM banks
+  localparam int BRAM1024_COUNT = 4; // Number of 1024x128 BRAM banks
+  localparam int BRAM2048_COUNT = 1; // Number of 2048x128 BRAM banks
   localparam int BRAM3072_COUNT = 1; // Number of 3072x128 BRAM banks
   localparam int BRAM6144_COUNT = 1; // Number of 6144x128 BRAM banks
   localparam int BRAM_BANK_COUNT = BRAM3072_COUNT + BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT;
@@ -158,19 +158,6 @@ module control_unit#(
           .doutb(bram_dout_b[1]),
           .web(bram_we_b[1])
         );
-  bram2 bram2 (
-          .addra(bram2048_addr_a[1]),
-          .clka(clk),
-          .dina(bram_din_a[2]),
-          .douta(bram_dout_a[2]),
-          .wea(bram_we_a[2]),
-
-          .addrb(bram2048_addr_b[1]),
-          .clkb(clk),
-          .dinb(bram_din_b[2]),
-          .doutb(bram_dout_b[2]),
-          .web(bram_we_b[2])
-        );
 `else
   genvar i_bram2048;
   generate
@@ -196,40 +183,53 @@ module control_unit#(
   logic [`BRAM1024_ADDR_WIDTH-1:0] bram1024_addr_b [BRAM1024_COUNT];
 `ifdef DEBUG_BRAMS
 
-  bram3 bram3 (
+  bram2 bram2 (
           .addra(bram1024_addr_a[0]),
+          .clka(clk),
+          .dina(bram_din_a[2]),
+          .douta(bram_dout_a[2]),
+          .wea(bram_we_a[2]),
+
+          .addrb(bram1024_addr_b[0]),
+          .clkb(clk),
+          .dinb(bram_din_b[2]),
+          .doutb(bram_dout_b[2]),
+          .web(bram_we_b[2])
+        );
+  bram3 bram3 (
+          .addra(bram1024_addr_a[1]),
           .clka(clk),
           .dina(bram_din_a[3]),
           .douta(bram_dout_a[3]),
           .wea(bram_we_a[3]),
 
-          .addrb(bram1024_addr_b[0]),
+          .addrb(bram1024_addr_b[1]),
           .clkb(clk),
           .dinb(bram_din_b[3]),
           .doutb(bram_dout_b[3]),
           .web(bram_we_b[3])
         );
   bram4 bram4 (
-          .addra(bram1024_addr_a[1]),
+          .addra(bram1024_addr_a[2]),
           .clka(clk),
           .dina(bram_din_a[4]),
           .douta(bram_dout_a[4]),
           .wea(bram_we_a[4]),
 
-          .addrb(bram1024_addr_b[1]),
+          .addrb(bram1024_addr_b[2]),
           .clkb(clk),
           .dinb(bram_din_b[4]),
           .doutb(bram_dout_b[4]),
           .web(bram_we_b[4])
         );
   bram5 bram5 (
-          .addra(bram1024_addr_a[2]),
+          .addra(bram1024_addr_a[3]),
           .clka(clk),
           .dina(bram_din_a[5]),
           .douta(bram_dout_a[5]),
           .wea(bram_we_a[5]),
 
-          .addrb(bram1024_addr_b[2]),
+          .addrb(bram1024_addr_b[3]),
           .clkb(clk),
           .dinb(bram_din_b[5]),
           .doutb(bram_dout_b[5]),
