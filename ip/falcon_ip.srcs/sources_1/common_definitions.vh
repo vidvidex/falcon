@@ -24,4 +24,4 @@
 
 // Debugging
 // Uncomment this to not use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
-`define DEBUG_BRAMS
+// `define DEBUG_BRAMS
