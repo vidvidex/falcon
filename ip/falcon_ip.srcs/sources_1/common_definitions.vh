@@ -16,7 +16,7 @@
 `define EXPONENT_BITS 11
 
 // Memory locations
-`define SEED_BASE_ADDR (N == 512) ? 802 : 1604
+`define SEED_BASE_ADDR (N == 512) ? 324 : 648
 
 // Constants
 // Expected (max) signature length in bytes, sbytelen(depends on N) - HEAD_LEN(1) - SALT_LEN(40)
@@ -24,4 +24,4 @@
 
 // Debugging
 // Uncomment this to not use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
-// `define DEBUG_BRAMS
+`define DEBUG_BRAMS
