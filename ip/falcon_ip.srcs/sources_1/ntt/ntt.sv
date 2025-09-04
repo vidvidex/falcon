@@ -12,7 +12,7 @@
 // ... and so on
 //
 // Input is always in BRAM1
-// Output will be either in the BRAM1 or BRAM2 depending on the stage number. For N=512 it will be in BRAM1 and for N=1024 it will be in BRAM2.
+// Output will be either in the BRAM1 or BRAM2 depending on the stage number. For N=512 it will be in BRAM2 and for N=1024 it will be in BRAM1.
 //
 // Forward NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
 // Inverse NTT: IDLE -> NTT <-> NTT_WAIT_FOR_MULTIPLY -> DONE -> IDLE
@@ -236,7 +236,7 @@ module ntt#(
   // stage 1: read from bank2, write to bank1
   // stage 2: read from bank1, write to bank2
   // ...
-  // for N=512 the final result is in bank1, for N=1024 it is in bank2
+  // for N=512 the final result is in bank2, for N=1024 it is in bank1
   always_comb begin
 
     bram1_addr_a = 0;
@@ -269,25 +269,18 @@ module ntt#(
       bram2_addr_b = read_addr2;
     end
 
-    if(stage_counter == $clog2(N)-1 || scale_we_a_out == 1'b1 || scale_we_b_out == 1'b1) begin
-      if(mode == 1'b0) begin        // For NTT we write directly to bram2
-        bram2_addr_a = write_addr1;
-        bram2_din_a = write_data1;
-        bram2_we_a = write_enable1;
-        bram2_addr_b = write_addr2;
-        bram2_din_b = write_data2;
-        bram2_we_b = write_enable2;
-      end
-      else begin // For INTT we go through scaling pipeline
-        // Input into scaling pipeline
-        scale_data1_in = write_data1;
-        scale_data2_in = write_data2;
-        scale_addr1_in = write_addr1;
-        scale_addr2_in = write_addr2;
-        scale_we_a_in = write_enable1;
-        scale_we_b_in = write_enable2;
+    if((mode == 1'b1 && stage_counter == $clog2(N)-1)|| scale_we_a_out == 1'b1 || scale_we_b_out == 1'b1) begin // In the last stage of INTT we send output through scaling pipeline. We also keep this active as long as there is output of scaling pipeline
 
-        // Output from scaling pipeline
+      // Input into scaling pipeline
+      scale_data1_in = write_data1;
+      scale_data2_in = write_data2;
+      scale_addr1_in = write_addr1;
+      scale_addr2_in = write_addr2;
+      scale_we_a_in = write_enable1;
+      scale_we_b_in = write_enable2;
+
+      // Output from scaling pipeline
+      if(N == 512) begin
         bram2_addr_a = scale_addr1_out;
         bram2_din_a = scale_mod_mult1;
         bram2_we_a = scale_we_a_out;
@@ -295,9 +288,17 @@ module ntt#(
         bram2_din_b = scale_mod_mult2;
         bram2_we_b = scale_we_b_out;
       end
+      else begin
+        bram1_addr_a = scale_addr1_out;
+        bram1_din_a = scale_mod_mult1;
+        bram1_we_a = scale_we_a_out;
+        bram1_addr_b = scale_addr2_out;
+        bram1_din_b = scale_mod_mult2;
+        bram1_we_b = scale_we_b_out;
+      end
     end
-    else begin
-      if(stage_counter % 2 == 0) begin        // When stage_counter is even we write to bank2
+    else begin  // In all other cases we just directly switch between the BRAM banks
+      if(stage_counter % 2 == 0) begin // When stage_counter is even we write to bank2
         bram2_addr_a = write_addr1;
         bram2_din_a = write_data1;
         bram2_we_a = write_enable1;
