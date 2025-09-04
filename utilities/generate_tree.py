@@ -7,7 +7,7 @@ import math
 
 N = 1024
 toggle_write_coe_file = True
-toggle_write_array = False
+toggle_write_array = True
 
 
 def write_coe_file(rows, filename):
@@ -16474,7 +16474,6 @@ reordered_values = [None] * treesize(N)
 order_for_FPGA(N, tree_addr=0)
 
 rows = generate_rows(reordered_values)
-# rows = generate_rows(tree_values)
 
 if toggle_write_coe_file:
     write_coe_file(rows=rows, filename=f"tree_FPGA.coe")

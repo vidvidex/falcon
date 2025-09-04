@@ -31,7 +31,11 @@
  ******************************************************************************/
 
 #include "main.h"
-#include "constants.h"
+#if N == 512
+#include "constants_512.h"
+#elif N == 1024
+#include "constants_1024.h"
+#endif
 #include "platform.h"
 #include "utilities.h"
 #include "xil_io.h"
@@ -55,7 +59,7 @@ void load_message(unsigned int bram_id) {
 }
 
 // Loads seed into BRAM. Seed is 4x128 bit, loaded to bram_addr, bram_addr+1, +2, +3
-void load_seed(uint128_t *seed) { bram_write(seed, BRAM2, SEED_BASE_ADDR, 4); }
+void load_seed(uint128_t *seed) { bram_write(seed, BRAM3, SEED_BASE_ADDR, 4); }
 
 void load_into_bram(uint64_t *src, unsigned int bram_id, unsigned int start_addr, unsigned int count) {
     for (unsigned int i = 0; i < count / 2; i++) {

@@ -6,7 +6,7 @@ All reset signals are active high, except in shake256, where they are active low
 
 Coefficients are 15 bits `[14:0]` in signed decimal representation
 
-Folder `scripts` contains the various scripts used during implementation
+Folder `utilities` contains the various scripts and programs used during implementation
 
 ## Implementation-wide parameters
 
