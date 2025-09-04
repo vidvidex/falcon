@@ -178,7 +178,7 @@ class InstructionGenerator:
 
         tree_bram = 6
 
-        prev_bram = (curr_bram - 1) % 4 if t1 != 0 else 5  # On top level (when t1 == 0) read from BRAM5
+        prev_bram = (curr_bram - 1) % 4 if t1 != 0 else (5 if N == 512 else 4)  # On top level (when t1 == 0) read from BRAM5 for N=512 and BRAM4 for N=1024
         next_bram = (curr_bram + 1) % 4
         element_count_log2 = int(math.log2(n))
 
@@ -204,7 +204,7 @@ class InstructionGenerator:
                 bank2=tree_bram,  # Tree
                 addr2=tree // 2,
                 bank3=curr_bram,  # Output
-                bank4=2,  # Seed
+                bank4=3,  # Seed
             )
             self.first_samplerz_call = False
             self.samplerz_tree_addrs.append(tree)
@@ -300,7 +300,7 @@ class InstructionGenerator:
         for i in range(tree, tree + n // 2):
             self.mul_tree_addrs.append(i)
 
-        t0_bram = prev_bram if n < N else 4  # On top level of recursion this BRAM is different
+        t0_bram = prev_bram if n < N else (4 if N == 512 else 5)  # On top level of recursion this BRAM is different
         dprint(f"n={n},\tadd_t0\tin_bram={t0_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
@@ -381,7 +381,7 @@ class InstructionGenerator:
 
         # timestep 2: INT_TO_DOUBLE, COPY
         dprint("INT_TO_DOUBLE, COPY")
-        saved_hm_address = 2560 if N==512 else 5632
+        saved_hm_address = 2560 if N == 512 else 5632
         self.add_instruction(
             modules=self.sel_module(INT_TO_DOUBLE=1, COPY=1),
             bank1=5,  # INT_TO_DOUBLE input
@@ -406,7 +406,6 @@ class InstructionGenerator:
 
         # timestep 4: COPY, COMPLEX_MUL
         dprint("COPY COMPLEX_MUL")
-        # We swap BRAM4 and BRAM5 between N=512 and N=1024
         if N == 512:
             self.add_instruction(
                 modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
@@ -419,7 +418,7 @@ class InstructionGenerator:
                 element_count=int(math.log2(N // 2)),
             )
         else:
-           self.add_instruction(
+            self.add_instruction(
                 modules=self.sel_module(COPY=1, COMPLEX_MUL=1),
                 bank1=4,  # COMPLEX_MUL input 1, output
                 bank2=1,  # COMPLEX_MUL input 2
@@ -429,33 +428,47 @@ class InstructionGenerator:
                 addr2=0,  # End offset for COPY and COMPLEX_MUL
                 element_count=int(math.log2(N // 2)),
             )
-           
+
         # timestep 5: COMPLEX_MUL, MUL_CONST
         dprint("COMPLEX_MUL MUL_CONST")
-        self.add_instruction(
-            modules=self.sel_module(COMPLEX_MUL=1, MUL_CONST=1),
-            bank1=4,  # COMPLEX_MUL input 1, output
-            bank2=3,  # COMPLEX_MUL input 2
-            bank3=5,  # MUL_CONST input
-            bank4=5,  # MUL_CONST output
-            addr1=0,  # Start offset for COMPLEX_MUL
-            addr2=0,  # End offset for COMPLEX_MUL
-            mul_const_selection=1,  # Select constant for multiplication
-            element_count=int(math.log2(N // 2)),
-        )
+        if N == 512:
+            self.add_instruction(
+                modules=self.sel_module(COMPLEX_MUL=1, MUL_CONST=1),
+                bank1=4,  # COMPLEX_MUL input 1, output
+                bank2=3,  # COMPLEX_MUL input 2
+                bank3=5,  # MUL_CONST input
+                bank4=5,  # MUL_CONST output
+                addr1=0,  # Start offset for COMPLEX_MUL
+                addr2=0,  # End offset for COMPLEX_MUL
+                mul_const_selection=1,  # Select constant for multiplication
+                element_count=int(math.log2(N // 2)),
+            )
+        else:
+            self.add_instruction(
+                modules=self.sel_module(COMPLEX_MUL=1, MUL_CONST=1),
+                bank1=5,  # COMPLEX_MUL input 1, output
+                bank2=3,  # COMPLEX_MUL input 2
+                bank3=4,  # MUL_CONST input
+                bank4=4,  # MUL_CONST output
+                addr1=0,  # Start offset for COMPLEX_MUL
+                addr2=0,  # End offset for COMPLEX_MUL
+                mul_const_selection=1,  # Select constant for multiplication
+                element_count=int(math.log2(N // 2)),
+            )
 
         # timestep 6: MUL_CONST
+        timestep6_bank = 4 if N == 512 else 5
         dprint("MUL_CONST")
         self.add_instruction(
             modules=self.sel_module(MUL_CONST=1),
-            bank3=4,  # MUL_CONST input
-            bank4=4,  # MUL_CONST output
+            bank3=timestep6_bank,  # MUL_CONST input
+            bank4=timestep6_bank,  # MUL_CONST output
             mul_const_selection=0,  # Select constant for multiplication
             element_count=int(math.log2(N // 2)),
         )
 
         self.first_samplerz_call = True
-        self.ffsampling(N=N, n=N, curr_bram=0, next_free_addr=[N//2, N//2, N//2, N//2], t0=0, t1=0, tree=0)
+        self.ffsampling(N=N, n=N, curr_bram=0, next_free_addr=[N // 2, N // 2, N // 2, N // 2], t0=0, t1=0, tree=0)
 
         dprint("COPY b00")
         self.add_instruction(
@@ -551,8 +564,8 @@ class InstructionGenerator:
         )
 
         dprint("compress")
-        compress_t0_bank = 2 if N==512 else 3
-        compress_t1_bank = 5 if N==512 else 4
+        compress_t0_bank = 2 if N == 512 else 3
+        compress_t1_bank = 5 if N == 512 else 4
         self.add_instruction(
             modules=self.sel_module(COMPRESS=1),
             bank1=compress_t0_bank,  # bank with t0
@@ -578,4 +591,4 @@ if __name__ == "__main__":
 
     generator = InstructionGenerator()
     # generator.verify(1024)
-    generator.sign(512)
+    generator.sign(1024)
