@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="705.230 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,058.954 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="709.561 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,058.088 ns"></ZoomEndTime>
+      <Cursor1Time time="741.342 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="243"></NameColumnWidth>
-      <ValueColumnWidth column_width="122"></ValueColumnWidth>
+      <ValueColumnWidth column_width="106"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="3" />
    <wvobject type="group" fp_name="group822">
@@ -564,7 +564,6 @@
       <wvobject type="group" fp_name="group1299">
          <obj_property name="label">bram3</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/bram_addr_a[3]">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">[3][12:0]</obj_property>
@@ -1495,11 +1494,49 @@
             <obj_property name="ElementShortName">mod_mult_a[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_a[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+            </wvobject>
          </wvobject>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b">
             <obj_property name="ElementShortName">mod_mult_b[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">mod_mult_b[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+               <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[0]">
+               <obj_property name="ElementShortName">[0][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[0][14:0]</obj_property>
+            </wvobject>
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[1]">
+               <obj_property name="ElementShortName">[1][14:0]</obj_property>
+               <obj_property name="ObjectShortName">[1][14:0]</obj_property>
+            </wvobject>
          </wvobject>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_valid_in">
             <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
@@ -1544,16 +1581,19 @@
             <obj_property name="ElementShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_a[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/sub_normalize_squared_norm_b">
             <obj_property name="ElementShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_b[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
          </wvobject>
          <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/sub_normalize_squared_norm_c">
             <obj_property name="ElementShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
             <obj_property name="ObjectShortName">sub_normalize_squared_norm_c[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="isExpanded"></obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/sub_normalize_squared_norm_valid">
             <obj_property name="ElementShortName">sub_normalize_squared_norm_valid</obj_property>
@@ -1902,7 +1942,6 @@
       <wvobject type="group" fp_name="group1583">
          <obj_property name="label">samplerz</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/samplerz_start">
             <obj_property name="ElementShortName">samplerz_start</obj_property>
             <obj_property name="ObjectShortName">samplerz_start</obj_property>
