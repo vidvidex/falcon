@@ -1116,7 +1116,7 @@
         "inst_hier_path": "falcon_0",
         "parameters": {
           "N": {
-            "value": "512"
+            "value": "1024"
           }
         },
         "interface_ports": {

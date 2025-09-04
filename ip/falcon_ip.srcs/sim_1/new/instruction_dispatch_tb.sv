@@ -2,7 +2,7 @@
 
 module instruction_dispatch_tb;
 
-  parameter N = 512;
+  parameter N = 1024;
 
   logic clk, rst_n;
 

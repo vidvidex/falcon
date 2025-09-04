@@ -61,20 +61,20 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynqzu"/>
-    <Option Name="WTXSimLaunchSim" Val="13371"/>
+    <Option Name="WTXSimLaunchSim" Val="13373"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="157"/>
-    <Option Name="WTModelSimExportSim" Val="157"/>
-    <Option Name="WTQuestaExportSim" Val="157"/>
+    <Option Name="WTXSimExportSim" Val="164"/>
+    <Option Name="WTModelSimExportSim" Val="164"/>
+    <Option Name="WTQuestaExportSim" Val="164"/>
     <Option Name="WTIesExportSim" Val="0"/>
-    <Option Name="WTVcsExportSim" Val="157"/>
-    <Option Name="WTRivieraExportSim" Val="157"/>
-    <Option Name="WTActivehdlExportSim" Val="157"/>
+    <Option Name="WTVcsExportSim" Val="164"/>
+    <Option Name="WTRivieraExportSim" Val="164"/>
+    <Option Name="WTActivehdlExportSim" Val="164"/>
     <Option Name="GenerateIPUpgradeLog" Val="TRUE"/>
     <Option Name="XSimRadix" Val="hex"/>
     <Option Name="XSimTimeUnit" Val="ns"/>
@@ -1048,6 +1048,7 @@
     <FileSet Name="bram_6144x128" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_6144x128" RelGenDir="$PGENDIR/bram_6144x128">
       <File Path="$PSRCDIR/sources_1/ip/bram_6144x128/bram_6144x128.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1061,6 +1062,7 @@
     <FileSet Name="bram_1024x128" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_1024x128" RelGenDir="$PGENDIR/bram_1024x128">
       <File Path="$PSRCDIR/sources_1/ip/bram_1024x128/bram_1024x128.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1074,6 +1076,7 @@
     <FileSet Name="bram_2048x128" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_2048x128" RelGenDir="$PGENDIR/bram_2048x128">
       <File Path="$PSRCDIR/sources_1/ip/bram_2048x128/bram_2048x128.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1087,6 +1090,7 @@
     <FileSet Name="bram_3072x128" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram_3072x128" RelGenDir="$PGENDIR/bram_3072x128">
       <File Path="$PSRCDIR/sources_1/ip/bram_3072x128/bram_3072x128.xci">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1114,7 +1118,6 @@
     <FileSet Name="bram6" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram6" RelGenDir="$PGENDIR/bram6">
       <File Path="$PSRCDIR/sources_1/ip/bram6/bram6.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1128,7 +1131,6 @@
     <FileSet Name="bram5" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram5" RelGenDir="$PGENDIR/bram5">
       <File Path="$PSRCDIR/sources_1/ip/bram5/bram5.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1142,7 +1144,6 @@
     <FileSet Name="bram4" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram4" RelGenDir="$PGENDIR/bram4">
       <File Path="$PSRCDIR/sources_1/ip/bram4/bram4.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1156,7 +1157,6 @@
     <FileSet Name="bram3" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram3" RelGenDir="$PGENDIR/bram3">
       <File Path="$PSRCDIR/sources_1/ip/bram3/bram3.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1170,7 +1170,6 @@
     <FileSet Name="bram2" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram2" RelGenDir="$PGENDIR/bram2">
       <File Path="$PSRCDIR/sources_1/ip/bram2/bram2.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1184,7 +1183,6 @@
     <FileSet Name="bram1" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram1" RelGenDir="$PGENDIR/bram1">
       <File Path="$PSRCDIR/sources_1/ip/bram1/bram1.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -1198,7 +1196,6 @@
     <FileSet Name="bram0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/bram0" RelGenDir="$PGENDIR/bram0">
       <File Path="$PSRCDIR/sources_1/ip/bram0/bram0.xci">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
