@@ -86,6 +86,10 @@ void verify() {
         print("Signature rejected\n");
     else
         print("Not accepted, not rejected (did the algorithm even run?)\n");
+
+    uint32_t cycle_count = get_cycle_count();
+    print("Cycle count: ");
+    xil_printf("%d\n", cycle_count);
 }
 
 void sign() {
@@ -117,6 +121,10 @@ void sign() {
         print("Signature rejected\n");
     else
         print("Not accepted, not rejected (did the algorithm even run?)\n");
+
+    uint32_t cycle_count = get_cycle_count();
+    print("Cycle count: ");
+    xil_printf("%d\n", cycle_count);
 }
 
 int main() {

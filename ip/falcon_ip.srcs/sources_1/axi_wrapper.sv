@@ -13,7 +13,7 @@
 //        [0] ... 1 = algorithm execution done
 //        [1] ... 1 = signature accepted
 //        [2] ... 1 = signature rejected
-//  - slv_reg2 is unused
+//  - slv_reg2 is cycle count
 //  - slv_reg3 is unused
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -110,6 +110,8 @@ module axi_wrapper #
   logic [1:0] algorithm_select;
   logic signature_accepted;
   logic signature_rejected;
+
+  logic [31:0] cycle_count;
 
   logic ext_bram_en;
 
@@ -243,6 +245,7 @@ module axi_wrapper #
     else begin
 
       slv_reg1 <= {29'b0, signature_rejected, signature_accepted, done};
+      slv_reg2 <= cycle_count;
 
       if (slv_reg_wren) begin
         case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
@@ -423,6 +426,17 @@ module axi_wrapper #
                          .ext_bram_dout(ext_bram_dout),
                          .ext_bram_we(ext_bram_we)
                        );
+
+  counter #(
+            .WIDTH(32)
+          ) counter (
+            .clk(S_AXI_ACLK),
+            .rst_n(S_AXI_ARESETN && !reset),
+            .start(start == 1'b1 && start_i == 1'b0),
+            .stop(done),
+
+            .count(cycle_count)
+          );
 
   always @( posedge S_AXI_ACLK ) begin
     if(S_AXI_ARESETN == 1'b0)

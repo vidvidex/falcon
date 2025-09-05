@@ -6,6 +6,7 @@
 #define AXI_LITE_BASE 0xA0000000
 #define CONTROL_REG AXI_LITE_BASE
 #define OUTPUT_REG (AXI_LITE_BASE + 4)
+#define CYCLE_COUNT_REG (AXI_LITE_BASE + 8)
 
 // Base address for accessing device BRAM
 #define BRAM_BASE 0xB0000000
