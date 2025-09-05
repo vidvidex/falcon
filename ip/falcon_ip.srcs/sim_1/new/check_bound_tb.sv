@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module sub_normalize_squared_norm_tb;
+module check_bound_tb;
 
   logic clk;
   logic rst_n;
@@ -23,20 +23,20 @@ module sub_normalize_squared_norm_tb;
   logic run_test = 0;
   int send_index;
 
-  sub_normalize_squared_norm #(
-                               .N(N),
-                               .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
-                             )uut (
-                               .clk(clk),
-                               .rst_n(rst_n),
-                               .a(a),
-                               .b(b),
-                               .c(c),
-                               .valid(valid),
-                               .last(last),
-                               .accept(accept),
-                               .reject(reject)
-                             );
+  check_bound #(
+                .N(N),
+                .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
+              )uut (
+                .clk(clk),
+                .rst_n(rst_n),
+                .a(a),
+                .b(b),
+                .c(c),
+                .valid(valid),
+                .last(last),
+                .accept(accept),
+                .reject(reject)
+              );
 
   always #5 clk = ~clk;
 
@@ -195,7 +195,7 @@ module sub_normalize_squared_norm_tb;
 
 
 
-    $display("All tests for sub_normalize_squared_norm passed!");
+    $display("All tests for check_bound passed!");
     $finish;
   end
 

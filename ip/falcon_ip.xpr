@@ -61,20 +61,20 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="pynqzu"/>
-    <Option Name="WTXSimLaunchSim" Val="13374"/>
+    <Option Name="WTXSimLaunchSim" Val="13378"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="164"/>
-    <Option Name="WTModelSimExportSim" Val="164"/>
-    <Option Name="WTQuestaExportSim" Val="164"/>
+    <Option Name="WTXSimExportSim" Val="171"/>
+    <Option Name="WTModelSimExportSim" Val="171"/>
+    <Option Name="WTQuestaExportSim" Val="171"/>
     <Option Name="WTIesExportSim" Val="0"/>
-    <Option Name="WTVcsExportSim" Val="164"/>
-    <Option Name="WTRivieraExportSim" Val="164"/>
-    <Option Name="WTActivehdlExportSim" Val="164"/>
+    <Option Name="WTVcsExportSim" Val="171"/>
+    <Option Name="WTRivieraExportSim" Val="171"/>
+    <Option Name="WTActivehdlExportSim" Val="171"/>
     <Option Name="GenerateIPUpgradeLog" Val="TRUE"/>
     <Option Name="XSimRadix" Val="hex"/>
     <Option Name="XSimTimeUnit" Val="ns"/>
@@ -107,6 +107,13 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/samplerz/chacha20.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/check_bound.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -386,13 +393,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/sub_normalize_squared_norm.sv">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/axi_wrapper.sv">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -634,7 +634,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/new/sub_normalize_squared_norm_tb.sv">
+      <File Path="$PSRCDIR/sim_1/new/check_bound_tb.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -746,7 +746,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sim_1/wcfg/sub_normalize_squared_norm_tb_behav.wcfg">
+      <File Path="$PSRCDIR/sim_1/wcfg/check_bound_tb_behav.wcfg">
         <FileInfo>
           <Attr Name="UserDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="simulation"/>

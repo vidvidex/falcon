@@ -69,7 +69,7 @@ class InstructionGenerator:
         SPLIT=0,
         MERGE=0,
         MOD_MULT_Q=0,
-        SUB_NORM_SQ=0,
+        CHECK_BOUND=0,
         DECOMPRESS=0,
         COMPRESS=0,
         ADD_SUB=0,
@@ -88,7 +88,7 @@ class InstructionGenerator:
             | (SPLIT << 7)
             | (MERGE << 6)
             | (MOD_MULT_Q << 5)
-            | (SUB_NORM_SQ << 4)
+            | (CHECK_BOUND << 4)
             | (DECOMPRESS << 3)
             | (COMPRESS << 2)
             | (ADD_SUB << 1)
@@ -161,14 +161,14 @@ class InstructionGenerator:
             bank2=4,  # NTT bank2
         )
 
-        # timestep 5: SUB_NORM_SQ
-        sub_norm_sq_intt_input = 4 if N == 512 else 6
-        dprint("SUB_NORM_SQ")
+        # timestep 5: CHECK_BOUND
+        CHECK_BOUND_intt_input = 4 if N == 512 else 6
+        dprint("CHECK_BOUND")
         self.add_instruction(
-            modules=self.sel_module(SUB_NORM_SQ=1),
-            bank1=5,  # SUB_NORM_SQ input 1
-            bank2=sub_norm_sq_intt_input,  # SUB_NORM_SQ input 2
-            bank3=3,  # SUB_NORM_SQ input 3
+            modules=self.sel_module(CHECK_BOUND=1),
+            bank1=5,  # CHECK_BOUND input 1
+            bank2=CHECK_BOUND_intt_input,  # CHECK_BOUND input 2
+            bank3=3,  # CHECK_BOUND input 3
             element_count=log2N - 1,
         )
 

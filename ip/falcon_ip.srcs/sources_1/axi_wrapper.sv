@@ -429,7 +429,7 @@ module axi_wrapper #
 
   counter #(
             .WIDTH(32)
-          ) counter (
+          ) cycle_counter (
             .clk(S_AXI_ACLK),
             .rst_n(S_AXI_ARESETN && !reset),
             .start(start == 1'b1 && start_i == 1'b0),

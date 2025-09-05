@@ -53,7 +53,7 @@ module control_unit#(
   logic debug_SPLIT;
   logic debug_MERGE;
   logic debug_MOD_MULT_Q;
-  logic debug_SUB_NORM_SQ;
+  logic debug_CHECK_BOUND;
   logic debug_DECOMPRESS;
   logic debug_COMPRESS;
   logic debug_ADD_SUB;
@@ -71,7 +71,7 @@ module control_unit#(
     debug_SPLIT = instruction[127-9];
     debug_MERGE = instruction[127-10];
     debug_MOD_MULT_Q = instruction[127-11];
-    debug_SUB_NORM_SQ = instruction[127-12];
+    debug_CHECK_BOUND = instruction[127-12];
     debug_DECOMPRESS = instruction[127-13];
     debug_COMPRESS = instruction[127-14];
     debug_ADD_SUB = instruction[127-15];
@@ -750,29 +750,29 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(6)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
 
-  localparam int SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT = 2;
-  logic signed [14:0] sub_normalize_squared_norm_a [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_b [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT], sub_normalize_squared_norm_c [SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT];
-  logic sub_normalize_squared_norm_valid, sub_normalize_squared_norm_valid_delayed;
-  logic sub_normalize_squared_norm_last_delayed;
-  logic sub_normalize_squared_norm_accept, sub_normalize_squared_norm_reject;
-  logic sub_normalize_squared_norm_done, sub_normalize_squared_norm_done_delayed;
-  sub_normalize_squared_norm #(
-                               .N(N),
-                               .PARALLEL_OPS_COUNT(SUB_NORMALIZE_SQUARED_NORM_PARALLEL_OPS_COUNT)
-                             )sub_normalize_squared_norm (
-                               .clk(clk),
-                               .rst_n(rst_n),
-                               .a(sub_normalize_squared_norm_a),
-                               .b(sub_normalize_squared_norm_b),
-                               .c(sub_normalize_squared_norm_c),
-                               .valid(sub_normalize_squared_norm_valid_delayed),
-                               .last(sub_normalize_squared_norm_last_delayed),
-                               .accept(sub_normalize_squared_norm_accept),
-                               .reject(sub_normalize_squared_norm_reject)
-                             );
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) sub_normalize_squared_norm_valid_delay(.clk(clk), .in(sub_normalize_squared_norm_valid), .out(sub_normalize_squared_norm_valid_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) sub_normalize_squared_norm_last_delay(.clk(clk), .in(sub_normalize_squared_norm_done), .out(sub_normalize_squared_norm_last_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) sub_normalize_squared_norm_done_delay(.clk(clk), .in(sub_normalize_squared_norm_done), .out(sub_normalize_squared_norm_done_delayed));
+  localparam int CHECK_BOUND_PARALLEL_OPS_COUNT = 2;
+  logic signed [14:0] check_bound_a [CHECK_BOUND_PARALLEL_OPS_COUNT], check_bound_b [CHECK_BOUND_PARALLEL_OPS_COUNT], check_bound_c [CHECK_BOUND_PARALLEL_OPS_COUNT];
+  logic check_bound_valid, check_bound_valid_delayed;
+  logic check_bound_last_delayed;
+  logic check_bound_accept, check_bound_reject;
+  logic check_bound_done, check_bound_done_delayed;
+  check_bound #(
+                .N(N),
+                .PARALLEL_OPS_COUNT(CHECK_BOUND_PARALLEL_OPS_COUNT)
+              )check_bound (
+                .clk(clk),
+                .rst_n(rst_n),
+                .a(check_bound_a),
+                .b(check_bound_b),
+                .c(check_bound_c),
+                .valid(check_bound_valid_delayed),
+                .last(check_bound_last_delayed),
+                .accept(check_bound_accept),
+                .reject(check_bound_reject)
+              );
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) check_bound_valid_delay(.clk(clk), .in(check_bound_valid), .out(check_bound_valid_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) check_bound_last_delay(.clk(clk), .in(check_bound_done), .out(check_bound_last_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(7)) check_bound_done_delay(.clk(clk), .in(check_bound_done), .out(check_bound_done_delayed));
 
   // FLP adder can only add two 64 doubles at a time, so we use two instances of it to add 4 doubles at a time.
   logic fp_adder_mode;
@@ -1087,17 +1087,17 @@ module control_unit#(
           modules_running[INSTRUCTION_COUNT-11] <= 1'b1;
       end
 
-      if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
-        if(sub_normalize_squared_norm_done_delayed)
+      if(instruction[127-12] == 1'b1) begin // CHECK_BOUND
+        if(check_bound_done_delayed)
           modules_running[INSTRUCTION_COUNT-12] <= 1'b0;
         else
           modules_running[INSTRUCTION_COUNT-12] <= 1'b1;
 
-        if(sub_normalize_squared_norm_accept == 1'b1 && sub_normalize_squared_norm_reject == 1'b0) begin
+        if(check_bound_accept == 1'b1 && check_bound_reject == 1'b0) begin
           signature_accepted <= 1'b1;
           signature_rejected <= 1'b0;
         end
-        else if (sub_normalize_squared_norm_accept == 1'b0 && sub_normalize_squared_norm_reject == 1'b1) begin
+        else if (check_bound_accept == 1'b0 && check_bound_reject == 1'b1) begin
           signature_accepted <= 1'b0;
           signature_rejected <= 1'b1;
         end
@@ -1155,8 +1155,8 @@ module control_unit#(
     int_to_double_done = 1'b0;
     mod_mult_valid_in = 1'b0;
     mod_mult_done = 1'b0;
-    sub_normalize_squared_norm_valid = 1'b0;
-    sub_normalize_squared_norm_done = 1'b0;
+    check_bound_valid = 1'b0;
+    check_bound_done = 1'b0;
     fp_adder_valid_in = 1'b0;
     fp_adder_done = 1'b0;
     fp_mul_valid_in = 1'b0;
@@ -1203,12 +1203,12 @@ module control_unit#(
     mod_mult_b[0] = 0;
     mod_mult_b[1] = 0;
     mod_mult_write_addr = 0;
-    sub_normalize_squared_norm_a[0] = 0;
-    sub_normalize_squared_norm_a[1] = 0;
-    sub_normalize_squared_norm_b[0] = 0;
-    sub_normalize_squared_norm_b[1] = 0;
-    sub_normalize_squared_norm_c[0] = 0;
-    sub_normalize_squared_norm_c[1] = 0;
+    check_bound_a[0] = 0;
+    check_bound_a[1] = 0;
+    check_bound_b[0] = 0;
+    check_bound_b[1] = 0;
+    check_bound_c[0] = 0;
+    check_bound_c[1] = 0;
     decompress_input_bram_data = 0;
     decompress_output_bram2_data = 0;
     fp_adder_mode = 0;
@@ -1405,21 +1405,21 @@ module control_unit#(
         bram_we_a[bank3] = mod_mult_valid_out;
       end
 
-      if(instruction[127-12] == 1'b1) begin // SUB_NORM_SQ
+      if(instruction[127-12] == 1'b1) begin // CHECK_BOUND
         bram_addr_a[bank1] = pipelined_inst_index; // Data from hash_to_point
         bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT
         bram_addr_b[bank2] = pipelined_inst_index + N/2; // Data from INTT
         bram_addr_b[bank3] = pipelined_inst_index; // Data from decompress
 
-        sub_normalize_squared_norm_a[0] = bram_dout_a[bank1][64+14:64];
-        sub_normalize_squared_norm_a[1] = bram_dout_a[bank1][14:0];
-        sub_normalize_squared_norm_b[0] = bram_dout_a[bank2][14:0];
-        sub_normalize_squared_norm_b[1] = bram_dout_b[bank2][14:0];
-        sub_normalize_squared_norm_c[0] = bram_dout_b[bank3][64+14:64];
-        sub_normalize_squared_norm_c[1] = bram_dout_b[bank3][14:0];
+        check_bound_a[0] = bram_dout_a[bank1][64+14:64];
+        check_bound_a[1] = bram_dout_a[bank1][14:0];
+        check_bound_b[0] = bram_dout_a[bank2][14:0];
+        check_bound_b[1] = bram_dout_b[bank2][14:0];
+        check_bound_c[0] = bram_dout_b[bank3][64+14:64];
+        check_bound_c[1] = bram_dout_b[bank3][14:0];
 
-        sub_normalize_squared_norm_valid = pipelined_inst_valid;
-        sub_normalize_squared_norm_done = pipelined_inst_done;
+        check_bound_valid = pipelined_inst_valid;
+        check_bound_done = pipelined_inst_done;
       end
 
       if(instruction[127-13] == 1'b1) begin // DECOMPRESS

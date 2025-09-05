@@ -8,7 +8,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module sub_normalize_squared_norm#(
+module check_bound#(
     parameter int N = 512,
     parameter int PARALLEL_OPS_COUNT = 2  //! How many operations to do in parallel
   )(
