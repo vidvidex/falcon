@@ -82,12 +82,11 @@ module control_unit#(
   logic [`BRAM_ADDR_WIDTH-1:0] ext_local_bram_addr;
 
   logic [INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
-  logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6;
+  logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6, bank7;
   logic [12:0] addr1, addr2;
 
   logic add_sub_mode;
   logic input_output_addr_same;
-  logic [2:0] decompress_output2;
   logic [$clog2(N):0] element_count;
   logic mul_const_constant;
   logic mode;
@@ -943,12 +942,12 @@ module control_unit#(
   assign bank4 = instruction[11:9];
   assign bank5 = instruction[14:12];
   assign bank6 = instruction[17:15];
+  assign bank7 = instruction[52:50];
   assign addr1 = instruction[30:18];
   assign addr2 = instruction[43:31];
 
   assign add_sub_mode = instruction[54];
   assign input_output_addr_same = instruction[53];
-  assign decompress_output2 = instruction[52:50];
   assign mul_const_constant = instruction[45];
   assign mode = instruction[44];
   assign element_count = (1 << instruction[49:46]);
@@ -1432,9 +1431,9 @@ module control_unit#(
         bram_din_a[bank6] = decompress_output_bram1_data;
         bram_we_a[bank6] = decompress_output_bram1_we;
 
-        bram_addr_a[decompress_output2] = decompress_output_bram1_addr; // decompress can output to two banks at the same time
-        bram_din_a[decompress_output2] = decompress_output_bram1_data;
-        bram_we_a[decompress_output2] = decompress_output_bram1_we;
+        bram_addr_a[bank7] = decompress_output_bram1_addr;
+        bram_din_a[bank7] = decompress_output_bram1_data;
+        bram_we_a[bank7] = decompress_output_bram1_we;
 
         bram_addr_b[bank6] = decompress_output_bram2_addr;
         decompress_output_bram2_data = bram_dout_b[bank6];
