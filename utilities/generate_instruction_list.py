@@ -68,7 +68,7 @@ class InstructionGenerator:
         MUL_CONST=0,
         SPLIT=0,
         MERGE=0,
-        MOD_MULT_Q=0,
+        MULT_MOD_Q=0,
         CHECK_BOUND=0,
         DECOMPRESS=0,
         COMPRESS=0,
@@ -87,7 +87,7 @@ class InstructionGenerator:
             | (MUL_CONST << 8)
             | (SPLIT << 7)
             | (MERGE << 6)
-            | (MOD_MULT_Q << 5)
+            | (MULT_MOD_Q << 5)
             | (CHECK_BOUND << 4)
             | (DECOMPRESS << 3)
             | (COMPRESS << 2)
@@ -140,15 +140,15 @@ class InstructionGenerator:
             bank2=1,  # NTT bank2
         )
 
-        # timestep 3: MOD_MULT_Q
-        dprint("MOD_MULT_Q")
-        mod_mult_q_ntt_input1 = 1 if N == 512 else 4
-        mod_mult_q_ntt_input2 = 2 if N == 512 else 0
+        # timestep 3: MULT_MOD_Q
+        dprint("MULT_MOD_Q")
+        mult_mod_q_ntt_input1 = 1 if N == 512 else 4
+        mult_mod_q_ntt_input2 = 2 if N == 512 else 0
         self.add_instruction(
-            modules=self.sel_module(MOD_MULT_Q=1),
-            bank1=mod_mult_q_ntt_input1,  # MOD_MULT_Q input 1
-            bank2=mod_mult_q_ntt_input2,  # MOD_MULT_Q input 2
-            bank3=6,  # MOD_MULT_Q output
+            modules=self.sel_module(MULT_MOD_Q=1),
+            bank1=mult_mod_q_ntt_input1,  # MULT_MOD_Q input 1
+            bank2=mult_mod_q_ntt_input2,  # MULT_MOD_Q input 2
+            bank3=6,  # MULT_MOD_Q output
             element_count=log2N - 1,
         )
 

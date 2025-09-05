@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mod_mult #(
+module mult_mod_q #(
     parameter int N = 512,
     parameter int PARALLEL_OPS_COUNT = 2  //! How many operations to do in parallel (how many a_i * b_i % 12289 operations we do at the same time)
   )(

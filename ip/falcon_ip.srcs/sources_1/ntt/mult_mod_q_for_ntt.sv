@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module mod_mult_ntt #(
+module mult_mod_q_for_ntt #(
     parameter int N = 512
   )(
     input logic clk,
