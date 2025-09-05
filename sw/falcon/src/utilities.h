@@ -103,3 +103,5 @@ void print_array(uint8_t *array, size_t size) {
     }
     xil_printf("\n");
 }
+
+uint32_t get_cycle_count() { return *((volatile uint32_t *)CYCLE_COUNT_REG); }

@@ -68,13 +68,13 @@
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="6"/>
-    <Option Name="WTModelSimExportSim" Val="6"/>
-    <Option Name="WTQuestaExportSim" Val="6"/>
+    <Option Name="WTXSimExportSim" Val="9"/>
+    <Option Name="WTModelSimExportSim" Val="9"/>
+    <Option Name="WTQuestaExportSim" Val="9"/>
     <Option Name="WTIesExportSim" Val="0"/>
-    <Option Name="WTVcsExportSim" Val="6"/>
-    <Option Name="WTRivieraExportSim" Val="6"/>
-    <Option Name="WTActivehdlExportSim" Val="6"/>
+    <Option Name="WTVcsExportSim" Val="9"/>
+    <Option Name="WTRivieraExportSim" Val="9"/>
+    <Option Name="WTActivehdlExportSim" Val="9"/>
     <Option Name="GenerateIPUpgradeLog" Val="TRUE"/>
     <Option Name="XSimRadix" Val="hex"/>
     <Option Name="XSimTimeUnit" Val="ns"/>
@@ -98,6 +98,15 @@
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
+        <CompFileExtendedInfo CompFileName="falcon.bd" FileRelPathName="ip/falcon_zynq_ultra_ps_e_0_0/falcon_zynq_ultra_ps_e_0_0.xci">
+          <Proxy FileSetName="falcon_zynq_ultra_ps_e_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="falcon.bd" FileRelPathName="ip/falcon_axi_bram_ctrl_0_0/falcon_axi_bram_ctrl_0_0.xci">
+          <Proxy FileSetName="falcon_axi_bram_ctrl_0_0"/>
+        </CompFileExtendedInfo>
+        <CompFileExtendedInfo CompFileName="falcon.bd" FileRelPathName="ip/falcon_rst_ps8_0_100M_0/falcon_rst_ps8_0_100M_0.xci">
+          <Proxy FileSetName="falcon_rst_ps8_0_100M_0"/>
+        </CompFileExtendedInfo>
         <CompFileExtendedInfo CompFileName="falcon.bd" FileRelPathName="ip/falcon_falcon_0_0/falcon_falcon_0_0.xci">
           <Proxy FileSetName="falcon_falcon_0_0"/>
         </CompFileExtendedInfo>
@@ -152,6 +161,24 @@
         <Option Name="TopAutoSet" Val="TRUE"/>
       </Config>
     </FileSet>
+    <FileSet Name="falcon_zynq_ultra_ps_e_0_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/falcon_zynq_ultra_ps_e_0_0" RelGenDir="$PGENDIR/falcon_zynq_ultra_ps_e_0_0">
+      <Config>
+        <Option Name="TopModule" Val="falcon_zynq_ultra_ps_e_0_0"/>
+        <Option Name="UseBlackboxStub" Val="1"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="falcon_axi_bram_ctrl_0_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/falcon_axi_bram_ctrl_0_0" RelGenDir="$PGENDIR/falcon_axi_bram_ctrl_0_0">
+      <Config>
+        <Option Name="TopModule" Val="falcon_axi_bram_ctrl_0_0"/>
+        <Option Name="UseBlackboxStub" Val="1"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="falcon_rst_ps8_0_100M_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/falcon_rst_ps8_0_100M_0" RelGenDir="$PGENDIR/falcon_rst_ps8_0_100M_0">
+      <Config>
+        <Option Name="TopModule" Val="falcon_rst_ps8_0_100M_0"/>
+        <Option Name="UseBlackboxStub" Val="1"/>
+      </Config>
+    </FileSet>
     <FileSet Name="falcon_falcon_0_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/falcon_falcon_0_0" RelGenDir="$PGENDIR/falcon_falcon_0_0">
       <Config>
         <Option Name="TopModule" Val="falcon_falcon_0_0"/>
@@ -191,6 +218,36 @@
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
     </Run>
+    <Run Id="falcon_zynq_ultra_ps_e_0_0_synth_1" Type="Ft3:Synth" SrcSet="falcon_zynq_ultra_ps_e_0_0" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_zynq_ultra_ps_e_0_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/falcon_zynq_ultra_ps_e_0_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_zynq_ultra_ps_e_0_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_zynq_ultra_ps_e_0_0_synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
+        <Step Id="synth_design"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+      <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
+      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
+      <RQSFiles/>
+    </Run>
+    <Run Id="falcon_axi_bram_ctrl_0_0_synth_1" Type="Ft3:Synth" SrcSet="falcon_axi_bram_ctrl_0_0" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_axi_bram_ctrl_0_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/falcon_axi_bram_ctrl_0_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_axi_bram_ctrl_0_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_axi_bram_ctrl_0_0_synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
+        <Step Id="synth_design"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+      <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
+      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
+      <RQSFiles/>
+    </Run>
+    <Run Id="falcon_rst_ps8_0_100M_0_synth_1" Type="Ft3:Synth" SrcSet="falcon_rst_ps8_0_100M_0" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_rst_ps8_0_100M_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/falcon_rst_ps8_0_100M_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_rst_ps8_0_100M_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_rst_ps8_0_100M_0_synth_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
+        <Step Id="synth_design"/>
+      </Strategy>
+      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+      <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
+      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
+      <RQSFiles/>
+    </Run>
     <Run Id="falcon_falcon_0_0_synth_1" Type="Ft3:Synth" SrcSet="falcon_falcon_0_0" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_falcon_0_0" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" Dir="$PRUNDIR/falcon_falcon_0_0_synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_falcon_0_0_synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_falcon_0_0_synth_1">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023">
@@ -217,6 +274,57 @@
         <Step Id="write_bitstream"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+      <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2023"/>
+      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
+      <RQSFiles/>
+    </Run>
+    <Run Id="falcon_zynq_ultra_ps_e_0_0_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_zynq_ultra_ps_e_0_0" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="falcon_zynq_ultra_ps_e_0_0_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_zynq_ultra_ps_e_0_0_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_zynq_ultra_ps_e_0_0_impl_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
+      <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2023"/>
+      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
+      <RQSFiles/>
+    </Run>
+    <Run Id="falcon_axi_bram_ctrl_0_0_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_axi_bram_ctrl_0_0" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="falcon_axi_bram_ctrl_0_0_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_axi_bram_ctrl_0_0_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_axi_bram_ctrl_0_0_impl_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
+      <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2023"/>
+      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
+      <RQSFiles/>
+    </Run>
+    <Run Id="falcon_rst_ps8_0_100M_0_impl_1" Type="Ft2:EntireDesign" Part="xczu5eg-sfvc784-1-e" ConstrsSet="falcon_rst_ps8_0_100M_0" Description="Default settings for Implementation." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" SynthRun="falcon_rst_ps8_0_100M_0_synth_1" IncludeInArchive="false" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/falcon_rst_ps8_0_100M_0_impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/falcon_rst_ps8_0_100M_0_impl_1">
+      <Strategy Version="1" Minor="2">
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2023"/>
+        <Step Id="init_design"/>
+        <Step Id="opt_design"/>
+        <Step Id="power_opt_design"/>
+        <Step Id="place_design"/>
+        <Step Id="post_place_power_opt_design"/>
+        <Step Id="phys_opt_design"/>
+        <Step Id="route_design"/>
+        <Step Id="post_route_phys_opt_design"/>
+        <Step Id="write_bitstream"/>
+      </Strategy>
       <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
