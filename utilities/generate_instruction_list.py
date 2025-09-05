@@ -31,7 +31,7 @@ class InstructionGenerator:
         mode=0,
         mul_const_selection=0,
         element_count=0,
-        decompress_output2=0,
+        bank7=0,
         input_output_addr_same=0,
         add_sub_mode=0,
     ):
@@ -40,7 +40,7 @@ class InstructionGenerator:
             ("empty", 56, 0),
             ("add_sub_mode", 1, add_sub_mode),
             ("input_output_addr_same", 1, input_output_addr_same),
-            ("decompress_output2", 3, decompress_output2),
+            ("bank7", 3, bank7),
             ("element_count", 4, element_count),
             ("mul_const_selection", 1, mul_const_selection),
             ("mode", 1, mode),
@@ -127,8 +127,8 @@ class InstructionGenerator:
             bank3=6,  # hash_to_point input
             bank4=5,  # hash_to_point output
             bank5=1,  # decompress input
-            bank6=4,  # decompress output
-            decompress_output2=3,  # Second output for decompress
+            bank6=4,  # decompress output 1
+            bank7=3,  # decompress output 2
         )
 
         # timestep 2: NTT

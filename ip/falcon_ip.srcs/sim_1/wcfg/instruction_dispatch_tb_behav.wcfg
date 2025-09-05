@@ -290,6 +290,11 @@
          <obj_property name="ObjectShortName">bank6[2:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/bank7">
+         <obj_property name="ElementShortName">bank7[2:0]</obj_property>
+         <obj_property name="ObjectShortName">bank7[2:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/addr1">
          <obj_property name="ElementShortName">addr1[12:0]</obj_property>
          <obj_property name="ObjectShortName">addr1[12:0]</obj_property>
@@ -307,11 +312,6 @@
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/input_output_addr_same">
          <obj_property name="ElementShortName">input_output_addr_same</obj_property>
          <obj_property name="ObjectShortName">input_output_addr_same</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/decompress_output2">
-         <obj_property name="ElementShortName">decompress_output2[2:0]</obj_property>
-         <obj_property name="ObjectShortName">decompress_output2[2:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/element_count">
          <obj_property name="ElementShortName">element_count[10:0]</obj_property>
