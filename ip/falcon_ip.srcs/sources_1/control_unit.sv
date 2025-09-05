@@ -85,11 +85,10 @@ module control_unit#(
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6, bank7;
   logic [12:0] addr1, addr2;
 
-  logic add_sub_mode;
+  logic mode1, mode2;
   logic input_output_addr_same;
   logic [$clog2(N):0] element_count;
   logic mul_const_constant;
-  logic mode;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram_addr_a [BRAM_BANK_COUNT];
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a [BRAM_BANK_COUNT];
@@ -946,10 +945,10 @@ module control_unit#(
   assign addr1 = instruction[30:18];
   assign addr2 = instruction[43:31];
 
-  assign add_sub_mode = instruction[54];
+  assign mode1 = instruction[44];
+  assign mode2 = instruction[54];
   assign input_output_addr_same = instruction[53];
   assign mul_const_constant = instruction[45];
-  assign mode = instruction[44];
   assign element_count = (1 << instruction[49:46]);
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
   assign pipelined_inst_done = pipelined_inst_index > element_count-1 ? 1'b1 : 1'b0;
@@ -1032,7 +1031,7 @@ module control_unit#(
       end
 
       if(instruction[127-5] == 1'b1) begin // FFT_IFFT
-        fft_mode <= mode;
+        fft_mode <= mode1;
         fft_start <= 1'b1;
         if(fft_done)
           modules_running[INSTRUCTION_COUNT-5] <= 1'b0;
@@ -1041,7 +1040,7 @@ module control_unit#(
       end
 
       if(instruction[127-6] == 1'b1) begin // NTT_INTT
-        ntt_mode <= mode;
+        ntt_mode <= mode1;
         ntt_start <= 1'b1;
         if(ntt_done)
           modules_running[INSTRUCTION_COUNT-6] <= 1'b0;
@@ -1131,7 +1130,7 @@ module control_unit#(
 
       if(instruction[127-16] == 1'b1) begin // SAMPLERZ
         samplerz_start <= 1'b1;
-        samplerz_restart <= mode;
+        samplerz_restart <= mode1;
         if(samplerz_done)
           modules_running[INSTRUCTION_COUNT-16] <= 1'b0;
         else
@@ -1458,7 +1457,7 @@ module control_unit#(
       end
 
       if(instruction[127-15] == 1'b1) begin // ADD_SUB
-        fp_adder_mode = add_sub_mode;
+        fp_adder_mode = mode2;
 
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
         bram_addr_a[bank4] = (input_output_addr_same ? addr1 : addr2) + pipelined_inst_index;
@@ -1484,7 +1483,7 @@ module control_unit#(
 
         // isigma. Take either high 64 bits or low 64 bits
         bram_addr_a[bank2] = addr2;
-        samplerz_isigma = add_sub_mode ? bram_dout_a[bank2][63:0] : bram_dout_a[bank2][127:64];
+        samplerz_isigma = mode2 ? bram_dout_a[bank2][63:0] : bram_dout_a[bank2][127:64];
 
         // result
         bram_addr_a[bank3] = (N == 512) ? 528 : 784;

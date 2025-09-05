@@ -305,9 +305,13 @@
          <obj_property name="ObjectShortName">addr2[12:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/add_sub_mode">
-         <obj_property name="ElementShortName">add_sub_mode</obj_property>
-         <obj_property name="ObjectShortName">add_sub_mode</obj_property>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mode1">
+         <obj_property name="ElementShortName">mode1</obj_property>
+         <obj_property name="ObjectShortName">mode1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mode2">
+         <obj_property name="ElementShortName">mode2</obj_property>
+         <obj_property name="ObjectShortName">mode2</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/input_output_addr_same">
          <obj_property name="ElementShortName">input_output_addr_same</obj_property>
@@ -322,10 +326,7 @@
          <obj_property name="ElementShortName">mul_const_constant</obj_property>
          <obj_property name="ObjectShortName">mul_const_constant</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mode">
-         <obj_property name="ElementShortName">mode</obj_property>
-         <obj_property name="ObjectShortName">mode</obj_property>
-      </wvobject>
+
       <wvobject type="group" fp_name="group868">
          <obj_property name="label">debug</obj_property>
          <obj_property name="DisplayName">label</obj_property>
