@@ -33,12 +33,12 @@ class InstructionGenerator:
         element_count=0,
         bank7=0,
         input_output_addr_same=0,
-        add_sub_mode=0,
+        mode2=0,
     ):
         fields = [
             ("modules", 16, modules),
             ("empty", 56, 0),
-            ("add_sub_mode", 1, add_sub_mode),
+            ("mode2", 1, mode2),
             ("input_output_addr_same", 1, input_output_addr_same),
             ("bank7", 3, bank7),
             ("element_count", 4, element_count),
@@ -198,7 +198,7 @@ class InstructionGenerator:
             self.add_instruction(
                 modules=self.sel_module(SAMPLERZ=1),
                 mode=1 if self.first_samplerz_call else 0,
-                add_sub_mode=1 if tree % 2 == 1 else 0,
+                mode2=1 if tree % 2 == 1 else 0,
                 bank1=prev_bram,  # Input
                 addr1=t0,
                 bank2=tree_bram,  # Tree
@@ -279,7 +279,7 @@ class InstructionGenerator:
         dprint(f"n={n},\tsub_z1\tin_bram={curr_bram}\tin_addr={z1}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
-            add_sub_mode=1,  # Subtract mode
+            mode2=1,  # Subtract mode
             bank3=curr_bram,  # Input1
             addr1=z1,
             bank4=next_bram,  # Input2, output
@@ -304,7 +304,7 @@ class InstructionGenerator:
         dprint(f"n={n},\tadd_t0\tin_bram={t0_bram}\tin_addr={t0}\tout_bram={next_bram}\tout_addr={tmp}")
         self.add_instruction(
             modules=self.sel_module(ADD_SUB=1),
-            add_sub_mode=0,  # Add mode
+            mode2=0,  # Add mode
             bank3=t0_bram,  # Input1
             addr1=t0,
             bank4=next_bram,  # Input2, output
@@ -518,7 +518,7 @@ class InstructionGenerator:
         dprint("COMPLEX_MUL, ADD_SUB")
         self.add_instruction(
             modules=self.sel_module(COMPLEX_MUL=1, ADD_SUB=1),
-            add_sub_mode=0,  # Add mode
+            mode2=0,  # Add mode
             bank1=4,  # COMPLEX_MUL input1, output
             bank2=1,  # COMPLEX_MUL input2
             addr1=N // 2,  # Offset for COMPLEX_MUL input1 and output, both inputs and output for ADD_SUB
@@ -543,7 +543,7 @@ class InstructionGenerator:
         self.add_instruction(
             modules=self.sel_module(FFT_IFFT=1, ADD_SUB=1),
             mode=1,  # IFFT mode: IFFT
-            add_sub_mode=0,  # add
+            mode2=0,  # add
             bank1=2,  # FFT bank1
             bank2=3,  # FFT bank2
             addr1=N // 2,  # Offset for FFT bank1, ADD_SUB input
