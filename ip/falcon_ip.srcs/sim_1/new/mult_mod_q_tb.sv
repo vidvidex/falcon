@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module mod_mult_tb;
+module mult_mod_q_tb;
 
   logic clk;
   logic rst_n;
@@ -19,18 +19,18 @@ module mod_mult_tb;
   logic run_test;
   int send_i = 0, receive_i = 0;    // Counters for sending data to module and receiving from module
 
-  mod_mult #(
-                    .N(8),
-                    .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
-                  )uut (
-                    .clk(clk),
-                    .rst_n(rst_n),
-                    .a(a),
-                    .b(b),
-                    .valid_in(valid_in),
-                    .result(result),
-                    .valid_out(valid_out)
-                  );
+  mult_mod_q #(
+               .N(8),
+               .PARALLEL_OPS_COUNT(PARALLEL_OPS_COUNT)
+             )uut (
+               .clk(clk),
+               .rst_n(rst_n),
+               .a(a),
+               .b(b),
+               .valid_in(valid_in),
+               .result(result),
+               .valid_out(valid_out)
+             );
 
   always #5 clk = ~clk;
 
@@ -77,7 +77,7 @@ module mod_mult_tb;
 
     run_test = 0;
 
-    $display("All tests for mod_mult passed!");
+    $display("All tests for mult_mod_q passed!");
     $finish;
   end
 

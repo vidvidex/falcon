@@ -375,9 +375,9 @@
             <obj_property name="ElementShortName">debug_MERGE</obj_property>
             <obj_property name="ObjectShortName">debug_MERGE</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/debug_MOD_MULT_Q">
-            <obj_property name="ElementShortName">debug_MOD_MULT_Q</obj_property>
-            <obj_property name="ObjectShortName">debug_MOD_MULT_Q</obj_property>
+         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/debug_MULT_MOD_Q">
+            <obj_property name="ElementShortName">debug_MULT_MOD_Q</obj_property>
+            <obj_property name="ObjectShortName">debug_MULT_MOD_Q</obj_property>
          </wvobject>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/debug_CHECK_BOUND">
             <obj_property name="ElementShortName">debug_CHECK_BOUND</obj_property>
@@ -1489,89 +1489,89 @@
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group1070">
-         <obj_property name="label">mod_mult</obj_property>
+         <obj_property name="label">mult_mod_q</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a">
-            <obj_property name="ElementShortName">mod_mult_a[0:1][14:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_a[0:1][14:0]</obj_property>
+         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_a">
+            <obj_property name="ElementShortName">mult_mod_q_a[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_a[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             <obj_property name="isExpanded"></obj_property>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[0]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_a[0]">
                <obj_property name="ElementShortName">[0][14:0]</obj_property>
                <obj_property name="ObjectShortName">[0][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[1]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_a[1]">
                <obj_property name="ElementShortName">[1][14:0]</obj_property>
                <obj_property name="ObjectShortName">[1][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[0]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_a[0]">
                <obj_property name="ElementShortName">[0][14:0]</obj_property>
                <obj_property name="ObjectShortName">[0][14:0]</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_a[1]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_a[1]">
                <obj_property name="ElementShortName">[1][14:0]</obj_property>
                <obj_property name="ObjectShortName">[1][14:0]</obj_property>
             </wvobject>
          </wvobject>
-         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b">
-            <obj_property name="ElementShortName">mod_mult_b[0:1][14:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_b[0:1][14:0]</obj_property>
+         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_b">
+            <obj_property name="ElementShortName">mult_mod_q_b[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_b[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             <obj_property name="isExpanded"></obj_property>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[0]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_b[0]">
                <obj_property name="ElementShortName">[0][14:0]</obj_property>
                <obj_property name="ObjectShortName">[0][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[1]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_b[1]">
                <obj_property name="ElementShortName">[1][14:0]</obj_property>
                <obj_property name="ObjectShortName">[1][14:0]</obj_property>
                <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[0]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_b[0]">
                <obj_property name="ElementShortName">[0][14:0]</obj_property>
                <obj_property name="ObjectShortName">[0][14:0]</obj_property>
             </wvobject>
-            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_b[1]">
+            <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_b[1]">
                <obj_property name="ElementShortName">[1][14:0]</obj_property>
                <obj_property name="ObjectShortName">[1][14:0]</obj_property>
             </wvobject>
          </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_valid_in">
-            <obj_property name="ElementShortName">mod_mult_valid_in</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_valid_in</obj_property>
+         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_valid_in">
+            <obj_property name="ElementShortName">mult_mod_q_valid_in</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_valid_in</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_valid_in_delayed">
-            <obj_property name="ElementShortName">mod_mult_valid_in_delayed</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_valid_in_delayed</obj_property>
+         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_valid_in_delayed">
+            <obj_property name="ElementShortName">mult_mod_q_valid_in_delayed</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_valid_in_delayed</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_result">
-            <obj_property name="ElementShortName">mod_mult_result[0:1][14:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_result[0:1][14:0]</obj_property>
+         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_result">
+            <obj_property name="ElementShortName">mult_mod_q_result[0:1][14:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_result[0:1][14:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_valid_out">
-            <obj_property name="ElementShortName">mod_mult_valid_out</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_valid_out</obj_property>
+         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_valid_out">
+            <obj_property name="ElementShortName">mult_mod_q_valid_out</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_valid_out</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_done">
-            <obj_property name="ElementShortName">mod_mult_done</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_done</obj_property>
+         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_done">
+            <obj_property name="ElementShortName">mult_mod_q_done</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_done</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_done_delayed">
-            <obj_property name="ElementShortName">mod_mult_done_delayed</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_done_delayed</obj_property>
+         <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_done_delayed">
+            <obj_property name="ElementShortName">mult_mod_q_done_delayed</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_done_delayed</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_write_addr">
-            <obj_property name="ElementShortName">mod_mult_write_addr[12:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_write_addr[12:0]</obj_property>
+         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_write_addr">
+            <obj_property name="ElementShortName">mult_mod_q_write_addr[12:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_write_addr[12:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mod_mult_write_addr_delayed">
-            <obj_property name="ElementShortName">mod_mult_write_addr_delayed[12:0]</obj_property>
-            <obj_property name="ObjectShortName">mod_mult_write_addr_delayed[12:0]</obj_property>
+         <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/mult_mod_q_write_addr_delayed">
+            <obj_property name="ElementShortName">mult_mod_q_write_addr_delayed[12:0]</obj_property>
+            <obj_property name="ObjectShortName">mult_mod_q_write_addr_delayed[12:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
       </wvobject>

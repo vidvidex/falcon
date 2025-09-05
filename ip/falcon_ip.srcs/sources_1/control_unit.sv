@@ -52,7 +52,7 @@ module control_unit#(
   logic debug_MUL_CONST;
   logic debug_SPLIT;
   logic debug_MERGE;
-  logic debug_MOD_MULT_Q;
+  logic debug_MULT_MOD_Q;
   logic debug_CHECK_BOUND;
   logic debug_DECOMPRESS;
   logic debug_COMPRESS;
@@ -70,7 +70,7 @@ module control_unit#(
     debug_MUL_CONST = instruction[127-8];
     debug_SPLIT = instruction[127-9];
     debug_MERGE = instruction[127-10];
-    debug_MOD_MULT_Q = instruction[127-11];
+    debug_MULT_MOD_Q = instruction[127-11];
     debug_CHECK_BOUND = instruction[127-12];
     debug_DECOMPRESS = instruction[127-13];
     debug_COMPRESS = instruction[127-14];
@@ -727,28 +727,28 @@ module control_unit#(
         .done(ntt_done)
       );
 
-  localparam int MOD_MULT_PARALLEL_OPS_COUNT = 2;
-  logic signed [14:0] mod_mult_a [MOD_MULT_PARALLEL_OPS_COUNT], mod_mult_b [MOD_MULT_PARALLEL_OPS_COUNT];
-  logic mod_mult_valid_in, mod_mult_valid_in_delayed;
-  logic signed [14:0] mod_mult_result [MOD_MULT_PARALLEL_OPS_COUNT];
-  logic mod_mult_valid_out;
-  logic mod_mult_done, mod_mult_done_delayed;
-  mod_mult #(
-             .N(N),
-             .PARALLEL_OPS_COUNT(MOD_MULT_PARALLEL_OPS_COUNT)
-           )mod_mult (
-             .clk(clk),
-             .rst_n(rst_n),
-             .a(mod_mult_a),
-             .b(mod_mult_b),
-             .valid_in(mod_mult_valid_in_delayed),
-             .result(mod_mult_result),
-             .valid_out(mod_mult_valid_out)
-           );
-  logic [`BRAM_ADDR_WIDTH-1:0] mod_mult_write_addr, mod_mult_write_addr_delayed;  // Where to write the output of mod_mult
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mod_mult_write_addr_delay(.clk(clk), .in(mod_mult_write_addr), .out(mod_mult_write_addr_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(6)) mod_mult_done_delay(.clk(clk), .in(mod_mult_done), .out(mod_mult_done_delayed));
+  localparam int MULT_MOD_Q_PARALLEL_OPS_COUNT = 2;
+  logic signed [14:0] mult_mod_q_a [MULT_MOD_Q_PARALLEL_OPS_COUNT], mult_mod_q_b [MULT_MOD_Q_PARALLEL_OPS_COUNT];
+  logic mult_mod_q_valid_in, mult_mod_q_valid_in_delayed;
+  logic signed [14:0] mult_mod_q_result [MULT_MOD_Q_PARALLEL_OPS_COUNT];
+  logic mult_mod_q_valid_out;
+  logic mult_mod_q_done, mult_mod_q_done_delayed;
+  mult_mod_q #(
+               .N(N),
+               .PARALLEL_OPS_COUNT(MULT_MOD_Q_PARALLEL_OPS_COUNT)
+             )mult_mod_q (
+               .clk(clk),
+               .rst_n(rst_n),
+               .a(mult_mod_q_a),
+               .b(mult_mod_q_b),
+               .valid_in(mult_mod_q_valid_in_delayed),
+               .result(mult_mod_q_result),
+               .valid_out(mult_mod_q_valid_out)
+             );
+  logic [`BRAM_ADDR_WIDTH-1:0] mult_mod_q_write_addr, mult_mod_q_write_addr_delayed;  // Where to write the output of mult_mod_q
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(7)) mult_mod_q_write_addr_delay(.clk(clk), .in(mult_mod_q_write_addr), .out(mult_mod_q_write_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) mult_mod_q_valid_in_delay(.clk(clk), .in(mult_mod_q_valid_in), .out(mult_mod_q_valid_in_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(6)) mult_mod_q_done_delay(.clk(clk), .in(mult_mod_q_done), .out(mult_mod_q_done_delayed));
 
   localparam int CHECK_BOUND_PARALLEL_OPS_COUNT = 2;
   logic signed [14:0] check_bound_a [CHECK_BOUND_PARALLEL_OPS_COUNT], check_bound_b [CHECK_BOUND_PARALLEL_OPS_COUNT], check_bound_c [CHECK_BOUND_PARALLEL_OPS_COUNT];
@@ -1080,8 +1080,8 @@ module control_unit#(
           modules_running[INSTRUCTION_COUNT-10] <= 1'b1;
       end
 
-      if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
-        if(mod_mult_done_delayed)
+      if(instruction[127-11] == 1'b1) begin // MULT_MOD_Q
+        if(mult_mod_q_done_delayed)
           modules_running[INSTRUCTION_COUNT-11] <= 1'b0;
         else
           modules_running[INSTRUCTION_COUNT-11] <= 1'b1;
@@ -1153,8 +1153,8 @@ module control_unit#(
 
     int_to_double_valid_in = 1'b0;
     int_to_double_done = 1'b0;
-    mod_mult_valid_in = 1'b0;
-    mod_mult_done = 1'b0;
+    mult_mod_q_valid_in = 1'b0;
+    mult_mod_q_done = 1'b0;
     check_bound_valid = 1'b0;
     check_bound_done = 1'b0;
     fp_adder_valid_in = 1'b0;
@@ -1198,11 +1198,11 @@ module control_unit#(
     split_bram1_dout_b = 0;
     merge_bram1_dout_a = 0;
     merge_bram1_dout_b = 0;
-    mod_mult_a[0] = 0;
-    mod_mult_a[1] = 0;
-    mod_mult_b[0] = 0;
-    mod_mult_b[1] = 0;
-    mod_mult_write_addr = 0;
+    mult_mod_q_a[0] = 0;
+    mult_mod_q_a[1] = 0;
+    mult_mod_q_b[0] = 0;
+    mult_mod_q_b[1] = 0;
+    mult_mod_q_write_addr = 0;
     check_bound_a[0] = 0;
     check_bound_a[1] = 0;
     check_bound_b[0] = 0;
@@ -1386,23 +1386,23 @@ module control_unit#(
         bram_we_b[bank2] = merge_bram2_we_b;
       end
 
-      if(instruction[127-11] == 1'b1) begin // MOD_MULT_Q
+      if(instruction[127-11] == 1'b1) begin // MULT_MOD_Q
         bram_addr_a[bank1] = pipelined_inst_index;
         bram_addr_b[bank1] = pipelined_inst_index + N/2;
         bram_addr_a[bank2] = pipelined_inst_index;
         bram_addr_b[bank2] = pipelined_inst_index + N/2;
 
-        mod_mult_a[0] = bram_dout_a[bank1][14:0];
-        mod_mult_a[1] = bram_dout_b[bank1][14:0];
-        mod_mult_b[0] = bram_dout_a[bank2][14:0];
-        mod_mult_b[1] = bram_dout_b[bank2][14:0];
-        mod_mult_valid_in = pipelined_inst_valid;
-        mod_mult_done = pipelined_inst_done;
-        mod_mult_write_addr = pipelined_inst_index;
+        mult_mod_q_a[0] = bram_dout_a[bank1][14:0];
+        mult_mod_q_a[1] = bram_dout_b[bank1][14:0];
+        mult_mod_q_b[0] = bram_dout_a[bank2][14:0];
+        mult_mod_q_b[1] = bram_dout_b[bank2][14:0];
+        mult_mod_q_valid_in = pipelined_inst_valid;
+        mult_mod_q_done = pipelined_inst_done;
+        mult_mod_q_write_addr = pipelined_inst_index;
 
-        bram_addr_a[bank3] = mod_mult_write_addr_delayed;
-        bram_din_a[bank3] = {49'b0, mod_mult_result[0], 49'b0, mod_mult_result[1]};
-        bram_we_a[bank3] = mod_mult_valid_out;
+        bram_addr_a[bank3] = mult_mod_q_write_addr_delayed;
+        bram_din_a[bank3] = {49'b0, mult_mod_q_result[0], 49'b0, mult_mod_q_result[1]};
+        bram_we_a[bank3] = mult_mod_q_valid_out;
       end
 
       if(instruction[127-12] == 1'b1) begin // CHECK_BOUND

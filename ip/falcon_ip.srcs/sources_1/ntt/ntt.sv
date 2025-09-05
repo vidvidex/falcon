@@ -66,17 +66,17 @@ module ntt#(
   delay_register #(.BITWIDTH(15), .CYCLE_COUNT(3)) twiddle_factor_delay(.clk(clk), .in(twiddle_factor), .out(twiddle_factor_delayed));
   logic [9:0] twiddle_address;
 
-  logic signed [14:0] mod_mult_a, mod_mult_b, mod_mult_passthrough_in;
-  logic [$clog2(N):0] mod_mult_index1_in, mod_mult_index1_in_delayed, mod_mult_index2_in, mod_mult_index2_in_delayed;
-  logic mod_mult_valid_in, mod_mult_valid_in_delayed;
-  logic signed [14:0] mod_mult_result, mod_mult_passthrough_out;
-  logic [$clog2(N):0] mod_mult_index1_out, mod_mult_index2_out;
-  logic mod_mult_valid_out, mod_mult_last;
+  logic signed [14:0] mult_mod_q_a, mult_mod_q_b, mult_mod_q_passthrough_in;
+  logic [$clog2(N):0] mult_mod_q_index1_in, mult_mod_q_index1_in_delayed, mult_mod_q_index2_in, mult_mod_q_index2_in_delayed;
+  logic mult_mod_q_valid_in, mult_mod_q_valid_in_delayed;
+  logic signed [14:0] mult_mod_q_result, mult_mod_q_passthrough_out;
+  logic [$clog2(N):0] mult_mod_q_index1_out, mult_mod_q_index2_out;
+  logic mult_mod_q_valid_out, mult_mod_q_last;
 
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) mod_mult_valid_in_delay(.clk(clk), .in(mod_mult_valid_in), .out(mod_mult_valid_in_delayed));
-  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mod_mult_index1_in_delay(.clk(clk), .in(mod_mult_index1_in), .out(mod_mult_index1_in_delayed));
-  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mod_mult_index2_in_delay(.clk(clk), .in(mod_mult_index2_in), .out(mod_mult_index2_in_delayed));
-  logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM. It is essentially mod_mult_last but delayed to account for the extra cycle needed for writing to the BRAM
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) mult_mod_q_valid_in_delay(.clk(clk), .in(mult_mod_q_valid_in), .out(mult_mod_q_valid_in_delayed));
+  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mult_mod_q_index1_in_delay(.clk(clk), .in(mult_mod_q_index1_in), .out(mult_mod_q_index1_in_delayed));
+  delay_register #(.BITWIDTH($clog2(N)+1), .CYCLE_COUNT(3)) mult_mod_q_index2_in_delay(.clk(clk), .in(mult_mod_q_index2_in), .out(mult_mod_q_index2_in_delayed));
+  logic bram_write_complete; // This is high for one clock cycle when we've written all coefficients to the BRAM. It is essentially mult_mod_q_last but delayed to account for the extra cycle needed for writing to the BRAM
 
   // "logical" signals that get assigned to different BRAM banks depending on the stage
   // These are routed to either bram1, bram2
@@ -85,7 +85,7 @@ module ntt#(
   logic write_enable1, write_enable2;
 
   // Signals for scaling pipeline
-  logic signed [14:0] scale_data1_in, scale_data2_in, scale_mod_mult1, scale_mod_mult2;
+  logic signed [14:0] scale_data1_in, scale_data2_in, scale_mult_mod_q1, scale_mult_mod_q2;
   logic signed [28:0] scale_a_times_b1, scale_a_times_b2;
   logic [$clog2(N)-1:0] scale_addr1_in, scale_addr2_in, scale_addr1_1, scale_addr2_1, scale_addr1_out, scale_addr2_out;
   logic scale_we_a_in, scale_we_b_in, scale_we_a_1, scale_we_b_1, scale_we_a_out, scale_we_b_out;
@@ -121,23 +121,23 @@ module ntt#(
 
   assign twiddle_address = mode == 1'b0 ? stage + group:  (stage >> 1) + group;
 
-  mod_mult_ntt #(
+  mult_mod_q_for_ntt #(
                  .N(N)
-               )mod_mult(
+               )mult_mod_q(
                  .clk(clk),
                  .rst_n(rst_n),
-                 .a(mod_mult_a),
-                 .b(mod_mult_b),
-                 .valid_in(mod_mult_valid_in_delayed),
-                 .index1_in(mod_mult_index1_in_delayed),
-                 .index2_in(mod_mult_index2_in_delayed),
-                 .passthrough_in(mod_mult_passthrough_in),
-                 .result(mod_mult_result),
-                 .valid_out(mod_mult_valid_out),
-                 .last(mod_mult_last),
-                 .index1_out(mod_mult_index1_out),
-                 .index2_out(mod_mult_index2_out),
-                 .passthrough_out(mod_mult_passthrough_out)
+                 .a(mult_mod_q_a),
+                 .b(mult_mod_q_b),
+                 .valid_in(mult_mod_q_valid_in_delayed),
+                 .index1_in(mult_mod_q_index1_in_delayed),
+                 .index2_in(mult_mod_q_index2_in_delayed),
+                 .passthrough_in(mult_mod_q_passthrough_in),
+                 .result(mult_mod_q_result),
+                 .valid_out(mult_mod_q_valid_out),
+                 .last(mult_mod_q_last),
+                 .index1_out(mult_mod_q_index1_out),
+                 .index2_out(mult_mod_q_index2_out),
+                 .passthrough_out(mult_mod_q_passthrough_out)
                );
 
   // Modulo 12289 addition
@@ -175,7 +175,7 @@ module ntt#(
         if (butterfly == N >> 1)
           next_state = NTT_WAIT_FOR_MULTIPLY;
       end
-      NTT_WAIT_FOR_MULTIPLY: begin // Wait for mod_mult to finish and coefficient to be written to BRAM
+      NTT_WAIT_FOR_MULTIPLY: begin // Wait for mult_mod_q to finish and coefficient to be written to BRAM
         // When we write everything to BRAM we go to DONE if we're finished or to the next stage of NTT if we're not
         if(bram_write_complete == 1'b1)
           if(butterfly - 1 == N >> 1 && ((mode == 1'b0 && stride == 1) || (mode == 1'b1 && stride == N >> 1)))
@@ -206,8 +206,8 @@ module ntt#(
     // Stage 2: Modulo 12289
     scale_temp1 = scale_a_times_b1 % 12289;
     scale_temp2 = scale_a_times_b2 % 12289;
-    scale_mod_mult1 <= scale_temp1 < 0 ? scale_temp1 + 12289 : scale_temp1; // Make sure the result is positive
-    scale_mod_mult2 <= scale_temp2 < 0 ? scale_temp2 + 12289 : scale_temp2; // Make sure the result is positive
+    scale_mult_mod_q1 <= scale_temp1 < 0 ? scale_temp1 + 12289 : scale_temp1; // Make sure the result is positive
+    scale_mult_mod_q2 <= scale_temp2 < 0 ? scale_temp2 + 12289 : scale_temp2; // Make sure the result is positive
     scale_addr1_out <= scale_addr1_1;
     scale_addr2_out <= scale_addr2_1;
     scale_we_a_out <= scale_we_a_1;
@@ -282,18 +282,18 @@ module ntt#(
       // Output from scaling pipeline
       if(N == 512) begin
         bram2_addr_a = scale_addr1_out;
-        bram2_din_a = scale_mod_mult1;
+        bram2_din_a = scale_mult_mod_q1;
         bram2_we_a = scale_we_a_out;
         bram2_addr_b = scale_addr2_out;
-        bram2_din_b = scale_mod_mult2;
+        bram2_din_b = scale_mult_mod_q2;
         bram2_we_b = scale_we_b_out;
       end
       else begin
         bram1_addr_a = scale_addr1_out;
-        bram1_din_a = scale_mod_mult1;
+        bram1_din_a = scale_mult_mod_q1;
         bram1_we_a = scale_we_a_out;
         bram1_addr_b = scale_addr2_out;
-        bram1_din_b = scale_mod_mult2;
+        bram1_din_b = scale_mult_mod_q2;
         bram1_we_b = scale_we_b_out;
       end
     end
@@ -352,26 +352,26 @@ module ntt#(
     if(rst_n == 1'b0)
       bram_write_complete <= 0;
     else
-      bram_write_complete <= mod_mult_last;
+      bram_write_complete <= mult_mod_q_last;
   end
 
-  // Assign mod_mult parameters
+  // Assign mult_mod_q parameters
   always_comb begin
 
-    mod_mult_passthrough_in = 0;
+    mult_mod_q_passthrough_in = 0;
 
     if (rst_n == 1'b0) begin
-      mod_mult_a = 0;
-      mod_mult_b = 0;
+      mult_mod_q_a = 0;
+      mult_mod_q_b = 0;
     end
     else if(state == NTT || state == NTT_WAIT_FOR_MULTIPLY) begin
-      mod_mult_a = mode == 1'b0 ? read_data2 : mod_sub(read_data1, read_data2);
-      mod_mult_b = twiddle_factor_delayed;
-      mod_mult_passthrough_in = mode == 1'b0 ? read_data1 : mod_add(read_data1, read_data2);
+      mult_mod_q_a = mode == 1'b0 ? read_data2 : mod_sub(read_data1, read_data2);
+      mult_mod_q_b = twiddle_factor_delayed;
+      mult_mod_q_passthrough_in = mode == 1'b0 ? read_data1 : mod_add(read_data1, read_data2);
     end
     else begin
-      mod_mult_a = 0;
-      mod_mult_b = 0;
+      mult_mod_q_a = 0;
+      mult_mod_q_b = 0;
     end
   end
 
@@ -381,9 +381,9 @@ module ntt#(
     if (rst_n == 1'b0) begin
       read_addr1 <= 0;
       read_addr2 <= 0;
-      mod_mult_valid_in <= 0;
-      mod_mult_index1_in <= 0;
-      mod_mult_index2_in <= 0;
+      mult_mod_q_valid_in <= 0;
+      mult_mod_q_index1_in <= 0;
+      mult_mod_q_index2_in <= 0;
     end
 
     case (state)
@@ -393,39 +393,39 @@ module ntt#(
         read_addr2 <= (mode == 1'b1 && stage_counter == 0 && state != IDLE) ? (i + stride) % (N/2) : (i + stride);
 
         if (mode == 1'b0) begin
-          mod_mult_valid_in <= 1'b1;
-          mod_mult_index1_in <= i;
-          mod_mult_index2_in <= i + stride;
+          mult_mod_q_valid_in <= 1'b1;
+          mult_mod_q_index1_in <= i;
+          mult_mod_q_index2_in <= i + stride;
         end
         else begin
-          mod_mult_valid_in <= 1'b1;
-          mod_mult_index1_in <= i;
-          mod_mult_index2_in <= i + stride;
+          mult_mod_q_valid_in <= 1'b1;
+          mult_mod_q_index1_in <= i;
+          mult_mod_q_index2_in <= i + stride;
         end
       end
 
       NTT_WAIT_FOR_MULTIPLY: begin
-        mod_mult_valid_in <= 0;
-        mod_mult_index1_in <= 0;
-        mod_mult_index2_in <= 0;
+        mult_mod_q_valid_in <= 0;
+        mult_mod_q_index1_in <= 0;
+        mult_mod_q_index2_in <= 0;
       end
     endcase
 
-    // If there is valid output from mod_mult for main NTT operation we store the result
-    if((state == NTT || state == NTT_WAIT_FOR_MULTIPLY) && mod_mult_valid_out == 1'b1) begin
+    // If there is valid output from mult_mod_q for main NTT operation we store the result
+    if((state == NTT || state == NTT_WAIT_FOR_MULTIPLY) && mult_mod_q_valid_out == 1'b1) begin
 
-      write_addr1 <= mod_mult_index1_out;
-      write_addr2 <= mod_mult_index2_out;
+      write_addr1 <= mult_mod_q_index1_out;
+      write_addr2 <= mult_mod_q_index2_out;
       write_enable1 <= 1'b1;
       write_enable2 <= 1'b1;
 
       if (mode == 1'b0) begin
-        write_data1 <= mod_add(mod_mult_passthrough_out, mod_mult_result);
-        write_data2 <= mod_sub(mod_mult_passthrough_out, mod_mult_result);
+        write_data1 <= mod_add(mult_mod_q_passthrough_out, mult_mod_q_result);
+        write_data2 <= mod_sub(mult_mod_q_passthrough_out, mult_mod_q_result);
       end
       else begin
-        write_data1 <= mod_mult_passthrough_out;
-        write_data2 <= mod_mult_result;
+        write_data1 <= mult_mod_q_passthrough_out;
+        write_data2 <= mult_mod_q_result;
       end
     end
     else begin
