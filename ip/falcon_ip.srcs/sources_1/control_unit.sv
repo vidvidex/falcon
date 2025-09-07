@@ -17,14 +17,11 @@ module control_unit#(
     input logic clk,
     input logic rst_n,
 
-    input logic [127:0] instruction,
+    input logic [`INSTRUCTION_WIDTH-1:0] instruction,
     output logic instruction_done,
 
     output logic signature_accepted,
     output logic signature_rejected,
-
-    input logic [`BRAM_DATA_WIDTH-1:0] bram_din, // Data to write to BRAM
-    output logic [`BRAM_DATA_WIDTH-1:0] bram_dout, // Data read from BRAM
 
     // External BRAM interface
     input logic ext_bram_en, // Enable signal for External BRAM interface. When this is high, software has access to the BRAM
@@ -39,10 +36,7 @@ module control_unit#(
   localparam int BRAM3072_COUNT = 1; // Number of 3072x128 BRAM banks
   localparam int BRAM6144_COUNT = 1; // Number of 6144x128 BRAM banks
   localparam int BRAM_BANK_COUNT = BRAM3072_COUNT + BRAM1024_COUNT + BRAM2048_COUNT + BRAM6144_COUNT;
-  localparam int INSTRUCTION_COUNT = 17;
 
-  logic debug_BRAM_READ;
-  logic debug_BRAM_WRITE;
   logic debug_COPY;
   logic debug_HASH_TO_POINT;
   logic debug_INT_TO_DOUBLE;
@@ -59,29 +53,27 @@ module control_unit#(
   logic debug_ADD_SUB;
   logic debug_SAMPLERZ;
   always_comb begin
-    debug_BRAM_READ = instruction[127-0];
-    debug_BRAM_WRITE = instruction[127-1];
-    debug_COPY = instruction[127-2];
-    debug_HASH_TO_POINT = instruction[127-3];
-    debug_INT_TO_DOUBLE = instruction[127-4];
-    debug_FFT_IFFT = instruction[127-5];
-    debug_NTT_INTT = instruction[127-6];
-    debug_COMPLEX_MUL = instruction[127-7];
-    debug_MUL_CONST = instruction[127-8];
-    debug_SPLIT = instruction[127-9];
-    debug_MERGE = instruction[127-10];
-    debug_MULT_MOD_Q = instruction[127-11];
-    debug_CHECK_BOUND = instruction[127-12];
-    debug_DECOMPRESS = instruction[127-13];
-    debug_COMPRESS = instruction[127-14];
-    debug_ADD_SUB = instruction[127-15];
-    debug_SAMPLERZ = instruction[127-16];
+    debug_COPY = instruction[`INSTRUCTION_WIDTH-1-0];
+    debug_HASH_TO_POINT = instruction[`INSTRUCTION_WIDTH-1-1];
+    debug_INT_TO_DOUBLE = instruction[`INSTRUCTION_WIDTH-1-2];
+    debug_FFT_IFFT = instruction[`INSTRUCTION_WIDTH-1-3];
+    debug_NTT_INTT = instruction[`INSTRUCTION_WIDTH-1-4];
+    debug_COMPLEX_MUL = instruction[`INSTRUCTION_WIDTH-1-5];
+    debug_MUL_CONST = instruction[`INSTRUCTION_WIDTH-1-6];
+    debug_SPLIT = instruction[`INSTRUCTION_WIDTH-1-7];
+    debug_MERGE = instruction[`INSTRUCTION_WIDTH-1-8];
+    debug_MULT_MOD_Q = instruction[`INSTRUCTION_WIDTH-1-9];
+    debug_CHECK_BOUND = instruction[`INSTRUCTION_WIDTH-1-10];
+    debug_DECOMPRESS = instruction[`INSTRUCTION_WIDTH-1-11];
+    debug_COMPRESS = instruction[`INSTRUCTION_WIDTH-1-12];
+    debug_ADD_SUB = instruction[`INSTRUCTION_WIDTH-1-13];
+    debug_SAMPLERZ = instruction[`INSTRUCTION_WIDTH-1-14];
   end
 
   logic [2:0] ext_bram_bank;
   logic [`BRAM_ADDR_WIDTH-1:0] ext_local_bram_addr;
 
-  logic [INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
+  logic [`INSTRUCTION_COUNT-1:0] modules_running, modules_running_i;
   logic [2:0] bank1, bank2, bank3, bank4, bank5, bank6, bank7;
   logic [12:0] addr1, addr2;
 
@@ -310,8 +302,8 @@ module control_unit#(
     modules_running_i <= modules_running;
   end
 
-  // Instruction done when no modules are running. Alternatively when we're using the debug read/write instructions
-  assign instruction_done = modules_running == 0 && modules_running_i != 0 || (instruction[127-0] == 1'b1 || instruction[127-1] == 1'b1);
+  // Instruction done when no modules are running
+  assign instruction_done = modules_running == 0 && modules_running_i != 0;
 
   logic [$clog2(N):0] pipelined_inst_index;  // Index for pipelined operations (split, merge, add, etc.)
   logic pipelined_inst_done; // Last/done signal for pipelined operations
@@ -568,7 +560,7 @@ module control_unit#(
             );
 
   always_comb begin
-    if(instruction[122]) begin
+    if(instruction[66]) begin
       btf_mode = fft_btf_mode;
       btf_valid_in = fft_btf_valid_in;
       btf_a_in_real = fft_btf_a_in_real;
@@ -595,7 +587,7 @@ module control_unit#(
       merge_btf_b_out_imag = 0;
       merge_btf_valid_out = 0;
     end
-    else if(instruction[118]) begin
+    else if(instruction[62]) begin
       btf_mode = split_btf_mode;
       btf_valid_in = split_btf_valid_in;
       btf_a_in_real = split_btf_a_in_real;
@@ -941,15 +933,15 @@ module control_unit#(
   assign bank4 = instruction[11:9];
   assign bank5 = instruction[14:12];
   assign bank6 = instruction[17:15];
-  assign bank7 = instruction[52:50];
-  assign addr1 = instruction[30:18];
-  assign addr2 = instruction[43:31];
+  assign bank7 = instruction[20:18];
+  assign addr1 = instruction[33:21];
+  assign addr2 = instruction[46:34];
 
-  assign mode1 = instruction[44];
-  assign mode2 = instruction[54];
-  assign input_output_addr_same = instruction[53];
-  assign mul_const_constant = instruction[45];
-  assign element_count = (1 << instruction[49:46]);
+  assign mode1 = instruction[47];
+  assign mode2 = instruction[48];
+  assign element_count = (1 << instruction[52:49]);
+  assign mul_const_constant = instruction[53];
+  assign input_output_addr_same = instruction[54];
   assign pipelined_inst_valid = pipelined_inst_index < element_count ? 1'b1 : 1'b0;
   assign pipelined_inst_done = pipelined_inst_index > element_count-1 ? 1'b1 : 1'b0;
 
@@ -966,7 +958,7 @@ module control_unit#(
     else
       pipelined_inst_index <= (pipelined_inst_index == N) ? pipelined_inst_index : pipelined_inst_index+1;
 
-    if (!rst_n || instruction[127:127-INSTRUCTION_COUNT+1] == 0) begin
+    if (!rst_n || instruction[`INSTRUCTION_WIDTH-1:`INSTRUCTION_WIDTH-1-`INSTRUCTION_COUNT+1] == 0) begin
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
 
@@ -1000,98 +992,90 @@ module control_unit#(
       samplerz_start_i <= samplerz_start;
       samplerz_restart_i <= samplerz_restart;
 
-      if(instruction[127-0] == 1'b1) begin // BRAM_READ
-        // Empty
-      end
-
-      if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
-        // Empty
-      end
-
-      if(instruction[127-2] == 1'b1) begin // COPY
+      if(instruction[`INSTRUCTION_WIDTH-1-0] == 1'b1) begin // COPY
         if(copy_done_delayed)
-          modules_running[INSTRUCTION_COUNT-2] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-0] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-2] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-0] <= 1'b1;
       end
 
-      if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
+      if(instruction[`INSTRUCTION_WIDTH-1-1] == 1'b1) begin // HASH_TO_POINT
         htp_start <= 1'b1;
         if(htp_done_delayed)
-          modules_running[INSTRUCTION_COUNT-3] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-1] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-3] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-1] <= 1'b1;
       end
 
-      if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
+      if(instruction[`INSTRUCTION_WIDTH-1-2] == 1'b1) begin // INT_TO_DOUBLE
         if(int_to_double_done_delayed)
-          modules_running[INSTRUCTION_COUNT-4] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-2] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-4] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-2] <= 1'b1;
       end
 
-      if(instruction[127-5] == 1'b1) begin // FFT_IFFT
+      if(instruction[`INSTRUCTION_WIDTH-1-3] == 1'b1) begin // FFT_IFFT
         fft_mode <= mode1;
         fft_start <= 1'b1;
         if(fft_done)
-          modules_running[INSTRUCTION_COUNT-5] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-3] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-5] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-3] <= 1'b1;
       end
 
-      if(instruction[127-6] == 1'b1) begin // NTT_INTT
+      if(instruction[`INSTRUCTION_WIDTH-1-4] == 1'b1) begin // NTT_INTT
         ntt_mode <= mode1;
         ntt_start <= 1'b1;
         if(ntt_done)
-          modules_running[INSTRUCTION_COUNT-6] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-4] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-6] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-4] <= 1'b1;
       end
 
-      if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
+      if(instruction[`INSTRUCTION_WIDTH-1-5] == 1'b1) begin // COMPLEX_MUL
         if(complex_mul_done_delayed)
-          modules_running[INSTRUCTION_COUNT-7] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-5] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-7] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-5] <= 1'b1;
       end
 
-      if(instruction[127-8] == 1'b1) begin // MUL_CONST
+      if(instruction[`INSTRUCTION_WIDTH-1-6] == 1'b1) begin // MUL_CONST
         if(fp_mul_done_delayed)
-          modules_running[INSTRUCTION_COUNT-8] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-6] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-8] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-6] <= 1'b1;
       end
 
-      if(instruction[127-9] == 1'b1) begin // SPLIT
-        split_size <= 1 << instruction[49:46];
+      if(instruction[`INSTRUCTION_WIDTH-1-7] == 1'b1) begin // SPLIT
+        split_size <= element_count;
         split_start <= 1'b1;
         if(split_done)
-          modules_running[INSTRUCTION_COUNT-9] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-7] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-9] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-7] <= 1'b1;
       end
 
-      if(instruction[127-10] == 1'b1) begin // MERGE
-        merge_size <= 1 << instruction[49:46];
+      if(instruction[`INSTRUCTION_WIDTH-1-8] == 1'b1) begin // MERGE
+        merge_size <= element_count;
         merge_start <= 1'b1;
         if(merge_done)
-          modules_running[INSTRUCTION_COUNT-10] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-8] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-10] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-8] <= 1'b1;
       end
 
-      if(instruction[127-11] == 1'b1) begin // MULT_MOD_Q
+      if(instruction[`INSTRUCTION_WIDTH-1-9] == 1'b1) begin // MULT_MOD_Q
         if(mult_mod_q_done_delayed)
-          modules_running[INSTRUCTION_COUNT-11] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-9] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-11] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-9] <= 1'b1;
       end
 
-      if(instruction[127-12] == 1'b1) begin // CHECK_BOUND
+      if(instruction[`INSTRUCTION_WIDTH-1-10] == 1'b1) begin // CHECK_BOUND
         if(check_bound_done_delayed)
-          modules_running[INSTRUCTION_COUNT-12] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-10] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-12] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-10] <= 1'b1;
 
         if(check_bound_accept == 1'b1 && check_bound_reject == 1'b0) begin
           signature_accepted <= 1'b1;
@@ -1103,38 +1087,38 @@ module control_unit#(
         end
       end
 
-      if(instruction[127-13] == 1'b1) begin // DECOMPRESS
+      if(instruction[`INSTRUCTION_WIDTH-1-11] == 1'b1) begin // DECOMPRESS
         decompress_start <= 1'b1;
         if(decompress_done)
-          modules_running[INSTRUCTION_COUNT-13] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-11] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-13] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-11] <= 1'b1;
       end
 
-      if(instruction[127-14] == 1'b1) begin // COMPRESS
+      if(instruction[`INSTRUCTION_WIDTH-1-12] == 1'b1) begin // COMPRESS
         if(compress_done_delayed) begin
-          modules_running[INSTRUCTION_COUNT-14] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-12] <= 1'b0;
           signature_accepted <= compress_accept;
           signature_rejected <= compress_reject;
         end
         else
-          modules_running[INSTRUCTION_COUNT-14] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-12] <= 1'b1;
       end
 
-      if(instruction[127-15] == 1'b1) begin // ADD_SUB
+      if(instruction[`INSTRUCTION_WIDTH-1-13] == 1'b1) begin // ADD_SUB
         if(fp_adder_done_delayed)
-          modules_running[INSTRUCTION_COUNT-15] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-13] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-15] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-13] <= 1'b1;
       end
 
-      if(instruction[127-16] == 1'b1) begin // SAMPLERZ
+      if(instruction[`INSTRUCTION_WIDTH-1-14] == 1'b1) begin // SAMPLERZ
         samplerz_start <= 1'b1;
         samplerz_restart <= mode1;
         if(samplerz_done)
-          modules_running[INSTRUCTION_COUNT-16] <= 1'b0;
+          modules_running[`INSTRUCTION_COUNT-1-14] <= 1'b0;
         else
-          modules_running[INSTRUCTION_COUNT-16] <= 1'b1;
+          modules_running[`INSTRUCTION_COUNT-1-14] <= 1'b1;
       end
     end
   end
@@ -1170,7 +1154,6 @@ module control_unit#(
     compress_done = 1'b0;
     compress_lower_half = 1'b0;
 
-    bram_dout = 0;
     copy_dst_addr = 0;
     htp_input_bram_data = 0;
     htp_output_bram2_data = 0;
@@ -1239,18 +1222,7 @@ module control_unit#(
     end
     else begin  // Instructions have BRAM access
 
-      if(instruction[127-0] == 1'b1) begin // BRAM_READ
-        bram_addr_a[bank1] = addr1;
-        bram_dout = bram_dout_a[bank1];
-      end
-
-      if(instruction[127-1] == 1'b1) begin // BRAM_WRITE
-        bram_addr_a[bank1] = addr1;
-        bram_din_a[bank1] = bram_din;
-        bram_we_a[bank1] = 1'b1;
-      end
-
-      if(instruction[127-2] == 1'b1) begin // COPY
+      if(instruction[`INSTRUCTION_WIDTH-1-0] == 1'b1) begin // COPY
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
         copy_valid_in = pipelined_inst_valid;
         copy_done = pipelined_inst_done;
@@ -1261,7 +1233,7 @@ module control_unit#(
         bram_we_b[bank4] = copy_valid_out;
       end
 
-      if(instruction[127-3] == 1'b1) begin // HASH_TO_POINT
+      if(instruction[`INSTRUCTION_WIDTH-1-1] == 1'b1) begin // HASH_TO_POINT
         bram_addr_a[bank3] = htp_input_bram_addr;
         htp_input_bram_data = bram_dout_a[bank3];
 
@@ -1273,7 +1245,7 @@ module control_unit#(
         htp_output_bram2_data = bram_dout_b[bank4];
       end
 
-      if(instruction[127-4] == 1'b1) begin // INT_TO_DOUBLE
+      if(instruction[`INSTRUCTION_WIDTH-1-2] == 1'b1) begin // INT_TO_DOUBLE
         bram_addr_a[bank1] = pipelined_inst_index;
         int_to_double_address_in = pipelined_inst_index;
         int_to_double_data_in = bram_dout_a[bank1];
@@ -1286,7 +1258,7 @@ module control_unit#(
         bram_we_b[bank2] = int_to_double_valid_out;
       end
 
-      if(instruction[127-5] == 1'b1) begin // FFT_IFFT
+      if(instruction[`INSTRUCTION_WIDTH-1-3] == 1'b1) begin // FFT_IFFT
         bram_addr_a[bank1] = addr1 + fft_bram1_addr_a;
         bram_din_a[bank1] = fft_bram1_din_a;
         bram_we_a[bank1] = fft_bram1_we_a;
@@ -1306,7 +1278,7 @@ module control_unit#(
         fft_bram2_dout_b = bram_dout_b[bank2];
       end
 
-      if(instruction[127-6] == 1'b1) begin // NTT_INTT
+      if(instruction[`INSTRUCTION_WIDTH-1-4] == 1'b1) begin // NTT_INTT
         bram_addr_a[bank1] = ntt_bram1_addr_a;
         bram_din_a[bank1] = ntt_bram1_din_a;
         bram_we_a[bank1] = ntt_bram1_we_a;
@@ -1326,7 +1298,7 @@ module control_unit#(
         ntt_bram2_dout_b = bram_dout_b[bank2];
       end
 
-      if(instruction[127-7] == 1'b1) begin // COMPLEX_MUL
+      if(instruction[`INSTRUCTION_WIDTH-1-5] == 1'b1) begin // COMPLEX_MUL
         bram_addr_a[bank1] = addr1 + pipelined_inst_index;
         bram_addr_a[bank2] = addr2 + pipelined_inst_index;
         complex_mul_a_real = bram_dout_a[bank1][127:64];
@@ -1342,7 +1314,7 @@ module control_unit#(
         bram_we_b[bank1] = complex_mul_valid_out;
       end
 
-      if(instruction[127-8] == 1'b1) begin // MUL_CONST
+      if(instruction[`INSTRUCTION_WIDTH-1-6] == 1'b1) begin // MUL_CONST
         bram_addr_a[bank3] = pipelined_inst_index;
         fp_mul1_a = bram_dout_a[bank3][127:64];
         fp_mul2_a = bram_dout_a[bank3][63:0];
@@ -1358,7 +1330,7 @@ module control_unit#(
         bram_we_b[bank4] = fp_mul_valid_out;
       end
 
-      if(instruction[127-9] == 1'b1) begin // SPLIT
+      if(instruction[`INSTRUCTION_WIDTH-1-7] == 1'b1) begin // SPLIT
         bram_addr_a[bank1] = split_bram1_addr_a + addr1;
         bram_addr_b[bank1] = split_bram1_addr_b + addr1;
         split_bram1_dout_a = bram_dout_a[bank1];
@@ -1372,7 +1344,7 @@ module control_unit#(
         bram_we_b[bank2] = split_bram2_we_b;
       end
 
-      if(instruction[127-10] == 1'b1) begin // MERGE
+      if(instruction[`INSTRUCTION_WIDTH-1-8] == 1'b1) begin // MERGE
         bram_addr_a[bank1] = merge_bram1_addr_a + addr1;
         bram_addr_b[bank1] = merge_bram1_addr_b + addr1;
         merge_bram1_dout_a = bram_dout_a[bank1];
@@ -1386,7 +1358,7 @@ module control_unit#(
         bram_we_b[bank2] = merge_bram2_we_b;
       end
 
-      if(instruction[127-11] == 1'b1) begin // MULT_MOD_Q
+      if(instruction[`INSTRUCTION_WIDTH-1-9] == 1'b1) begin // MULT_MOD_Q
         bram_addr_a[bank1] = pipelined_inst_index;
         bram_addr_b[bank1] = pipelined_inst_index + N/2;
         bram_addr_a[bank2] = pipelined_inst_index;
@@ -1405,7 +1377,7 @@ module control_unit#(
         bram_we_a[bank3] = mult_mod_q_valid_out;
       end
 
-      if(instruction[127-12] == 1'b1) begin // CHECK_BOUND
+      if(instruction[`INSTRUCTION_WIDTH-1-10] == 1'b1) begin // CHECK_BOUND
         bram_addr_a[bank1] = pipelined_inst_index; // Data from hash_to_point
         bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT
         bram_addr_b[bank2] = pipelined_inst_index + N/2; // Data from INTT
@@ -1422,7 +1394,7 @@ module control_unit#(
         check_bound_done = pipelined_inst_done;
       end
 
-      if(instruction[127-13] == 1'b1) begin // DECOMPRESS
+      if(instruction[`INSTRUCTION_WIDTH-1-11] == 1'b1) begin // DECOMPRESS
         bram_addr_a[bank5] = decompress_input_bram_addr;
         decompress_input_bram_data = bram_dout_a[bank5];
 
@@ -1438,7 +1410,7 @@ module control_unit#(
         decompress_output_bram2_data = bram_dout_b[bank6];
       end
 
-      if(instruction[127-14] == 1'b1) begin // COMPRESS
+      if(instruction[`INSTRUCTION_WIDTH-1-12] == 1'b1) begin // COMPRESS
         bram_addr_a[bank1] = addr1 + (pipelined_inst_index % (N/2));
         bram_addr_a[bank2] = addr1 + (pipelined_inst_index % (N/2));
         bram_addr_a[bank3] = addr2 + (pipelined_inst_index % (N/2));
@@ -1456,7 +1428,7 @@ module control_unit#(
         bram_din_b[bank4] = compress_bram_data;
       end
 
-      if(instruction[127-15] == 1'b1) begin // ADD_SUB
+      if(instruction[`INSTRUCTION_WIDTH-1-13] == 1'b1) begin // ADD_SUB
         fp_adder_mode = mode2;
 
         bram_addr_a[bank3] = addr1 + pipelined_inst_index;
@@ -1476,7 +1448,7 @@ module control_unit#(
         bram_we_b[bank4] = fp_adder_valid_out;
       end
 
-      if(instruction[127-16] == 1'b1) begin // SAMPLERZ
+      if(instruction[`INSTRUCTION_WIDTH-1-14] == 1'b1) begin // SAMPLERZ
         // mu
         bram_addr_a[bank1] = addr1;
         {samplerz_mu1, samplerz_mu2} = bram_dout_a[bank1];

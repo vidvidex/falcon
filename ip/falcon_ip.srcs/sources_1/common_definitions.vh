@@ -18,10 +18,14 @@
 // Memory locations
 `define SEED_BASE_ADDR (N == 512) ? 324 : 648
 
+// Instructions
+`define INSTRUCTION_WIDTH 70
+`define INSTRUCTION_COUNT 15
+
 // Constants
 // Expected (max) signature length in bytes, sbytelen(depends on N) - HEAD_LEN(1) - SALT_LEN(40)
 `define SLEN ((N == 8 ? 52 : N == 512 ? 666 : N == 1024 ? 1280 : 0) - 1 - 40)
 
 // Debugging
 // Uncomment this to not use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
-// `define DEBUG_BRAMS
+`define DEBUG_BRAMS
