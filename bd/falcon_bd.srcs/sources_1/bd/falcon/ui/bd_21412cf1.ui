@@ -1,32 +1,32 @@
 {
    "ActiveEmotionalView":"Default View",
-   "Default View_ScaleFactor":"1.0",
-   "Default View_TopLeft":"-249,-207",
+   "Default View_ScaleFactor":"0.867416",
+   "Default View_TopLeft":"595,-22",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.5.8 2022-09-21 7111 VDI=41 GEI=38 GUI=JA:10.0 TLS
 #  -string -flagsOSRD
-preplace inst zynq_ultra_ps_e_0 -pg 1 -lvl 1 -x 330 -y 300 -defaultsOSRD
-preplace inst axi_bram_ctrl_0 -pg 1 -lvl 3 -x 1150 -y 120 -defaultsOSRD
-preplace inst axi_smc -pg 1 -lvl 2 -x 790 -y 270 -defaultsOSRD
-preplace inst rst_ps8_0_100M -pg 1 -lvl 1 -x 330 -y 100 -defaultsOSRD
-preplace inst falcon_0 -pg 1 -lvl 3 -x 1150 -y 330 -defaultsOSRD
-preplace netloc axi_bram_ctrl_0_bram_addr_a 1 2 2 970 10 1330
-preplace netloc axi_bram_ctrl_0_bram_we_a 1 2 2 980 20 1340
-preplace netloc axi_bram_ctrl_0_bram_wrdata_a 1 2 2 960 220 1330
-preplace netloc falcon_0_ext_bram_dout 1 3 1 1320 140n
-preplace netloc rst_ps8_0_100M_peripheral_aresetn 1 1 2 650 140 940
-preplace netloc zynq_ultra_ps_e_0_pl_clk0 1 0 3 30 420 640 360 950
-preplace netloc zynq_ultra_ps_e_0_pl_resetn0 1 0 2 20 430 630
-preplace netloc axi_smc_M00_AXI 1 2 1 930 100n
-preplace netloc axi_smc_M01_AXI 1 2 1 N 280
-preplace netloc zynq_ultra_ps_e_0_M_AXI_HPM0_FPD 1 1 1 N 240
-preplace netloc zynq_ultra_ps_e_0_M_AXI_HPM1_FPD 1 1 1 N 260
-levelinfo -pg 1 0 330 790 1150 1360
-pagesize -pg 1 -db -bbox -sgen 0 0 1360 440
+preplace inst axi_bram_ctrl_0 -pg 1 -lvl 3 -x 1440 -y 150 -defaultsOSRD
+preplace inst axi_smc -pg 1 -lvl 2 -x 1110 -y 90 -defaultsOSRD
+preplace inst rst_ps8_0_100M -pg 1 -lvl 1 -x 650 -y 350 -defaultsOSRD
+preplace inst zynq_ultra_ps_e_0 -pg 1 -lvl 1 -x 650 -y 120 -defaultsOSRD
+preplace inst falcon_0 -pg 1 -lvl 4 -x 1820 -y 200 -defaultsOSRD
+preplace netloc rst_ps8_0_100M_peripheral_aresetn 1 1 3 970 180 1270 10 1610
+preplace netloc zynq_ultra_ps_e_0_pl_clk0 1 0 4 340 -10 960 0 1260J 0 1640
+preplace netloc zynq_ultra_ps_e_0_pl_resetn0 1 0 2 350 0 950
+preplace netloc axi_bram_ctrl_0_bram_addr_a 1 3 1 1630 100n
+preplace netloc axi_bram_ctrl_0_bram_we_a 1 3 1 1650 190n
+preplace netloc axi_bram_ctrl_0_bram_wrdata_a 1 3 1 1600 140n
+preplace netloc falcon_0_ext_bram_dout 1 3 2 1620 90 1990
+preplace netloc axi_smc_M00_AXI 1 2 1 1250 80n
+preplace netloc zynq_ultra_ps_e_0_M_AXI_HPM0_FPD 1 1 1 N 60
+preplace netloc zynq_ultra_ps_e_0_M_AXI_HPM1_FPD 1 1 1 N 80
+preplace netloc axi_smc_M01_AXI 1 2 2 1280 20 1650J
+levelinfo -pg 1 0 650 1110 1440 1820 2010
+pagesize -pg 1 -db -bbox -sgen 0 -50 2010 450
 "
 }
 {
-   "da_axi4_cnt":"3",
+   "da_axi4_cnt":"4",
    "da_bram_cntlr_cnt":"2",
    "da_zynq_ultra_ps_e_cnt":"1"
 }

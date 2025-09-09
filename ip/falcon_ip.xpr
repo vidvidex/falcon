@@ -484,9 +484,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../../ip_repo/component.xml">
-        <FileInfo SFType="IPXACT"/>
-      </File>
       <File Path="$PSRCDIR/sources_1/ip/bram_6144x128_preinit_for_ntt1024_tb/bram_6144x128_preinit_for_ntt1024_tb.xci">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -500,6 +497,9 @@
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../../../ip_repo/component.xml">
+        <FileInfo SFType="IPXACT"/>
       </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
