@@ -9,7 +9,6 @@
 //  b_real + j*b_imag ----/-\|-|---- a_m_b_real + j*a_m_b_imag
 // input: unbuffered
 // output: buffered
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module fft_butterfly_add_stage(
     input clk,
     input valid_in,

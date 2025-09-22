@@ -5,7 +5,6 @@
 // number support
 // input: unbuffered
 // output: buffered
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module fp_adder (
     input clk,
     input logic mode, // 0 = add, 1 = subtract

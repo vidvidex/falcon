@@ -4,7 +4,6 @@
 // performs the first half of FlP addition operand switch and denormalization
 // input: unbuffered
 // output: buffered
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module fp_adder_denormalization (
     input clk,
     input logic mode, // 0 = add, 1 = subtract

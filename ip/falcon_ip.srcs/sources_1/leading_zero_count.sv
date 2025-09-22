@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module leading_zero_count #(
     parameter BITWIDTH = 24
   )

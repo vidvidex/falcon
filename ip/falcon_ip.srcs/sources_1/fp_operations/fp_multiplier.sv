@@ -9,7 +9,6 @@
 // number support
 // input: unbuffered
 // output: buffered
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module fp_multiplier(
     input clk,
     input valid_in,

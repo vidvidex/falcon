@@ -12,7 +12,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module fft_butterfly(
     input clk,
     input valid_in, // Are inputs valid

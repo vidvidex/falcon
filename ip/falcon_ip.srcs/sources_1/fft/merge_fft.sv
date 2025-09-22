@@ -25,8 +25,6 @@
 //          | f[0]  | f[1]  | f[2] | f[3]  |                    | f[size/2-2] | f[size/2-1] |   (total length = "size"/2)
 //          ---------------------------------------------------------------------------------
 //
-// When size is less than N/2 there will be empty space at the end of each BRAM
-//
 // To save resources we share a single butterfly unit between fft, split_fft and merge_fft modules.
 // For this reason this module also includes a bunch of signals for the butterfly unit.
 //

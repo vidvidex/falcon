@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module delay_register #(
     BITWIDTH = 8,
     CYCLE_COUNT = 1
