@@ -8,7 +8,6 @@
 // = (a_real*b_real - a_imag*b_imag) + j(a_imag*b_real + a_real*b_imag)
 // input: unbuffered
 // output: buffered
-(* keep_hierarchy = `KEEP_HIERARCHY *)
 module complex_multiplier(
     input clk,
     input valid_in,

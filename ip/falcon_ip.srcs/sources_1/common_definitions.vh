@@ -1,6 +1,3 @@
-// set this to "true" for gathering area utilization results
-`define KEEP_HIERARCHY  "false"
-
 // BRAM
 `define BRAM_DATA_WIDTH 128
 `define BRAM_ADDR_WIDTH 13
@@ -28,4 +25,4 @@
 
 // Debugging
 // Uncomment this to not use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
-`define DEBUG_BRAMS
+// `define DEBUG_BRAMS
