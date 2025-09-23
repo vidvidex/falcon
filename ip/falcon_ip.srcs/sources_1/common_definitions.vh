@@ -26,3 +26,5 @@
 // Debugging
 // Uncomment this to not use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
 // `define DEBUG_BRAMS
+// Uncomment this to print the start and end cycle of each operation
+`define PRINT_CYCLES

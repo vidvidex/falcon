@@ -300,6 +300,16 @@ module control_unit#(
 
   always_ff @(posedge clk) begin
     modules_running_i <= modules_running;
+
+`ifdef PRINT_CYCLES
+    if(modules_running_i != modules_running) begin
+      int fd;
+      fd = $fopen ("/home/vid/Downloads/cycles_output.txt", "a");
+      $fdisplay(fd, "Time %0d: Modules running changed from %b to %b", $time, modules_running_i, modules_running);
+      $fclose(fd);
+    end
+`endif
+
   end
 
   // Instruction done when no modules are running
