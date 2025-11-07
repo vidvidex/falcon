@@ -17,6 +17,8 @@
 # Time 21180: Modules running changed from 000000000000000 to 100001000000000
 #
 # At every time-step when a change occurs, the simulation outputs the change of modules (one-hot encoded).
+#
+# The cycle count files for the current implementation can be found in the `cycle_counts/` directory.
 
 import re
 import sys
