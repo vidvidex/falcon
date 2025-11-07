@@ -1,6 +1,15 @@
 # This script can take the tree values from C implementation and generates either a .coe file for the FPGA implementation or an array that can be loaded into BRAM from software
 # Values that are used in the "multiply with tmp" step are reordered in the way we need them on FPGA (real and imag part in the same memory location)
 # Input tree values can be extracted from C implementation by dumpling the tree before first ffSampling_fft call.
+#
+# The script can generate:
+# - a .coe file, that can be loaded into a BRAM instance during simulations
+# - a C array, that can be pasted into the software application. The software loads the tree into BRAMs a runtime.
+#
+# Usage:
+#   - select N (512 or 1024)
+#   - select whether you want a .coe file or a c array
+#   - run the script: python3 utilities/generate_tree.py
 
 import struct
 import math

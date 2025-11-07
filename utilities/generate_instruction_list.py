@@ -1,7 +1,15 @@
+# This script generates instruction lists for the Falcon hardware accelerator's control unit.
+# The generated list can be pasted into the instruction_dispatch module. Be sure to also update the instruction count variable in that module.
+#
+# Usage:
+#   - enable additional prints if needed
+#   - at the bottom of the file, uncomment the desired algorithm call (verify or sign) with the desired N (512 or 1024)
+#   - run the script: python3 utilities/generate_instruction_list.py
+
 import math
 
-debug_prints = False
-tree_index_print = False
+debug_prints = False  # Enable debug prints
+tree_index_print = False  # Additionally print the addresses accessed in the Falcon tree
 
 
 def dprint(*args, **kwargs):

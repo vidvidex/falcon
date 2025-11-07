@@ -1,7 +1,25 @@
+# This script can be used to compute the number of cycles when each of the modules in the accelerator is active.
+#
+# Usage:
+# - Run the simulation with PRINT_CYCLES defined to output a file with module state changes.
+# - Use this script to parse that file and compute cycle counts.
+# Example command:
+#   python calculate_cycles.py simulation_output.txt
+#
+# The simulation_output.txt file should contain lines like:
+# Time 50: Modules running changed from 000000000000000 to 010000000000000
+# Time 6160: Modules running changed from 010000000000000 to 000000000000000
+# Time 6190: Modules running changed from 000000000000000 to 101000000000000
+# Time 8760: Modules running changed from 101000000000000 to 001000000000000
+# Time 8770: Modules running changed from 001000000000000 to 000000000000000
+# Time 8800: Modules running changed from 000000000000000 to 000100000000000
+# Time 21150: Modules running changed from 000100000000000 to 000000000000000
+# Time 21180: Modules running changed from 000000000000000 to 100001000000000
+#
+# At every time-step when a change occurs, the simulation outputs the change of modules (one-hot encoded).
+
 import re
 import sys
-
-# Run simulation with PRINT_CYCLES to output a file that can be analyzed by this script
 
 
 def parse_cycles_file(filename):
