@@ -41,8 +41,8 @@ module fft_butterfly(
   // For FFT we have to delay a_in_real and a_in_imag before it enters the add stage (pipelining doesn't work without it)
   logic [63:0] a_real, a_imag;
   logic [63:0] a_in_real_15D, a_in_imag_15D;
-  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_real_delay(.clk(clk), .in(a_in_real), .out(a_in_real_15D));
-  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_in_imag_delay(.clk(clk), .in(a_in_imag), .out(a_in_imag_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+18)) a_in_real_delay(.clk(clk), .in(a_in_real), .out(a_in_real_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+18)) a_in_imag_delay(.clk(clk), .in(a_in_imag), .out(a_in_imag_15D));
 
   assign a_real = mode ?  a_in_real: a_in_real_15D;
   assign a_imag = mode ? a_in_imag : a_in_imag_15D;
@@ -50,8 +50,8 @@ module fft_butterfly(
   // For IFFT we have to delay a_p_b_real and a_p_b_imag before outputting the final result (pipelining doesn't work without it)
   logic [63:0] a_p_b_real, a_p_b_imag;
   logic [63:0] a_p_b_real_15D, a_p_b_imag_15D;
-  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_real_delay(.clk(clk), .in(a_p_b_real), .out(a_p_b_real_15D));
-  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+15)) a_p_b_imag_delay(.clk(clk), .in(a_p_b_imag), .out(a_p_b_imag_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+18)) a_p_b_real_delay(.clk(clk), .in(a_p_b_real), .out(a_p_b_real_15D));
+  delay_register #(.BITWIDTH(64), .CYCLE_COUNT(1+18)) a_p_b_imag_delay(.clk(clk), .in(a_p_b_imag), .out(a_p_b_imag_15D));
 
   assign a_out_real = mode ? a_p_b_real_15D : a_p_b_real;
   assign a_out_imag = mode ? a_p_b_imag_15D : a_p_b_imag;

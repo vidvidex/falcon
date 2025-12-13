@@ -103,8 +103,8 @@ module fft#(
 
   // Delay write addresses until butterfly finished operation so we know where to write the values back into BRAM
   logic [$clog2(N)-1:0] write_addr1, write_addr2;
-  delay_register #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
-  delay_register #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+25)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
+  delay_register #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+28)) write_addr1_delay(.clk(clk), .in(j), .out(write_addr1));
+  delay_register #(.BITWIDTH($clog2(N)), .CYCLE_COUNT(1+28)) write_addr2_delay(.clk(clk), .in(j + t), .out(write_addr2));
 
   // Router between BRAM1 and BRAM2. On odd stages read from BRAM1 and write to BRAM2, on even stages read from BRAM and write to BRAM1 (we start with stage 1)
   always_comb begin
@@ -161,7 +161,7 @@ module fft#(
   end
 
   logic butterfly_unpause_pulse, butterfly_unpause_pulse_delayed; // When we pause the butterfly we set this high and then delay it for the latency of butterfly. Once the delayed version is high we can unpause
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+24)) buttefly_unpause_pulse_delay(.clk(clk), .in(butterfly_unpause_pulse), .out(butterfly_unpause_pulse_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+27)) buttefly_unpause_pulse_delay(.clk(clk), .in(butterfly_unpause_pulse), .out(butterfly_unpause_pulse_delayed));
 
   always_ff @(posedge clk) begin
     if (rst)

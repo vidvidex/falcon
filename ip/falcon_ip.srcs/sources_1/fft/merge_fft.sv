@@ -74,7 +74,7 @@ module merge_fft#(
   assign btf_scale_factor = 0;
 
   logic [$clog2(N/4)-1:0] u, u_delayed; // Counter over the input. Will be at most N/4. We need the delayed version to know where to write the butterfly output
-  delay_register #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(27)) u_delay(.clk(clk), .in(u), .out(u_delayed));
+  delay_register #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(30)) u_delay(.clk(clk), .in(u), .out(u_delayed));
 
   typedef enum logic [2:0] {
             IDLE,

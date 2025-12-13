@@ -19,31 +19,56 @@ module fp_multiplier(
     output valid_out
   );
 
+  // Register inputs to reduce fanout
+  logic [63:0] a_reg, b_reg;
+  logic signed [4:0] scale_factor_reg;
+  logic valid_in_reg;
+  always_ff @(posedge clk) begin
+    a_reg <= a;
+    b_reg <= b;
+    scale_factor_reg <= scale_factor;
+    valid_in_reg <= valid_in;
+  end
+
   logic sign_a, sign_b;
-  assign sign_a = a[63];
-  assign sign_b = b[63];
+  assign sign_a = a_reg[63];
+  assign sign_b = b_reg[63];
 
   logic [`EXPONENT_BITS:0] exponent_a, exponent_b;
-  assign exponent_a = a[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
-  assign exponent_b = b[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
+  assign exponent_a = a_reg[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
+  assign exponent_b = b_reg[`SIGNIFICANT_BITS+`EXPONENT_BITS-1:`SIGNIFICANT_BITS];
 
   logic [`SIGNIFICANT_BITS:0] significant_a, significant_b;
   logic implicit_bit_a, implicit_bit_b;
   assign implicit_bit_a = exponent_a != `EXPONENT_BITS'd0;
   assign implicit_bit_b = exponent_b != `EXPONENT_BITS'd0;
-  assign significant_a = {implicit_bit_a, a[`SIGNIFICANT_BITS-1:0]};
-  assign significant_b = {implicit_bit_b, b[`SIGNIFICANT_BITS-1:0]};
+  assign significant_a = {implicit_bit_a, a_reg[`SIGNIFICANT_BITS-1:0]};
+  assign significant_b = {implicit_bit_b, b_reg[`SIGNIFICANT_BITS-1:0]};
 
   logic sign_result;
   assign sign_result = sign_a ^ sign_b;
 
   logic [`EXPONENT_BITS:0] exponent_sum;
-  assign exponent_sum = signed'(exponent_a) + signed'(exponent_b) + scale_factor;
+  assign exponent_sum = signed'(exponent_a) + signed'(exponent_b) + scale_factor_reg;
 
   logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted;
-
   logic [107:0] a_times_b;
-  assign a_times_b = {1'd0, significant_a} * {1'd0, significant_b};
+  
+  (* use_dsp = "yes" *)
+  logic [53:0] mult_a_reg, mult_b_reg;
+  (* use_dsp = "yes" *)
+  logic [107:0] mult_result_reg;
+  
+  always_ff @(posedge clk) begin
+    mult_a_reg <= {1'd0, significant_a};
+    mult_b_reg <= {1'd0, significant_b};
+  end
+  
+  always_ff @(posedge clk) begin
+    mult_result_reg <= mult_a_reg * mult_b_reg;
+  end
+  
+  assign a_times_b = mult_result_reg;
   assign multiplied_significants_shifted = a_times_b[2*`SIGNIFICANT_BITS+1:`SIGNIFICANT_BITS];
 
 
@@ -52,9 +77,9 @@ module fp_multiplier(
   logic [`EXPONENT_BITS:0] exponent_sum_1DP;
   logic [`SIGNIFICANT_BITS+1:0] multiplied_significants_shifted_3DP;
 
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) data_valid_delay(.clk(clk), .in(valid_in), .out(data_valid_1DP));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+2)) sign_result_delay(.clk(clk), .in(sign_result), .out(sign_result_1DP));
-  delay_register #(.BITWIDTH(`EXPONENT_BITS+1), .CYCLE_COUNT(1+2)) exponent_sum_delay(.clk(clk), .in(exponent_sum), .out(exponent_sum_1DP));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+4)) data_valid_delay(.clk(clk), .in(valid_in_reg), .out(data_valid_1DP));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1+4)) sign_result_delay(.clk(clk), .in(sign_result), .out(sign_result_1DP));
+  delay_register #(.BITWIDTH(`EXPONENT_BITS+1), .CYCLE_COUNT(1+4)) exponent_sum_delay(.clk(clk), .in(exponent_sum), .out(exponent_sum_1DP));
 
   logic [`EXPONENT_BITS+1:0] exponent_uncorrected;
   assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - 11'd1023;
