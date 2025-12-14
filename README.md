@@ -103,3 +103,9 @@ See header of `utilities/calculate_cycles.py` for more details.
 ## Combining Hardware and Software
 
 See <https://github.com/vidvidex/zynq-software-custom-ip-guide?tab=readme-ov-file>
+
+
+## TODO
+
+- `compress` module should be optimized to use only 24-bit compressed format instead of 105-bit
+  - both `compress_tb` and `compress_coefficient_tb` have to be fixed. It seems like at some point the module was changed but the testbenches were not updated accordingly.
