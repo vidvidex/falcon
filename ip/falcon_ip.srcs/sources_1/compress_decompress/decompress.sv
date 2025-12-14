@@ -55,11 +55,10 @@ module decompress #(
   logic [$clog2(N):0] coefficient_index;
   logic coefficient_valid;
 
-  logic [6:0] bits_used; //! Number of bits used to decompress the current coefficient
+  logic [4:0] bits_used; //! Number of bits used to decompress the current coefficient
   logic [$clog2(slen*8):0] total_bits_used; //! Total number of bits used to decompress the signature
 
   logic invalid_bits_used_error;  // Bits that are not valid were used to decompress a coefficient
-  logic cannot_find_high_error;  // We could not find the high bit in the compressed signature
   logic used_bit_count_error; // We did not use the expected number of bits to decompress the signature
   logic remaining_bits_not_zeros_error; // Once we are done decompressing the signature the remaining bits are not all zeros
   logic invalid_zero_representation_error; // We found a zero representation that is not valid
@@ -80,24 +79,23 @@ module decompress #(
 
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
 
-  logic [2*128-1:0] buffer, buffer_tmp; // Buffer of compressed signature bits
-  logic [8:0] buffer_valid_bits;  // How many bits in the buffer are valid (counting from the left)
+  logic [128+24-1:0] buffer, buffer_tmp; // Buffer of compressed signature bits
+  logic [7:0] buffer_valid_bits;  // How many bits in the buffer are valid (counting from the left)
 
-  logic [7:0] valid_bits;
+  logic [4:0] valid_bits;
   logic waiting_for_input_data; // Did we already issue a read and we're waiting for BRAM
 
   decompress_coefficient decompress_coefficient (
                            .clk(clk),
                            .rst_n(decompress_coefficient_rst_n),
 
-                           .compressed_signature(buffer[2*128-1 -: 105]), // Pass top 105 bits of the buffer
+                           .compressed_signature(buffer[128+24-1 -: 24]), // Pass top 24 bits of the buffer
                            .valid_bits(valid_bits),
 
                            .coefficient(coefficient),
                            .bits_used(bits_used),
                            .coefficient_valid(coefficient_valid),
                            .invalid_bits_used_error(invalid_bits_used_error),
-                           .cannot_find_high_error(cannot_find_high_error),
                            .invalid_zero_representation_error(invalid_zero_representation_error)
                          );
 
@@ -130,7 +128,7 @@ module decompress #(
       DECOMPRESSING: begin
         if(coefficient_valid == 1'b1)  // Wait for valid coefficient
           next_state = DECOMPRESS_START;
-        else if(invalid_bits_used_error == 1'b1 || cannot_find_high_error == 1'b1)  // If we detected an error go to done
+        else if(invalid_bits_used_error == 1'b1)  // If we detected an error go to done
           next_state = DONE;
       end
       DONE: begin
@@ -191,7 +189,7 @@ module decompress #(
         // We read next block of data and we have a valid coefficient.
 
         buffer_tmp = buffer;
-        buffer_tmp[2*128-1-buffer_valid_bits -: 128] = input_bram_data;
+        buffer_tmp[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
         buffer <= buffer_tmp << bits_used;
 
         buffer_valid_bits = buffer_valid_bits + 128 - bits_used;
@@ -199,7 +197,7 @@ module decompress #(
       end
       else if(input_bram_data_valid_delayed == 1'b1) begin
         // We read next block of data
-        buffer[2*128-1-buffer_valid_bits -: 128] = input_bram_data;
+        buffer[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
         buffer_valid_bits = buffer_valid_bits + 128;
         waiting_for_input_data <= 1'b0;
       end
@@ -210,7 +208,7 @@ module decompress #(
       end
 
       // When there is space for a block of 128 bits in the buffer and we're not waiting for data we issue a BRAM read
-      if(buffer_valid_bits <= 128 && waiting_for_input_data == 1'b0) begin
+      if(buffer_valid_bits <= 24 && waiting_for_input_data == 1'b0) begin
         input_bram_addr <= input_bram_addr + 1;
         input_bram_data_valid <= 1'b1;
         waiting_for_input_data <= 1'b1;
@@ -230,10 +228,10 @@ module decompress #(
     output_we = coefficient_valid; // Write only when we have a valid coefficient
   end
 
-  assign valid_bits = (buffer_valid_bits < 105) ? buffer_valid_bits : 105;
+  assign valid_bits = (buffer_valid_bits < 24) ? buffer_valid_bits : 24;
 
-  assign remaining_bits_not_zeros_error = (state == DONE && buffer[2*128-1:2*128-7] != 0);
+  assign remaining_bits_not_zeros_error = (state == DONE && buffer[128+24-1:128+24-7] != 0);
   assign done = state == DONE;
-  assign signature_error = invalid_bits_used_error || cannot_find_high_error || used_bit_count_error || remaining_bits_not_zeros_error || invalid_zero_representation_error;
+  assign signature_error = invalid_bits_used_error || used_bit_count_error || remaining_bits_not_zeros_error || invalid_zero_representation_error;
 
 endmodule
