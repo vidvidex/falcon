@@ -13927,6 +13927,7 @@ module instruction_dispatch#(
 
   typedef enum logic [2:0] {
             IDLE, // Waiting for start signal
+            START,  // Issue first instruction
             INSTRUCTIONS_RUNNING,  // Instructions are running
             INSTRUCTIONS_DONE, // Instruction done, sending NOP to control unit
             DONE  // All instructions done
@@ -13939,16 +13940,19 @@ module instruction_dispatch#(
     case (state)
       IDLE: begin
         if (start == 1'b1)
-          next_state = INSTRUCTIONS_RUNNING;
+          next_state = START;
+      end
+      START: begin
+        next_state = INSTRUCTIONS_RUNNING;
       end
       INSTRUCTIONS_RUNNING: begin
         if(instruction_done == 1'b1)
           next_state = INSTRUCTIONS_DONE;
       end
       INSTRUCTIONS_DONE: begin
-        if (algorithm_select == 2'b00 && instruction_index == SIGN_INSTRUCTION_COUNT)
+        if (algorithm_select == 2'b00 && instruction_index == SIGN_INSTRUCTION_COUNT-1)
           next_state = DONE;
-        else if (algorithm_select == 2'b01 && instruction_index == VERIFY_INSTRUCTION_COUNT)
+        else if (algorithm_select == 2'b01 && instruction_index == VERIFY_INSTRUCTION_COUNT-1)
           next_state = DONE;
         else
           next_state = INSTRUCTIONS_RUNNING;
@@ -13971,31 +13975,33 @@ module instruction_dispatch#(
 
   assign done = (state == DONE);
 
-  always_comb begin
-    if(state == INSTRUCTIONS_RUNNING)
-      instruction = (algorithm_select == 2'b01) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
-    else
-      instruction = 128'b0;
-  end
-
   always_ff @(posedge clk) begin
     if (!rst_n) begin
       instruction_index <= 0;
+      instruction <= 0;
     end
     else begin
 
       case (state)
         IDLE: begin
         end
+        START: begin
+          instruction_index <= 0;
+          instruction <= (algorithm_select == 2'b01) ? verify_instructions[0] : sign_instructions[0];
+        end
         INSTRUCTIONS_RUNNING: begin
           // instruction_done being 1'b1 is also condition for going out of INSTRUCTIONS_RUNNING, which ensures this will be incremented only once per instruction_done pulse (even if not pulse)
-          if (instruction_done == 1'b1)
+          if (instruction_done == 1'b1) begin
             instruction_index <= instruction_index + 1;
+            instruction <= 0;
+          end
         end
         INSTRUCTIONS_DONE: begin
+          instruction <= (algorithm_select == 2'b01) ? verify_instructions[instruction_index + 1] : sign_instructions[instruction_index + 1];
         end
         DONE: begin
           instruction_index <= 0;
+          instruction <= (algorithm_select == 2'b01) ? verify_instructions[0] : sign_instructions[0];
         end
       endcase
     end

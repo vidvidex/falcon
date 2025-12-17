@@ -6,8 +6,8 @@ module samplerz
      parameter N = 512
    )
    (
-    input                  clk              ,
-    input                  rst_n            ,
+     input                  clk              ,
+     input                  rst_n            ,
      input logic start,  //start port gives a pulse, must come after at least 90 cycles when reset.
      input logic restart,
 
@@ -24,194 +24,219 @@ module samplerz
      output logic [63:0] result2,
 
      output logic done
-);
+   );
 
 
-//////////////////////////////////////////////////////////////////////////////////
-//generate start signal
+  //////////////////////////////////////////////////////////////////////////////////
+  //generate start signal
 
-    logic samp_again         ;
-    logic done_refill_control; //This done is used only in SAMPLERZ_INITI
-    logic done_pre_samp      ;
-    logic done_samp_loop     ;
-    logic done_berexp        ;
-    logic done_chacha20      ;
+  logic samp_again         ;
+  logic done_refill_control; //This done is used only in SAMPLERZ_INITI
+  logic done_pre_samp      ;
+  logic done_samp_loop     ;
+  logic done_berexp        ;
+  logic done_chacha20      ;
 
-    logic cnt ; // to count number of sampling, once sampling two value, output sample value and done
+  logic cnt ; // to count number of sampling, once sampling two value, output sample value and done
 
-    always_ff @(posedge clk) if(start) cnt <= 1'b0; else if(done_berexp) cnt <= ~cnt;
+  always_ff @(posedge clk) if(start)
+      cnt <= 1'b0;
+    else if(done_berexp)
+      cnt <= ~cnt;
 
-    logic sample_init ;
-    always_ff @(posedge clk) begin 
-        if(~rst_n)                    sample_init <= 'd1 ; 
-        else if(start && restart)    sample_init <= 'd1 ; 
-        else if(done_refill_control) sample_init <= 'd0 ; 
+  logic sample_init ;
+  always_ff @(posedge clk) begin
+    if(~rst_n)
+      sample_init <= 'd1 ;
+    else if(start && restart)
+      sample_init <= 'd1 ;
+    else if(done_refill_control)
+      sample_init <= 'd0 ;
+  end
+  wire fetch_en;
+  wire start_chacha20       = ((start & restart));
+  wire start_refill_control = (sample_init & done_chacha20); // After chacha20 generate first blocks,
+  // it should start the refill_control module to fill its' buffer firetly
+  wire start_pre_samp       = (start & (~sample_init)) |  (done_refill_control & sample_init);
+  wire start_samp_loop      = done_pre_samp | samp_again | (done_berexp & ~cnt);
+  wire start_berexp         = done_samp_loop;
+  wire done_samplerz = (done_berexp & cnt) ;
+
+  //////////////////////////////////////////////////////////////////////////////////
+  //nets
+  wire        read_1byte      ;
+  wire [79:0] dout_10         ;
+  wire [ 7:0] dout_1          ;
+  wire        part_en         ;
+
+  wire read_10byte = start_samp_loop ;
+
+  wire [63:0] pre_samp2cal_0     ;
+  wire [63:0] pre_samp2cal_1     ;
+  wire        pre_samp_mode2cal  ;
+  wire [63:0] samp_loop2cal_0    ;
+  wire [63:0] samp_loop2cal_1    ;
+  wire        samp_loop_mode2cal ;
+  wire [63:0] cal_out            ;
+
+  wire [63:0] fpr_isigma     ;
+  wire [63:0] fpr_ccs        ;
+  wire [63:0] fpr_r          ;
+  wire [31:0] int_mu_floor   ;
+  wire [63:0] fpr_r_l        ;
+  wire [31:0] int_mu_floor_l ;
+  wire [63:0] fpr_r_r        ;
+  wire [31:0] int_mu_floor_r ;
+
+  wire [63:0] fpr_x ;
+  wire [31:0] int_z ;
+
+  wire [31:0] int_sample_value ;
+  reg  [63:0] sample_value ;
+  wire [63:0] fpr_sample_value ;
+
+  wire [511:0] prng_data;  // This data is the prng data used bu samplerZ ,from chacha20
+
+  logic [1:0] seed_read_bram_addr;
+  logic [255:0] seed_read_bram_dout;
+
+
+  always_ff @(posedge clk) if((done_berexp) & (cnt == 0))
+      sample_value <= fpr_sample_value;
+
+  assign int_sample_value = int_mu_floor + int_z;
+  assign fpr_r = cnt ? fpr_r_r : fpr_r_l;
+  assign int_mu_floor = cnt ? int_mu_floor_r : int_mu_floor_l;
+
+  assign seed_offset_a = seed_read_bram_addr;
+  assign seed_offset_b = seed_read_bram_addr + 2;
+  assign seed_read_bram_dout = {seed_bram_dout_a, seed_bram_dout_b};
+
+
+  logic [63:0] mu1_reg, mu2_reg, isigma_reg;
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+      result1<= 'd0;
+      result2<= 'd0;
+      done   <= 1'b0;
+      mu1_reg <= 'd0;
+      mu2_reg <= 'd0;
+      isigma_reg <= 'd0;
     end
-    wire fetch_en;
-    wire start_chacha20       = ((start & restart));
-    wire start_refill_control = (sample_init & done_chacha20); // After chacha20 generate first blocks,
-                                                               // it should start the refill_control module to fill its' buffer firetly
-    wire start_pre_samp       = (start & (~sample_init)) |  (done_refill_control & sample_init);
-    wire start_samp_loop      = done_pre_samp | samp_again | (done_berexp & ~cnt);
-    wire start_berexp         = done_samp_loop;
-    wire done_samplerz = (done_berexp & cnt) ;
+    else begin
+      result1 <= fpr_sample_value;
+      result2 <= sample_value;
+      done <= done_samplerz & cnt;
+      mu1_reg <= mu1;
+      mu2_reg <= mu2;
+      isigma_reg <= isigma;
+    end
+  end
 
-//////////////////////////////////////////////////////////////////////////////////
-//nets
-    wire        read_1byte      ;
-    wire [79:0] dout_10         ;
-    wire [ 7:0] dout_1          ;
-    wire        part_en         ;
+  //////////////////////////////////////////////////////////////////////////////////
+  //instance
+  refill_control i_refill_control
+                 (
+                   .clk              (   clk                     ), //i
+                   .rst_n            (   rst_n                   ), //i
+                   .start            (   start_refill_control    ), //i
+                   .init             (   sample_init             ), //i first use samplez, fullill buffer
+                   .fetch_en         (   fetch_en                ), //o
+                   .r_data           (   prng_data               ), //i [511:0]
+                   .read_10byte      (   read_10byte             ), //i
+                   .read_1byte       (   read_1byte              ), //i
+                   .dout_10          (   dout_10                 ), //o [ 79:0]
+                   .dout_1           (   dout_1                  ), //o [  7:0]
+                   .part_en          (   part_en                 ), //o 1: enable 'berexp' module work, 0: 'berexp' module pause
+                   .done             (   done_refill_control     )  //o
+                 );
 
-    wire read_10byte = start_samp_loop ;
+  pre_samp i_pre_samp
+           (
+             .clk            (   clk                 ), //i
+             .rst_n          (   rst_n               ), //i
+             .start          (   start_pre_samp      ), //i start pre_samp
+             .input_mu1(mu1_reg),
+             .input_mu2(mu2_reg),
+             .input_isigma(isigma_reg),
+             .cal2pre_samp   (   cal_out             ), //i [ 63:0]
+             .dout2cal_0     (   pre_samp2cal_0      ), //o [ 63:0]
+             .dout2cal_1     (   pre_samp2cal_1      ), //o [ 63:0]
+             .choose2cal     (   pre_samp_mode2cal   ), //o choose use fpr_mul
+             .fpr_isigma     (   fpr_isigma          ), //o [ 63:0]
+             .fpr_ccs        (   fpr_ccs             ), //o [ 63:0]
+             .fpr_r_l        (   fpr_r_l             ), //o [ 63:0]
+             .int_mu_floor_l (   int_mu_floor_l      ), //o [ 31:0]
+             .fpr_r_r        (   fpr_r_r             ), //o [ 63:0]
+             .int_mu_floor_r (   int_mu_floor_r      ), //o [ 31:0]
+             .done           (   done_pre_samp       )  //o
+           );
 
-    wire [63:0] pre_samp2cal_0     ;
-    wire [63:0] pre_samp2cal_1     ;
-    wire        pre_samp_mode2cal  ;
-    wire [63:0] samp_loop2cal_0    ;
-    wire [63:0] samp_loop2cal_1    ;
-    wire        samp_loop_mode2cal ;
-    wire [63:0] cal_out            ;
+  samp_loop i_samp_loop
+            (
+              .clk            (   clk                 ), //i
+              .rst_n          (   rst_n               ), //i
+              .start          (   start_samp_loop     ), //i
+              .en             (   part_en             ), //i 1: enable samp_loop work
+              .fpr_isigma     (   fpr_isigma          ), //i [63:0]
+              .fpr_r          (   fpr_r               ), //i [63:0]
+              .random_bytes   (   dout_10             ), //i [79:0] 10 bytes random_bytes
+              .cal2samp_loop  (   cal_out             ), //i [63:0]
+              .dout2cal_0     (   samp_loop2cal_0     ), //o [63:0]
+              .dout2cal_1     (   samp_loop2cal_1     ), //o [63:0]
+              .choose2cal     (   samp_loop_mode2cal  ), //o choose use fpr_mul
+              .fpr_x          (   fpr_x               ), //o [63:0]
+              .int_z          (   int_z               ), //o [31:0]
+              .done           (   done_samp_loop      )  //o
+            );
 
-    wire [63:0] fpr_isigma     ;
-    wire [63:0] fpr_ccs        ;
-    wire [63:0] fpr_r          ;
-    wire [31:0] int_mu_floor   ;
-    wire [63:0] fpr_r_l        ;
-    wire [31:0] int_mu_floor_l ;
-    wire [63:0] fpr_r_r        ;
-    wire [31:0] int_mu_floor_r ;
+  berexp i_berexp
+         (
+           .clk            (   clk                 ), // i
+           .rst_n          (   rst_n               ), // i
+           .start          (   start_berexp        ), // i
+           .en             (   part_en             ), // i
+           .fpr_x          (   fpr_x               ), // i [63:0]
+           .fpr_ccs        (   fpr_ccs             ), // i [63:0]
+           .random_req     (   read_1byte          ), // o require a random byte
+           .random_bytes   (   dout_1              ), // i [ 7:0]
+           .samp_again     (   samp_again          ), // o
+           .done           (   done_berexp         )  // o
+         );
 
-    wire [63:0] fpr_x ;
-    wire [31:0] int_z ;
+  fpr_cal i_fpr_cal
+          (
+            .clk            (   clk                 ),
+            .data_a0        (   pre_samp2cal_0      ), // i [63:0]
+            .data_a1        (   pre_samp2cal_1      ), // i [63:0]
+            .choose_a       (   pre_samp_mode2cal   ), // i
+            .data_b0        (   samp_loop2cal_0     ), // i [63:0]
+            .data_b1        (   samp_loop2cal_1     ), // i [63:0]
+            .choose_b       (   samp_loop_mode2cal  ), // i
+            .data_out       (   cal_out             )  // o [63:0]
+          );
 
-    wire [31:0] int_sample_value ;
-    reg  [63:0] sample_value ;
-    wire [63:0] fpr_sample_value ;
+  // USED TO BE: fp_i2flt_int32 fp_i2flt_U0 (
+  fp_i2flt_int32 fp_i2flt_U0 (
+                   .aclk(clk),                               // input wire aclk
+                   .s_axis_a_tvalid(1'b1),                      // input wire s_axis_a_tvalid
+                   .s_axis_a_tdata(int_sample_value),        // input wire [15 : 0] s_axis_a_tdata
+                   .m_axis_result_tready(1'b1),                 // input wire m_axis_result_tready
+                   .m_axis_result_tdata(fpr_sample_value)    // output wire [63 : 0] m_axis_result_tdata
+                 );
 
-    wire [511:0] prng_data;  // This data is the prng data used bu samplerZ ,from chacha20 
-
-    logic [1:0] seed_read_bram_addr;
-    logic [255:0] seed_read_bram_dout;
-
-
-    always_ff @(posedge clk) if((done_berexp) & (cnt == 0)) sample_value <= fpr_sample_value;
-
-    assign int_sample_value = int_mu_floor + int_z;
-    assign fpr_r = cnt ? fpr_r_r : fpr_r_l;
-    assign int_mu_floor = cnt ? int_mu_floor_r : int_mu_floor_l;
-
-    assign seed_offset_a = seed_read_bram_addr;
-    assign seed_offset_b = seed_read_bram_addr + 2;
-    assign seed_read_bram_dout = {seed_bram_dout_a, seed_bram_dout_b};
-
-    assign result1 = fpr_sample_value;
-    assign result2 = sample_value;
-    assign done = done_samplerz & cnt;
-
-//////////////////////////////////////////////////////////////////////////////////
-//instance
-    refill_control i_refill_control
-    (
-        .clk              (   clk                     ), //i
-        .rst_n            (   rst_n                   ), //i
-        .start            (   start_refill_control    ), //i
-        .init             (   sample_init             ), //i first use samplez, fullill buffer
-        .fetch_en         (   fetch_en                ), //o
-        .r_data           (   prng_data               ), //i [511:0]
-        .read_10byte      (   read_10byte             ), //i
-        .read_1byte       (   read_1byte              ), //i
-        .dout_10          (   dout_10                 ), //o [ 79:0]
-        .dout_1           (   dout_1                  ), //o [  7:0]
-        .part_en          (   part_en                 ), //o 1: enable 'berexp' module work, 0: 'berexp' module pause
-        .done             (   done_refill_control     )  //o
-    );
-
-    pre_samp i_pre_samp
-    (
-        .clk            (   clk                 ), //i
-        .rst_n          (   rst_n               ), //i
-        .start          (   start_pre_samp      ), //i start pre_samp
-        .input_mu1(mu1),
-        .input_mu2(mu2),
-        .input_isigma(isigma),
-        .cal2pre_samp   (   cal_out             ), //i [ 63:0]
-        .dout2cal_0     (   pre_samp2cal_0      ), //o [ 63:0]
-        .dout2cal_1     (   pre_samp2cal_1      ), //o [ 63:0]
-        .choose2cal     (   pre_samp_mode2cal   ), //o choose use fpr_mul
-        .fpr_isigma     (   fpr_isigma          ), //o [ 63:0]
-        .fpr_ccs        (   fpr_ccs             ), //o [ 63:0]
-        .fpr_r_l        (   fpr_r_l             ), //o [ 63:0]
-        .int_mu_floor_l (   int_mu_floor_l      ), //o [ 31:0]
-        .fpr_r_r        (   fpr_r_r             ), //o [ 63:0]
-        .int_mu_floor_r (   int_mu_floor_r      ), //o [ 31:0]
-        .done           (   done_pre_samp       )  //o
-    );
-
-    samp_loop i_samp_loop
-    (
-        .clk            (   clk                 ), //i
-        .rst_n          (   rst_n               ), //i
-        .start          (   start_samp_loop     ), //i
-        .en             (   part_en             ), //i 1: enable samp_loop work
-        .fpr_isigma     (   fpr_isigma          ), //i [63:0]
-        .fpr_r          (   fpr_r               ), //i [63:0]
-        .random_bytes   (   dout_10             ), //i [79:0] 10 bytes random_bytes
-        .cal2samp_loop  (   cal_out             ), //i [63:0]
-        .dout2cal_0     (   samp_loop2cal_0     ), //o [63:0]
-        .dout2cal_1     (   samp_loop2cal_1     ), //o [63:0]
-        .choose2cal     (   samp_loop_mode2cal  ), //o choose use fpr_mul
-        .fpr_x          (   fpr_x               ), //o [63:0]
-        .int_z          (   int_z               ), //o [31:0]
-        .done           (   done_samp_loop      )  //o
-    );
-
-    berexp i_berexp
-    (
-        .clk            (   clk                 ), // i
-        .rst_n          (   rst_n               ), // i
-        .start          (   start_berexp        ), // i
-        .en             (   part_en             ), // i
-        .fpr_x          (   fpr_x               ), // i [63:0]
-        .fpr_ccs        (   fpr_ccs             ), // i [63:0]
-        .random_req     (   read_1byte          ), // o require a random byte
-        .random_bytes   (   dout_1              ), // i [ 7:0]
-        .samp_again     (   samp_again          ), // o
-        .done           (   done_berexp         )  // o
-    );
-
-    fpr_cal i_fpr_cal
-    (
-        .clk            (   clk                 ),
-        .data_a0        (   pre_samp2cal_0      ), // i [63:0]
-        .data_a1        (   pre_samp2cal_1      ), // i [63:0]
-        .choose_a       (   pre_samp_mode2cal   ), // i
-        .data_b0        (   samp_loop2cal_0     ), // i [63:0]
-        .data_b1        (   samp_loop2cal_1     ), // i [63:0]
-        .choose_b       (   samp_loop_mode2cal  ), // i
-        .data_out       (   cal_out             )  // o [63:0]
-    );
-
-    // USED TO BE: fp_i2flt_int32 fp_i2flt_U0 (
-    fp_i2flt_int32 fp_i2flt_U0 (
-        .aclk(clk),                               // input wire aclk
-        .s_axis_a_tvalid(1'b1),                      // input wire s_axis_a_tvalid
-        .s_axis_a_tdata(int_sample_value),        // input wire [15 : 0] s_axis_a_tdata
-        .m_axis_result_tready(1'b1),                 // input wire m_axis_result_tready
-        .m_axis_result_tdata(fpr_sample_value)    // output wire [63 : 0] m_axis_result_tdata
-    );
-
-    chacha20 i_chacha20
-    (
-        .clk                 (  clk                 ),
-        .rst_n               (  rst_n               ),
-        .start               (  start_chacha20      ),  //start signal to generate PRNG data
-        .restart             (  restart             ),  //restart signal to generate PRNG data using new Random seed
-        .sample_init         (  sample_init         ),
-        .fetch_en            (  fetch_en            ),
-        .done                (  done_chacha20       ),  //generate PRNG data done!
-        .seed_read_bram_addr(seed_read_bram_addr),
-        .seed_read_bram_dout(seed_read_bram_dout),
-        .data_o              (  prng_data           )   //PRNG data (512bits) output
-    );
+  chacha20 i_chacha20
+           (
+             .clk                 (  clk                 ),
+             .rst_n               (  rst_n               ),
+             .start               (  start_chacha20      ),  //start signal to generate PRNG data
+             .restart             (  restart             ),  //restart signal to generate PRNG data using new Random seed
+             .sample_init         (  sample_init         ),
+             .fetch_en            (  fetch_en            ),
+             .done                (  done_chacha20       ),  //generate PRNG data done!
+             .seed_read_bram_addr(seed_read_bram_addr),
+             .seed_read_bram_dout(seed_read_bram_dout),
+             .data_o              (  prng_data           )   //PRNG data (512bits) output
+           );
 endmodule
