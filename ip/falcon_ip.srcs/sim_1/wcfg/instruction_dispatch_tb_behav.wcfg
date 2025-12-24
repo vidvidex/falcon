@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="604.291 ns"></ZoomEndTime>
-      <Cursor1Time time="85.475 ns"></Cursor1Time>
+      <ZoomEndTime time="174.401 ns"></ZoomEndTime>
+      <Cursor1Time time="179.281 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="243"></NameColumnWidth>
-      <ValueColumnWidth column_width="102"></ValueColumnWidth>
+      <ValueColumnWidth column_width="98"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="3" />
+   <WVObjectSize size="4" />
    <wvobject type="group" fp_name="group822">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -233,13 +233,13 @@
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/modules_running">
-         <obj_property name="ElementShortName">modules_running[16:0]</obj_property>
-         <obj_property name="ObjectShortName">modules_running[16:0]</obj_property>
+         <obj_property name="ElementShortName">modules_running[14:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running[14:0]</obj_property>
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/modules_running_i">
-         <obj_property name="ElementShortName">modules_running_i[16:0]</obj_property>
-         <obj_property name="ObjectShortName">modules_running_i[16:0]</obj_property>
+         <obj_property name="ElementShortName">modules_running_i[14:0]</obj_property>
+         <obj_property name="ObjectShortName">modules_running_i[14:0]</obj_property>
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/pipelined_inst_index">
@@ -772,7 +772,6 @@
       <wvobject type="group" fp_name="group902">
          <obj_property name="label">hash_to_point</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject type="logic" fp_name="/instruction_dispatch_tb/instruction_dispatch/control_unit/htp_start">
             <obj_property name="ElementShortName">htp_start</obj_property>
             <obj_property name="ObjectShortName">htp_start</obj_property>

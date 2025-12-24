@@ -96,36 +96,44 @@ module control_unit#(
 
 `ifdef DEBUG_BRAMS
 
-  bram0 bram0 (
-          .addra(bram3072_addr_a[0]),
-          .clka(clk),
-          .dina(bram_din_a[0]),
-          .douta(bram_dout_a[0]),
-          .wea(bram_we_a[0]),
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(12),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram0.coe")
+       ) bram0 (
+         .clk(clk),
 
-          .addrb(bram3072_addr_b[0]),
-          .clkb(clk),
-          .dinb(bram_din_b[0]),
-          .doutb(bram_dout_b[0]),
-          .web(bram_we_b[0])
-        );
+         .addra(bram3072_addr_a[0]),
+         .dina(bram_din_a[0]),
+         .douta(bram_dout_a[0]),
+         .wea(bram_we_a[0]),
+
+         .addrb(bram3072_addr_b[0]),
+         .dinb(bram_din_b[0]),
+         .doutb(bram_dout_b[0]),
+         .web(bram_we_b[0])
+       );
 `else
   genvar i_bram3072;
   generate
     for (i_bram3072 = 0; i_bram3072 < BRAM3072_COUNT; i_bram3072++) begin : bram3072_bank
-      bram_3072x128 bram_3072x128_inst (
-                      .addra(bram3072_addr_a[i_bram3072]),
-                      .clka(clk),
-                      .dina(bram_din_a[i_bram3072]),
-                      .douta(bram_dout_a[i_bram3072]),
-                      .wea(bram_we_a[i_bram3072]),
 
-                      .addrb(bram3072_addr_b[i_bram3072]),
-                      .clkb(clk),
-                      .dinb(bram_din_b[i_bram3072]),
-                      .doutb(bram_dout_b[i_bram3072]),
-                      .web(bram_we_b[i_bram3072])
-                    );
+      bram #(
+             .DATA_WIDTH(128),
+             .ADDR_WIDTH(12)
+           ) bram_3072x128_inst (
+             .addra(bram3072_addr_a[i_bram3072]),
+             .clka(clk),
+             .dina(bram_din_a[i_bram3072]),
+             .douta(bram_dout_a[i_bram3072]),
+             .wea(bram_we_a[i_bram3072]),
+
+             .addrb(bram3072_addr_b[i_bram3072]),
+             .clkb(clk),
+             .dinb(bram_din_b[i_bram3072]),
+             .doutb(bram_dout_b[i_bram3072]),
+             .web(bram_we_b[i_bram3072])
+           );
     end
   endgenerate
 `endif
@@ -135,36 +143,44 @@ module control_unit#(
   logic [`BRAM2048_ADDR_WIDTH-1:0] bram2048_addr_b [BRAM2048_COUNT];
 `ifdef DEBUG_BRAMS
 
-  bram1 bram1 (
-          .addra(bram2048_addr_a[0]),
-          .clka(clk),
-          .dina(bram_din_a[1]),
-          .douta(bram_dout_a[1]),
-          .wea(bram_we_a[1]),
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(11),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram1.coe")
+       )bram1 (
+         .clk(clk),
 
-          .addrb(bram2048_addr_b[0]),
-          .clkb(clk),
-          .dinb(bram_din_b[1]),
-          .doutb(bram_dout_b[1]),
-          .web(bram_we_b[1])
-        );
+         .addra(bram2048_addr_a[0]),
+         .dina(bram_din_a[1]),
+         .douta(bram_dout_a[1]),
+         .wea(bram_we_a[1]),
+
+         .addrb(bram2048_addr_b[0]),
+         .dinb(bram_din_b[1]),
+         .doutb(bram_dout_b[1]),
+         .web(bram_we_b[1])
+       );
 `else
   genvar i_bram2048;
   generate
     for (i_bram2048 = BRAM3072_COUNT; i_bram2048 < BRAM2048_COUNT + BRAM3072_COUNT; i_bram2048++) begin : bram2048_bank
-      bram_2048x128 bram_2048x128_inst (
-                      .addra(bram2048_addr_a[i_bram2048-BRAM3072_COUNT]),
-                      .clka(clk),
-                      .dina(bram_din_a[i_bram2048]),
-                      .douta(bram_dout_a[i_bram2048]),
-                      .wea(bram_we_a[i_bram2048]),
 
-                      .addrb(bram2048_addr_b[i_bram2048-BRAM3072_COUNT]),
-                      .clkb(clk),
-                      .dinb(bram_din_b[i_bram2048]),
-                      .doutb(bram_dout_b[i_bram2048]),
-                      .web(bram_we_b[i_bram2048])
-                    );
+      bram #(
+             .DATA_WIDTH(128),
+             .ADDR_WIDTH(11)
+           ) bram_2048x128_inst (
+             .addra(bram2048_addr_a[i_bram2048-BRAM3072_COUNT]),
+             .clka(clk),
+             .dina(bram_din_a[i_bram2048]),
+             .douta(bram_dout_a[i_bram2048]),
+             .wea(bram_we_a[i_bram2048]),
+
+             .addrb(bram2048_addr_b[i_bram2048-BRAM3072_COUNT]),
+             .clkb(clk),
+             .dinb(bram_din_b[i_bram2048]),
+             .doutb(bram_dout_b[i_bram2048]),
+             .web(bram_we_b[i_bram2048])
+           );
     end
   endgenerate
 `endif
@@ -173,111 +189,137 @@ module control_unit#(
   logic [`BRAM1024_ADDR_WIDTH-1:0] bram1024_addr_b [BRAM1024_COUNT];
 `ifdef DEBUG_BRAMS
 
-  bram2 bram2 (
-          .addra(bram1024_addr_a[0]),
-          .clka(clk),
-          .dina(bram_din_a[2]),
-          .douta(bram_dout_a[2]),
-          .wea(bram_we_a[2]),
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(10),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram2.coe")
+       )bram2 (
+         .clk(clk),
 
-          .addrb(bram1024_addr_b[0]),
-          .clkb(clk),
-          .dinb(bram_din_b[2]),
-          .doutb(bram_dout_b[2]),
-          .web(bram_we_b[2])
-        );
-  bram3 bram3 (
-          .addra(bram1024_addr_a[1]),
-          .clka(clk),
-          .dina(bram_din_a[3]),
-          .douta(bram_dout_a[3]),
-          .wea(bram_we_a[3]),
+         .addra(bram1024_addr_a[0]),
+         .dina(bram_din_a[2]),
+         .douta(bram_dout_a[2]),
+         .wea(bram_we_a[2]),
 
-          .addrb(bram1024_addr_b[1]),
-          .clkb(clk),
-          .dinb(bram_din_b[3]),
-          .doutb(bram_dout_b[3]),
-          .web(bram_we_b[3])
-        );
-  bram4 bram4 (
-          .addra(bram1024_addr_a[2]),
-          .clka(clk),
-          .dina(bram_din_a[4]),
-          .douta(bram_dout_a[4]),
-          .wea(bram_we_a[4]),
+         .addrb(bram1024_addr_b[0]),
+         .dinb(bram_din_b[2]),
+         .doutb(bram_dout_b[2]),
+         .web(bram_we_b[2])
+       );
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(10),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram3.coe")
+       )bram3 (
+         .clk(clk),
 
-          .addrb(bram1024_addr_b[2]),
-          .clkb(clk),
-          .dinb(bram_din_b[4]),
-          .doutb(bram_dout_b[4]),
-          .web(bram_we_b[4])
-        );
-  bram5 bram5 (
-          .addra(bram1024_addr_a[3]),
-          .clka(clk),
-          .dina(bram_din_a[5]),
-          .douta(bram_dout_a[5]),
-          .wea(bram_we_a[5]),
+         .addra(bram1024_addr_a[1]),
+         .dina(bram_din_a[3]),
+         .douta(bram_dout_a[3]),
+         .wea(bram_we_a[3]),
 
-          .addrb(bram1024_addr_b[3]),
-          .clkb(clk),
-          .dinb(bram_din_b[5]),
-          .doutb(bram_dout_b[5]),
-          .web(bram_we_b[5])
-        );
+         .addrb(bram1024_addr_b[1]),
+         .dinb(bram_din_b[3]),
+         .doutb(bram_dout_b[3]),
+         .web(bram_we_b[3])
+       );
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(10),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram4.coe")
+       )bram4 (
+         .clk(clk),
+
+         .addra(bram1024_addr_a[2]),
+         .dina(bram_din_a[4]),
+         .douta(bram_dout_a[4]),
+         .wea(bram_we_a[4]),
+
+         .addrb(bram1024_addr_b[2]),
+         .dinb(bram_din_b[4]),
+         .doutb(bram_dout_b[4]),
+         .web(bram_we_b[4])
+       );
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(10),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram5.coe")
+       )bram5 (
+         .clk(clk),
+
+         .addra(bram1024_addr_a[3]),
+         .dina(bram_din_a[5]),
+         .douta(bram_dout_a[5]),
+         .wea(bram_we_a[5]),
+
+         .addrb(bram1024_addr_b[3]),
+         .dinb(bram_din_b[5]),
+         .doutb(bram_dout_b[5]),
+         .web(bram_we_b[5])
+       );
 `else
   genvar i_bram1024;
   generate
     for (i_bram1024 = BRAM2048_COUNT+BRAM3072_COUNT; i_bram1024 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT; i_bram1024++) begin : bram1024_bank
-      bram_1024x128 bram_1024x128_inst (
-                      .addra(bram1024_addr_a[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
-                      .clka(clk),
-                      .dina(bram_din_a[i_bram1024]),
-                      .douta(bram_dout_a[i_bram1024]),
-                      .wea(bram_we_a[i_bram1024]),
+      bram #(
+             .DATA_WIDTH(128),
+             .ADDR_WIDTH(10)
+           )bram_1024x128_inst (
+             .addra(bram1024_addr_a[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
+             .clka(clk),
+             .dina(bram_din_a[i_bram1024]),
+             .douta(bram_dout_a[i_bram1024]),
+             .wea(bram_we_a[i_bram1024]),
 
-                      .addrb(bram1024_addr_b[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
-                      .clkb(clk),
-                      .dinb(bram_din_b[i_bram1024]),
-                      .doutb(bram_dout_b[i_bram1024]),
-                      .web(bram_we_b[i_bram1024])
-                    );
+             .addrb(bram1024_addr_b[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
+             .clkb(clk),
+             .dinb(bram_din_b[i_bram1024]),
+             .doutb(bram_dout_b[i_bram1024]),
+             .web(bram_we_b[i_bram1024])
+           );
     end
   endgenerate
 `endif
 
 `ifdef DEBUG_BRAMS
 
-  bram6 bram6 (
-          .addra(bram_addr_a[6]),
-          .clka(clk),
-          .dina(bram_din_a[6]),
-          .douta(bram_dout_a[6]),
-          .wea(bram_we_a[6]),
+  bram #(
+         .DATA_WIDTH(128),
+         .ADDR_WIDTH(13),
+         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram6.coe")
+       )bram6 (
+         .clk(clk),
 
-          .addrb(bram_addr_b[6]),
-          .clkb(clk),
-          .dinb(bram_din_b[6]),
-          .doutb(bram_dout_b[6]),
-          .web(bram_we_b[6])
-        );
+         .addra(bram_addr_a[6]),
+         .dina(bram_din_a[6]),
+         .douta(bram_dout_a[6]),
+         .wea(bram_we_a[6]),
+
+         .addrb(bram_addr_b[6]),
+         .dinb(bram_din_b[6]),
+         .doutb(bram_dout_b[6]),
+         .web(bram_we_b[6])
+       );
 `else
   genvar i_bram6144;
   generate
     for (i_bram6144 = BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT; i_bram6144 < BRAM1024_COUNT + BRAM2048_COUNT + BRAM3072_COUNT + BRAM6144_COUNT; i_bram6144++) begin : bram6144_bank
-      bram_6144x128 bram_6144x128_inst (
-                      .addra(bram_addr_a[i_bram6144]),
-                      .clka(clk),
-                      .dina(bram_din_a[i_bram6144]),
-                      .douta(bram_dout_a[i_bram6144]),
-                      .wea(bram_we_a[i_bram6144]),
+      bram #(
+             .DATA_WIDTH(128),
+             .ADDR_WIDTH(13)
+           )bram_6144x128_inst (
+             .addra(bram_addr_a[i_bram6144]),
+             .clka(clk),
+             .dina(bram_din_a[i_bram6144]),
+             .douta(bram_dout_a[i_bram6144]),
+             .wea(bram_we_a[i_bram6144]),
 
-                      .addrb(bram_addr_b[i_bram6144]),
-                      .clkb(clk),
-                      .dinb(bram_din_b[i_bram6144]),
-                      .doutb(bram_dout_b[i_bram6144]),
-                      .web(bram_we_b[i_bram6144])
-                    );
+             .addrb(bram_addr_b[i_bram6144]),
+             .clkb(clk),
+             .dinb(bram_din_b[i_bram6144]),
+             .doutb(bram_dout_b[i_bram6144]),
+             .web(bram_we_b[i_bram6144])
+           );
     end
   endgenerate
 `endif
@@ -302,6 +344,7 @@ module control_unit#(
     modules_running_i <= modules_running;
 
 `ifdef PRINT_CYCLES
+
     if(modules_running_i != modules_running) begin
       int fd;
       fd = $fopen ("/home/vid/Downloads/cycles_output.txt", "a");
