@@ -99,7 +99,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(12),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram0.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram0.coe")
        ) bram0 (
          .clk(clk),
 
@@ -146,7 +146,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(11),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram1.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram1.coe")
        )bram1 (
          .clk(clk),
 
@@ -192,7 +192,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram2.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram2.coe")
        )bram2 (
          .clk(clk),
 
@@ -209,7 +209,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram3.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram3.coe")
        )bram3 (
          .clk(clk),
 
@@ -226,7 +226,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram4.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram4.coe")
        )bram4 (
          .clk(clk),
 
@@ -243,7 +243,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram5.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram5.coe")
        )bram5 (
          .clk(clk),
 
@@ -286,7 +286,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(13),
-         .INIT_FILE("/home/vid/Documents/falcon/ip/falcon_ip.srcs/sources_1/coefficients/bram6.coe")
+         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram6.coe")
        )bram6 (
          .clk(clk),
 
@@ -347,7 +347,7 @@ module control_unit#(
 
     if(modules_running_i != modules_running) begin
       int fd;
-      fd = $fopen ("/home/vid/Downloads/cycles_output.txt", "a");
+      fd = $fopen ("C:/Users/ratko/Documents/Repositories/falcon/cycles_output.txt", "a");
       $fdisplay(fd, "Time %0d: Modules running changed from %b to %b", $time, modules_running_i, modules_running);
       $fclose(fd);
     end

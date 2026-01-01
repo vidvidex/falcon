@@ -2,3 +2,7 @@ ip_repo/
 .stfolder
 .vscode/
 .stignore
+Aikata.code-workspace
+cycles_output.txt
+dfx_runtime.txt
+ip/dfx_runtime.txt
