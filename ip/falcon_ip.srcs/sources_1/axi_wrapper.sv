@@ -147,7 +147,8 @@ module axi_wrapper #
   reg [C_S_AXI_DATA_WIDTH-1:0]	 reg_data_out;
   integer	 byte_index;
   reg	 aw_en;
-
+  logic done;
+  
   // I/O Connections assignments
 
   assign S_AXI_AWREADY	= axi_awready;

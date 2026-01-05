@@ -1372,8 +1372,8 @@ module control_unit#(
         fp_mul1_a = bram_dout_a[bank3][127:64];
         fp_mul2_a = bram_dout_a[bank3][63:0];
 
-        fp_mul1_b = mul_const_constant ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
-        fp_mul2_b = mul_const_constant ? $realtobits(-1.0 / 12289.0) : $realtobits(1.0 / 12289.0);
+        fp_mul1_b = mul_const_constant ? 64'hBF1554E3759D7368  : 64'h3F1554E3759D7368 ;
+        fp_mul2_b = mul_const_constant ? 64'hBF1554E3759D7368  : 64'h3F1554E3759D7368 ;
         fp_mul_valid_in = pipelined_inst_valid;
         fp_mul_done = pipelined_inst_done;
         fp_mul_dst_addr = pipelined_inst_index;

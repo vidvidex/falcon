@@ -6,3 +6,5 @@ Aikata.code-workspace
 cycles_output.txt
 dfx_runtime.txt
 ip/dfx_runtime.txt
+utilities/fft_twiddle_factor_rom_always_block.sv
+utilities/ntt_twiddle_factor_rom_always_block.sv

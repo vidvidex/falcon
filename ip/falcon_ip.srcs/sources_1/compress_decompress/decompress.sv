@@ -158,7 +158,7 @@ module decompress #(
       DECOMPRESSING: begin
         if(coefficient_valid == 1'b1) begin
 
-          coefficient_index++;
+          coefficient_index <= coefficient_index + 1;
 
           if(coefficient_index == N/2)
             second_half <= 1;
@@ -188,17 +188,17 @@ module decompress #(
       if(input_bram_data_valid_delayed == 1'b1 && coefficient_valid == 1'b1) begin
         // We read next block of data and we have a valid coefficient.
 
-        buffer_tmp = buffer;
+        buffer_tmp <= buffer;
         buffer_tmp[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
         buffer <= buffer_tmp << bits_used;
 
-        buffer_valid_bits = buffer_valid_bits + 128 - bits_used;
+        buffer_valid_bits <= buffer_valid_bits + 128 - bits_used;
         waiting_for_input_data <= 1'b0;
       end
       else if(input_bram_data_valid_delayed == 1'b1) begin
         // We read next block of data
         buffer[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
-        buffer_valid_bits = buffer_valid_bits + 128;
+        buffer_valid_bits <= buffer_valid_bits + 128;
         waiting_for_input_data <= 1'b0;
       end
       else if(coefficient_valid == 1'b1) begin
