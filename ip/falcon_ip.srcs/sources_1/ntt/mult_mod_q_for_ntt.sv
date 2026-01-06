@@ -61,9 +61,7 @@ module mult_mod_q_for_ntt #(
       valid_out <= 0;
     end
     else begin
-      logic signed [14:0] temp;
-      temp = a_times_b % 12289;
-      result <= temp < 0 ? temp + 12289 : temp; // Make sure the result is positive
+      result <= (a_times_b % 12289) < 0 ? (a_times_b % 12289) + 12289 : (a_times_b % 12289); // Make sure the result is positive
       valid_out <= valid1;
       index1_out <= index1_1;
       index2_out <= index2_1;

@@ -122,6 +122,13 @@ module check_bound#(
   // Stage 5: Sum all element-wise sums and check if we're over the bound
   // If we are over the bound we don't immediately set "reject" high, but wait until all data is provided
   // to ensure this module is constant-time
+  
+  always_comb begin
+      temp_sum = 0;
+      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
+        temp_sum =  temp_sum + elementwise_sum[i];
+  end 
+  
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       squared_norm <= 0;
@@ -129,10 +136,6 @@ module check_bound#(
       last5 <= 0;
     end
     else begin
-      temp_sum = 0;
-      for(int i = 0; i < PARALLEL_OPS_COUNT; i++)
-        temp_sum += elementwise_sum[i];
-
       squared_norm <= squared_norm + temp_sum;
       if(squared_norm > bound2)
         over_bound <= 1;

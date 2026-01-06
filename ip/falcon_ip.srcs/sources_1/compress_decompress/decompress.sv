@@ -158,7 +158,7 @@ module decompress #(
       DECOMPRESSING: begin
         if(coefficient_valid == 1'b1) begin
 
-          coefficient_index <= coefficient_index + 1;
+          coefficient_index++;
 
           if(coefficient_index == N/2)
             second_half <= 1;
@@ -177,44 +177,44 @@ module decompress #(
   // Reading from BRAM
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0 || state == IDLE) begin
-      input_bram_addr <= -1;
-      input_bram_data_valid <= 1'b0;
-      buffer_valid_bits <= 0;
-      buffer <= 0;
-      waiting_for_input_data <= 1'b0;
+      input_bram_addr = -1;
+      input_bram_data_valid = 1'b0;
+      buffer_valid_bits = 0;
+      buffer = 0;
+      waiting_for_input_data = 1'b0;
     end
     else begin
 
       if(input_bram_data_valid_delayed == 1'b1 && coefficient_valid == 1'b1) begin
         // We read next block of data and we have a valid coefficient.
 
-        buffer_tmp <= buffer;
+        buffer_tmp = buffer;
         buffer_tmp[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
-        buffer <= buffer_tmp << bits_used;
+        buffer = buffer_tmp << bits_used;
 
-        buffer_valid_bits <= buffer_valid_bits + 128 - bits_used;
-        waiting_for_input_data <= 1'b0;
+        buffer_valid_bits = buffer_valid_bits + 128 - bits_used;
+        waiting_for_input_data = 1'b0;
       end
       else if(input_bram_data_valid_delayed == 1'b1) begin
         // We read next block of data
         buffer[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
-        buffer_valid_bits <= buffer_valid_bits + 128;
-        waiting_for_input_data <= 1'b0;
+        buffer_valid_bits = buffer_valid_bits + 128;
+        waiting_for_input_data = 1'b0;
       end
       else if(coefficient_valid == 1'b1) begin
         // We have a valid coefficient
-        buffer_valid_bits <= buffer_valid_bits - bits_used;
-        buffer <= buffer << bits_used;
+        buffer_valid_bits = buffer_valid_bits - bits_used;
+        buffer = buffer << bits_used;
       end
 
       // When there is space for a block of 128 bits in the buffer and we're not waiting for data we issue a BRAM read
       if(buffer_valid_bits <= 24 && waiting_for_input_data == 1'b0) begin
-        input_bram_addr <= input_bram_addr + 1;
-        input_bram_data_valid <= 1'b1;
-        waiting_for_input_data <= 1'b1;
+        input_bram_addr = input_bram_addr + 1;
+        input_bram_data_valid = 1'b1;
+        waiting_for_input_data = 1'b1;
       end
       else
-        input_bram_data_valid <= 1'b0;
+        input_bram_data_valid = 1'b0;
     end
   end
 

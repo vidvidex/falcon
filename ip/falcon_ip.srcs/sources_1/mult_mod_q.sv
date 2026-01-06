@@ -109,9 +109,9 @@ module mult_mod_q #(
     else begin
       for(int i = 0; i < PARALLEL_OPS_COUNT; i++) begin
         if(a_times_b_3[i] - times_12289[i] >= 12289)
-          result_i[i] = a_times_b_3[i] - times_12289[i] - 12289;
+          result_i[i] <= a_times_b_3[i] - times_12289[i] - 12289;
         else
-          result_i[i] = a_times_b_3[i] - times_12289[i];
+          result_i[i] <= a_times_b_3[i] - times_12289[i];
       end
       valid5 <= valid4;
     end

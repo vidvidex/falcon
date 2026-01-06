@@ -204,10 +204,8 @@ module ntt#(
     scale_we_b_1 <= scale_we_b_in;
 
     // Stage 2: Modulo 12289
-    scale_temp1 = scale_a_times_b1 % 12289;
-    scale_temp2 = scale_a_times_b2 % 12289;
-    scale_mult_mod_q1 <= scale_temp1 < 0 ? scale_temp1 + 12289 : scale_temp1; // Make sure the result is positive
-    scale_mult_mod_q2 <= scale_temp2 < 0 ? scale_temp2 + 12289 : scale_temp2; // Make sure the result is positive
+    scale_mult_mod_q1 <= (scale_a_times_b1 % 12289) < 0 ? (scale_a_times_b1 % 12289) + 12289 : (scale_a_times_b1 % 12289); // Make sure the result is positive
+    scale_mult_mod_q2 <= (scale_a_times_b2 % 12289) < 0 ? (scale_a_times_b2 % 12289) + 12289 : (scale_a_times_b2 % 12289); // Make sure the result is positive
     scale_addr1_out <= scale_addr1_1;
     scale_addr2_out <= scale_addr2_1;
     scale_we_a_out <= scale_we_a_1;
