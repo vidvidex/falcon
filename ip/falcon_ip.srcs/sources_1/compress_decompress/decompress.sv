@@ -150,23 +150,23 @@ module decompress #(
   always_ff @(posedge clk) begin
     case (state)
       IDLE: begin
-        total_bits_used <= 0;
-        coefficient_index <= 0;
-        used_bit_count_error <= 0;
-        second_half <= 0;
+        total_bits_used = 0;
+        coefficient_index = 0;
+        used_bit_count_error = 0;
+        second_half = 0;
       end
       DECOMPRESSING: begin
         if(coefficient_valid == 1'b1) begin
 
-          coefficient_index++;
+          coefficient_index = coefficient_index + 1;
 
           if(coefficient_index == N/2)
-            second_half <= 1;
+            second_half = 1;
 
           // Check if we already used too many bits to decompress the signature
-          total_bits_used <= total_bits_used + bits_used;
+          total_bits_used = total_bits_used + bits_used;
           if(total_bits_used > slen*8)
-            used_bit_count_error <= 1;
+            used_bit_count_error = 1;
         end
       end
     endcase
