@@ -13934,6 +13934,11 @@ module instruction_dispatch#(
           } state_t;
   state_t state, next_state;
 
+  // instruction_index is incremented when an instruction finishes, so it equals the instruction count once the last one is done
+  logic all_instructions_done;
+  assign all_instructions_done = (algorithm_select == 2'b00 && instruction_index == SIGN_INSTRUCTION_COUNT) ||
+                                 (algorithm_select == 2'b01 && instruction_index == VERIFY_INSTRUCTION_COUNT);
+
   always_comb begin
     next_state = state;
 
@@ -13950,9 +13955,7 @@ module instruction_dispatch#(
           next_state = INSTRUCTIONS_DONE;
       end
       INSTRUCTIONS_DONE: begin
-        if (algorithm_select == 2'b00 && instruction_index == SIGN_INSTRUCTION_COUNT-1)
-          next_state = DONE;
-        else if (algorithm_select == 2'b01 && instruction_index == VERIFY_INSTRUCTION_COUNT-1)
+        if (all_instructions_done)
           next_state = DONE;
         else
           next_state = INSTRUCTIONS_RUNNING;
@@ -13997,11 +14000,12 @@ module instruction_dispatch#(
           end
         end
         INSTRUCTIONS_DONE: begin
-          instruction <= (algorithm_select == 2'b01) ? verify_instructions[instruction_index + 1] : sign_instructions[instruction_index + 1];
+          if (!all_instructions_done)
+            instruction <= (algorithm_select == 2'b01) ? verify_instructions[instruction_index] : sign_instructions[instruction_index];
         end
         DONE: begin
           instruction_index <= 0;
-          instruction <= (algorithm_select == 2'b01) ? verify_instructions[0] : sign_instructions[0];
+          instruction <= 0;
         end
       endcase
     end
