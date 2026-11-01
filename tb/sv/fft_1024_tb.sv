@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
+// Runs the FFT on mem/tb/fft_1024.hex and compares the result with mem/tb/fft_1024_tb_expected.hex,
+// which scripts/fft_reference.py computes with Falcon's reference FFT.
 module fft_1024_tb;
 
   parameter int N = 1024;
@@ -119,34 +121,7 @@ module fft_1024_tb;
         .btf_valid_out(btf_valid_out)
       );
 
-  // Signals that split 128 bit BRAM line into real and imag part, used mostly for debugging
-  logic [63:0] bram1_out_a_real, bram1_out_a_imag;
-  logic [63:0] bram1_out_b_real, bram1_out_b_imag;
-  logic [63:0] bram2_out_a_real, bram2_out_a_imag;
-  logic [63:0] bram2_out_b_real, bram2_out_b_imag;
-  assign {bram1_out_a_real, bram1_out_a_imag} = bram1_dout_a;
-  assign {bram1_out_b_real, bram1_out_b_imag} = bram1_dout_b;
-  assign {bram2_out_a_real, bram2_out_a_imag} = bram2_dout_a;
-  assign {bram2_out_b_real, bram2_out_b_imag} = bram2_dout_b;
-  logic [63:0] bram1_in_a_real, bram1_in_a_imag;
-  logic [63:0] bram1_in_b_real, bram1_in_b_imag;
-  logic [63:0] bram2_in_a_real, bram2_in_a_imag;
-  logic [63:0] bram2_in_b_real, bram2_in_b_imag;
-  assign {bram1_in_a_real, bram1_in_a_imag} = bram1_din_a;
-  assign {bram1_in_b_real, bram1_in_b_imag} = bram1_din_b;
-  assign {bram2_in_a_real, bram2_in_a_imag} = bram2_din_a;
-  assign {bram2_in_b_real, bram2_in_b_imag} = bram2_din_b;
-
-  // For result verification
-  real a_real_double, a_imag_double, b_real_double, b_imag_double;
-
-  function bit double_equal(real a, real b, real epsilon = 1e-6);
-    real diff;
-    diff = a - b;
-    if (diff < 0.0)
-      diff = -diff;
-    return (diff < epsilon);
-  endfunction
+  logic [`BRAM_DATA_WIDTH-1:0] expected_output [N/2];
 
   always #5 clk = ~clk;
 
@@ -168,26 +143,14 @@ module fft_1024_tb;
     while(!done)
       #10;
 
-    // Check if first and last values are as expected (for N=1024 the results will be in BRAM2)
-    bram2_addr_a = 0;
-    bram2_addr_b = 511;
-    #20;
+    repeat (5) @(posedge clk);
 
-    a_real_double = $bitstoreal(bram2_out_a_real);
-    if(!double_equal(a_real_double, -211974.089585))
-      $fatal(1, "FFT 1024: Expected first real part to be -211974.089585, got %f", a_real_double);
-
-    a_imag_double = $bitstoreal(bram2_out_a_imag);
-    if(!double_equal(a_imag_double, 333771.845416))
-      $fatal(1, "FFT 1024: Expected first imag part to be 333771.845416, got %f", a_imag_double);
-
-    b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, -23097.713658))
-      $fatal(1, "FFT 1024: Expected last real part to be -23097.713658, got %f", b_real_double);
-
-    b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, -111256.583672))
-      $fatal(1, "FFT 1024: Expected last imag part to be -111256.583672, got %f", b_imag_double);
+    // The result is in BRAM2. It is read directly from the memory array because the FFT module drives the BRAM ports.
+    $readmemh({`FALCON_MEM_DIR, "/tb/fft_1024_tb_expected.hex"}, expected_output);
+    for (int i = 0; i < N/2; i++)
+      if (bram_6144x128_preinit_for_fft_tb_2.mem[i] !== expected_output[i])
+        $fatal(1, "Output word %0d differs from fft_1024_tb_expected.hex: expected %h, got %h", i, expected_output[i],
+               bram_6144x128_preinit_for_fft_tb_2.mem[i]);
 
     $display("All tests for fft_1024 passed!");
     $finish;
