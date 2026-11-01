@@ -123,13 +123,12 @@ module control_unit#(
              .ADDR_WIDTH(12)
            ) bram_3072x128_inst (
              .addra(bram3072_addr_a[i_bram3072]),
-             .clka(clk),
+             .clk(clk),
              .dina(bram_din_a[i_bram3072]),
              .douta(bram_dout_a[i_bram3072]),
              .wea(bram_we_a[i_bram3072]),
 
              .addrb(bram3072_addr_b[i_bram3072]),
-             .clkb(clk),
              .dinb(bram_din_b[i_bram3072]),
              .doutb(bram_dout_b[i_bram3072]),
              .web(bram_we_b[i_bram3072])
@@ -170,13 +169,12 @@ module control_unit#(
              .ADDR_WIDTH(11)
            ) bram_2048x128_inst (
              .addra(bram2048_addr_a[i_bram2048-BRAM3072_COUNT]),
-             .clka(clk),
+             .clk(clk),
              .dina(bram_din_a[i_bram2048]),
              .douta(bram_dout_a[i_bram2048]),
              .wea(bram_we_a[i_bram2048]),
 
              .addrb(bram2048_addr_b[i_bram2048-BRAM3072_COUNT]),
-             .clkb(clk),
              .dinb(bram_din_b[i_bram2048]),
              .doutb(bram_dout_b[i_bram2048]),
              .web(bram_we_b[i_bram2048])
@@ -266,13 +264,12 @@ module control_unit#(
              .ADDR_WIDTH(10)
            )bram_1024x128_inst (
              .addra(bram1024_addr_a[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
-             .clka(clk),
+             .clk(clk),
              .dina(bram_din_a[i_bram1024]),
              .douta(bram_dout_a[i_bram1024]),
              .wea(bram_we_a[i_bram1024]),
 
              .addrb(bram1024_addr_b[i_bram1024-BRAM2048_COUNT-BRAM3072_COUNT]),
-             .clkb(clk),
              .dinb(bram_din_b[i_bram1024]),
              .doutb(bram_dout_b[i_bram1024]),
              .web(bram_we_b[i_bram1024])
@@ -309,13 +306,12 @@ module control_unit#(
              .ADDR_WIDTH(13)
            )bram_6144x128_inst (
              .addra(bram_addr_a[i_bram6144]),
-             .clka(clk),
+             .clk(clk),
              .dina(bram_din_a[i_bram6144]),
              .douta(bram_dout_a[i_bram6144]),
              .wea(bram_we_a[i_bram6144]),
 
              .addrb(bram_addr_b[i_bram6144]),
-             .clkb(clk),
              .dinb(bram_din_b[i_bram6144]),
              .doutb(bram_dout_b[i_bram6144]),
              .web(bram_we_b[i_bram6144])

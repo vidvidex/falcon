@@ -23,14 +23,13 @@ module ntt_1024_tb;
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_b, bram1_dout_b;
   logic bram1_we_b;
-  bram_6144x128_preinit_for_ntt1024_tb bram1 (
-                                     .clka(clk),
+  bram #(.DATA_WIDTH(`BRAM_DATA_WIDTH), .ADDR_WIDTH(`BRAM_ADDR_WIDTH), .INIT_FILE({`FALCON_MEM_DIR, "/tb/ntt_1024.hex"})) bram1 (
+                                     .clk(clk),
                                      .addra(bram1_addr_a),
                                      .dina(bram1_din_a),
                                      .wea(bram1_we_a),
                                      .douta(bram1_dout_a),
 
-                                     .clkb(clk),
                                      .addrb(bram1_addr_b),
                                      .dinb(bram1_din_b),
                                      .web(bram1_we_b),
@@ -43,14 +42,13 @@ module ntt_1024_tb;
   logic [`BRAM_ADDR_WIDTH-1:0] bram2_addr_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_din_b, bram2_dout_b;
   logic bram2_we_b;
-  bram_6144x128 bram2 (
-                  .clka(clk),
+  bram #(.DATA_WIDTH(`BRAM_DATA_WIDTH), .ADDR_WIDTH(`BRAM_ADDR_WIDTH)) bram2 (
+                  .clk(clk),
                   .addra(bram2_addr_a),
                   .dina(bram2_din_a),
                   .douta(bram2_dout_a),
                   .wea(bram2_we_a),
 
-                  .clkb(clk),
                   .addrb(bram2_addr_b),
                   .dinb(bram2_din_b),
                   .doutb(bram2_dout_b),

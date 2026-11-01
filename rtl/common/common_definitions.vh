@@ -12,6 +12,11 @@
 `define SIGNIFICANT_BITS 52
 `define EXPONENT_BITS 11
 
+// Directory with memory images used by the testbenches (repo mem/ directory)
+`ifndef FALCON_MEM_DIR
+  `define FALCON_MEM_DIR "mem"
+`endif
+
 // Memory locations
 `define SEED_BASE_ADDR (N == 512) ? 324 : 648
 

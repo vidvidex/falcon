@@ -30,15 +30,14 @@ module compress_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram_din_a, bram_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram_dout_a, bram_dout_b;
   logic bram_we_a, bram_we_b;
-  bram_6144x128 bram (
+  bram #(.DATA_WIDTH(`BRAM_DATA_WIDTH), .ADDR_WIDTH(`BRAM_ADDR_WIDTH)) bram (
                   .addra(bram_addr_a),
-                  .clka(clk),
+                  .clk(clk),
                   .dina(bram_din_a),
                   .douta(bram_dout_a),
                   .wea(bram_we_a),
 
                   .addrb(bram_addr_b),
-                  .clkb(clk),
                   .dinb(bram_din_b),
                   .doutb(bram_dout_b),
                   .web(bram_we_b)

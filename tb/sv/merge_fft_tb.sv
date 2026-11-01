@@ -15,15 +15,14 @@ module merge_fft_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_din_a, bram1_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram1_dout_a, bram1_dout_b;
   logic bram1_we_a, bram1_we_b;
-  bram_6144x128 bram_6144x128_1 (
+  bram #(.DATA_WIDTH(`BRAM_DATA_WIDTH), .ADDR_WIDTH(`BRAM_ADDR_WIDTH)) bram_6144x128_1 (
                   .addra(bram1_addr_a),
-                  .clka(clk),
+                  .clk(clk),
                   .dina(bram1_din_a),
                   .douta(bram1_dout_a),
                   .wea(bram1_we_a),
 
                   .addrb(bram1_addr_b),
-                  .clkb(clk),
                   .dinb(bram1_din_b),
                   .doutb(bram1_dout_b),
                   .web(bram1_we_b)
@@ -33,15 +32,14 @@ module merge_fft_tb;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_din_a, bram2_din_b;
   logic [`BRAM_DATA_WIDTH-1:0] bram2_dout_a, bram2_dout_b;
   logic bram2_we_a, bram2_we_b;
-  bram_6144x128 bram_6144x128_2 (
+  bram #(.DATA_WIDTH(`BRAM_DATA_WIDTH), .ADDR_WIDTH(`BRAM_ADDR_WIDTH)) bram_6144x128_2 (
                   .addra(bram2_addr_a),
-                  .clka(clk),
+                  .clk(clk),
                   .dina(bram2_din_a),
                   .douta(bram2_dout_a),
                   .wea(bram2_we_a),
 
                   .addrb(bram2_addr_b),
-                  .clkb(clk),
                   .dinb(bram2_din_b),
                   .doutb(bram2_dout_b),
                   .web(bram2_we_b)
