@@ -26,5 +26,13 @@
 // Debugging
 // Uncomment this to not use empty BRAMs but ones that can be filled with desired debug data (bram0 to bram6)
 `define DEBUG_BRAMS
+// Directory with the debug BRAM contents (bram0.hex to bram6.hex), e.g. mem/instruction_dispatch_tb/sign512.
+// Pass it from the simulator: -d FALCON_BRAM_INIT_DIR=\"<path>\" (xvlog) or +define+FALCON_BRAM_INIT_DIR=\"<path>\".
+// When it is not set, the debug BRAMs start empty.
+`ifdef FALCON_BRAM_INIT_DIR
+  `define BRAM_INIT_FILE(name) {`FALCON_BRAM_INIT_DIR, "/", name}
+`else
+  `define BRAM_INIT_FILE(name) ""
+`endif
 // Uncomment this to print the start and end cycle of each operation
 `define PRINT_CYCLES

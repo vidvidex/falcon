@@ -99,7 +99,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(12),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram0.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram0.hex"))
        ) bram0 (
          .clk(clk),
 
@@ -146,7 +146,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(11),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram1.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram1.hex"))
        )bram1 (
          .clk(clk),
 
@@ -192,7 +192,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram2.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram2.hex"))
        )bram2 (
          .clk(clk),
 
@@ -209,7 +209,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram3.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram3.hex"))
        )bram3 (
          .clk(clk),
 
@@ -226,7 +226,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram4.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram4.hex"))
        )bram4 (
          .clk(clk),
 
@@ -243,7 +243,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(10),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram5.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram5.hex"))
        )bram5 (
          .clk(clk),
 
@@ -286,7 +286,7 @@ module control_unit#(
   bram #(
          .DATA_WIDTH(128),
          .ADDR_WIDTH(13),
-         .INIT_FILE("C:\Users\ratko\Documents\Repositories\falcon\ip\falcon_ip.srcs\sources_1\coefficients\bram6.coe")
+         .INIT_FILE(`BRAM_INIT_FILE("bram6.hex"))
        )bram6 (
          .clk(clk),
 
