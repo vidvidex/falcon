@@ -1,69 +1,72 @@
 # Falcon FPGA accelerator - top-level entry points.
 #
 #   make lint                     Verilator lint of the RTL
-#   make sim TB=ntt_512_tb        run one SV testbench in xsim (batch)
-#   make test-sv                  run all self-checking SV testbenches
+#   make test-sv                  run all SystemVerilog testbenches in xsim, in parallel
 #   make project                  create the Vivado project in build/vivado (for GUI work)
 #   make ip                       package the accelerator as an IP core into build/ip_repo
 #   make bd N=1024                create the block design project in build/bd_<N>
 #   make xsa N=1024               synthesize + implement the block design, write build/falcon_<N>.xsa
-#   make sim-top ALG=verify1024   simulate the whole accelerator (instruction_dispatch_tb, slow)
 #
 # Vivado tools (vivado, xvlog, xelab, xsim) are taken from PATH.
 
 SHELL := /bin/bash
 
-VIVADO          := mkdir -p build && cd build && vivado -mode batch -nojournal -notrace
+VIVADO := mkdir -p build && cd build && vivado -mode batch -nojournal -notrace
 
 ROOT  := $(abspath .)
 BUILD := $(ROOT)/build
 N     ?= 512
-# Data set for sim-top: one of mem/instruction_dispatch_tb/{sign512,sign1024,verify512,verify1024}
-ALG   ?= sign512
-
-# Testbench to run with `make sim`, and how long to run it (xsim time, or "all")
-TB       ?= ntt_512_tb
-SIM_TIME ?= all
-# Extra defines for xvlog, e.g. DEFINES='FALCON_BRAM_INIT_DIR=\"$(ROOT)/mem/instruction_dispatch_tb/sign512\"'
-DEFINES  ?=
-
-# Self-checking testbenches (they $fatal on mismatch and $finish when done)
-SV_TESTS := check_bound_tb compress_tb compress_coefficient_tb decompress_tb decompress_coefficient_tb \
-            fft_512_tb fft_1024_tb ifft_512_tb ifft_1024_tb hash_to_point_tb merge_fft_tb split_fft_tb \
-            mult_mod_q_tb mult_mod_q_for_ntt_tb ntt_512_tb ntt_1024_tb intt_512_tb intt_1024_tb
 
 RTL_FILES := $(filter-out +incdir+%,$(shell cat rtl/files.f))
 
-.PHONY: help lint sim test-sv sim-top project ip bd xsa clean
+# Module testbenches (tb/sv/*_tb.sv) and the whole-accelerator test (instruction_dispatch_tb), which runs once per
+# data set in mem/instruction_dispatch_tb/. The accelerator tests take longest, so they are listed (and started) first.
+MODULE_TESTS := $(filter-out instruction_dispatch_tb,$(notdir $(basename $(wildcard tb/sv/*_tb.sv))))
+TOP_TESTS    := $(addprefix instruction_dispatch_tb_,sign512 sign1024 verify512 verify1024)
+TESTS        ?= $(TOP_TESTS) $(MODULE_TESTS)
+JOBS         ?= $(shell nproc)
+# Simulated time limit per test; a test that has not finished by then fails (e.g. a hang after a design change)
+SIM_TIME     ?= 20ms
+
+RESULTS := $(patsubst %,$(BUILD)/xsim/%/result,$(TESTS))
+
+.PHONY: help lint test-sv project ip bd xsa clean FORCE
 
 help:
-	@sed -n '3,14p' Makefile | sed 's/^# //'
+	@sed -n '3,8p' Makefile | sed 's/^# //'
 
 lint:
 	verilator --lint-only -Wall -Wno-fatal -f rtl/files.f --top-module axi_wrapper
 
-sim:
-	@mkdir -p $(BUILD)/xsim/$(TB)
-	@echo "xsim: $(TB) (logs in build/xsim/$(TB))"
-	@cd $(BUILD)/xsim/$(TB) && \
-	  xvlog -sv --nolog -i $(ROOT)/rtl/common \
-	    -d FALCON_MEM_DIR=\"$(ROOT)/mem\" $(foreach d,$(DEFINES),-d $(d)) \
-	    $(addprefix $(ROOT)/,$(RTL_FILES)) $(ROOT)/tb/sv/$(TB).sv >xvlog.log && \
-	  xelab --nolog --relax -timescale 1ns/1ps -debug typical $(TB) -s $(TB) >xelab.log && \
-	  echo "run $(SIM_TIME); quit" > run.tcl && \
-	  xsim --nolog $(TB) -tclbatch run.tcl | tee xsim.log && \
-	  grep -q '^\$$finish called' xsim.log && ! grep -q -E '^(Fatal|ERROR):' xsim.log
-
 test-sv:
-	@fail=0; for t in $(SV_TESTS); do \
-	  if $(MAKE) --no-print-directory sim TB=$$t >/dev/null 2>&1; then echo "PASS $$t"; \
-	  else echo "FAIL $$t  (see build/xsim/$$t/)"; fail=1; fi; \
-	done; exit $$fail
+	@rm -f $(RESULTS)
+	@$(MAKE) --no-print-directory -k -j$(JOBS) $(RESULTS)
+	@cat $(RESULTS) > $(BUILD)/test-results.txt; \
+	  fail=$$(grep -c '^FAIL' $(BUILD)/test-results.txt); \
+	  echo "$$(( $(words $(TESTS)) - fail )) passed, $$fail failed (of $(words $(TESTS))), results in build/test-results.txt"; \
+	  [ $$fail -eq 0 ]
 
-# instruction_dispatch_tb hard-codes N=512 and algorithm_select=sign; edit them to match ALG
-sim-top:
-	$(MAKE) --no-print-directory sim TB=instruction_dispatch_tb \
-	  DEFINES='FALCON_BRAM_INIT_DIR=\"$(ROOT)/mem/instruction_dispatch_tb/$(ALG)\"'
+# $(call xsim,<testbench>,<xvlog options>,<xelab options>): compile and run a testbench in $(@D) and write PASS/FAIL to $@
+define xsim
+@mkdir -p $(@D)
+@cd $(@D) && rm -f *.log && \
+  if xvlog -sv --nolog -i $(ROOT)/rtl/common -d FALCON_MEM_DIR=\"$(ROOT)/mem\" $(2) \
+       $(addprefix $(ROOT)/,$(RTL_FILES)) $(ROOT)/tb/sv/$(1).sv >xvlog.log 2>&1 && \
+     xelab --nolog --relax -timescale 1ns/1ps -debug typical $(3) $(1) -s $(1) >xelab.log 2>&1 && \
+     echo "run $(SIM_TIME); quit" > run.tcl && \
+     xsim --nolog $(1) -tclbatch run.tcl >xsim.log 2>&1 && \
+     grep -q '^\$$finish called' xsim.log && ! grep -q -E '^(Fatal|ERROR):' xsim.log; \
+  then echo "PASS $(notdir $(@D))" | tee $(@F); \
+  else echo "FAIL $(notdir $(@D))  see build/xsim/$(notdir $(@D))/" | tee $(@F); fi
+endef
+
+$(BUILD)/xsim/%/result: FORCE
+	$(call xsim,$*)
+
+# N and the algorithm (0 = sign, 1 = verify) are derived from the data set name
+$(BUILD)/xsim/instruction_dispatch_tb_%/result: FORCE
+	$(call xsim,instruction_dispatch_tb,-d FALCON_BRAM_INIT_DIR=\"$(ROOT)/mem/instruction_dispatch_tb/$*\",\
+	  -generic_top N=$(subst sign,,$(subst verify,,$*)) -generic_top ALGORITHM=$(if $(filter verify%,$*),1,0))
 
 project:
 	$(VIVADO) -source $(ROOT)/vivado/create_project.tcl -tclargs $(BUILD)/vivado

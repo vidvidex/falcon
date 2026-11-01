@@ -10,7 +10,7 @@ The accelerator was developed as part of a Master's thesis at the University of 
 
 ```txt
 .
-├── Makefile             - entry point for lint, simulation and the Vivado flow (run `make help`)
+├── Makefile             - entry point for lint, tests and the Vivado flow (run `make help`)
 ├── rtl/                 - synthesizable SystemVerilog of the accelerator (vendor-neutral)
 │   ├── files.f          - file list shared by Verilator, xsim and the Vivado scripts
 │   ├── top/             - axi_wrapper (top), instruction_dispatch, control_unit
@@ -46,24 +46,31 @@ All generated files (Vivado projects, packaged IP, simulation runs, bitstreams, 
 
 ## Simulation
 
-Every testbench in `tb/sv/` can be run in batch mode with xsim:
+All testbenches in `tb/sv/` are self-checking and run in xsim:
 
 ```bash
-make sim TB=ntt_512_tb      # one testbench, logs in build/xsim/ntt_512_tb/
-make test-sv                # all self-checking testbenches, prints PASS/FAIL
+make test-sv                                       # all tests in parallel (JOBS=<n>, default: number of CPUs)
+make test-sv TESTS=ntt_512_tb                      # only the listed tests
+make test-sv TESTS="fp_adder_tb instruction_dispatch_tb_sign512"
 ```
 
-Testbenches that run forever (no `$finish`) can be limited with `SIM_TIME`, e.g. `make sim TB=samplerz_tb SIM_TIME=100us`.
+Each test prints PASS or FAIL; logs are in `build/xsim/<test>/` and the summary in `build/test-results.txt`.
+A test fails if it reports an error or does not finish within `SIM_TIME` (default 20 ms of simulated time).
 
-### Simulating the whole accelerator
+The tests are:
 
-`instruction_dispatch_tb.sv` simulates the entire accelerator. It is slow, but it checks that the whole design works. The BRAM contents it needs are in `mem/instruction_dispatch_tb/{sign512,sign1024,verify512,verify1024}` and are selected with the `FALCON_BRAM_INIT_DIR` define (`DEBUG_BRAMS` must be defined in `rtl/common/common_definitions.vh`):
+- `<module>_tb`: one per module, comparing against reference values or a reference model
+- `instruction_dispatch_tb_{sign512,sign1024,verify512,verify1024}`: the whole accelerator, with the BRAMs preloaded
+  from `mem/instruction_dispatch_tb/<data set>/`. Verification must accept the data set's signature and reject a
+  corrupted one. Signing must produce `expected_signature.hex`, which is then verified with the `verify<N>` public key,
+  like the software does.
+
+`scripts/falcon_verify.py` checks a generated signature independently of the hardware:
 
 ```bash
-make sim-top ALG=sign512
+python3 scripts/falcon_verify.py 512 mem/instruction_dispatch_tb/verify512/bram0.hex mem/instruction_dispatch_tb/verify512/bram6.hex \
+        build/xsim/instruction_dispatch_tb_sign512/generated_signature.hex
 ```
-
-The testbench hard-codes `N` and `algorithm_select`, so adjust them to match the selected data set.
 
 ### Simulating in the Vivado GUI
 
@@ -72,16 +79,16 @@ make project                # creates build/vivado/falcon_ip.xpr
 vivado build/vivado/falcon_ip.xpr
 ```
 
-The project references the files in `rtl/` and `tb/` directly, so edits made in the GUI end up in the repository. The simulation set is configured to load the `sign512` BRAM contents; change `FALCON_BRAM_INIT_DIR` under *Simulation Settings > Verilog options* to use another one.
+The project references the files in `rtl/` and `tb/` directly, so edits made in the GUI end up in the repository. The simulation set is configured to run `instruction_dispatch_tb` with the `sign512` BRAM contents; change `FALCON_BRAM_INIT_DIR` under *Simulation Settings > Verilog options* and the `N`/`ALGORITHM` generics to use another data set.
 
 ## Analyzing cycle counts
 
 1. Enable the `PRINT_CYCLES` define in `rtl/common/common_definitions.vh`
-2. Run the simulation; module state changes are appended to `cycles_output.txt` in the simulation directory (e.g. `build/xsim/instruction_dispatch_tb/`)
+2. Run the simulation; module state changes are appended to `cycles_output.txt` in the simulation directory (e.g. `build/xsim/instruction_dispatch_tb_sign512/`)
 3. Analyze it:
 
    ```bash
-   python3 scripts/calculate_cycles.py build/xsim/instruction_dispatch_tb/cycles_output.txt
+   python3 scripts/calculate_cycles.py build/xsim/instruction_dispatch_tb_sign512/cycles_output.txt
    ```
 
 This shows cycle counts broken down by module (COPY, HASH_TO_POINT, FFT_IFFT, NTT, etc.). See the header of `scripts/calculate_cycles.py` for details. Measured results are in `results/cycles/`.

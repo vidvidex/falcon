@@ -4,7 +4,7 @@
 // Simulates the whole accelerator.
 //
 // The BRAMs are preloaded with the data set selected by FALCON_BRAM_INIT_DIR (mem/instruction_dispatch_tb/<alg><N>),
-// which requires DEBUG_BRAMS. `make sim-top ALG=<alg><N>` sets this together with N and ALGORITHM.
+// which requires DEBUG_BRAMS. `make test-sv TESTS=instruction_dispatch_tb_<alg><N>` sets this together with N and ALGORITHM.
 //
 //   ALGORITHM = 0 (sign):   signs the message, checks that the signature is accepted and that the generated signature
 //                           (written to generated_signature.hex in the simulation directory) equals
