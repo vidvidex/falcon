@@ -3,15 +3,23 @@
 #   make lint                     Verilator lint of the RTL
 #   make sim TB=ntt_512_tb        run one SV testbench in xsim (batch)
 #   make test-sv                  run all self-checking SV testbenches
+#   make project                  create the Vivado project in build/vivado (for GUI work)
+#   make ip                       package the accelerator as an IP core into build/ip_repo
+#   make bd N=1024                create the block design project in build/bd_<N>
+#   make xsa N=1024               synthesize + implement the block design, write build/falcon_<N>.xsa
+#   make sim-top ALG=verify1024   simulate the whole accelerator (instruction_dispatch_tb, slow)
 #
 # Vivado tools (vivado, xvlog, xelab, xsim) are taken from PATH.
 
 SHELL := /bin/bash
 
-VIVADO          := vivado -mode batch -nojournal -notrace
+VIVADO          := mkdir -p build && cd build && vivado -mode batch -nojournal -notrace
 
 ROOT  := $(abspath .)
 BUILD := $(ROOT)/build
+N     ?= 512
+# Data set for sim-top: one of mem/instruction_dispatch_tb/{sign512,sign1024,verify512,verify1024}
+ALG   ?= sign512
 
 # Testbench to run with `make sim`, and how long to run it (xsim time, or "all")
 TB       ?= ntt_512_tb
@@ -26,10 +34,10 @@ SV_TESTS := check_bound_tb compress_tb compress_coefficient_tb decompress_tb dec
 
 RTL_FILES := $(filter-out +incdir+%,$(shell cat rtl/files.f))
 
-.PHONY: help lint sim test-sv clean
+.PHONY: help lint sim test-sv sim-top project ip bd xsa clean
 
 help:
-	@sed -n '3,8p' Makefile | sed 's/^# //'
+	@sed -n '3,14p' Makefile | sed 's/^# //'
 
 lint:
 	verilator --lint-only -Wall -Wno-fatal -f rtl/files.f --top-module axi_wrapper
@@ -51,6 +59,23 @@ test-sv:
 	  if $(MAKE) --no-print-directory sim TB=$$t >/dev/null 2>&1; then echo "PASS $$t"; \
 	  else echo "FAIL $$t  (see build/xsim/$$t/)"; fail=1; fi; \
 	done; exit $$fail
+
+# instruction_dispatch_tb hard-codes N=512 and algorithm_select=sign; edit them to match ALG
+sim-top:
+	$(MAKE) --no-print-directory sim TB=instruction_dispatch_tb \
+	  DEFINES='FALCON_BRAM_INIT_DIR=\"$(ROOT)/mem/instruction_dispatch_tb/$(ALG)\"'
+
+project:
+	$(VIVADO) -source $(ROOT)/vivado/create_project.tcl -tclargs $(BUILD)/vivado
+
+ip:
+	$(VIVADO) -source $(ROOT)/vivado/package_ip.tcl -tclargs $(BUILD)/ip_repo
+
+bd: ip
+	$(VIVADO) -source $(ROOT)/vivado/create_bd_project.tcl -tclargs $(BUILD)/bd_$(N) $(BUILD)/ip_repo $(N)
+
+xsa: ip
+	$(VIVADO) -source $(ROOT)/vivado/build.tcl -tclargs $(BUILD)/bd_$(N) $(BUILD)/ip_repo $(N) $(BUILD)/falcon_$(N).xsa
 
 clean:
 	rm -rf $(BUILD) .Xil
