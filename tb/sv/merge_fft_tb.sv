@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
+// Checks merge_fft bit for bit against Falcon's reference poly_merge_fft (see the check task), for sizes 16 and N.
 module merge_fft_tb;
 
   parameter int N = 1024;
@@ -110,152 +111,96 @@ module merge_fft_tb;
               .btf_valid_out(btf_valid_out)
             );
 
-  // Signals that split 128 bit BRAM line into real and imag part, used mostly for debugging
-  logic [63:0] bram1_out_a_real, bram1_out_a_imag;
-  logic [63:0] bram1_out_b_real, bram1_out_b_imag;
-  logic [63:0] bram2_out_a_real, bram2_out_a_imag;
-  logic [63:0] bram2_out_b_real, bram2_out_b_imag;
-  assign {bram1_out_a_real, bram1_out_a_imag} = bram1_dout_a;
-  assign {bram1_out_b_real, bram1_out_b_imag} = bram1_dout_b;
-  assign {bram2_out_a_real, bram2_out_a_imag} = bram2_dout_a;
-  assign {bram2_out_b_real, bram2_out_b_imag} = bram2_dout_b;
-  logic [63:0] bram1_in_a_real, bram1_in_a_imag;
-  logic [63:0] bram1_in_b_real, bram1_in_b_imag;
-  logic [63:0] bram2_in_a_real, bram2_in_a_imag;
-  logic [63:0] bram2_in_b_real, bram2_in_b_imag;
-  assign {bram1_in_a_real, bram1_in_a_imag} = bram1_din_a;
-  assign {bram1_in_b_real, bram1_in_b_imag} = bram1_din_b;
-  assign {bram2_in_a_real, bram2_in_a_imag} = bram2_din_a;
-  assign {bram2_in_b_real, bram2_in_b_imag} = bram2_din_b;
-
-  // For result verification
-  real a_real_double, a_imag_double, b_real_double, b_imag_double;
-
-  function bit double_equal(real a, real b, real epsilon = 1e-6);
-    real diff;
-    diff = a - b;
-    if (diff < 0.0)
-      diff = -diff;
-    return (diff < epsilon);
-  endfunction
+  // Twiddle factors (fpr_gm_tab), read from a separate ROM instance (its contents are checked by the FFT testbenches)
+  logic [9:0] rom_addr;
+  logic [63:0] rom_real, rom_imag;
+  fft_twiddle_factor_rom rom(.clk(clk), .mode(1'b0), .tw_addr(rom_addr), .tw_real(rom_real), .tw_imag(rom_imag));
+  real w_real [1024], w_imag [1024];
 
   always #5 clk = ~clk;
 
+  function automatic real re(logic [127:0] word);
+    return $bitstoreal(word[127:64]);
+  endfunction
+
+  function automatic real im(logic [127:0] word);
+    return $bitstoreal(word[63:0]);
+  endfunction
+
+  task automatic compare(int size, int addr, logic [127:0] expected);
+    if (bram_6144x128_2.mem[addr] !== expected)
+      $fatal(1, "size %0d, output word %0d: expected %h, got %h", size, addr, expected, bram_6144x128_2.mem[addr]);
+  endtask
+
+  task automatic run(int s);
+    size = s;
+    rst = 1;
+    @(posedge clk);
+    rst = 0;
+    start = 1;
+    @(posedge clk);
+    start = 0;
+    while (!done)
+      @(posedge clk);
+    repeat (5) @(posedge clk);
+  endtask
+
+  // Reference: poly_merge_fft from Falcon's reference implementation. The input (BRAM1) holds f0 in words [0, size/4)
+  // and f1 in [size/4, size/2); the merged polynomial f of `size` coefficients is written to BRAM2 as size/2 complex values:
+  //   f[2u] = f0[u] + f1[u] * w[u + size/2],   f[2u+1] = f0[u] - f1[u] * w[u + size/2]
+  task automatic check(int size);
+    for (int u = 0; u < size/4; u++) begin
+      logic [127:0] a = bram_6144x128_1.mem[u], b = bram_6144x128_1.mem[u + size/4];
+      real wr = w_real[u + size/2], wi = w_imag[u + size/2];
+      real tr = re(b) * wr - im(b) * wi, ti = re(b) * wi + im(b) * wr;
+      compare(size, 2*u, {$realtobits(re(a) + tr), $realtobits(im(a) + ti)});
+      compare(size, 2*u + 1, {$realtobits(re(a) - tr), $realtobits(im(a) - ti)});
+    end
+    $display("All tests for merge_fft with size %0d passed!", size);
+  endtask
+
+  // Input: f0[i] = i + j*(i + size/4), f1[i] = (i + size/2) + j*(i + size/4 + size/2)
+  task automatic load(int size);
+    for (int i = 0; i < size/4; i++) begin
+      bram1_we_a <= 1;
+      bram1_we_b <= 1;
+      bram1_addr_a <= i;
+      bram1_din_a <= {$realtobits(real'(i)), $realtobits(real'(i + size/4))};
+      bram1_addr_b <= i + size/4;
+      bram1_din_b <= {$realtobits(real'(i + size/2)), $realtobits(real'(i + size/4 + size/2))};
+      @(posedge clk);
+    end
+    bram1_we_a <= 0;
+    bram1_we_b <= 0;
+    @(posedge clk);
+  endtask
+
   initial begin
     clk = 0;
-
     mode = 0;
     rst = 1;
     start = 0;
-    #15;
-    rst = 0;
-
-    ////// Start BRAM 1 initialization for size 16 //////
     size = 16;
-    bram1_we_a <= 1;
-    bram1_we_b <= 1;
-    for(int i = 0; i < (size>>2); i++) begin
-      real i_real = real'(i);
-      bram1_addr_a <= i;
-      bram1_din_a <= {$realtobits(i_real), $realtobits(i_real+(size>>2))};
+    bram1_we_a = 0;
+    bram1_we_b = 0;
 
-      bram1_addr_b <= i + (size>>2);
-      bram1_din_b <= {$realtobits(i_real+size/2), $realtobits(i_real + (size>>2) + (size>>1))};
-      #10;
+    // Read the twiddle factor table (the ROM has a latency of one cycle)
+    for (int i = 0; i < 1024; i++) begin
+      rom_addr <= i;
+      @(posedge clk);
+      #1;
+      w_real[i] = $bitstoreal(rom_real);
+      w_imag[i] = $bitstoreal(rom_imag);
     end
-    bram1_we_a <= 0;
-    bram1_we_b <= 0;
-    ////// Finish BRAM 1 initialization //////
 
-    ////// Test for size 16 (8 real, 8 imaginary numbers) //////
-    start = 1;
-    #10;
-    start = 0;
+    load(16);
+    run(16);
+    check(16);
+    load(N);
+    run(N);
+    check(N);
 
-
-    // Wait for done signal
-    while(!done)
-      #10;
-
-    // Check if first and last value of f are correct
-    bram2_addr_a = 0;
-    bram2_addr_b = size/2-1;
-    #30;
-    a_real_double = $bitstoreal(bram2_out_a_real);
-    if(!double_equal(a_real_double, 5.505198))
-      $fatal(1, "merge_fft size 16: Expected first real part to be 5.505198, got %f", a_real_double);
-
-    a_imag_double = $bitstoreal(bram2_out_a_imag);
-    if(!double_equal(a_imag_double, 17.330145))
-      $fatal(1, "merge_fft size 16: Expected first imag part to be 17.330145, got %f", a_imag_double);
-
-    b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, 20.479719))
-      $fatal(1, "merge_fft size 16: Expected last real part to be 20.479719, got %f", b_real_double);
-
-    b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, 13.360772))
-      $fatal(1, "merge_fft size 16: Expected last imag part to be 13.360772, got %f", b_imag_double);
-
-    $display("All tests for merge_fft with size 16 passed!");
-    ////// Finish test for size = 16 //////
-
-    rst = 1;
-    #10;
-    rst = 0;
-
-    ////// Start BRAM 1 initialization for size 1024 //////
-    size = 1024;
-
-    bram1_we_a <= 1;
-    bram1_we_b <= 1;
-    for(int i = 0; i < (size>>2); i++) begin
-      real i_real = real'(i);
-      bram1_addr_a <= i;
-      bram1_din_a <= {$realtobits(i_real), $realtobits(i_real+(size>>2))};
-
-      bram1_addr_b <= i + (size>>2);
-      bram1_din_b <= {$realtobits(i_real+size/2), $realtobits(i_real + (size>>2) + (size>>1))};
-      #10;
-    end
-    bram1_we_a <= 0;
-    bram1_we_b <= 0;
-    ////// Finish BRAM 1 initialization //////
-
-    ////// Test for size 1024 (512 real, 512 imaginary numbers) //////
-    size = 1024;
-    start = 1;
-    #10;
-    start = 0;
-
-
-    // Wait for done signal
-    while(!done)
-      #10;
-
-    // Check if first and last value of f are correct
-    bram2_addr_a = 0;
-    bram2_addr_b = size/2-1;
-    #30;
-    a_real_double = $bitstoreal(bram2_out_a_real);
-    if(!double_equal(a_real_double, 509.641399))
-      $fatal(1, "merge_fft size 1024: Expected first real part to be 509.641399, got %f", a_real_double);
-
-    a_imag_double = $bitstoreal(bram2_out_a_imag);
-    if(!double_equal(a_imag_double, 1025.567179))
-      $fatal(1, "merge_fft size 1024: Expected first imag part to be 1025.567179, got %f", a_imag_double);
-
-    b_real_double = $bitstoreal(bram2_out_b_real);
-    if(!double_equal(b_real_double, 1031.382955))
-      $fatal(1, "merge_fft size 1024: Expected last real part to be 1031.382955, got %f", b_real_double);
-
-    b_imag_double = $bitstoreal(bram2_out_b_imag);
-    if(!double_equal(b_imag_double, 1526.897390))
-      $fatal(1, "merge_fft size 1024: Expected last imag part to be 1526.897390, got %f", b_imag_double);
-
-    $display("All tests for merge_fft with size 1024 passed!");
     $finish;
-
   end
 
 endmodule

@@ -1,22 +1,25 @@
 `timescale 1ns / 1ps
-`include "common_definitions.vh"
 
+// Compares fft_butterfly bit for bit against a reference model in the simulator's IEEE-754 double arithmetic, with w
+// the twiddle factor at tw_addr and s = 2^scale_factor:
+//   FFT  (mode 0): a_out = a + b*w,     b_out = a - b*w
+//   IFFT (mode 1): a_out = (a + b)*s,   b_out = (a - b)*conj(w)*s
+// Complex products are computed like complex_multiplier: re = xr*yr*s - xi*yi*s, im = xr*yi*s + xi*yr*s.
+//
+// Twiddle factors are read from a separate fft_twiddle_factor_rom instance (its contents are checked by the
+// FFT/IFFT testbenches).
+//
+// The butterfly must not switch modes while it is processing, and the scale factor is not fully pipelined, so mode
+// and scale factor are held constant within a batch.
 module fft_butterfly_tb;
+
+  localparam int RANDOM_TESTS = 1000;
 
   logic clk;
   logic valid_in, valid_out, mode;
-  logic [63:0] a_in_real;
-  logic [63:0] a_in_imag;
-  logic [63:0] b_in_real;
-  logic [63:0] b_in_imag;
-
+  logic [63:0] a_in_real, a_in_imag, b_in_real, b_in_imag;
   logic [9:0] tw_addr;
-
-  logic [63:0] a_out_real;
-  logic [63:0] a_out_imag;
-  logic [63:0] b_out_real;
-  logic [63:0] b_out_imag;
-
+  logic [63:0] a_out_real, a_out_imag, b_out_real, b_out_imag;
   logic signed [4:0] scale_factor;
 
   always #5 clk = ~clk;
@@ -25,16 +28,12 @@ module fft_butterfly_tb;
                  .clk(clk),
                  .valid_in(valid_in),
                  .mode(mode),
-
                  .a_in_real(a_in_real),
                  .a_in_imag(a_in_imag),
                  .b_in_real(b_in_real),
                  .b_in_imag(b_in_imag),
-
                  .tw_addr(tw_addr),
-
                  .scale_factor(scale_factor),
-
                  .a_out_real(a_out_real),
                  .a_out_imag(a_out_imag),
                  .b_out_real(b_out_real),
@@ -42,89 +41,131 @@ module fft_butterfly_tb;
                  .valid_out(valid_out)
                );
 
-  initial begin
+  // Twiddle factor table
+  logic [9:0] rom_addr;
+  logic [63:0] rom_real, rom_imag;
+  fft_twiddle_factor_rom rom(.clk(clk), .mode(1'b0), .tw_addr(rom_addr), .tw_real(rom_real), .tw_imag(rom_imag));
+  real w_real [1024], w_imag [1024];
 
+  typedef struct {
+    logic [63:0] a_re, a_im, b_re, b_im;
+    logic m;
+    int addr;
+  } expected_t;
+
+  expected_t expected [$];
+  int sent = 0, checked = 0;
+
+  task automatic check(string name, logic [63:0] got, logic [63:0] exp, expected_t e);
+    if (got !== exp)
+      $fatal(1, "Output %0d (%s, tw_addr %0d), %s: expected %h (%g), got %h (%g)", checked, e.m ? "IFFT" : "FFT", e.addr,
+             name, exp, $bitstoreal(exp), got, $bitstoreal(got));
+  endtask
+
+  always_ff @(posedge clk) begin
+    if (valid_out) begin
+      if (expected.size() == 0)
+        $fatal(1, "Unexpected output");
+      check("a_out real", a_out_real, expected[0].a_re, expected[0]);
+      check("a_out imag", a_out_imag, expected[0].a_im, expected[0]);
+      check("b_out real", b_out_real, expected[0].b_re, expected[0]);
+      check("b_out imag", b_out_imag, expected[0].b_im, expected[0]);
+      void'(expected.pop_front());
+      checked <= checked + 1;
+    end
+  end
+
+  function automatic real random_double(int range);
+    int e = $urandom_range(2 * range) - range;
+    return $bitstoreal({1'($urandom), 11'(1023 + e), 20'($urandom), 32'($urandom)});
+  endfunction
+
+  task automatic send(logic m, real ar, real ai, real br, real bi, int addr, int scale);
+    expected_t e;
+    real s = 2.0 ** scale;
+    real wr = w_real[addr];
+    real wi = m ? -w_imag[addr] : w_imag[addr];
+    real tr, ti, dr, di;
+    if (m == 1'b0) begin
+      tr = br * wr - bi * wi;
+      ti = br * wi + bi * wr;
+      e.a_re = $realtobits(ar + tr);
+      e.a_im = $realtobits(ai + ti);
+      e.b_re = $realtobits(ar - tr);
+      e.b_im = $realtobits(ai - ti);
+    end
+    else begin
+      dr = ar - br;
+      di = ai - bi;
+      e.a_re = $realtobits((ar + br) * s);
+      e.a_im = $realtobits((ai + bi) * s);
+      e.b_re = $realtobits(dr * wr * s - di * wi * s);
+      e.b_im = $realtobits(dr * wi * s + di * wr * s);
+    end
+    e.m = m;
+    e.addr = addr;
+    expected.push_back(e);
+
+    mode <= m;
+    a_in_real <= $realtobits(ar);
+    a_in_imag <= $realtobits(ai);
+    b_in_real <= $realtobits(br);
+    b_in_imag <= $realtobits(bi);
+    tw_addr <= addr;
+    scale_factor <= scale;
+    valid_in <= 1;
+    sent++;
+    @(posedge clk);
+  endtask
+
+  task automatic drain();
+    valid_in <= 0;
+    while (expected.size() != 0)
+      @(posedge clk);
+    repeat (5) @(posedge clk);
+  endtask
+
+  initial begin
     clk = 1;
     valid_in = 0;
     mode = 0;
-    a_in_real = 0;
-    a_in_imag = 0;
-    b_in_real = 0;
-    b_in_imag = 0;
     scale_factor = 0;
-    #10;
+    tw_addr = 0;
 
-    valid_in = 1;
-    scale_factor = 0;
-    mode = 0; // FFT
-    a_in_real = $realtobits(1.0);
-    a_in_imag = $realtobits(2.0);
-    b_in_real = $realtobits(3.0);
-    b_in_imag = $realtobits(4.0);
-    tw_addr = 2;  // Output: 0.29289+6.94974i, 1.70710-2.9497i
-    #10;
+    // Read the twiddle factor table (the ROM has a latency of one cycle)
+    for (int i = 0; i < 1024; i++) begin
+      rom_addr <= i;
+      @(posedge clk);
+      #1;
+      w_real[i] = $bitstoreal(rom_real);
+      w_imag[i] = $bitstoreal(rom_imag);
+    end
+    if ($realtobits(w_real[2]) !== 64'h3FE6A09E667F3BCD || $realtobits(w_imag[2]) !== 64'h3FE6A09E667F3BCD)  // sqrt(2)/2
+      $fatal(1, "Unexpected twiddle factor at address 2: %g + j%g", w_real[2], w_imag[2]);
 
-    valid_in = 1;
-    scale_factor = 0;
-    mode = 0; // FFT
-    a_in_real = $realtobits(12.5);
-    a_in_imag = $realtobits(2.7);
-    b_in_real = $realtobits(1.5);
-    b_in_imag = $realtobits(-4.2);
-    tw_addr = 4;  // Output: 15.49308-0.60626i, 9.50691+6.00626i
-    #10;
+    // FFT
+    send(0, 1.0, 2.0, 3.0, 4.0, 2, 0);    // 0.29289+6.94974i, 1.70710-2.9497i
+    send(0, 12.5, 2.7, 1.5, -4.2, 4, 0);  // 15.49308-0.60626i, 9.50691+6.00626i
+    send(0, 3.0, 2.0, 1.0, 0.0, 2, 0);    // 3.70710+2.70710i, 2.29289+1.29289i
+    for (int i = 0; i < RANDOM_TESTS; i++)
+      send(0, random_double(10), random_double(10), random_double(10), random_double(10), $urandom_range(1023), 0);
+    drain();
 
-    valid_in = 1;
-    scale_factor = 0;
-    mode = 0; // FFT
-    a_in_real = $realtobits(3.0);
-    a_in_imag = $realtobits(2.0);
-    b_in_real = $realtobits(1.0);
-    b_in_imag = $realtobits(0.0);
-    tw_addr = 2;  // Output: 3.70710+2.70710i, 2.29289+1.29289i
-    #10;
+    // IFFT (scaled by 1/2 per stage, as used in the IFFT module)
+    send(1, 1.0, 2.0, 3.0, 4.0, 2, -1);
+    send(1, 12.5, 2.7, 1.5, -4.2, 4, -1);
+    send(1, 3.0, 2.0, 1.0, 0.0, 2, -1);
+    for (int i = 0; i < RANDOM_TESTS; i++)
+      send(1, random_double(10), random_double(10), random_double(10), random_double(10), $urandom_range(1023), -1);
+    drain();
+    for (int i = 0; i < RANDOM_TESTS; i++)
+      send(1, random_double(10), random_double(10), random_double(10), random_double(10), $urandom_range(1023), -5);
+    drain();
 
-    valid_in = 0;
-
-
-    // Wait for valid_out from FFT before starting IFFT
-    while(valid_out !== 1'b1)
-      #10;
-    #50;  // Wait for FFT results to be outputted (fft_butterfly does not like changing the mode during processing)
-
-    valid_in = 1;
-    scale_factor = -1;
-    mode = 1; // IFFT
-    a_in_real = $realtobits(1.0);
-    a_in_imag = $realtobits(2.0);
-    b_in_real = $realtobits(3.0);
-    b_in_imag = $realtobits(4.0);
-    tw_addr = 2;  // Output: 2 + 3i, -1.41421i + 0
-    #10;
-
-    valid_in = 1;
-    scale_factor = -1;
-    mode = 1; // IFFT
-    a_in_real = $realtobits(12.5);
-    a_in_imag = $realtobits(2.7);
-    b_in_real = $realtobits(1.5);
-    b_in_imag = $realtobits(-4.2);
-    tw_addr = 4;  // Output: 7 - 0.75i, 6.401595 + 1.08262i
-    #10;
-
-    valid_in = 1;
-    scale_factor = -1;
-    mode = 1; // IFFT
-    a_in_real = $realtobits(3.0);
-    a_in_imag = $realtobits(2.0);
-    b_in_real = $realtobits(1.0);
-    b_in_imag = $realtobits(0.0);
-    tw_addr = 2;  // Output: 2 + 1i, 1.41421i - 0 
-    #10;
-
-    valid_in = 0;
-
-
+    if (checked != sent)
+      $fatal(1, "Got %0d results, expected %0d", checked, sent);
+    $display("All tests for fft_butterfly passed! (%0d butterflies)", sent);
+    $finish;
   end
 
 endmodule
