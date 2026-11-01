@@ -15,7 +15,7 @@ This project is composed of several key components:
 - Software running on the ARM processor to interface with the hardware (see `sw/` directory)
 - Utility scripts used during development (see `utilities/` directory)
 
-![High level overview](img/high_level_overview.png)
+![High level overview](docs/img/high_level_overview.png)
 
 ### `ip/`
 
@@ -45,7 +45,7 @@ Contains the Vivado project (`falcon_bd.xpr`) that combines the Falcon IP core w
 
 See [Zynq Software Custom IP Guide](https://github.com/vidvidex/zynq-software-custom-ip-guide) for more information about creating a block design with custom IP core and using it from software.
 
-![Block diagram](img/block_diagram.png)
+![Block diagram](docs/img/block_diagram.png)
 
 IP blocks and configuration:
 
