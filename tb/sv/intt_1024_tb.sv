@@ -14,7 +14,7 @@ module intt_1024_tb;
 
   logic signed[14:0] expected_polynomial [N];
 
-  logic finished, finished_i, finished_ii;
+  logic finished;
   int index = 0;
 
   logic [`BRAM_ADDR_WIDTH-1:0] bram1_addr_a, bram1_addr_a_ntt, bram1_addr_a_validate;
@@ -83,18 +83,23 @@ module intt_1024_tb;
         .bram2_we_b(bram2_we_b)
       );
 
-  // Check if result is correct
+  // Check if result is correct. BRAM reads have a latency of 2 cycles, so track which index each read belongs to.
+  logic read_valid = 0, read_valid_i = 0, read_valid_ii = 0;
+  int read_index, read_index_i, read_index_ii;
+  int checked = 0;
   always_ff @(posedge clk) begin
-    if(finished_ii === 1 && index < N/2) begin
-      if(bram1_dout_a_validate !== expected_polynomial[index])
-        $fatal(1, "Test failed at index %d. Expected %d, got %d", index, expected_polynomial[index], bram1_dout_a_validate);
-      if(bram1_dout_b_validate !== expected_polynomial[index + N/2])
-        $fatal(1, "Test failed at index %d. Expected %d, got %d", index + N/2, expected_polynomial[index + N/2], bram1_dout_b_validate);
-      index++;
-    end
+    read_valid_i <= read_valid;
+    read_valid_ii <= read_valid_i;
+    read_index_i <= read_index;
+    read_index_ii <= read_index_i;
 
-    finished_i <= finished;
-    finished_ii <= finished_i;
+    if(read_valid_ii === 1'b1) begin
+      if(bram1_dout_a_validate !== expected_polynomial[read_index_ii])
+        $fatal(1, "Test failed at index %0d. Expected %0d, got %0d", read_index_ii, expected_polynomial[read_index_ii], bram1_dout_a_validate);
+      if(bram1_dout_b_validate !== expected_polynomial[read_index_ii + N/2])
+        $fatal(1, "Test failed at index %0d. Expected %0d, got %0d", read_index_ii + N/2, expected_polynomial[read_index_ii + N/2], bram1_dout_b_validate);
+      checked <= checked + 1;
+    end
   end
 
   always_comb begin
@@ -135,13 +140,18 @@ module intt_1024_tb;
       #10;
 
     finished <= 1;
-    bram1_addr_a_validate <= 0;
-    bram1_addr_b_validate <= N/2;
     for (int i = 0; i < N/2; i++) begin
+      bram1_addr_a_validate <= i;
+      bram1_addr_b_validate <= i + N/2;
+      read_index <= i;
+      read_valid <= 1;
       #10;
-      bram1_addr_a_validate++;
-      bram1_addr_b_validate++;
     end
+    read_valid <= 0;
+    #30;
+
+    if (checked != N/2)
+      $fatal(1, "Test failed: checked %0d coefficient pairs, expected %0d", checked, N/2);
 
     $display("All tests for intt_1024 passed!");
     $finish;

@@ -38,18 +38,34 @@ module decompress_coefficient_tb;
       logic expected_invalid_zero_representation_error
     );
 
-    if(coefficient != expected_coefficient)
+    if(coefficient !== expected_coefficient)
       $fatal(1, "Test %d failed: Expected coefficient %d, got %d", test_num, expected_coefficient, coefficient);
-    else if(bits_used != expected_bits_used)
+    else if(bits_used !== expected_bits_used)
       $fatal(1, "Test %d failed: Expected bits_used %d, got %d", test_num, expected_bits_used, bits_used);
-    else if(coefficient_valid != expected_coefficient_valid)
+    else if(coefficient_valid !== expected_coefficient_valid)
       $fatal(1, "Test %d failed: Expected coefficient_valid %d, got %d", test_num, expected_coefficient_valid, coefficient_valid);
-    else if(invalid_bits_used_error != expected_invalid_bits_used_error)
+    else if(invalid_bits_used_error !== expected_invalid_bits_used_error)
       $fatal(1, "Test %d failed: Expected invalid_bits_used_error %d, got %d", test_num, expected_invalid_bits_used_error, invalid_bits_used_error);
-    else if(invalid_zero_representation_error != expected_invalid_zero_representation_error)
+    else if(invalid_zero_representation_error !== expected_invalid_zero_representation_error)
       $fatal(1, "Test %d failed: Expected invalid_zero_representation_error %d, got %d", test_num, expected_invalid_zero_representation_error, invalid_zero_representation_error);
     else
       $display("Test %d passed", test_num);
+  endtask
+
+  task check_flags(
+      int test_num,
+      logic expected_coefficient_valid,
+      logic expected_invalid_bits_used_error,
+      logic expected_invalid_zero_representation_error
+    );
+    if(coefficient_valid !== expected_coefficient_valid)
+      $fatal(1, "Test %0d failed: Expected coefficient_valid %0d, got %0d", test_num, expected_coefficient_valid, coefficient_valid);
+    else if(invalid_bits_used_error !== expected_invalid_bits_used_error)
+      $fatal(1, "Test %0d failed: Expected invalid_bits_used_error %0d, got %0d", test_num, expected_invalid_bits_used_error, invalid_bits_used_error);
+    else if(invalid_zero_representation_error !== expected_invalid_zero_representation_error)
+      $fatal(1, "Test %0d failed: Expected invalid_zero_representation_error %0d, got %0d", test_num, expected_invalid_zero_representation_error, invalid_zero_representation_error);
+    else
+      $display("Test %0d passed", test_num);
   endtask
 
   always #5 clk = ~clk;
@@ -93,7 +109,7 @@ module decompress_coefficient_tb;
     #10;
     while(invalid_bits_used_error !== 1'b1)
       #10;
-    check(3, 0, 9, 0, 1, 0);  // It actually doesn't matter what the coefficient is or how many bits it used, since an error is raised
+    check_flags(3, 0, 1, 0);  // The coefficient and bits_used don't matter, since an error is raised
 
     rst_n = 0;
     #10;
