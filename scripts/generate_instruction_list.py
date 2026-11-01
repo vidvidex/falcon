@@ -4,7 +4,7 @@
 # Usage:
 #   - enable additional prints if needed
 #   - at the bottom of the file, uncomment the desired algorithm call (verify or sign) with the desired N (512 or 1024)
-#   - run the script: python3 utilities/generate_instruction_list.py
+#   - run the script: python3 scripts/generate_instruction_list.py
 
 import math
 

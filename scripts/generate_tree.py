@@ -9,7 +9,7 @@
 # Usage:
 #   - select N (512 or 1024)
 #   - select whether you want a .coe file or a c array
-#   - run the script: python3 utilities/generate_tree.py
+#   - run the script: python3 scripts/generate_tree.py
 
 import struct
 import math
