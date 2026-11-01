@@ -343,7 +343,7 @@ module control_unit#(
 
     if(modules_running_i != modules_running) begin
       int fd;
-      fd = $fopen ("C:/Users/ratko/Documents/Repositories/falcon/cycles_output.txt", "a");
+      fd = $fopen("cycles_output.txt", "a");
       $fdisplay(fd, "Time %0d: Modules running changed from %b to %b", $time, modules_running_i, modules_running);
       $fclose(fd);
     end
