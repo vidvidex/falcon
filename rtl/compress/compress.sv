@@ -169,78 +169,79 @@ module compress#(
   logic output_final_zeros;
   logic signature_output_done;
 
+  // Used when a compressed coefficient has to be split between the current and the next output word
+  assign bits_that_fit = 128 - buffer_valid_bits;
+  assign remaining_bits = compressed_coefficient_length - bits_that_fit;
+
   assign accept = signature_output_done ? accept_i : 0;
   assign reject = signature_output_done ? reject_i : 0;
 
   always_ff @(posedge clk) begin
     if (!rst_n) begin
-      output_addr = -1;
-      output_data = 0;
-      output_we = 0;
-      buffer = 0;
-      buffer_valid_bits = 0;
-      compressed_signature_length = 0;
-      output_final_zeros = 0;
-      signature_output_done = 0;
+      output_addr <= -1;
+      output_data <= 0;
+      output_we <= 0;
+      buffer <= 0;
+      buffer_valid_bits <= 0;
+      compressed_signature_length <= 0;
+      output_final_zeros <= 0;
+      signature_output_done <= 0;
     end
     else begin
-      output_we = 0;
+      output_we <= 0;
 
       if (compressed_coefficient_length > 0 && reject_i == 1'b0 && accept_i == 1'b0) begin
 
-        compressed_signature_length = compressed_signature_length + compressed_coefficient_length;
+        compressed_signature_length <= compressed_signature_length + compressed_coefficient_length;
 
         if (buffer_valid_bits + compressed_coefficient_length < 128) begin // Entire compressed coefficient fits into buffer and it won't be full
-          buffer = buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
-          buffer_valid_bits = buffer_valid_bits + compressed_coefficient_length;
+          buffer <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+          buffer_valid_bits <= buffer_valid_bits + compressed_coefficient_length;
         end
         else if (buffer_valid_bits + compressed_coefficient_length == 128) begin // Entire compressed coefficient fits into buffer and it fills it
-          output_data = buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
-          output_we = 1;
-          output_addr = output_addr + 1;
-          buffer = 0;
-          buffer_valid_bits = 0;
+          output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+          output_we <= 1;
+          output_addr <= output_addr + 1;
+          buffer <= 0;
+          buffer_valid_bits <= 0;
         end
         else begin  // Split the compressed coefficient
-          bits_that_fit = 128 - buffer_valid_bits;
-          remaining_bits = compressed_coefficient_length - bits_that_fit;
-
           // Fill the buffer with what fits and output it
-          output_data = buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
-          output_we = 1;
-          output_addr = output_addr + 1;
+          output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+          output_we <= 1;
+          output_addr <= output_addr + 1;
 
           // Put the remaining bits in the cleared buffer
-          buffer = {compressed_coefficient, 23'b0} << bits_that_fit;
-          buffer_valid_bits = remaining_bits;
+          buffer <= {compressed_coefficient, 23'b0} << bits_that_fit;
+          buffer_valid_bits <= remaining_bits;
         end
       end
 
       // Final flush on last signal
       if (last_delayed && !signature_output_done) begin
-        output_data = buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
-        output_we = 1;
-        output_addr = output_addr + 1;
-        buffer = 0;
-        buffer_valid_bits = 0;
+        output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+        output_we <= 1;
+        output_addr <= output_addr + 1;
+        buffer <= 0;
+        buffer_valid_bits <= 0;
 
         // After the signature is sent we might have to output some zeros to clear anything that was in BRAM before
-        compressed_signature_length = compressed_signature_length + 128;
+        compressed_signature_length <= compressed_signature_length + 128;
         if(compressed_signature_length < `SLEN*8)
-          output_final_zeros = 1;
+          output_final_zeros <= 1;
         else
-          signature_output_done = 1;
+          signature_output_done <= 1;
       end
 
       if(output_final_zeros == 1'b1) begin
-        output_data = 0;
-        output_we = 1;
-        output_addr = output_addr + 1;
-        compressed_signature_length = compressed_signature_length + 128;
+        output_data <= 0;
+        output_we <= 1;
+        output_addr <= output_addr + 1;
+        compressed_signature_length <= compressed_signature_length + 128;
 
         if(compressed_signature_length >= `SLEN*8) begin
-          output_final_zeros = 0; // Stop outputting zeros after reaching the expected length
-          signature_output_done = 1;
+          output_final_zeros <= 0; // Stop outputting zeros after reaching the expected length
+          signature_output_done <= 1;
         end
       end
     end
