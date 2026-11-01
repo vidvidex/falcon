@@ -1,8 +1,12 @@
-`timescale 1ns/1ps
+`timescale 1ns / 1ps
+`include "common_definitions.vh"
 
+// Replays SamplerZ calls recorded from a full sign512 simulation and checks that the results are identical.
+// mem/tb/samplerz_512.hex: {restart (4 bits), mu1, mu2, isigma, result1, result2} (doubles).
 module samplerz_tb;
 
   parameter int N = 512;
+  localparam int CALLS = 64;
 
   logic clk;
   logic rst_n;
@@ -11,20 +15,8 @@ module samplerz_tb;
   logic start;
   logic done;
 
-  logic [127:0] seed_a;
-  logic [127:0] seed_b;
-  // logic [127:0] seed [4] = '{
-  //         128'h0000000011111111_2222222233333333,
-  //         128'h8888888899999999_aaaaaaaabbbbbbbb,
-  //         128'h4444444455555555_6666666677777777,
-  //         128'hccccccccdddddddd_eeeeeeeeffffffff
-  //       };
-  logic [127:0] seed [4] = '{
-          128'h11111111111111111111111111111111,
-          128'h11111111111111111111111111111111,
-          128'h11111111111111111111111111111111,
-          128'h11111111111111111111111111111111
-        };
+  logic [127:0] seed_a, seed_b, seed_a_i, seed_b_i;
+  logic [127:0] seed [4] = '{default: 128'h11111111111111111111111111111111};
 
   logic [63:0] mu1, mu2, isigma;
   logic [63:0] result1, result2;
@@ -32,10 +24,10 @@ module samplerz_tb;
   logic [1:0] seed_offset_a;
   logic [1:0] seed_offset_b;
 
-  // Bi_samplerz #(.N(N))samplerz (
-  samplerz #(.N(N))samplerz (
+  logic [323:0] calls [CALLS];
+
+  samplerz #(.N(N)) samplerz (
                 .clk(clk),
-                // .reset(rst_n),
                 .rst_n(rst_n),
                 .start(start),
                 .restart(restart),
@@ -54,73 +46,63 @@ module samplerz_tb;
                 .done(done)
               );
 
+  // The seed is read from BRAM, which has a read latency of 2 cycles
   always_ff @(posedge clk) begin
-    seed_a <= seed[seed_offset_a];
-    seed_b <= seed[seed_offset_b];
+    seed_a_i <= seed[seed_offset_a];
+    seed_b_i <= seed[seed_offset_b];
+    seed_a <= seed_a_i;
+    seed_b <= seed_b_i;
   end
 
   always #5 clk = ~clk;
 
   initial begin
+    logic [63:0] expected1, expected2;
+    int cycles;
+
+    $readmemh({`FALCON_MEM_DIR, "/tb/samplerz_512.hex"}, calls);
+
     clk = 1;
+    start = 0;
+    restart = 0;
+    mu1 = 0;
+    mu2 = 0;
+    isigma = 0;
 
     rst_n = 0;
-    #20;
-    rst_n = 1;
+    repeat (2) @(posedge clk);
+    rst_n <= 1;
+    repeat (100) @(posedge clk);  // start must come at least 90 cycles after reset
 
-    #30;
+    for (int i = 0; i < CALLS; i++) begin
+      if ($isunknown(calls[i]))
+        $fatal(1, "Recorded call %0d missing from samplerz_512.hex", i);
+      restart <= calls[i][323:320] != 0;
+      {mu1, mu2, isigma} <= calls[i][319:128];
+      expected1 = calls[i][127:64];
+      expected2 = calls[i][63:0];
+      start <= 1;
+      @(posedge clk);
+      start <= 0;
+      restart <= 0;
 
-    mu1 = $realtobits(-1.0);
-    mu2 = $realtobits(-1.0);
-    isigma = $realtobits(10/17.0);
+      cycles = 0;
+      do begin
+        @(posedge clk);
+        if (++cycles > 10000)
+          $fatal(1, "Call %0d: samplerz did not finish", i);
+      end while (done !== 1'b1);
 
-    #1000;
+      if (result1 !== expected1 || result2 !== expected2)
+        $fatal(1, "Call %0d (mu1 %g, mu2 %g, isigma %g): expected %g, %g, got %g, %g", i,
+               $bitstoreal(mu1), $bitstoreal(mu2), $bitstoreal(isigma),
+               $bitstoreal(expected1), $bitstoreal(expected2), $bitstoreal(result1), $bitstoreal(result2));
 
+      @(posedge clk);
+    end
 
-    start <= 1;
-    restart <= 1;
-    #10;
-    restart <= 0;
-    start <= 0;
-
-    while(done !== 1)
-      #10;
-
-    // mu1 = $realtobits(56.95491949528823);
-    // mu2 = $realtobits(6.458067295424501);
-    // isigma = $realtobits(1/1.7410445103037335);
-
-
-    start <= 1;
-    #10;
-    start <= 0;
-
-    while(done !== 1)
-      #10;
-
-    // mu1 = $realtobits(-11.662806799958712);
-    // mu2 = $realtobits(39.64107628004665);
-    // isigma = $realtobits(1/1.714965058508814);
-
-
-    start <= 1;
-    #10;
-    start <= 0;
-
-    while(done !== 1)
-      #10;
-
-    // mu1 = $realtobits(83.89098065383646);
-    // mu2 = $realtobits(-11.706270418552691);
-    // isigma = $realtobits(1/1.732882618121838);
-
-
-    start <= 1;
-    #10;
-    start <= 0;
-
+    $display("All tests for samplerz passed! (%0d calls)", CALLS);
+    $finish;
   end
 
 endmodule
-
-
