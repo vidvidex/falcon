@@ -1,11 +1,24 @@
+# Build outputs: Vivado projects, packaged IP, simulations, bitstreams, .xsa
 build/
-ip_repo/
-.stfolder
+.Xil/
+*.jou
+*.log
+*.str
+
+# Python
+__pycache__/
+venv/
+.venv/
+
+# Editors and sync tools
 .vscode/
+*.code-workspace
+.stfolder
 .stignore
-Aikata.code-workspace
+
+# Vitis workspace (local, see sw/README.md)
+sw/workspace/
+
+# Generated outputs
+scripts/*_always_block.sv
 cycles_output.txt
-dfx_runtime.txt
-ip/dfx_runtime.txt
-utilities/fft_twiddle_factor_rom_always_block.sv
-utilities/ntt_twiddle_factor_rom_always_block.sv
