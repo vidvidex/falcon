@@ -33,14 +33,15 @@ module double_to_int (
     shifted_mantissa = 64'd0;
 
     if (exponent_unbiased < 52) begin
-      // Right shift — add rounding before shift
+      // Right shift, then round using the first bit shifted out (guard) and the OR of the bits below it (sticky)
       automatic int shift_amount = 52 - exponent_unbiased;
 
       if (shift_amount < 64 && shift_amount > 0) begin
         automatic logic [63:0] extended_mantissa = {11'b0, mantissa_with_hidden_bit};
-        automatic logic [63:0] rounding_add = 64'd1 << (shift_amount - 1);
-        automatic logic [63:0] rounded_mantissa = extended_mantissa + rounding_add;
-        shifted_mantissa = rounded_mantissa >> shift_amount;
+        automatic logic [63:0] truncated = extended_mantissa >> shift_amount;
+        automatic logic guard = extended_mantissa[shift_amount - 1];
+        automatic logic sticky = |(extended_mantissa & ((64'd1 << (shift_amount - 1)) - 1));
+        shifted_mantissa = truncated + (guard && (sticky || truncated[0]));
       end
       else if (shift_amount <= 0) begin
         // No shift needed or left shift needed
