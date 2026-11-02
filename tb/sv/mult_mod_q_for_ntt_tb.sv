@@ -52,7 +52,7 @@ module mult_mod_q_for_ntt_tb;
     end
     else if (run_test && i < COUNT) begin
       a <= a_arr[i];
-      b <= b_arr[i];
+      b <= (longint'(b_arr[i]) * 4095) % 12289;  // Montgomery form: 2^14 mod 12289 = 4095
       valid_in <= 1;
       index1_in <= i;
       index2_in <= i + COUNT;

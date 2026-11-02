@@ -95,13 +95,12 @@ module ntt#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) bram11_read_part_delay(.clk(clk), .in(i >= N/2), .out(bram11_read_part));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) bram12_read_part_delay(.clk(clk), .in(i+stride >= N/2), .out(bram12_read_part));
 
-  // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024
-  // R = pow(2, 16, 12289) (constant for Montgomery multiplication), if not using Montgomery reduction R=1
+  // (pow(N, -1, 12289) * R) % 12289 for N=8, 512, 1024 in Montgomery form (R = 2^14)
   int intt_scale_factor;
   assign intt_scale_factor =
-         N == 8 ? 10753 :
-         N == 512 ? 12265 :
-         N == 1024 ? 12277 :
+         N == 8 ? 2048 :
+         N == 512 ? 32 :
+         N == 1024 ? 16 :
          0;
 
   typedef enum logic [2:0] {
@@ -198,6 +197,10 @@ module ntt#(
   end
 
   // Pipeline for scaling output of INTT
+  logic [13:0] scale_reduced1, scale_reduced2;
+  montgomery_reduce scale_reduce1(.x(scale_a_times_b1[27:0]), .result(scale_reduced1));
+  montgomery_reduce scale_reduce2(.x(scale_a_times_b2[27:0]), .result(scale_reduced2));
+
   always_ff @(posedge clk) begin
 
     // Stage 1: Multiply by scale factor
@@ -209,8 +212,8 @@ module ntt#(
     scale_we_b_1 <= scale_we_b_in;
 
     // Stage 2: Modulo 12289
-    scale_mult_mod_q1 <= (scale_a_times_b1 % 12289) < 0 ? (scale_a_times_b1 % 12289) + 12289 : (scale_a_times_b1 % 12289); // Make sure the result is positive
-    scale_mult_mod_q2 <= (scale_a_times_b2 % 12289) < 0 ? (scale_a_times_b2 % 12289) + 12289 : (scale_a_times_b2 % 12289); // Make sure the result is positive
+    scale_mult_mod_q1 <= scale_reduced1;
+    scale_mult_mod_q2 <= scale_reduced2;
     scale_addr1_out <= scale_addr1_1;
     scale_addr2_out <= scale_addr2_1;
     scale_we_a_out <= scale_we_a_1;

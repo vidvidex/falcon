@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Implements pipelined multiplication a*b mod 12289.
+// Implements pipelined multiplication a*b mod 12289, for a and b in [0, 12289), with Montgomery reduction:
+// b has to be in Montgomery form (b * 2^14 mod 12289), like the twiddle factors in ntt_twiddle_factor_rom.
 //
 // The module is tailored specifically for use in the ntt module. For this reason we also have many other parameters, which we just pass through the pipeline
 // and output as they are. These parameters are for example index1, index2 and valid. They will be used when processing the result of multiplication in the parent module.
@@ -56,12 +57,15 @@ module mult_mod_q_for_ntt #(
   end
 
   // Stage 2: Modulo 12289
+  logic [13:0] a_times_b_mod_q;
+  montgomery_reduce reduce(.x(a_times_b[27:0]), .result(a_times_b_mod_q));
+
   always_ff @(posedge clk) begin
     if(rst_n == 1'b0) begin
       valid_out <= 0;
     end
     else begin
-      result <= (a_times_b % 12289) < 0 ? (a_times_b % 12289) + 12289 : (a_times_b % 12289); // Make sure the result is positive
+      result <= a_times_b_mod_q;
       valid_out <= valid1;
       index1_out <= index1_1;
       index2_out <= index2_1;
