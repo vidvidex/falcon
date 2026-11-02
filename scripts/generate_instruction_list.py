@@ -1,12 +1,12 @@
-# This script generates instruction lists for the Falcon hardware accelerator's control unit.
-# The generated list can be pasted into the instruction_dispatch module. Be sure to also update the instruction count variable in that module.
+# Reference model of the instruction sequence for the Falcon hardware accelerator's control unit.
 #
-# Usage:
-#   - enable additional prints if needed
-#   - at the bottom of the file, uncomment the desired algorithm call (verify or sign) with the desired N (512 or 1024)
-#   - run the script: python3 scripts/generate_instruction_list.py
+# rtl/top/instruction_generator.sv generates the same instructions in hardware. This script writes them to
+# mem/tb/instructions_<algorithm><N>.hex, which instruction_generator_tb compares with the hardware.
+#
+# Usage: python3 scripts/generate_instruction_list.py   (enable debug_prints below to print the instructions)
 
 import math
+from pathlib import Path
 
 debug_prints = False  # Enable debug prints
 tree_index_print = False  # Additionally print the addresses accessed in the Falcon tree
@@ -103,18 +103,9 @@ class InstructionGenerator:
         logn = int(math.log2(n))
         return (logn + 1) << logn
 
-    def print_verilog(self, algorithm):
-
-        if algorithm not in ["verify", "sign"]:
-            print(f"Error: Unsupported algorithm '{algorithm}'")
-            return
-
-        formatted_instructions = [f"70'b{instruction:070b}" for instruction in self.instructions]
-
-        print(f"localparam int {algorithm.upper()}_INSTRUCTION_COUNT = {len(formatted_instructions)};")
-        print(f"assign {algorithm}_instructions = '{{")
-        print(",\n".join(formatted_instructions))
-        print("};")
+    def write_hex(self, path):
+        path.write_text("".join(f"{instruction:018x}\n" for instruction in self.instructions))
+        print(f"wrote {path} ({len(self.instructions)} instructions)")
 
     def verify(self, N):
         self.instructions = []
@@ -175,7 +166,6 @@ class InstructionGenerator:
             element_count=log2N - 1,
         )
 
-        self.print_verilog(algorithm="verify")
 
     def ffsampling(self, N, n, curr_bram, next_free_addr, t0, t1, tree):
 
@@ -580,8 +570,6 @@ class InstructionGenerator:
             element_count=int(math.log2(N)),
         )
 
-        generator.print_verilog(algorithm="sign")
-
         if tree_index_print:
             print(f"Indices where samplerz will read tree:")
             print(self.samplerz_tree_addrs)
@@ -592,8 +580,9 @@ class InstructionGenerator:
 
 if __name__ == "__main__":
 
+    out_dir = Path(__file__).resolve().parent.parent / "mem" / "tb"
     generator = InstructionGenerator()
-    # generator.verify(512)
-    # generator.verify(1024)
-    generator.sign(512)
-    # generator.sign(1024)
+    for algorithm in ("sign", "verify"):
+        for n in (512, 1024):
+            getattr(generator, algorithm)(n)
+            generator.write_hex(out_dir / f"instructions_{algorithm}{n}.hex")

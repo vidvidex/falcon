@@ -144,8 +144,8 @@
          <obj_property name="ObjectShortName">instruction_done</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/instruction_index">
-         <obj_property name="ElementShortName">instruction_index[14:0]</obj_property>
-         <obj_property name="ObjectShortName">instruction_index[14:0]</obj_property>
+         <obj_property name="ElementShortName">instruction_index[13:0]</obj_property>
+         <obj_property name="ObjectShortName">instruction_index[13:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/state">
@@ -159,18 +159,6 @@
       <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/N">
          <obj_property name="ElementShortName">N[31:0]</obj_property>
          <obj_property name="ObjectShortName">N[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/VERIFY_INSTRUCTION_COUNT">
-         <obj_property name="ElementShortName">VERIFY_INSTRUCTION_COUNT[31:0]</obj_property>
-         <obj_property name="ObjectShortName">VERIFY_INSTRUCTION_COUNT[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/SIGN_INSTRUCTION_COUNT">
-         <obj_property name="ElementShortName">SIGN_INSTRUCTION_COUNT[31:0]</obj_property>
-         <obj_property name="ObjectShortName">SIGN_INSTRUCTION_COUNT[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/instruction_dispatch_tb/instruction_dispatch/MAX_INSTRUCTION_COUNT">
-         <obj_property name="ElementShortName">MAX_INSTRUCTION_COUNT[31:0]</obj_property>
-         <obj_property name="ObjectShortName">MAX_INSTRUCTION_COUNT[31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group824">

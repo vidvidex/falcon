@@ -48,5 +48,6 @@ rtl/samplerz/samplerz.sv
 rtl/samplerz/samp_loop.sv
 rtl/top/axi_wrapper.sv
 rtl/top/control_unit.sv
+rtl/top/instruction_generator.sv
 rtl/top/instruction_dispatch.sv
 rtl/verify/check_bound.sv
