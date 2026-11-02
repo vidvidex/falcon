@@ -1498,8 +1498,8 @@ module control_unit#(
       end
 
       if(instruction[`INSTRUCTION_WIDTH-1-14] == 1'b1) begin // SAMPLERZ
-        // mu
-        bram_addr_a[bank1] = addr1;
+        // mu, at a fixed address: where the instruction generator keeps the input of the lowest level of ffSampling
+        bram_addr_a[bank1] = (N == 512) ? 528 : 784;
         {samplerz_mu1, samplerz_mu2} = bram_dout_a[bank1];
 
         // isigma. Take either high 64 bits or low 64 bits
@@ -1507,7 +1507,7 @@ module control_unit#(
         samplerz_isigma = mode2 ? bram_dout_a[bank2][63:0] : bram_dout_a[bank2][127:64];
 
         // result
-        bram_addr_a[bank3] = (N == 512) ? 528 : 784;
+        bram_addr_a[bank3] = addr1;
         bram_din_a[bank3] = {samplerz_result1, samplerz_result2};
         bram_we_a[bank3] = samplerz_done;
 
