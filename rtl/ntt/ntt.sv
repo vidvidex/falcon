@@ -152,6 +152,11 @@ module ntt#(
     end
   endfunction
 
+  // Maps an input coefficient from (-12289, 12289) to [0, 12289) (coefficients of compressed signature can be negative)
+  function [14:0] mod_q_canonical(input logic signed [14:0] a);
+    mod_q_canonical = a < 0 ? a + 12289 : a;
+  endfunction
+
   // Modulo 12289 subtraction
   function [14:0] mod_sub(input logic signed [14:0] a, b);
     begin
@@ -363,9 +368,9 @@ module ntt#(
       mult_mod_q_b = 0;
     end
     else if(state == NTT || state == NTT_WAIT_FOR_MULTIPLY) begin
-      mult_mod_q_a = mode == 1'b0 ? read_data2 : mod_sub(read_data1, read_data2);
+      mult_mod_q_a = mode == 1'b0 ? mod_q_canonical(read_data2) : mod_sub(read_data1, read_data2);
       mult_mod_q_b = twiddle_factor_delayed;
-      mult_mod_q_passthrough_in = mode == 1'b0 ? read_data1 : mod_add(read_data1, read_data2);
+      mult_mod_q_passthrough_in = mode == 1'b0 ? mod_q_canonical(read_data1) : mod_add(read_data1, read_data2);
     end
     else begin
       mult_mod_q_a = 0;
