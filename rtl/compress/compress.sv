@@ -10,7 +10,8 @@
 // sum((hashed_message - t0)^2 + t1^2) < acceptance_bound
 //
 // We compute and compress the signature while checking if it's valid because it will
-// be valid in most cases and we can save a few cycles.
+// be valid in most cases and we can save a few cycles. The signature is also rejected if a coefficient
+// is too large to be compressed (|s| > 2047) or the compressed signature is longer than SLEN bytes.
 //
 // The compressed signature is written to BRAM via "output_*" signals.
 // First memory location will contain the bitlength of compressed signature.
@@ -83,14 +84,16 @@ module compress#(
 
   logic signed [14:0] uncompressed_coefficient;
   logic uncompressed_coefficient_valid;
-  logic [104:0] compressed_coefficient;
-  logic [6:0] compressed_coefficient_length;
+  logic [23:0] compressed_coefficient;
+  logic [4:0] compressed_coefficient_length;
+  logic coefficient_too_large, any_coefficient_too_large;
   compress_coefficient compress_coefficient (
                          .clk(clk),
                          .coefficient(uncompressed_coefficient),
                          .coefficient_valid(uncompressed_coefficient_valid),
                          .compressed_coefficient(compressed_coefficient),
-                         .compressed_coefficient_length(compressed_coefficient_length)
+                         .compressed_coefficient_length(compressed_coefficient_length),
+                         .too_large(coefficient_too_large)
                        );
 
   logic last_delayed;
@@ -138,11 +141,14 @@ module compress#(
     if (!rst_n) begin
       squared_norm <= 0;
       over_bound <= 0;
+      any_coefficient_too_large <= 0;
     end
     else begin
       squared_norm <= squared_norm + squared;
       if(squared_norm > bound2)
         over_bound <= 1;
+      if(coefficient_too_large)
+        any_coefficient_too_large <= 1;
     end
   end
 
@@ -154,7 +160,8 @@ module compress#(
     end
     else begin
       if(last_delayed == 1'b1 && accept_i == 1'b0 && reject_i == 1'b0) begin
-        if(over_bound == 1 || squared_norm > bound2 || compressed_signature_length > `SLEN*8)
+        if(over_bound == 1 || squared_norm > bound2 || compressed_signature_length > `SLEN*8 ||
+           any_coefficient_too_large || coefficient_too_large)
           reject_i <= 1;
         else
           accept_i <= 1;
@@ -165,7 +172,7 @@ module compress#(
   logic [127:0] buffer;
   logic [8:0] buffer_valid_bits;
   logic [6:0] bits_that_fit;
-  logic [6:0] remaining_bits;
+  logic [4:0] remaining_bits;
   logic output_final_zeros;
   logic signature_output_done;
 
@@ -195,11 +202,11 @@ module compress#(
         compressed_signature_length <= compressed_signature_length + compressed_coefficient_length;
 
         if (buffer_valid_bits + compressed_coefficient_length < 128) begin // Entire compressed coefficient fits into buffer and it won't be full
-          buffer <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+          buffer <= buffer | ({compressed_coefficient, 104'b0} >> buffer_valid_bits);
           buffer_valid_bits <= buffer_valid_bits + compressed_coefficient_length;
         end
         else if (buffer_valid_bits + compressed_coefficient_length == 128) begin // Entire compressed coefficient fits into buffer and it fills it
-          output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+          output_data <= buffer | ({compressed_coefficient, 104'b0} >> buffer_valid_bits);
           output_we <= 1;
           output_addr <= output_addr + 1;
           buffer <= 0;
@@ -207,19 +214,19 @@ module compress#(
         end
         else begin  // Split the compressed coefficient
           // Fill the buffer with what fits and output it
-          output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+          output_data <= buffer | ({compressed_coefficient, 104'b0} >> buffer_valid_bits);
           output_we <= 1;
           output_addr <= output_addr + 1;
 
           // Put the remaining bits in the cleared buffer
-          buffer <= {compressed_coefficient, 23'b0} << bits_that_fit;
+          buffer <= {compressed_coefficient, 104'b0} << bits_that_fit;
           buffer_valid_bits <= remaining_bits;
         end
       end
 
       // Final flush on last signal
       if (last_delayed && !signature_output_done) begin
-        output_data <= buffer | ({compressed_coefficient, 23'b0} >> buffer_valid_bits);
+        output_data <= buffer | ({compressed_coefficient, 104'b0} >> buffer_valid_bits);
         output_we <= 1;
         output_addr <= output_addr + 1;
         buffer <= 0;

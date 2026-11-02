@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
+// Compresses a valid signature and compares it with the expected compressed signature, then checks that the same
+// signature with one coefficient of t1 that is too large to compress (|s| > 2047) is rejected.
 module compress_tb;
   parameter int N = 512;
 
@@ -80,19 +82,16 @@ module compress_tb;
     end
   end
 
-  initial begin
-    bram_we_b = 0;
-    bram_out_valid = 0;
-    clk = 1;
-
+  task automatic run(input real t1_first);
     rst_n = 0;
+    valid = 0;
+    last = 0;
     #20;
     rst_n = 1;
     #10;
-
     for(int i = 0; i < N/2; i++) begin
       t0 = t0_arr[i];
-      t1 = t1_arr[i];
+      t1 = i == 0 ? {$realtobits(t1_first), t1_arr[0][63:0]} : t1_arr[i];
       hm = hm_arr[i];
       valid = 1;
       lower_half = 0;
@@ -115,10 +114,18 @@ module compress_tb;
     // Wait for the compressor to finish
     while (accept !== 1'b1 && reject !== 1'b1)
       #10;
+  endtask
+
+  initial begin
+    bram_we_b = 0;
+    bram_out_valid = 0;
+    clk = 1;
+
+    run($bitstoreal(t1_arr[0][127:64]));
     if (accept !== 1'b1 || reject !== 1'b0)
       $fatal(1, "Signature not accepted (accept=%0d, reject=%0d)", accept, reject);
-    #100; // let the final words reach BRAM
 
+    #100; // let the final words reach BRAM
     for (int i = 0; i < SIGNATURE_LEN; i++) begin
       bram_addr_b <= i;
       bram_out_valid <= 1;
@@ -126,9 +133,15 @@ module compress_tb;
     end
     bram_out_valid <= 0;
     #30;
-
     if (checked != SIGNATURE_LEN)
       $fatal(1, "Checked %0d signature words, expected %0d", checked, SIGNATURE_LEN);
+    $display("Valid signature compressed correctly");
+
+    run(3000.0);
+    if (accept !== 1'b0 || reject !== 1'b1)
+      $fatal(1, "Signature with a coefficient of 3000 not rejected (accept=%0d, reject=%0d)", accept, reject);
+    $display("Signature with a coefficient that is too large rejected");
+
     $display("All tests for compress passed!");
     $finish;
   end

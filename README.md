@@ -126,8 +126,3 @@ See [Zynq Software Custom IP Guide](https://github.com/vidvidex/zynq-software-cu
 **Important:** change the `N` define in `main.h` to select between the N=512 and N=1024 variants. It must match the `N` used for the hardware build.
 
 To build it with Vitis, create a platform from `build/falcon_<N>.xsa` (standalone, `psu_cortexa53_0`) and an application component with the sources from `sw/src/`. Keep the Vitis workspace outside the repository or in `sw/workspace/` (ignored by git). See <https://github.com/vidvidex/zynq-software-custom-ip-guide?tab=readme-ov-file#developing-software-with-vitis-ide>.
-
-## TODO
-
-- `compress` module should be optimized to use only 24-bit compressed format instead of 105-bit
-  - both `compress_tb` and `compress_coefficient_tb` have to be fixed. It seems like at some point the module was changed but the testbenches were not updated accordingly.
