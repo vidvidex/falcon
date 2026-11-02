@@ -1,9 +1,12 @@
 `timescale 1ns / 1ps
 `include "common_definitions.vh"
 
-// performs the first half of FlP addition operand switch and denormalization
+// performs the first half of FlP addition: operand switch and alignment of the smaller operand
 // input: unbuffered
 // output: buffered
+//
+// The smaller operand is shifted right by the exponent difference. Below its LSB it keeps a guard bit, a round bit
+// and a sticky bit (OR of all bits shifted further out), which is enough for round to nearest even after the addition.
 module fp_adder_denormalization (
     input clk,
     input logic mode, // 0 = add, 1 = subtract
@@ -12,11 +15,11 @@ module fp_adder_denormalization (
     input [63:0] a,
     input [63:0] b,
 
-    output logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP,
+    output logic sign_result_2DP, data_valid_2DP, signs_equal_2DP,
     output logic [`EXPONENT_BITS-1:0] exponent_b_2DP,
     output logic [`SIGNIFICANT_BITS:0] significant_b_2DP,
-    output logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP,
-    output switched_operands_2DP
+    output logic [`SIGNIFICANT_BITS+3:0] aligned_significant_a_2DP, // {significant, guard, round, sticky}
+    output logic switched_operands_2DP
   );
 
   logic sign_a, sign_b;
@@ -61,46 +64,30 @@ module fp_adder_denormalization (
     significant_b_1DP <= switched_operands ? significant_a : significant_b;
   end
 
-  logic denorm_underflow;
-  assign denorm_underflow = (diff_exponent_1DP > `SIGNIFICANT_BITS);
+  // Shifts of 55 or more move the whole significand into the sticky bit
+  logic [5:0] shift;
+  assign shift = diff_exponent_1DP > 63 ? 6'd63 : diff_exponent_1DP[5:0];
 
-  logic [$clog2(`SIGNIFICANT_BITS+1)-1:0] denorm_shift_value;
-  assign denorm_shift_value = diff_exponent_1DP[$clog2(`SIGNIFICANT_BITS+1)-1:0];
+  localparam int EXTENDED_BITS = `SIGNIFICANT_BITS + 3;  // significand with hidden bit, guard and round bits
+  logic [EXTENDED_BITS-1:0] significant_a_extended, aligned, shifted_out_mask;
+  assign significant_a_extended = {significant_a_1DP, 2'b00};
+  assign aligned = significant_a_extended >> shift;
+  assign shifted_out_mask = (EXTENDED_BITS'(1) << shift) - 1'b1;
 
-  logic bit_shifted_out;
-  assign bit_shifted_out = denorm_shift_value == 6'd1 && !denorm_underflow ? significant_a_1DP[0] : 1'd0;
-
-  logic [`SIGNIFICANT_BITS:0] denorm_significant_a;
-  assign denorm_significant_a = significant_a_1DP >> denorm_shift_value;
+  logic sticky;
+  assign sticky = |(significant_a_extended & shifted_out_mask);
 
 
   ////////////// Pipeline stage /////////////////////////
-  logic sign_result_internal_2DP, data_valid_internal_2DP, bit_shifted_out_internal_2DP, denorm_underflow_internal_2DP, signs_equal_internal_2DP, switched_operands_internal_2DP;
-  logic [`EXPONENT_BITS-1:0] exponent_b_internal_2DP;
-  logic [`SIGNIFICANT_BITS:0] significant_b_internal_2DP;
-  logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_internal_2DP;
   always_ff @(posedge clk) begin
-    data_valid_internal_2DP <= data_valid_1DP;
-    sign_result_internal_2DP <= sign_result_1DP;
-    signs_equal_internal_2DP <= signs_equal_1DP;
+    data_valid_2DP <= data_valid_1DP;
+    sign_result_2DP <= sign_result_1DP;
+    signs_equal_2DP <= signs_equal_1DP;
+    switched_operands_2DP <= switched_operands_1DP;
 
-    switched_operands_internal_2DP <= switched_operands_1DP;
-    denorm_underflow_internal_2DP <= denorm_underflow;
-    bit_shifted_out_internal_2DP <= bit_shifted_out;
-
-    exponent_b_internal_2DP <= exponent_b_1DP;
-    denorm_significant_a_internal_2DP <= denorm_significant_a;
-    significant_b_internal_2DP <= significant_b_1DP;
+    exponent_b_2DP <= exponent_b_1DP;
+    aligned_significant_a_2DP <= {aligned, sticky};
+    significant_b_2DP <= significant_b_1DP;
   end
-
-  assign sign_result_2DP = sign_result_internal_2DP;
-  assign data_valid_2DP = data_valid_internal_2DP;
-  assign bit_shifted_out_2DP = bit_shifted_out_internal_2DP;
-  assign denorm_underflow_2DP = denorm_underflow_internal_2DP;
-  assign signs_equal_2DP = signs_equal_internal_2DP;
-  assign exponent_b_2DP = exponent_b_internal_2DP;
-  assign significant_b_2DP = significant_b_internal_2DP;
-  assign denorm_significant_a_2DP = denorm_significant_a_internal_2DP;
-  assign switched_operands_2DP = switched_operands_internal_2DP;
 
 endmodule

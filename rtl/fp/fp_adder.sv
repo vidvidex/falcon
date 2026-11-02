@@ -15,10 +15,10 @@ module fp_adder (
     output valid_out
   );
 
-  logic sign_result_2DP, data_valid_2DP, bit_shifted_out_2DP, denorm_underflow_2DP, signs_equal_2DP;
+  logic sign_result_2DP, data_valid_2DP, signs_equal_2DP;
   logic [`EXPONENT_BITS-1:0] exponent_b_2DP;
   logic [`SIGNIFICANT_BITS:0] significant_b_2DP;
-  logic signed [`SIGNIFICANT_BITS:0] denorm_significant_a_2DP;
+  logic [`SIGNIFICANT_BITS+3:0] aligned_significant_a_2DP;
   fp_adder_denormalization denormalize (
                             .clk(clk),
                             .mode(mode),
@@ -27,12 +27,10 @@ module fp_adder (
                             .b(b),
                             .sign_result_2DP(sign_result_2DP),
                             .data_valid_2DP(data_valid_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_2DP),
                             .signs_equal_2DP(signs_equal_2DP),
                             .exponent_b_2DP(exponent_b_2DP),
                             .significant_b_2DP(significant_b_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_2DP),
+                            .aligned_significant_a_2DP(aligned_significant_a_2DP),
                             .switched_operands_2DP()
                           );
 
@@ -40,12 +38,10 @@ module fp_adder (
                             .clk(clk),
                             .sign_result_2DP(sign_result_2DP),
                             .data_valid_2DP(data_valid_2DP),
-                            .bit_shifted_out_2DP(bit_shifted_out_2DP),
-                            .denorm_underflow_2DP(denorm_underflow_2DP),
                             .signs_equal_2DP(signs_equal_2DP),
                             .exponent_b_2DP(exponent_b_2DP),
                             .significant_b_2DP(significant_b_2DP),
-                            .denorm_significant_a_2DP(denorm_significant_a_2DP),
+                            .aligned_significant_a_2DP(aligned_significant_a_2DP),
 
                             .result(result),
                             .valid_out(valid_out)
