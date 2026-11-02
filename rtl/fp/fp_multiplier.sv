@@ -71,6 +71,10 @@ module fp_multiplier(
   assign a_times_b = mult_result_reg;
   assign multiplied_significants_shifted = a_times_b[2*`SIGNIFICANT_BITS+1:`SIGNIFICANT_BITS];
 
+  // Bits below multiplied_significants_shifted needed for rounding: the next bit and the OR of all lower bits
+  logic [1:0] low_bits, low_bits_3DP;
+  assign low_bits = {a_times_b[`SIGNIFICANT_BITS-1], |a_times_b[`SIGNIFICANT_BITS-2:0]};
+
 
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_1DP, data_valid_1DP;
@@ -85,6 +89,7 @@ module fp_multiplier(
   assign exponent_uncorrected = {1'b0, exponent_sum_1DP} - 11'd1023;
 
   delay_register #(.BITWIDTH(`SIGNIFICANT_BITS+2), .CYCLE_COUNT(1+4)) multiplied_significants_shifted_delay(.clk(clk), .in(multiplied_significants_shifted), .out(multiplied_significants_shifted_3DP));
+  delay_register #(.BITWIDTH(2), .CYCLE_COUNT(1+4)) low_bits_delay(.clk(clk), .in(low_bits), .out(low_bits_3DP));
 
   ////////////////////////// Pipeline stage ///////////////////
   logic sign_result_2DP, data_valid_2DP;
@@ -127,31 +132,37 @@ module fp_multiplier(
   logic [`SIGNIFICANT_BITS-1:0] significant_result;
   assign significant_result = carry_bit ? multiplied_significants_shifted_3DP[`SIGNIFICANT_BITS:1] : multiplied_significants_shifted_3DP[`SIGNIFICANT_BITS-1:0];
 
+  // Round to nearest, ties to even
+  logic guard, sticky, round_up;
+  assign guard = carry_bit ? multiplied_significants_shifted_3DP[0] : low_bits_3DP[1];
+  assign sticky = carry_bit ? |low_bits_3DP : low_bits_3DP[0];
+  assign round_up = guard && (sticky || significant_result[0]);
+
 
   ////////////////////////// Pipeline stage ///////////////////
-  logic sign_result_4DP, data_valid_4DP, zero_result_4DP;
+  logic sign_result_4DP, data_valid_4DP, zero_result_4DP, round_up_4DP;
   logic [`EXPONENT_BITS-1:0] exponent_tmp_4DP;
   logic [`SIGNIFICANT_BITS-1:0] significant_result_4DP;
   always_ff @(posedge clk) begin
     data_valid_4DP <= data_valid_3DP;
     sign_result_4DP <= sign_result_3DP;
     zero_result_4DP <= zero_result;
+    round_up_4DP <= round_up;
     exponent_tmp_4DP <= exponent_tmp;
     significant_result_4DP <= significant_result;
   end
 
   ////////////////////////// final Pipeline stage ///////////////////
   logic sign_result_5DP, data_valid_5DP;
-  logic [`EXPONENT_BITS-1:0] exponent_result_5DP;
-  logic [`SIGNIFICANT_BITS-1:0] significant_result_5DP;
+  logic [62:0] magnitude_5DP;
   always_ff @(posedge clk) begin
     data_valid_5DP <= data_valid_4DP;
     sign_result_5DP <= sign_result_4DP;
-    exponent_result_5DP <= zero_result_4DP ? `EXPONENT_BITS'd0 : exponent_tmp_4DP;
-    significant_result_5DP <= zero_result_4DP ? `SIGNIFICANT_BITS'd0 : significant_result_4DP;
+    // A carry out of the significand when rounding increments the exponent
+    magnitude_5DP <= zero_result_4DP ? 63'd0 : {exponent_tmp_4DP, significant_result_4DP} + round_up_4DP;
   end
 
-  assign result = {sign_result_5DP, exponent_result_5DP, significant_result_5DP};
+  assign result = {sign_result_5DP, magnitude_5DP};
   assign valid_out = data_valid_5DP;
 
 endmodule
