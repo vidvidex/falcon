@@ -4,8 +4,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 //
 // This module dispatches instructions that guide the execution of Falcon signing and signature verification.
-// The instructions come from instruction_generator, one at a time: when the control unit reports that an instruction
-// is done, the next one is issued.
+// The instructions come from instruction_generator. The generator always holds the next instruction, so when 
+// the control unit reports that an instruction is done, the next one is issued in the following cycle.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +36,7 @@ module instruction_dispatch#(
 
   logic [13:0] instruction_index;  // Number of instructions done, for debugging
 
-  logic generator_restart, generator_next, all_instructions_done;
+  logic generator_restart, generator_next, no_more_instructions;
   logic [`INSTRUCTION_WIDTH-1:0] next_instruction;
   instruction_generator #(
                           .N(N)
@@ -46,7 +46,7 @@ module instruction_dispatch#(
                           .algorithm(algorithm_select == 2'b01),
                           .next(generator_next),
                           .instruction(next_instruction),
-                          .finished(all_instructions_done)
+                          .finished(no_more_instructions)
                         );
 
   control_unit #(
@@ -67,18 +67,19 @@ module instruction_dispatch#(
                  .ext_bram_we(ext_bram_we)
                );
 
-  typedef enum logic [2:0] {
+  typedef enum logic [1:0] {
             IDLE, // Waiting for start signal
             START,  // Issue first instruction
             INSTRUCTIONS_RUNNING,  // Instructions are running
-            INSTRUCTIONS_DONE, // Instruction done, sending NOP to control unit
             DONE  // All instructions done
           } state_t;
   state_t state, next_state;
 
-  // The generator starts from the first instruction while idle and moves to the next one when an instruction is done
+  // The generator starts from the first instruction while idle and moves to the next one whenever one is issued
+  logic issue_next;
+  assign issue_next = state == INSTRUCTIONS_RUNNING && instruction_done == 1'b1 && !no_more_instructions;
   assign generator_restart = state == IDLE;
-  assign generator_next = state == INSTRUCTIONS_RUNNING && instruction_done == 1'b1;
+  assign generator_next = state == START || issue_next;
 
   always_comb begin
     next_state = state;
@@ -92,14 +93,8 @@ module instruction_dispatch#(
         next_state = INSTRUCTIONS_RUNNING;
       end
       INSTRUCTIONS_RUNNING: begin
-        if(instruction_done == 1'b1)
-          next_state = INSTRUCTIONS_DONE;
-      end
-      INSTRUCTIONS_DONE: begin
-        if (all_instructions_done)
+        if(instruction_done == 1'b1 && no_more_instructions)
           next_state = DONE;
-        else
-          next_state = INSTRUCTIONS_RUNNING;
       end
       DONE: begin
         next_state = DONE;
@@ -134,15 +129,11 @@ module instruction_dispatch#(
           instruction <= next_instruction;
         end
         INSTRUCTIONS_RUNNING: begin
-          // instruction_done being 1'b1 is also condition for going out of INSTRUCTIONS_RUNNING, which ensures this will be incremented only once per instruction_done pulse (even if not pulse)
+          // instruction_done is high for one cycle per instruction
           if (instruction_done == 1'b1) begin
             instruction_index <= instruction_index + 1;
-            instruction <= 0;
+            instruction <= no_more_instructions ? '0 : next_instruction;
           end
-        end
-        INSTRUCTIONS_DONE: begin
-          if (!all_instructions_done)
-            instruction <= next_instruction;
         end
         DONE: begin
           instruction_index <= 0;

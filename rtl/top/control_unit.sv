@@ -1003,11 +1003,11 @@ module control_unit#(
     end
 
     if(!rst_n || instruction_done)
-      pipelined_inst_index <= -1;
+      pipelined_inst_index <= 0;
     else
       pipelined_inst_index <= (pipelined_inst_index == N) ? pipelined_inst_index : pipelined_inst_index+1;
 
-    if (!rst_n || instruction[`INSTRUCTION_WIDTH-1:`INSTRUCTION_WIDTH-1-`INSTRUCTION_COUNT+1] == 0) begin
+    if (!rst_n || instruction_done || instruction[`INSTRUCTION_WIDTH-1:`INSTRUCTION_WIDTH-1-`INSTRUCTION_COUNT+1] == 0) begin
       htp_start <= 1'b0;
       htp_start_i <= 1'b0;
 
