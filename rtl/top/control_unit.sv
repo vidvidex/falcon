@@ -371,7 +371,7 @@ module control_unit#(
                 hash_to_point(
                   .clk(clk),
                   .rst_n(rst_n),
-                  .start(htp_start && !htp_start_i),
+                  .start(instruction[`INSTRUCTION_WIDTH-1-1] && !htp_start),
 
                   .input_bram_addr(htp_input_bram_addr),
                   .input_bram_data(htp_input_bram_data),
@@ -471,7 +471,7 @@ module control_unit#(
         .clk(clk),
         .rst(!rst_n || instruction_done), // Reset on instruction_done so it's ready for the next instruction
         .mode(fft_mode),
-        .start(fft_start && !fft_start_i),
+        .start(instruction[`INSTRUCTION_WIDTH-1-3] && !fft_start),
 
         .bram1_addr_a(fft_bram1_addr_a),
         .bram1_din_a(fft_bram1_din_a),
@@ -534,7 +534,7 @@ module control_unit#(
               .clk(clk),
               .rst(!rst_n || instruction_done),
               .size(split_size),
-              .start(split_start && !split_start_i),
+              .start(instruction[`INSTRUCTION_WIDTH-1-7] && !split_start),
 
               .bram1_addr_a(split_bram1_addr_a),
               .bram1_dout_a(split_bram1_dout_a),
@@ -591,7 +591,7 @@ module control_unit#(
               .clk(clk),
               .rst(!rst_n || instruction_done),
               .size(merge_size),
-              .start(merge_start && !merge_start_i),
+              .start(instruction[`INSTRUCTION_WIDTH-1-8] && !merge_start),
 
               .bram1_addr_a(merge_bram1_addr_a),
               .bram1_dout_a(merge_bram1_dout_a),
@@ -721,7 +721,7 @@ module control_unit#(
              decompress (
                .clk(clk),
                .rst_n(rst_n),
-               .start(decompress_start && !decompress_start_i),
+               .start(instruction[`INSTRUCTION_WIDTH-1-11] && !decompress_start),
 
                .input_bram_addr(decompress_input_bram_addr),
                .input_bram_data(decompress_input_bram_data),
@@ -758,7 +758,7 @@ module control_unit#(
       )ntt(
         .clk(clk),
         .rst_n(rst_n && !instruction_done), // Reset on instruction_done so it's ready for the next instruction
-        .start(ntt_start && !ntt_start_i),
+        .start(instruction[`INSTRUCTION_WIDTH-1-4] && !ntt_start),
         .mode(ntt_mode),
 
         .bram1_addr_a(ntt_bram1_addr_a),
@@ -859,7 +859,7 @@ module control_unit#(
            );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2 + `FP_ADDER_LATENCY)) fp_adder_dst_addr_delay(.clk(clk), .in(fp_adder_dst_addr), .out(fp_adder_dst_addr_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2 + `FP_ADDER_LATENCY)) fp_adder_done_delay(.clk(clk), .in(fp_adder_done), .out(fp_adder_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1 + `FP_ADDER_LATENCY)) fp_adder_done_delay(.clk(clk), .in(fp_adder_done), .out(fp_adder_done_delayed));
 
   // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
   logic fp_mul_valid_in, fp_mul_valid_in_delayed;
@@ -1063,7 +1063,6 @@ module control_unit#(
       end
 
       if(instruction[`INSTRUCTION_WIDTH-1-3] == 1'b1) begin // FFT_IFFT
-        fft_mode <= mode1;
         fft_start <= 1'b1;
         if(fft_done)
           modules_running[`INSTRUCTION_COUNT-1-3] <= 1'b0;
@@ -1072,7 +1071,6 @@ module control_unit#(
       end
 
       if(instruction[`INSTRUCTION_WIDTH-1-4] == 1'b1) begin // NTT_INTT
-        ntt_mode <= mode1;
         ntt_start <= 1'b1;
         if(ntt_done)
           modules_running[`INSTRUCTION_COUNT-1-4] <= 1'b0;
@@ -1095,7 +1093,6 @@ module control_unit#(
       end
 
       if(instruction[`INSTRUCTION_WIDTH-1-7] == 1'b1) begin // SPLIT
-        split_size <= element_count;
         split_start <= 1'b1;
         if(split_done)
           modules_running[`INSTRUCTION_COUNT-1-7] <= 1'b0;
@@ -1104,7 +1101,6 @@ module control_unit#(
       end
 
       if(instruction[`INSTRUCTION_WIDTH-1-8] == 1'b1) begin // MERGE
-        merge_size <= element_count;
         merge_start <= 1'b1;
         if(merge_done)
           modules_running[`INSTRUCTION_COUNT-1-8] <= 1'b0;
@@ -1170,6 +1166,13 @@ module control_unit#(
       end
     end
   end
+
+  // Parameters of the modules come straight from the instruction, which is stable while it runs
+  // They must be valid in the first cycle of the instruction, when the modules get their start pulse.
+  assign fft_mode = mode1;
+  assign ntt_mode = mode1;
+  assign split_size = element_count;
+  assign merge_size = element_count;
 
   always_comb begin
 

@@ -74,7 +74,7 @@ module merge_fft#(
   assign btf_scale_factor = 0;
 
   logic [$clog2(N/4)-1:0] u, u_delayed; // Counter over the input. Will be at most N/4. We need the delayed version to know where to write the butterfly output
-  delay_register #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(`FFT_BUTTERFLY_LATENCY + 4)) u_delay(.clk(clk), .in(u), .out(u_delayed));
+  delay_register #(.BITWIDTH($clog2(N/4)), .CYCLE_COUNT(`FFT_BUTTERFLY_LATENCY + 3)) u_delay(.clk(clk), .in(u), .out(u_delayed));
 
   typedef enum logic [2:0] {
             IDLE,
@@ -86,31 +86,25 @@ module merge_fft#(
   state_t state, next_state;
 
   logic butterfly_input_valid;
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_valid_in));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) butterfly_input_valid_delay(.clk(clk), .in(butterfly_input_valid), .out(btf_valid_in));
 
   logic [9:0] tw_addr;
-  delay_register #(.BITWIDTH(10), .CYCLE_COUNT(3)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(btf_tw_addr));
+  delay_register #(.BITWIDTH(10), .CYCLE_COUNT(2)) tw_addr_delay(.clk(clk), .in(tw_addr), .out(btf_tw_addr));
 
   // Reading inputs from BRAM 1
-  always @(posedge clk) begin
-    {btf_a_in_real, btf_a_in_imag} <= bram1_dout_a;
-    {btf_b_in_real, btf_b_in_imag} <= bram1_dout_b;
+  always_comb begin
+    {btf_a_in_real, btf_a_in_imag} = bram1_dout_a;
+    {btf_b_in_real, btf_b_in_imag} = bram1_dout_b;
   end
 
   // Writing results to BRAM 2
-  always_ff @(posedge clk) begin
-    if (btf_valid_out) begin
-      bram2_addr_a <= u_delayed << 1;
-      bram2_addr_b <= (u_delayed << 1) + 1;
-      bram2_din_a <= {btf_a_out_real, btf_a_out_imag};
-      bram2_din_b <= {btf_b_out_real, btf_b_out_imag};
-      bram2_we_a <= 1'b1;
-      bram2_we_b <= 1'b1;
-    end
-    else begin
-      bram2_we_a <= 1'b0;
-      bram2_we_b <= 1'b0;
-    end
+  always_comb begin
+    bram2_addr_a = u_delayed << 1;
+    bram2_addr_b = (u_delayed << 1) + 1;
+    bram2_din_a = {btf_a_out_real, btf_a_out_imag};
+    bram2_din_b = {btf_b_out_real, btf_b_out_imag};
+    bram2_we_a = btf_valid_out;
+    bram2_we_b = btf_valid_out;
   end
 
   always_ff @(posedge clk) begin
@@ -165,6 +159,7 @@ module merge_fft#(
     end
   end
 
-  assign done = state == DONE;
+  // Done when the butterfly stops outputting data. The last result is written in that cycle
+  assign done = (state == WAIT_FOR_BUTTERFLY_END && btf_valid_out == 1'b0) || state == DONE;
 
 endmodule
