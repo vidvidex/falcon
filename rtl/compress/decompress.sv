@@ -3,7 +3,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-// Implements decompression of Falcon coefficients from compressed string.
+// Implements decompression of Falcon coefficients from compressed string, one coefficient per cycle.
 //
 // Reads compressed string from BRAM and writes decompressed coefficients back to BRAM.
 //
@@ -21,8 +21,8 @@
 //
 // Because we only write half of a memory cell at a time, but we don't want to override the other half,
 // we first read the memory location and then only override the half that we need to write to.
-// This is what input_bram2 signals are used for.
-
+// This is what output_bram2 signals are used for.
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 module decompress #(
@@ -52,46 +52,25 @@ module decompress #(
              N == 512 ? 666-1-40 :
              N == 1024 ? 1280-1-40 : 0;
 
+  localparam int BUFFER_BITS = 256;
+
+  typedef enum logic [1:0] {IDLE, DECOMPRESSING, FINISH, DONE} state_t;
+  state_t state;
+
+  logic [BUFFER_BITS-1:0] buffer;
+  logic [8:0] buffer_valid_bits;
+  logic read_pending, read_pending_1, read_data_valid;  // A block was requested and arrives 2 cycles later
   logic [$clog2(N):0] coefficient_index;
-  logic coefficient_valid;
+  logic [$clog2(slen*8):0] total_bits_used;
+  logic [1:0] finish_count;
 
-  logic [4:0] bits_used; //! Number of bits used to decompress the current coefficient
-  logic [$clog2(slen*8):0] total_bits_used; //! Total number of bits used to decompress the signature
-
-  logic invalid_bits_used_error;  // Bits that are not valid were used to decompress a coefficient
-  logic used_bit_count_error; // We did not use the expected number of bits to decompress the signature
-  logic remaining_bits_not_zeros_error; // Once we are done decompressing the signature the remaining bits are not all zeros
-  logic invalid_zero_representation_error; // We found a zero representation that is not valid
-
-  logic decompress_coefficient_rst_n;
-
-  logic input_bram_data_valid, input_bram_data_valid_delayed;
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) input_bram_data_valid_delay(.clk(clk), .in(input_bram_data_valid), .out(input_bram_data_valid_delayed));
-
-  logic second_half, second_half_delayed; // 1 = we've processed the first half of coefficients
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(3)) second_half_delay(.clk(clk), .in(second_half), .out(second_half_delayed));
-
-  logic signed [14:0] coefficient, coefficient_delayed;
-  delay_register #(.BITWIDTH(15), .CYCLE_COUNT(2)) coefficient_delay(.clk(clk), .in(coefficient), .out(coefficient_delayed));
-
-  logic output_we;
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) output_we_delay(.clk(clk), .in(output_we), .out(output_bram1_we));
-
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) output_bram_addr_delay(.clk(clk), .in(output_bram2_addr), .out(output_bram1_addr));
-
-  logic [128+24-1:0] buffer, buffer_tmp; // Buffer of compressed signature bits
-  logic [7:0] buffer_valid_bits;  // How many bits in the buffer are valid (counting from the left)
-
-  logic [4:0] valid_bits;
-  logic waiting_for_input_data; // Did we already issue a read and we're waiting for BRAM
-
+  // Decode the coefficient at the start of the buffer
+  logic [14:0] coefficient;
+  logic [4:0] bits_used;
+  logic coefficient_valid, invalid_bits_used_error, invalid_zero_representation_error;
   decompress_coefficient decompress_coefficient (
-                           .clk(clk),
-                           .rst_n(decompress_coefficient_rst_n),
-
-                           .compressed_signature(buffer[128+24-1 -: 24]), // Pass top 24 bits of the buffer
-                           .valid_bits(valid_bits),
-
+                           .compressed_signature(buffer[BUFFER_BITS-1 -: 24]),
+                           .valid_bits(buffer_valid_bits >= 24 ? 5'd24 : 5'(buffer_valid_bits)),
                            .coefficient(coefficient),
                            .bits_used(bits_used),
                            .coefficient_valid(coefficient_valid),
@@ -99,139 +78,126 @@ module decompress #(
                            .invalid_zero_representation_error(invalid_zero_representation_error)
                          );
 
+  // Only decode when the buffer holds a whole coefficient, so a short buffer is not mistaken for an error
+  logic decode;
+  assign decode = state == DECOMPRESSING && buffer_valid_bits >= 24;
 
-  typedef enum logic [2:0] {
-            IDLE,   // Waiting for start signal
-            DECOMPRESS_START,  // Waiting for valid bits of the compressed signature and start decompression
-            DECOMPRESSING,  // Decompressing the current coefficient
-            DONE  // Output "done" pulse
-          } state_t;
-  state_t state, next_state;
+  logic decode_error, used_bit_count_error, remaining_bits_not_zeros_error;
 
-  assign decompress_coefficient_rst_n = rst_n && !(state == DECOMPRESS_START || state == DONE || state == DECOMPRESSING && coefficient_valid == 1'b1);
-
-  // State machine state changes
+  // Buffer: append arriving blocks after the valid bits, remove the bits of decoded coefficients
+  logic [BUFFER_BITS-1:0] buffer_appended;
+  logic [8:0] valid_bits_appended;
   always_comb begin
-    next_state = state;
-
-    case (state)
-      IDLE: begin
-        if (start == 1'b1)
-          next_state = DECOMPRESS_START;
-      end
-      DECOMPRESS_START: begin
-        if(coefficient_index == N) // If we decompressed all coefficients
-          next_state = DONE;
-        else if(valid_bits > 0)  // Wait for valid bits
-          next_state = DECOMPRESSING;
-      end
-      DECOMPRESSING: begin
-        if(coefficient_valid == 1'b1)  // Wait for valid coefficient
-          next_state = DECOMPRESS_START;
-        else if(invalid_bits_used_error == 1'b1)  // If we detected an error go to done
-          next_state = DONE;
-      end
-      DONE: begin
-        next_state = DONE;
-      end
-      default: begin
-        next_state = IDLE;
-      end
-    endcase
+    buffer_appended = buffer;
+    valid_bits_appended = buffer_valid_bits;
+    if (read_data_valid) begin
+      buffer_appended = buffer | ({input_bram_data, 128'b0} >> buffer_valid_bits);
+      valid_bits_appended = buffer_valid_bits + 128;
+    end
   end
 
-  always_ff @(posedge clk) begin
-    if (rst_n == 1'b0)
-      state <= IDLE;
-    else
-      state <= next_state;
-  end
+  logic consume;
+  assign consume = decode && coefficient_valid;
 
   always_ff @(posedge clk) begin
-    case (state)
-      IDLE: begin
-        total_bits_used = 0;
-        coefficient_index = 0;
-        used_bit_count_error = 0;
-        second_half = 0;
-      end
-      DECOMPRESSING: begin
-        if(coefficient_valid == 1'b1) begin
-
-          coefficient_index = coefficient_index + 1;
-
-          if(coefficient_index == N/2)
-            second_half = 1;
-
-          // Check if we already used too many bits to decompress the signature
-          total_bits_used = total_bits_used + bits_used;
-          if(total_bits_used > slen*8)
-            used_bit_count_error = 1;
-        end
-      end
-    endcase
-  end
-
-  assign output_bram2_addr = coefficient_index % (N/2);
-
-  // Reading from BRAM
-  always_ff @(posedge clk) begin
-    if(rst_n == 1'b0 || state == IDLE) begin
-      input_bram_addr = -1;
-      input_bram_data_valid = 1'b0;
-      buffer_valid_bits = 0;
-      buffer = 0;
-      waiting_for_input_data = 1'b0;
+    if (!rst_n || state == IDLE) begin
+      buffer <= 0;
+      buffer_valid_bits <= 0;
+      read_pending <= 0;
+      read_pending_1 <= 0;
+      read_data_valid <= 0;
+      input_bram_addr <= 0;
     end
     else begin
+      buffer <= consume ? buffer_appended << bits_used : buffer_appended;
+      buffer_valid_bits <= consume ? valid_bits_appended - bits_used : valid_bits_appended;
 
-      if(input_bram_data_valid_delayed == 1'b1 && coefficient_valid == 1'b1) begin
-        // We read next block of data and we have a valid coefficient.
-
-        buffer_tmp = buffer;
-        buffer_tmp[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
-        buffer = buffer_tmp << bits_used;
-
-        buffer_valid_bits = buffer_valid_bits + 128 - bits_used;
-        waiting_for_input_data = 1'b0;
-      end
-      else if(input_bram_data_valid_delayed == 1'b1) begin
-        // We read next block of data
-        buffer[128+24-1-buffer_valid_bits -: 128] = input_bram_data;
-        buffer_valid_bits = buffer_valid_bits + 128;
-        waiting_for_input_data = 1'b0;
-      end
-      else if(coefficient_valid == 1'b1) begin
-        // We have a valid coefficient
-        buffer_valid_bits = buffer_valid_bits - bits_used;
-        buffer = buffer << bits_used;
-      end
-
-      // When there is space for a block of 128 bits in the buffer and we're not waiting for data we issue a BRAM read
-      if(buffer_valid_bits <= 24 && waiting_for_input_data == 1'b0) begin
-        input_bram_addr = input_bram_addr + 1;
-        input_bram_data_valid = 1'b1;
-        waiting_for_input_data = 1'b1;
+      // Request the next block when there is room for it
+      read_pending_1 <= read_pending;
+      read_data_valid <= read_pending_1;
+      if (!read_pending && !read_pending_1 && !read_data_valid && buffer_valid_bits <= BUFFER_BITS - 128) begin
+        read_pending <= 1;
       end
       else
-        input_bram_data_valid = 1'b0;
+        read_pending <= 0;
+      if (read_data_valid)
+        input_bram_addr <= input_bram_addr + 1;
     end
   end
+
+  // State, coefficient counter and error checks
+  always_ff @(posedge clk) begin
+    if (!rst_n) begin
+      state <= IDLE;
+    end
+    else begin
+      case (state)
+        IDLE: begin
+          coefficient_index <= 0;
+          total_bits_used <= 0;
+          decode_error <= 0;
+          used_bit_count_error <= 0;
+          remaining_bits_not_zeros_error <= 0;
+          finish_count <= 0;
+          if (start)
+            state <= DECOMPRESSING;
+        end
+        DECOMPRESSING: begin
+          if (decode) begin
+            if (!coefficient_valid) begin
+              decode_error <= 1;
+              state <= FINISH;
+            end
+            else begin
+              coefficient_index <= coefficient_index + 1;
+              total_bits_used <= total_bits_used + bits_used;
+              if (total_bits_used + bits_used > slen*8)
+                used_bit_count_error <= 1;
+              if (coefficient_index == N - 1)
+                state <= FINISH;
+            end
+          end
+        end
+        FINISH: begin  // Wait for the last coefficient to be written and check the remaining bits of the last byte
+          finish_count <= finish_count + 1;
+          if (finish_count == 0)
+            remaining_bits_not_zeros_error <= buffer[BUFFER_BITS-1 -: 7] != 0;
+          if (finish_count == 2)
+            state <= DONE;
+        end
+        default: ;
+      endcase
+    end
+  end
+
+  // Output: read the other half of the output word, then write the coefficient into its half (2 cycles later)
+  logic write_valid_1, write_valid_3;
+  logic second_half_1, second_half_3;
+  logic [`BRAM_ADDR_WIDTH-1:0] output_addr_1;
+  logic signed [14:0] coefficient_1, coefficient_3;
+  always_ff @(posedge clk) begin
+    write_valid_1 <= consume;
+    second_half_1 <= coefficient_index >= N/2;
+    output_addr_1 <= `BRAM_ADDR_WIDTH'(coefficient_index % (N/2));
+    coefficient_1 <= coefficient;
+  end
+  assign output_bram2_addr = output_addr_1;
+
+  delay_register #(.BITWIDTH(1 + 1 + 15 + `BRAM_ADDR_WIDTH), .CYCLE_COUNT(2)) write_delay(
+                   .clk(clk),
+                   .in({write_valid_1, second_half_1, coefficient_1, output_addr_1}),
+                   .out({write_valid_3, second_half_3, coefficient_3, output_bram1_addr}));
 
   always_comb begin
     // First half of coefficients goes to the high part of the memory cell, second half goes to the low part
-    if(second_half_delayed)
-      output_bram1_data = {output_bram2_data[127:64], 49'b0, coefficient_delayed};
+    if (second_half_3)
+      output_bram1_data = {output_bram2_data[127:64], 49'b0, coefficient_3};
     else
-      output_bram1_data = {49'b0, coefficient_delayed, 64'b0};
-
-    output_we = coefficient_valid; // Write only when we have a valid coefficient
+      output_bram1_data = {49'b0, coefficient_3, 64'b0};
+    output_bram1_we = write_valid_3;
   end
 
-  assign valid_bits = (buffer_valid_bits < 24) ? buffer_valid_bits : 24;
-
-  assign remaining_bits_not_zeros_error = (state == DONE && buffer[128+24-1:128+24-7] != 0);
   assign done = state == DONE;
-  assign signature_error = invalid_bits_used_error || used_bit_count_error || remaining_bits_not_zeros_error || invalid_zero_representation_error;
+  assign signature_error = decode_error || used_bit_count_error || remaining_bits_not_zeros_error;
 
 endmodule

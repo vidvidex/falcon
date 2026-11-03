@@ -1,9 +1,7 @@
 `timescale 1ns / 1ps
 
+// Checks decompress_coefficient (combinational): coefficient, bits used and error flags for single encodings
 module decompress_coefficient_tb;
-
-  logic clk;
-  logic rst_n;
 
   logic [23:0] compressed_signature;
   logic [4:0] valid_bits;
@@ -15,9 +13,6 @@ module decompress_coefficient_tb;
   logic invalid_zero_representation_error;
 
   decompress_coefficient uut (
-                           .clk(clk),
-                           .rst_n(rst_n),
-
                            .compressed_signature(compressed_signature),
                            .valid_bits(valid_bits),
 
@@ -28,137 +23,44 @@ module decompress_coefficient_tb;
                            .invalid_zero_representation_error(invalid_zero_representation_error)
                          );
 
-
-  task check(
-      int test_num,
-      logic signed [14:0] expected_coefficient,
-      logic [7:0] expected_bits_used,
-      logic expected_coefficient_valid,
-      logic expected_invalid_bits_used_error,
-      logic expected_invalid_zero_representation_error
-    );
-
-    if(coefficient !== expected_coefficient)
-      $fatal(1, "Test %d failed: Expected coefficient %d, got %d", test_num, expected_coefficient, coefficient);
-    else if(bits_used !== expected_bits_used)
-      $fatal(1, "Test %d failed: Expected bits_used %d, got %d", test_num, expected_bits_used, bits_used);
-    else if(coefficient_valid !== expected_coefficient_valid)
-      $fatal(1, "Test %d failed: Expected coefficient_valid %d, got %d", test_num, expected_coefficient_valid, coefficient_valid);
-    else if(invalid_bits_used_error !== expected_invalid_bits_used_error)
-      $fatal(1, "Test %d failed: Expected invalid_bits_used_error %d, got %d", test_num, expected_invalid_bits_used_error, invalid_bits_used_error);
-    else if(invalid_zero_representation_error !== expected_invalid_zero_representation_error)
-      $fatal(1, "Test %d failed: Expected invalid_zero_representation_error %d, got %d", test_num, expected_invalid_zero_representation_error, invalid_zero_representation_error);
-    else
-      $display("Test %d passed", test_num);
+  // Checks a valid encoding
+  task automatic check(input logic [23:0] bits, input int valid, input logic signed [14:0] expected, input int expected_bits_used);
+    compressed_signature = bits;
+    valid_bits = valid;
+    #1;
+    if (coefficient_valid !== 1'b1 || invalid_bits_used_error !== 1'b0 || invalid_zero_representation_error !== 1'b0)
+      $fatal(1, "%b: expected a valid coefficient, got valid=%b, invalid_bits_used=%b, invalid_zero=%b", bits,
+             coefficient_valid, invalid_bits_used_error, invalid_zero_representation_error);
+    if ($signed(coefficient) !== expected || bits_used !== expected_bits_used)
+      $fatal(1, "%b: expected %0d (%0d bits), got %0d (%0d bits)", bits, expected, expected_bits_used, $signed(coefficient), bits_used);
   endtask
 
-  task check_flags(
-      int test_num,
-      logic expected_coefficient_valid,
-      logic expected_invalid_bits_used_error,
-      logic expected_invalid_zero_representation_error
-    );
-    if(coefficient_valid !== expected_coefficient_valid)
-      $fatal(1, "Test %0d failed: Expected coefficient_valid %0d, got %0d", test_num, expected_coefficient_valid, coefficient_valid);
-    else if(invalid_bits_used_error !== expected_invalid_bits_used_error)
-      $fatal(1, "Test %0d failed: Expected invalid_bits_used_error %0d, got %0d", test_num, expected_invalid_bits_used_error, invalid_bits_used_error);
-    else if(invalid_zero_representation_error !== expected_invalid_zero_representation_error)
-      $fatal(1, "Test %0d failed: Expected invalid_zero_representation_error %0d, got %0d", test_num, expected_invalid_zero_representation_error, invalid_zero_representation_error);
-    else
-      $display("Test %0d passed", test_num);
+  // Checks an invalid encoding
+  task automatic check_error(input logic [23:0] bits, input int valid, input logic bits_error, input logic zero_error);
+    compressed_signature = bits;
+    valid_bits = valid;
+    #1;
+    if (coefficient_valid !== 1'b0 || invalid_bits_used_error !== bits_error || invalid_zero_representation_error !== zero_error)
+      $fatal(1, "%b: expected valid=0, invalid_bits_used=%b, invalid_zero=%b, got valid=%b, invalid_bits_used=%b, invalid_zero=%b",
+             bits, bits_error, zero_error, coefficient_valid, invalid_bits_used_error, invalid_zero_representation_error);
   endtask
-
-  always #5 clk = ~clk;
 
   initial begin
-    clk = 1;
+    check(24'b0_0010111_0100000000000000, 10, 151, 10);    // positive
+    check(24'b1_0011100_0100000000000000, 10, -156, 10);   // negative
+    check(24'b0_0000000_1000000000000000, 9, 0, 9);        // zero
+    check(24'b0_1111111_0000000000000001, 24, 2047, 24);   // largest
+    check(24'b1_1111111_0000000000000001, 24, -2047, 24);  // smallest
 
-    // Reset
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-    #30;    // Intentionally long delay, so we see nothing happens before we have any valid bits
+    check_error(24'b1_0011100_0100000000000000, 5, 1, 0);   // needs 10 bits, only 5 valid
+    check_error(24'b1_0000000_1000000000000000, 9, 0, 1);   // "-0"
+    check_error(24'b0_0000011_0000000000000000, 24, 1, 0);  // no terminating one: |s| > 2047
 
-    // Test 1: Positive coefficient
-    compressed_signature = {24'b0_0010111_0100000000000000};
-    valid_bits = 10;
-    #10;
-    while(coefficient_valid !== 1'b1)
-      #10;
-    check(1, 151, 10, 1, 0, 0);
-
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-
-    // Test 2: Negative coefficient
-    compressed_signature = {24'b1_0011100_0100000000000000};
-    valid_bits = 10;
-    #10;
-    while(coefficient_valid == 1'b0)
-      #10;
-    check(2, -156, 10, 1, 0, 0);
-
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-
-    // Test 3: Used invalid bits
-    compressed_signature = {24'b1_0011100_0100000000000000};
-    valid_bits = 5; // Only 5 bits are valid, but we'll need 10
-    #10;
-    while(invalid_bits_used_error !== 1'b1)
-      #10;
-    check_flags(3, 0, 1, 0);  // The coefficient and bits_used don't matter, since an error is raised
-
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-
-    // Test 4: Correct representation of zero
-    compressed_signature = {24'b0_0000000_1000000000000000};
-    valid_bits = 9;
-    #10;
-    while(coefficient_valid !== 1'b1)
-      #10;
-    check(4, 0, 9, 1, 0, 0);
-
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-
-    // Test 5: Incorrect representation of zero
-    compressed_signature = {24'b1_0000000_1000000000000000};
-    valid_bits = 9;
-    #10;
-    while(invalid_zero_representation_error !== 1'b1)
-      #10;
-    check(5, 0, 9, 0, 0, 1);
-
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-
-
-    // Test 6: Max value (+2047)
-    compressed_signature = {24'b0_1111111_0000000000000001};
-    valid_bits = 24;
-    #10;
-    while(coefficient_valid !== 1'b1)
-      #10;
-    check(6, 2047, 24, 1, 0, 0);
-    rst_n = 0;
-    #10;
-    rst_n = 1;
-
-    // Test 7: Min value (-2047)
-    compressed_signature = {24'b1_1111111_0000000000000001};
-    valid_bits = 24;
-    #10;
-    while(coefficient_valid !== 1'b1)
-      #10;
-    check(7, -2047, 24, 1, 0, 0);
-
+    // No valid bits: nothing is decoded
+    valid_bits = 0;
+    #1;
+    if (coefficient_valid !== 1'b0 || invalid_bits_used_error !== 1'b0)
+      $fatal(1, "Coefficient decoded without valid bits");
 
     $display("All tests for decompress_coefficient passed!");
     $finish;
