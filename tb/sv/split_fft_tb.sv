@@ -71,7 +71,9 @@ module split_fft_tb;
                  .b_out_real(btf_b_out_real),
                  .b_out_imag(btf_b_out_imag),
 
-                 .valid_out(btf_valid_out)
+                 .valid_out(btf_valid_out),
+
+                 .ext_mul(1'b0)
                );
 
   split_fft #(

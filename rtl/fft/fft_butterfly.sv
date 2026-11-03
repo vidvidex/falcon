@@ -9,6 +9,7 @@
 // and were adapted for Falcon. Most notable changes:
 // - added support for fully pipelined operation
 // - twiddle factor ROM is part of the fft_butterfly module
+// - the complex multiplier can be used on its own (when ext_mul = 1), so the control unit does not need a separate one
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +31,16 @@ module fft_butterfly(
     output [63:0] b_out_real,
     output [63:0] b_out_imag,
 
-    output valid_out
+    output valid_out,
+
+    input ext_mul,  // When ext_mul = 1 the complex multiplier is used for external multiplication instead of the butterfly operation
+    input ext_valid_in,
+    input [63:0] ext_a_real,
+    input [63:0] ext_a_imag,
+    input [63:0] ext_b_real,
+    input [63:0] ext_b_imag,
+    output [63:0] product_real,
+    output [63:0] product_imag
   );
 
   /////////////////////// Add stage //////////////////////
@@ -105,18 +115,21 @@ module fft_butterfly(
 
   complex_multiplier tw_factor_mult(
                       .clk(clk),
-                      .valid_in(add_done_2DP),
-                      .a_real(a_m_b_real_1DP),
-                      .a_imag(a_m_b_imag_1DP),
-                      .b_real(tw_real),
-                      .b_imag(tw_imag),
-                      .scale_factor(scale_factor),
+                      .valid_in(ext_mul ? ext_valid_in : add_done_2DP),
+                      .a_real(ext_mul ? ext_a_real : a_m_b_real_1DP),
+                      .a_imag(ext_mul ? ext_a_imag : a_m_b_imag_1DP),
+                      .b_real(ext_mul ? ext_b_real : tw_real),
+                      .b_imag(ext_mul ? ext_b_imag : tw_imag),
+                      .scale_factor(ext_mul ? 5'sd0 : scale_factor),
 
                       .a_x_b_real(mul_out_real),
                       .a_x_b_imag(mul_out_imag),
 
                       .valid_out(valid_out)
                     );
+
+  assign product_real = mul_out_real;
+  assign product_imag = mul_out_imag;
 
   logic [63:0] b_out_real_0DP, b_out_imag_0DP;
   assign b_out_real_0DP = mode ? mul_out_real : a_m_b_real;

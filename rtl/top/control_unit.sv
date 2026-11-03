@@ -407,6 +407,11 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) int_to_double_valid_in_delay(.clk(clk), .in(int_to_double_valid_in), .out(int_to_double_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) int_to_double_done_delay(.clk(clk), .in(int_to_double_done), .out(int_to_double_done_delayed));
 
+  logic [63:0] complex_mul_a_real, complex_mul_a_imag, complex_mul_b_real, complex_mul_b_imag;
+  logic complex_mul_valid_in, complex_mul_valid_in_delayed;
+  logic [63:0] complex_mul_result_real, complex_mul_result_imag;
+  logic complex_mul_valid_out;
+
   logic [63:0] btf_a_in_real, btf_a_in_imag, btf_b_in_real, btf_b_in_imag;
   logic [63:0] btf_a_out_real, btf_a_out_imag, btf_b_out_real, btf_b_out_imag;
   logic btf_mode;
@@ -432,7 +437,16 @@ module control_unit#(
                   .b_out_real(btf_b_out_real),
                   .b_out_imag(btf_b_out_imag),
 
-                  .valid_out(btf_valid_out)
+                  .valid_out(btf_valid_out),
+
+                  .ext_mul(instruction[`INSTRUCTION_WIDTH-1-5]),
+                  .ext_valid_in(complex_mul_valid_in_delayed),
+                  .ext_a_real(complex_mul_a_real),
+                  .ext_a_imag(complex_mul_a_imag),
+                  .ext_b_real(complex_mul_b_real),
+                  .ext_b_imag(complex_mul_b_imag),
+                  .product_real(complex_mul_result_real),
+                  .product_imag(complex_mul_result_imag)
                 );
 
   logic fft_mode, fft_start, fft_start_i, fft_done;
@@ -886,24 +900,9 @@ module control_unit#(
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) copy_valid_in_delay(.clk(clk), .in(copy_valid_in), .out(copy_valid_out));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1)) copy_done_delay(.clk(clk), .in(copy_done), .out(copy_done_delayed));
 
-  logic [63:0] complex_mul_a_real, complex_mul_a_imag, complex_mul_b_real, complex_mul_b_imag;
-  logic complex_mul_valid_in, complex_mul_valid_in_delayed;
-  logic [63:0] complex_mul_result_real, complex_mul_result_imag;
-  logic complex_mul_valid_out;
   logic [`BRAM_ADDR_WIDTH-1:0] complex_mul_dst_addr, complex_mul_dst_addr_delayed;
   logic complex_mul_done, complex_mul_done_delayed;
-  complex_multiplier complex_multiplier(
-                       .clk(clk),
-                       .valid_in(complex_mul_valid_in_delayed),
-                       .a_real(complex_mul_a_real),
-                       .a_imag(complex_mul_a_imag),
-                       .b_real(complex_mul_b_real),
-                       .b_imag(complex_mul_b_imag),
-                       .scale_factor(5'b0),
-                       .a_x_b_real(complex_mul_result_real),
-                       .a_x_b_imag(complex_mul_result_imag),
-                       .valid_out(complex_mul_valid_out)
-                     );
+  assign complex_mul_valid_out = btf_valid_out;
   delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(19)) complex_mul_dst_addr_delay(.clk(clk), .in(complex_mul_dst_addr), .out(complex_mul_dst_addr_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(18)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));

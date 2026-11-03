@@ -21,6 +21,8 @@ module fft_butterfly_tb;
   logic [9:0] tw_addr;
   logic [63:0] a_out_real, a_out_imag, b_out_real, b_out_imag;
   logic signed [4:0] scale_factor;
+  logic ext_mul = 0, ext_valid_in = 0;
+  logic [63:0] ext_a_real, ext_a_imag, ext_b_real, ext_b_imag, product_real, product_imag;
 
   always #5 clk = ~clk;
 
@@ -38,8 +40,20 @@ module fft_butterfly_tb;
                  .a_out_imag(a_out_imag),
                  .b_out_real(b_out_real),
                  .b_out_imag(b_out_imag),
-                 .valid_out(valid_out)
+                 .valid_out(valid_out),
+                 .ext_mul(ext_mul),
+                 .ext_valid_in(ext_valid_in),
+                 .ext_a_real(ext_a_real),
+                 .ext_a_imag(ext_a_imag),
+                 .ext_b_real(ext_b_real),
+                 .ext_b_imag(ext_b_imag),
+                 .product_real(product_real),
+                 .product_imag(product_imag)
                );
+
+  // Expected products for ext_mul
+  logic [127:0] expected_products [$];
+  int products_checked = 0;
 
   // Twiddle factor table
   logic [9:0] rom_addr;
@@ -63,7 +77,15 @@ module fft_butterfly_tb;
   endtask
 
   always_ff @(posedge clk) begin
-    if (valid_out) begin
+    if (valid_out && ext_mul) begin
+      if (expected_products.size() == 0)
+        $fatal(1, "Unexpected product");
+      if ({product_real, product_imag} !== expected_products[0])
+        $fatal(1, "Product %0d: expected %h, got %h", products_checked, expected_products[0], {product_real, product_imag});
+      void'(expected_products.pop_front());
+      products_checked <= products_checked + 1;
+    end
+    else if (valid_out) begin
       if (expected.size() == 0)
         $fatal(1, "Unexpected output");
       check("a_out real", a_out_real, expected[0].a_re, expected[0]);
@@ -164,7 +186,26 @@ module fft_butterfly_tb;
 
     if (checked != sent)
       $fatal(1, "Got %0d results, expected %0d", checked, sent);
-    $display("All tests for fft_butterfly passed! (%0d butterflies)", sent);
+    // The complex multiplier on its own
+    ext_mul <= 1;
+    for (int i = 0; i < RANDOM_TESTS; i++) begin
+      real ar = random_double(10), ai = random_double(10), br = random_double(10), bi = random_double(10);
+      expected_products.push_back({$realtobits(ar * br - ai * bi), $realtobits(ar * bi + ai * br)});
+      ext_a_real <= $realtobits(ar);
+      ext_a_imag <= $realtobits(ai);
+      ext_b_real <= $realtobits(br);
+      ext_b_imag <= $realtobits(bi);
+      ext_valid_in <= 1;
+      @(posedge clk);
+    end
+    ext_valid_in <= 0;
+    while (expected_products.size() != 0)
+      @(posedge clk);
+    @(posedge clk);
+    if (products_checked != RANDOM_TESTS)
+      $fatal(1, "Got %0d products, expected %0d", products_checked, RANDOM_TESTS);
+
+    $display("All tests for fft_butterfly passed! (%0d butterflies, %0d products)", sent, products_checked);
     $finish;
   end
 
