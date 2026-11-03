@@ -12,6 +12,12 @@
 `define SIGNIFICANT_BITS 52
 `define EXPONENT_BITS 11
 
+// Latencies (cycles from input to output)
+`define FP_ADDER_LATENCY 4
+`define FP_MULTIPLIER_LATENCY 6
+`define COMPLEX_MULTIPLIER_LATENCY (`FP_MULTIPLIER_LATENCY + `FP_ADDER_LATENCY)
+`define FFT_BUTTERFLY_LATENCY (`FP_ADDER_LATENCY + 2 + `COMPLEX_MULTIPLIER_LATENCY)
+
 // Directory with memory images used by the testbenches (repo mem/ directory)
 `ifndef FALCON_MEM_DIR
   `define FALCON_MEM_DIR "mem"

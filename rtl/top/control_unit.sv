@@ -858,8 +858,8 @@ module control_unit#(
              .valid_out()
            );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_adder_valid_in_delay(.clk(clk), .in(fp_adder_valid_in), .out(fp_adder_valid_in_delayed));
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(9)) fp_adder_dst_addr_delay(.clk(clk), .in(fp_adder_dst_addr), .out(fp_adder_dst_addr_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(9)) fp_adder_done_delay(.clk(clk), .in(fp_adder_done), .out(fp_adder_done_delayed));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2 + `FP_ADDER_LATENCY)) fp_adder_dst_addr_delay(.clk(clk), .in(fp_adder_dst_addr), .out(fp_adder_dst_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2 + `FP_ADDER_LATENCY)) fp_adder_done_delay(.clk(clk), .in(fp_adder_done), .out(fp_adder_done_delayed));
 
   // FLP multiplier can only multiply two 64 doubles at a time, so we use two instances of it to multiply 4 doubles at a time.
   logic fp_mul_valid_in, fp_mul_valid_in_delayed;
@@ -889,8 +889,8 @@ module control_unit#(
                   .valid_out()
                 );
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) fp_mul_valid_in_delay(.clk(clk), .in(fp_mul_valid_in), .out(fp_mul_valid_in_delayed));
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(12)) fp_mul_dst_addr_delay(.clk(clk), .in(fp_mul_dst_addr), .out(fp_mul_dst_addr_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(11)) fp_mul_done_delay(.clk(clk), .in(fp_mul_done), .out(fp_mul_done_delayed));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2 + `FP_MULTIPLIER_LATENCY)) fp_mul_dst_addr_delay(.clk(clk), .in(fp_mul_dst_addr), .out(fp_mul_dst_addr_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1 + `FP_MULTIPLIER_LATENCY)) fp_mul_done_delay(.clk(clk), .in(fp_mul_done), .out(fp_mul_done_delayed));
 
   logic copy_valid_in;
   logic [`BRAM_ADDR_WIDTH-1:0] copy_dst_addr, copy_dst_addr_delayed;
@@ -903,9 +903,9 @@ module control_unit#(
   logic [`BRAM_ADDR_WIDTH-1:0] complex_mul_dst_addr, complex_mul_dst_addr_delayed;
   logic complex_mul_done, complex_mul_done_delayed;
   assign complex_mul_valid_out = btf_valid_out;
-  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(19)) complex_mul_dst_addr_delay(.clk(clk), .in(complex_mul_dst_addr), .out(complex_mul_dst_addr_delayed));
+  delay_register #(.BITWIDTH(`BRAM_ADDR_WIDTH), .CYCLE_COUNT(2 + `COMPLEX_MULTIPLIER_LATENCY)) complex_mul_dst_addr_delay(.clk(clk), .in(complex_mul_dst_addr), .out(complex_mul_dst_addr_delayed));
   delay_register #(.BITWIDTH(1), .CYCLE_COUNT(2)) complex_mul_valid_in_delay(.clk(clk), .in(complex_mul_valid_in), .out(complex_mul_valid_in_delayed));
-  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(18)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
+  delay_register #(.BITWIDTH(1), .CYCLE_COUNT(1 + `COMPLEX_MULTIPLIER_LATENCY)) complex_mul_done_delay(.clk(clk), .in(complex_mul_done), .out(complex_mul_done_delayed));
 
   logic [`BRAM_DATA_WIDTH-1:0] compress_t0;
   logic [`BRAM_DATA_WIDTH-1:0] compress_t1;

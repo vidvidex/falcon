@@ -3,7 +3,7 @@
 
 // performs the first half of FlP addition: operand switch and alignment of the smaller operand
 // input: unbuffered
-// output: buffered
+// output: buffered (1 cycle)
 //
 // The smaller operand is shifted right by the exponent difference. Below its LSB it keeps a guard bit, a round bit
 // and a sticky bit (OR of all bits shifted further out), which is enough for round to nearest even after the addition.
@@ -48,29 +48,19 @@ module fp_adder_denormalization (
   logic [`EXPONENT_BITS:0] diff_exponent;
   assign diff_exponent = exponent_b - exponent_a;
 
-  ////////////// Pipeline stage /////////////////////////
-  logic sign_result_1DP, signs_equal_1DP, data_valid_1DP, switched_operands_1DP;
-  logic [`EXPONENT_BITS-1:0] diff_exponent_1DP, exponent_b_1DP;
-  logic [`SIGNIFICANT_BITS:0] significant_a_1DP, significant_b_1DP;
-  always_ff @(posedge clk) begin
-    data_valid_1DP <= valid_in;
-    signs_equal_1DP <= signs_equal;
-    switched_operands_1DP <= switched_operands;
-
-    sign_result_1DP   <= switched_operands ? sign_a : sign_b;
-    diff_exponent_1DP <= switched_operands ? -diff_exponent : diff_exponent[`EXPONENT_BITS-1:0];
-    exponent_b_1DP    <= switched_operands ? exponent_a : exponent_b;
-    significant_a_1DP <= switched_operands ? significant_b : significant_a;
-    significant_b_1DP <= switched_operands ? significant_a : significant_b;
-  end
+  logic [`EXPONENT_BITS-1:0] diff_exponent_switched;
+  logic [`SIGNIFICANT_BITS:0] significant_smaller, significant_larger;
+  assign diff_exponent_switched = switched_operands ? -diff_exponent : diff_exponent[`EXPONENT_BITS-1:0];
+  assign significant_smaller = switched_operands ? significant_b : significant_a;
+  assign significant_larger = switched_operands ? significant_a : significant_b;
 
   // Shifts of 55 or more move the whole significand into the sticky bit
   logic [5:0] shift;
-  assign shift = diff_exponent_1DP > 63 ? 6'd63 : diff_exponent_1DP[5:0];
+  assign shift = diff_exponent_switched > 63 ? 6'd63 : diff_exponent_switched[5:0];
 
   localparam int EXTENDED_BITS = `SIGNIFICANT_BITS + 3;  // significand with hidden bit, guard and round bits
   logic [EXTENDED_BITS-1:0] significant_a_extended, aligned, shifted_out_mask;
-  assign significant_a_extended = {significant_a_1DP, 2'b00};
+  assign significant_a_extended = {significant_smaller, 2'b00};
   assign aligned = significant_a_extended >> shift;
   assign shifted_out_mask = (EXTENDED_BITS'(1) << shift) - 1'b1;
 
@@ -80,14 +70,14 @@ module fp_adder_denormalization (
 
   ////////////// Pipeline stage /////////////////////////
   always_ff @(posedge clk) begin
-    data_valid_2DP <= data_valid_1DP;
-    sign_result_2DP <= sign_result_1DP;
-    signs_equal_2DP <= signs_equal_1DP;
-    switched_operands_2DP <= switched_operands_1DP;
+    data_valid_2DP <= valid_in;
+    sign_result_2DP <= switched_operands ? sign_a : sign_b;
+    signs_equal_2DP <= signs_equal;
+    switched_operands_2DP <= switched_operands;
 
-    exponent_b_2DP <= exponent_b_1DP;
+    exponent_b_2DP <= switched_operands ? exponent_a : exponent_b;
     aligned_significant_a_2DP <= {aligned, sticky};
-    significant_b_2DP <= significant_b_1DP;
+    significant_b_2DP <= significant_larger;
   end
 
 endmodule
