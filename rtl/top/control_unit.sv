@@ -1407,15 +1407,14 @@ module control_unit#(
       end
 
       if(instruction[`INSTRUCTION_WIDTH-1-9] == 1'b1) begin // MULT_MOD_Q
+        // NTT outputs: word i holds coefficients i and i + N/2
         bram_addr_a[bank1] = pipelined_inst_index;
-        bram_addr_b[bank1] = pipelined_inst_index + N/2;
         bram_addr_a[bank2] = pipelined_inst_index;
-        bram_addr_b[bank2] = pipelined_inst_index + N/2;
 
-        mult_mod_q_a[0] = bram_dout_a[bank1][14:0];
-        mult_mod_q_a[1] = bram_dout_b[bank1][14:0];
-        mult_mod_q_b[0] = bram_dout_a[bank2][14:0];
-        mult_mod_q_b[1] = bram_dout_b[bank2][14:0];
+        mult_mod_q_a[0] = bram_dout_a[bank1][64+14:64];
+        mult_mod_q_a[1] = bram_dout_a[bank1][14:0];
+        mult_mod_q_b[0] = bram_dout_a[bank2][64+14:64];
+        mult_mod_q_b[1] = bram_dout_a[bank2][14:0];
         mult_mod_q_valid_in = pipelined_inst_valid;
         mult_mod_q_done = pipelined_inst_done;
         mult_mod_q_write_addr = pipelined_inst_index;
@@ -1427,14 +1426,13 @@ module control_unit#(
 
       if(instruction[`INSTRUCTION_WIDTH-1-10] == 1'b1) begin // CHECK_BOUND
         bram_addr_a[bank1] = pipelined_inst_index; // Data from hash_to_point
-        bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT
-        bram_addr_b[bank2] = pipelined_inst_index + N/2; // Data from INTT
+        bram_addr_a[bank2] = pipelined_inst_index; // Data from INTT (word i holds coefficients i and i + N/2)
         bram_addr_b[bank3] = pipelined_inst_index; // Data from decompress
 
         check_bound_a[0] = bram_dout_a[bank1][64+14:64];
         check_bound_a[1] = bram_dout_a[bank1][14:0];
-        check_bound_b[0] = bram_dout_a[bank2][14:0];
-        check_bound_b[1] = bram_dout_b[bank2][14:0];
+        check_bound_b[0] = bram_dout_a[bank2][64+14:64];
+        check_bound_b[1] = bram_dout_a[bank2][14:0];
         check_bound_c[0] = bram_dout_b[bank3][64+14:64];
         check_bound_c[1] = bram_dout_b[bank3][14:0];
 

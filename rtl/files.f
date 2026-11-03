@@ -36,7 +36,6 @@ rtl/hash_to_point/shake256_squeeze.sv
 rtl/hash_to_point/shake256_state.sv
 rtl/hash_to_point/shake256.sv
 rtl/ntt/montgomery_reduce.sv
-rtl/ntt/mult_mod_q_for_ntt.sv
 rtl/ntt/mult_mod_q.sv
 rtl/ntt/ntt.sv
 rtl/ntt/ntt_twiddle_factor_rom.sv
